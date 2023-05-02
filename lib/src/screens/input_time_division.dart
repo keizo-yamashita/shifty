@@ -1,0 +1,141 @@
+import 'package:flutter/material.dart';
+import 'package:shift/src/font.dart';
+
+class InputTimeDivisions extends StatefulWidget {
+  final List<String> timeDivsList;
+  const InputTimeDivisions({Key? key, required this.timeDivsList}) : super(key: key);
+   
+  @override
+  TimeDivisionState createState() => TimeDivisionState();
+}
+
+class TimeDivisionState extends State<InputTimeDivisions> {
+  
+  @override
+  Widget build(BuildContext context) {
+    return _buildSuggestions();
+  }
+
+  final myController = TextEditingController();
+
+  Widget _buildSuggestions() {
+    
+    var screenSize = MediaQuery.of(context).size;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment:MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
+              margin: const EdgeInsets.only(right: 20),
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text("STEP 1", style: MyFont.headlineStyleWhite),
+            ),
+            const Text("時間区分の設定", style: MyFont.headlineStyleGreen),
+          ],             
+        ),
+        const SizedBox(height: 30),
+        const Text("基本となる時間区分を入力してください\n※ 後日変更可 \n※ 後日特定の日付のみ特別な時間区分に変更可", style: MyFont.commentStyle),
+        const SizedBox(height: 30),
+
+        // 登録した時間区分一覧
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: screenSize.width * 0.1,
+            maxWidth: screenSize.width  * 0.6,
+          ),
+          child: ReorderableListView.builder(
+            shrinkWrap: true,
+            buildDefaultDragHandles: false,
+            itemCount: widget.timeDivsList.length,
+            itemBuilder: (context, i) => buildItem(widget.timeDivsList[i], i, context),
+            onReorder: (int oldIndex, int newIndex) {
+              setState(() {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                final String item = widget.timeDivsList.removeAt(oldIndex);
+                widget.timeDivsList.insert(newIndex, item); 
+              });
+            }
+          ),
+        ),
+        
+        const SizedBox( height: 30),
+
+        // 時間区分の入力欄と登録ボタン
+         Row(
+          mainAxisAlignment:MainAxisAlignment.center,
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: screenSize.width * 0.1,
+                maxWidth: screenSize.width  * 0.5,
+              ),
+              child: TextField(
+                controller: myController,
+                decoration: const InputDecoration(
+                  hintText: '時間区分入力欄',
+                ),
+              ),
+            ),
+
+            SizedBox(
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.add),
+                  color: Colors.white,
+                  onPressed: () {
+                    final input = myController.text;
+                    if(input.isNotEmpty){
+                      myController.clear();
+                      widget.timeDivsList.add(input);
+                      setState(() {});
+                    }
+                  }
+                ),
+              )
+            )
+          ]
+        ),
+      ],
+    );
+  }
+
+  Widget buildItem(String item, int index, BuildContext context) {
+    return Card(
+      key: Key(index.toString()),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      color: Colors.green,
+      child: ReorderableDragStartListener(
+        index: index,
+        child: ListTile(
+          title: Text(
+            '${index+1}. $item',
+            style: const TextStyle(color: Colors.white),
+          ),
+          trailing: IconButton(
+            onPressed: () {
+              widget.timeDivsList.remove(widget.timeDivsList[index]);
+              setState(() {});
+            },
+            icon: const Icon(Icons.delete),
+            color: Colors.white,
+          )
+        ),
+      ),
+    );
+  }
+}
