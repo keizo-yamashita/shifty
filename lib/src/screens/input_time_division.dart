@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shift/src/font.dart';
+import 'package:shift/src/screens/create_schedule.dart';
+import 'package:shift/src/screens/shift_table.dart';
 
 class InputTimeDivisions extends StatefulWidget {
-  final List<String> timeDivsList;
-  const InputTimeDivisions({Key? key, required this.timeDivsList}) : super(key: key);
+  final ShiftTable shiftTable;
+  const InputTimeDivisions({Key? key, required this.shiftTable}) : super(key: key);
    
   @override
   TimeDivisionState createState() => TimeDivisionState();
@@ -53,15 +55,11 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           child: ReorderableListView.builder(
             shrinkWrap: true,
             buildDefaultDragHandles: false,
-            itemCount: widget.timeDivsList.length,
-            itemBuilder: (context, i) => buildItem(widget.timeDivsList[i], i, context),
+            itemCount: widget.shiftTable.timeDivs.length,
+            itemBuilder: (context, i) => buildItem(widget.shiftTable.timeDivs[i], i, context),
             onReorder: (int oldIndex, int newIndex) {
               setState(() {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                final String item = widget.timeDivsList.removeAt(oldIndex);
-                widget.timeDivsList.insert(newIndex, item); 
+                shiftTable.sortTimeDivision(oldIndex, newIndex);
               });
             }
           ),
@@ -99,7 +97,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                     final input = myController.text;
                     if(input.isNotEmpty){
                       myController.clear();
-                      widget.timeDivsList.add(input);
+                      widget.shiftTable.addTimeDivison(input);
                       setState(() {});
                     }
                   }
@@ -128,7 +126,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           ),
           trailing: IconButton(
             onPressed: () {
-              widget.timeDivsList.remove(widget.timeDivsList[index]);
+              widget.shiftTable.removeTimeDivision(index);
               setState(() {});
             },
             icon: const Icon(Icons.delete),

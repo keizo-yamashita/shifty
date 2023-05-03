@@ -5,7 +5,7 @@ class ShiftTable{
   late List<ShiftTableRow> assignTable;
 
   ShiftTable(){
-    rules       = List<ShiftRule>.generate(0, (index) => const ShiftRule(week: 0, weekday: 0, timeDivs: 0, assignNum: 0));
+    rules       = List<ShiftRule>.generate(0, (index) => ShiftRule(week: 0, weekday: 0, timeDivs: 0, assignNum: 0));
     timeDivs    = List<String>.generate(0, (index) => index.toString());
     assignTable = List<ShiftTableRow>.generate(0, (index) => ShiftTableRow("", 0));
   }
@@ -68,8 +68,34 @@ class ShiftTable{
     }
   }
 
-  addTimeDivison(){
+  addTimeDivison(String input){
+    timeDivs.add(input);
+  }
+
+  removeTimeDivision(int index){
+    timeDivs.removeAt(index);
+    for(int i = 0; i < rules.length; i++){
+      if(rules[i].timeDivs == index){
+        rules.removeAt(i);
+      }
+    }
+  }
+
+  sortTimeDivision(int oldIndex, int newIndex){
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
+    }
+    for(int i = 0; i < rules.length; i++){
+      if(rules[i].timeDivs == (oldIndex+1)){
+        rules[i].timeDivs = newIndex+1;
+      }else if(rules[i].timeDivs == (newIndex+1)){
+        rules[i].timeDivs = oldIndex+1;
+      }
+    }
     
+    final String item = timeDivs.removeAt(oldIndex);
+    timeDivs.insert(newIndex, item);
+
   }
 }
 
@@ -84,7 +110,7 @@ class ShiftTableRow{
 }
 
 class ShiftRule{
-  const ShiftRule({
+  ShiftRule({
     required this.week,
     required this.weekday,
     required this.timeDivs,
@@ -93,6 +119,6 @@ class ShiftRule{
 
   final int week;
   final int weekday;
-  final int timeDivs;
+  int timeDivs;
   final int assignNum;
 }
