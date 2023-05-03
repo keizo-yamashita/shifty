@@ -1,3 +1,5 @@
+import 'package:shift/src/screens/create_schedule.dart';
+
 class ShiftTable{
   late int                 startWeekday;
   late List<ShiftRule>     rules;
@@ -85,17 +87,22 @@ class ShiftTable{
     if (oldIndex < newIndex) {
       newIndex -= 1;
     }
+    print("$oldIndex$newIndex");
     for(int i = 0; i < rules.length; i++){
       if(rules[i].timeDivs == (oldIndex+1)){
+        print("${oldIndex+1} -> ${newIndex+1}");
         rules[i].timeDivs = newIndex+1;
-      }else if(rules[i].timeDivs == (newIndex+1)){
-        rules[i].timeDivs = oldIndex+1;
+      }else if((newIndex + 1 <= rules[i].timeDivs) && (rules[i].timeDivs < oldIndex + 1)){
+        rules[i].timeDivs += 1;
+      }else if((oldIndex + 1 < rules[i].timeDivs) && (rules[i].timeDivs <= newIndex + 1)){
+        rules[i].timeDivs -= 1;
       }
     }
-    
+    for(int i = 0; i < rules.length; i++){
+      print(rules[i].timeDivs);
+    }
     final String item = timeDivs.removeAt(oldIndex);
     timeDivs.insert(newIndex, item);
-
   }
 }
 
