@@ -3,6 +3,8 @@ import 'package:shift/src/font.dart';
 import 'package:shift/src/screens/create_schedule.dart';
 import 'package:shift/src/screens/shift_table.dart';
 
+String initialText = "";
+
 class InputTimeDivisions extends StatefulWidget {
   final ShiftTable shiftTable;
   const InputTimeDivisions({Key? key, required this.shiftTable}) : super(key: key);
@@ -18,7 +20,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
     return _buildSuggestions();
   }
 
-  final myController = TextEditingController();
+  final myController = TextEditingController(text: initialText);
 
   Widget _buildSuggestions() {
     
@@ -42,15 +44,15 @@ class TimeDivisionState extends State<InputTimeDivisions> {
             const Text("時間区分の設定", style: MyFont.headlineStyleGreen),
           ],             
         ),
-        const SizedBox(height: 30),
+        SizedBox(height: screenSize.height/30),
         const Text("基本となる時間区分を入力してください\n※ 後日変更可 \n※ 後日特定の日付のみ特別な時間区分に変更可", style: MyFont.commentStyle),
-        const SizedBox(height: 30),
+        SizedBox(height: screenSize.height/30),
 
         // 登録した時間区分一覧
         ConstrainedBox(
           constraints: BoxConstraints(
             minWidth: screenSize.width * 0.1,
-            maxWidth: screenSize.width  * 0.7,
+            maxWidth: screenSize.width  * 0.8,
           ),
           child: ReorderableListView.builder(
             shrinkWrap: true,
@@ -65,7 +67,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           ),
         ),
         
-        const SizedBox( height: 30),
+        SizedBox(height: screenSize.height/30),
 
         // 時間区分の入力欄と登録ボタン
          Row(
@@ -74,7 +76,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
             ConstrainedBox(
               constraints: BoxConstraints(
                 minWidth: screenSize.width * 0.1,
-                maxWidth: screenSize.width  * 0.8,
+                maxWidth: screenSize.width  * 0.6,
               ),
               child: TextField(
                 controller: myController,
@@ -120,10 +122,9 @@ class TimeDivisionState extends State<InputTimeDivisions> {
       child: ReorderableDragStartListener(
         index: index,
         child: ListTile(
-          title: Text(item, style: const TextStyle(color: Colors.white),
-          ),
+          title: Text(item, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold), textHeightBehavior: MyFont.defaultBehavior),
           leading: SizedBox(
-            child: Text('${index+1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
+            child: Text('${index+1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20), textHeightBehavior: MyFont.defaultBehavior),
           ),
           trailing: IconButton(
             onPressed: () {
@@ -132,7 +133,11 @@ class TimeDivisionState extends State<InputTimeDivisions> {
             },
             icon: const Icon(Icons.delete),
             color: Colors.white,
-          )
+          ),
+          onTap: () {
+            setState(() {
+            });
+          },
         ),
       ),
     );

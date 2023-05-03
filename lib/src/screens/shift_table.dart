@@ -75,7 +75,7 @@ class ShiftTable{
   removeTimeDivision(int index){
     timeDivs.removeAt(index);
     for(int i = 0; i < rules.length; i++){
-      if(rules[i].timeDivs == index){
+      if(rules[i].timeDivs == index + 1){
         rules.removeAt(i);
       }
     }

@@ -57,9 +57,10 @@ class InputAssignNumState extends State<InputAssignNum> {
             const Text("勤務人数の設定", style: MyFont.headlineStyleGreen),
           ],                  
         ),
-        const SizedBox(height: 30),
+
+        SizedBox(height: screenSize.height/30),
         const Text("基本となる勤務人数を設定してください\n※ 後日変更可 \n※ 上の設定から順に上書きされます", style: MyFont.commentStyle),
-        const SizedBox(height: 30),
+        SizedBox(height: screenSize.height/30),
 
         // 登録した勤務人数ルール一覧
         ConstrainedBox(
@@ -86,7 +87,7 @@ class InputAssignNumState extends State<InputAssignNum> {
             }),
         ),
 
-        const SizedBox(height: 50),
+        SizedBox(height: screenSize.height/30),
         Column(
           children: [
             Row(
@@ -141,7 +142,6 @@ class InputAssignNumState extends State<InputAssignNum> {
               
               ],
             ),
-            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -210,107 +210,6 @@ class InputAssignNumState extends State<InputAssignNum> {
                 ),
               )
             ),
-            const SizedBox(height: 20),
-
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: screenSize.width * 0.1,
-            maxWidth: screenSize.width  * 0.9,
-          ),
-              child: Scrollbar(
-                thumbVisibility: true,
-                trackVisibility: true,
-                controller: scrollController,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  controller: scrollController,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      // カレンダーの日付
-                      Row(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(2),
-                            height: 50,
-                            width:150,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: MyFont.tableColumnsColor,
-                              border: Border.all(color: MyFont.tableBorderColor, width: 2),
-                            ),
-                            child: const Text(""),
-                          ),
-                          for(int i =0 ; i < lastDay; i++)
-                          Container(
-                            margin: const EdgeInsets.all(2),
-                            height: 50,
-                            width:50,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: MyFont.tableColumnsColor,
-                              border: Border.all(color: MyFont.tableBorderColor, width: 2),
-                            ),
-                            child: (() {
-                              switch(DateTime(now.year, now.month + 1, i+1).weekday){
-                                case 1:
-                                  return Text('${i+1}(月)', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold));
-                                case 2:
-                                  return Text('${i+1}(火)', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold));
-                                case 3:
-                                  return Text('${i+1}(水)', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold));
-                                case 4:
-                                  return Text('${i+1}(木)', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold));
-                                case 5:
-                                  return Text('${i+1}(金)', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold));
-                                case 6:
-                                  return Text('${i+1}(土)', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.blue));
-                                case 7:
-                                  return Text('${i+1}(日)', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.red));
-                                default:
-                                  return Text('${i+1}(？)', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold));
-                                }
-                              }
-                            )(),
-                          ),
-                        ],
-                      ),
-                      
-                      // シフト表本体
-                      for(int i = 0; i < widget.shiftTable.timeDivs.length; i++)
-                      Row(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(2),
-                            height: 50,
-                            width:150,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: MyFont.tableColumnsColor,
-                              border: Border.all(color: MyFont.tableBorderColor, width: 2),
-                            ),
-                            child: Text(widget.shiftTable.timeDivs[i], style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                          ),
-                          for(int j =0 ; j < lastDay; j++)
-                          Container(
-                            margin: const EdgeInsets.all(2),
-                            height: 50,
-                            width:50,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              // shape: BoxShape.circle,
-                              border: Border.all(color: MyFont.tableBorderColor, width: 2),
-                            ),
-                            child: Text('${shiftTable.assignTable[i].timeDivsAssign[j]} 人', style: const TextStyle(fontSize: 15)),           
-                          )
-                        ]
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  )
-                ),
-              ),
-            ),
           ],
         )
       ],
@@ -329,19 +228,17 @@ class InputAssignNumState extends State<InputAssignNum> {
         child: ListTile(
           title: Wrap(
             children: [
-              Text('"$weekSelect"',        style: const TextStyle(color: Colors.white, fontSize: 15)),
-              const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15)),
-              Text('"$weekdaySelect"',     style: const TextStyle(color: Colors.white, fontSize: 15)),
-              const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15)),
-              Text('"$timeDivsSelect"',    style: const TextStyle(color: Colors.white, fontSize: 15)),
-              const Text(' の勤務人数は ', style:       TextStyle(color: Colors.white, fontSize: 15)),
-              Text('"$assignNumSelect"',   style: const TextStyle(color: Colors.white, fontSize: 15)),
-              const Text(' 人',            style:       TextStyle(color: Colors.white, fontSize: 15)),
+              Text('"$weekSelect"',        style: const TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
+              const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
+              Text('"$weekdaySelect"',     style: const TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
+              const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
+              Text('"$timeDivsSelect"',    style: const TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
+              const Text(' の勤務人数は ', style:       TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
+              Text('"$assignNumSelect"',   style: const TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
+              const Text(' 人',            style:       TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
             ],
           ),
-          leading: SizedBox(
-            child: Text('${index+1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
-          ),
+          leading: Text('${index+1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20), textHeightBehavior: MyFont.defaultBehavior),
           trailing: SizedBox(
             height: double.infinity,
             child: IconButton(
