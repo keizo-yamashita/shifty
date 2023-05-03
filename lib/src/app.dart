@@ -63,12 +63,12 @@ class MyStatefulWidgetState extends State<MyStatefulWidget> {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-          iconSize: 40,
-          selectedFontSize: 20,
-          unselectedFontSize: 15,
+          iconSize: 30,
+          selectedFontSize: 13,
+          unselectedFontSize: 10,
           items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.create), label: 'シフト表作成'),
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'シフト表一覧'),
+            BottomNavigationBarItem(icon: Icon(Icons.create), label: '作成'),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: '入力'),
             BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'お知らせ'),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'アカウント'),
           ],

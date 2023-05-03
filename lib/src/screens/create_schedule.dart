@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:shift/src/screens/input_time_division.dart';
 import 'package:shift/src/screens/input_assign_num.dart';
 import 'package:shift/src/screens/shift_table.dart';
-
+import 'package:shift/src/screens/check_shift_table.dart';
 // シフト表の作成に必要な変数
 ShiftTable shiftTable = ShiftTable();
 
@@ -26,6 +26,7 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
     final screens = [
       InputTimeDivisions(shiftTable: shiftTable,),
       InputAssignNum(shiftTable: shiftTable),
+      CheckShiftTable(shiftTable: shiftTable),
       // CheckTable(timeDivsList: timeDivsList, rulesList: rulesList),
       // InputAssignNum(timeDivsList: timeDivsList, rulesList: rulesList),
     ];
@@ -35,7 +36,7 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
         child: Column(
           crossAxisAlignment:  CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: screenSize.height  / 10),
+            SizedBox(height: screenSize.height/20),
             ConstrainedBox(
               constraints: BoxConstraints(
                 minWidth: screenSize.width * 0.6,
@@ -43,7 +44,7 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
               ),
               child: screens[_selectedIndex], 
             ),
-            SizedBox(height: screenSize.height / 10),
+            SizedBox(height: screenSize.height / 20),
           ],
         ),
       ),
@@ -51,9 +52,9 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onCreateScheduleItemTapped,
-        iconSize: 40,
-        selectedFontSize: 20,
-        unselectedFontSize: 15,
+        iconSize: 30,
+        selectedFontSize: 13,
+        unselectedFontSize: 10,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.access_time_filled_sharp), label: 'STEP1'),
           BottomNavigationBarItem(icon: Icon(Icons.people_alt), label: 'STEP2'),
