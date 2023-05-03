@@ -50,7 +50,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
         ConstrainedBox(
           constraints: BoxConstraints(
             minWidth: screenSize.width * 0.1,
-            maxWidth: screenSize.width  * 0.6,
+            maxWidth: screenSize.width  * 0.7,
           ),
           child: ReorderableListView.builder(
             shrinkWrap: true,
@@ -74,7 +74,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
             ConstrainedBox(
               constraints: BoxConstraints(
                 minWidth: screenSize.width * 0.1,
-                maxWidth: screenSize.width  * 0.5,
+                maxWidth: screenSize.width  * 0.8,
               ),
               child: TextField(
                 controller: myController,
@@ -120,9 +120,10 @@ class TimeDivisionState extends State<InputTimeDivisions> {
       child: ReorderableDragStartListener(
         index: index,
         child: ListTile(
-          title: Text(
-            '${index+1}. $item',
-            style: const TextStyle(color: Colors.white),
+          title: Text(item, style: const TextStyle(color: Colors.white),
+          ),
+          leading: SizedBox(
+            child: Text('${index+1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
           ),
           trailing: IconButton(
             onPressed: () {
