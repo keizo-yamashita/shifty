@@ -62,8 +62,11 @@ class InputAssignNumState extends State<InputAssignNum> {
         const SizedBox(height: 30),
 
         // 登録した勤務人数ルール一覧
-        SizedBox(
-          width: screenSize.width / 2,
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: screenSize.width * 0.1,
+            maxWidth: screenSize.width  * 0.8,
+          ),
           child: ReorderableListView.builder(
             shrinkWrap: true,
             buildDefaultDragHandles: false,
@@ -209,8 +212,11 @@ class InputAssignNumState extends State<InputAssignNum> {
             ),
             const SizedBox(height: 20),
 
-            SizedBox(
-              width: screenSize.width * 0.8,
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: screenSize.width * 0.1,
+            maxWidth: screenSize.width  * 0.9,
+          ),
               child: Scrollbar(
                 thumbVisibility: true,
                 trackVisibility: true,
@@ -321,23 +327,20 @@ class InputAssignNumState extends State<InputAssignNum> {
       child: ReorderableDragStartListener(
         index: index,
         child: ListTile(
-          title: Column(
+          title: Wrap(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${index+1}.', style: const TextStyle(color: Colors.white)),
-                  Text(weekSelect,             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-                  const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15)),
-                  Text(weekdaySelect,          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-                  const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15)),
-                  Text(timeDivsSelect,         style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-                  const Text(' の勤務人数は ', style:       TextStyle(color: Colors.white, fontSize: 15)),
-                  Text('$assignNumSelect',     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-                  const Text(' 人',            style:       TextStyle(color: Colors.white, fontSize: 15)),
-                ],
-              ),
+              Text('"$weekSelect"',        style: const TextStyle(color: Colors.white, fontSize: 15)),
+              const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15)),
+              Text('"$weekdaySelect"',     style: const TextStyle(color: Colors.white, fontSize: 15)),
+              const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15)),
+              Text('"$timeDivsSelect"',    style: const TextStyle(color: Colors.white, fontSize: 15)),
+              const Text(' の勤務人数は ', style:       TextStyle(color: Colors.white, fontSize: 15)),
+              Text('"$assignNumSelect"',   style: const TextStyle(color: Colors.white, fontSize: 15)),
+              const Text(' 人',            style:       TextStyle(color: Colors.white, fontSize: 15)),
             ],
+          ),
+          leading: SizedBox(
+            child: Text('${index+1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
           ),
           trailing: SizedBox(
             height: double.infinity,
@@ -349,7 +352,6 @@ class InputAssignNumState extends State<InputAssignNum> {
               icon: const Icon(Icons.delete),
               color: Colors.white,
             )
-          
           ),
         ),
       ),
