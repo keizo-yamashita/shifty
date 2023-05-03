@@ -1,5 +1,3 @@
-import 'package:shift/src/screens/create_schedule.dart';
-
 class ShiftTable{
   late int                 startWeekday;
   late List<ShiftRule>     rules;
