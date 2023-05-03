@@ -24,7 +24,7 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
     var screenSize = MediaQuery.of(context).size;
     
     final screens = [
-      InputTimeDivisions(timeDivsList: shiftTable.timeDivs),
+      InputTimeDivisions(shiftTable: shiftTable,),
       InputAssignNum(shiftTable: shiftTable),
       // CheckTable(timeDivsList: timeDivsList, rulesList: rulesList),
       // InputAssignNum(timeDivsList: timeDivsList, rulesList: rulesList),
