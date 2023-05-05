@@ -37,8 +37,6 @@ class InputAssignNumState extends State<InputAssignNum> {
   Widget _buildSuggestions() {
     var screenSize   = MediaQuery.of(context).size;
 
-    shiftTable.regenerateShiftTable(startWeekday, lastDay);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -82,7 +80,6 @@ class InputAssignNumState extends State<InputAssignNum> {
                 }
                 final ShiftRule item = widget.shiftTable.rules.removeAt(oldIndex);
                 widget.shiftTable.rules.insert(newIndex, item);
-                shiftTable.regenerateShiftTable(startWeekday, lastDay);
               });
             }),
         ),
@@ -204,7 +201,6 @@ class InputAssignNumState extends State<InputAssignNum> {
                   color: Colors.white,
                   onPressed: () {
                     widget.shiftTable.rules.add(ShiftRule(week: weekSelectIndex, weekday: weekdaySelectIndex, timeDivs: timeDivsSelectIndex, assignNum: assignNumSelectIndex));
-                    shiftTable.regenerateShiftTable(startWeekday, lastDay);
                     setState(() {});
                   }
                 ),
@@ -219,7 +215,7 @@ class InputAssignNumState extends State<InputAssignNum> {
   Widget buildItem(int index, String weekSelect, String weekdaySelect, String timeDivsSelect, int assignNumSelect, BuildContext context) {
     return Card(
       key: Key(index.toString()),
-      shape: RoundedRectangleBorder(
+      shape: RoundedRectangleBorder( 
         borderRadius: BorderRadius.circular(8),
       ),
       color: Colors.green,

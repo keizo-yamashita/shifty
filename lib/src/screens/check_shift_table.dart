@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shift/src/font.dart';
 import 'package:shift/src/screens/create_schedule.dart';
@@ -27,6 +28,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
   final myController = TextEditingController();
 
   Widget _buildSuggestions() {
+    widget.shiftTable.regenerateShiftTable(startWeekday, lastDay);
     var screenSize   = MediaQuery.of(context).size;
 
     return Column(
@@ -71,7 +73,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                       Container(
                         margin: const EdgeInsets.all(1),
                         height: 40,
-                        width:screenSize.width/5,
+                        width:screenSize.width/8,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: MyFont.tableColumnsColor,
@@ -121,7 +123,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                       Container(
                         margin: const EdgeInsets.all(1),
                         height: 40,
-                        width:screenSize.width/5,
+                        width:screenSize.width/8,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: MyFont.tableColumnsColor,
@@ -136,7 +138,6 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                         width:40,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          // shape: BoxShape.circle,
                           border: Border.all(color: MyFont.tableBorderColor, width: 1),
                         ),
                         child: Text('${shiftTable.assignTable[i].timeDivsAssign[j]} 人', style: const TextStyle(fontSize: 10)),           
@@ -149,7 +150,38 @@ class CheckShiftTableState extends State<CheckShiftTable> {
             ),
           ),
         ),
+
+        Container(
+          child: IconButton(onPressed: (){addTempleteShitTable(shiftTable);}, icon: const Icon(Icons.add)),
+        )
       ],
     );
   }
+}
+
+
+void getTempleteShitTable() async{
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final snapshot = await firestore.collection('template-shift-table').get();
+  var msg = '';
+  
+  snapshot.docChanges.forEach((element) {
+    final name = element.doc.get('name');
+  });
+}
+
+void addTempleteShitTable(ShiftTable shiftTable) async{
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  final data = {
+    'table-id' : 80,
+    'user-id' : 60,
+    'input-start-time' : "2023/01/01",
+    'input-end-time' : "2023/01/01",
+    'start-time' : "2023/01/01",
+    'end-time' : "2023/01/01",
+    'time-divison' : "朝，昼，夜",
+    'rules': "1111, 1111, 1111",
+  };
+  await firestore.collection('template-shift-table').add(data);
 }
