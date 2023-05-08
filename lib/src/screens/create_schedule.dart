@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shift/src/screens/shift_table.dart';
 import 'package:shift/src/screens/input_time_division.dart';
 import 'package:shift/src/screens/input_assign_num.dart';
-import 'package:shift/src/screens/shift_table.dart';
+import 'package:shift/src/screens/input_deadline_duration.dart';
 import 'package:shift/src/screens/check_shift_table.dart';
+
 // シフト表の作成に必要な変数
 ShiftTable shiftTable = ShiftTable();
 
@@ -24,11 +26,10 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
     var screenSize = MediaQuery.of(context).size;
     
     final screens = [
-      InputTimeDivisions(shiftTable: shiftTable,),
+      InputTimeDivisions(shiftTable: shiftTable),
       InputAssignNum(shiftTable: shiftTable),
+      InputDeadlineDuration(shiftTable: shiftTable),
       CheckShiftTable(shiftTable: shiftTable),
-      // CheckTable(timeDivsList: timeDivsList, rulesList: rulesList),
-      // InputAssignNum(timeDivsList: timeDivsList, rulesList: rulesList),
     ];
 
     return Scaffold(

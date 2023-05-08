@@ -104,6 +104,12 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "flutter_localizations",
+      "rootUri": "file:///Library/Flutter/packages/flutter_localizations",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "flutter_markdown",
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/flutter_markdown-0.6.14",
       "packageUri": "lib/",
@@ -124,6 +130,12 @@
     {
       "name": "infinite_listview",
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/infinite_listview-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "intl",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/intl-0.18.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -182,6 +194,12 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "simple_gesture_detector",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/simple_gesture_detector-0.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///Library/Flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -212,6 +230,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "table_calendar",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/table_calendar-3.0.9",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "term_glyph",
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/term_glyph-1.2.1",
       "packageUri": "lib/",
@@ -236,7 +260,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2023-05-05T08:40:13.346391Z",
+  "generated": "2023-05-06T05:15:59.282725Z",
   "generator": "pub",
   "generatorVersion": "3.1.0-60.0.dev"
 }

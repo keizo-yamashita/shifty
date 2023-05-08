@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shift/src/font.dart';
-import 'package:shift/src/screens/create_schedule.dart';
 import 'package:shift/src/screens/shift_table.dart';
 
 DateTime now = DateTime.now();
@@ -44,7 +43,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text("STEP 3", style: MyFont.headlineStyleWhite),
+              child: const Text("STEP 4", style: MyFont.headlineStyleWhite),
             ),
             const Text("シフト表のテェック", style: MyFont.headlineStyleGreen),
           ],                  
@@ -123,7 +122,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                       Container(
                         margin: const EdgeInsets.all(1),
                         height: 40,
-                        width:screenSize.width/8,
+                        width:screenSize.width/5,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: MyFont.tableColumnsColor,
@@ -140,7 +139,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                         decoration: BoxDecoration(
                           border: Border.all(color: MyFont.tableBorderColor, width: 1),
                         ),
-                        child: Text('${shiftTable.assignTable[i].timeDivsAssign[j]} 人', style: const TextStyle(fontSize: 10)),           
+                        child: Text('${widget.shiftTable.assignTable[i].timeDivsAssign[j]} 人', style: const TextStyle(fontSize: 10)),           
                       )
                     ]
                   ),
@@ -151,23 +150,10 @@ class CheckShiftTableState extends State<CheckShiftTable> {
           ),
         ),
 
-        Container(
-          child: IconButton(onPressed: (){addTempleteShitTable(shiftTable);}, icon: const Icon(Icons.add)),
-        )
+        IconButton(onPressed: (){addTempleteShitTable(widget.shiftTable);}, icon: const Icon(Icons.add)),
       ],
     );
-  }
-}
-
-
-void getTempleteShitTable() async{
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final snapshot = await firestore.collection('template-shift-table').get();
-  var msg = '';
-  
-  snapshot.docChanges.forEach((element) {
-    final name = element.doc.get('name');
-  });
+  }  
 }
 
 void addTempleteShitTable(ShiftTable shiftTable) async{
