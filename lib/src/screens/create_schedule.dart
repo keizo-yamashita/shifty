@@ -7,18 +7,18 @@ import 'package:shift/src/screens/input_deadline_duration.dart';
 import 'package:shift/src/screens/check_shift_table.dart';
 
 // シフト表の作成に必要な変数
-ShiftTable shiftTable = ShiftTable();
+ShiftTable shiftTable  = ShiftTable();
+bool inputTimeDivsFlag = false;
+bool inputDeadlineFlag = false;
+int _selectedIndex     = 0;
 
 class CreateScheduleWidget extends StatefulWidget {
   const CreateScheduleWidget({Key? key}) : super(key: key);
-
   @override
   State<CreateScheduleWidget> createState() => CreateScheduleWidgetState();
 }
 
 class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
-
-  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +73,35 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
         context: context,
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
-            title: const Text('入力エラー'),
+            title: const Text('STEP 1 : 入力エラー\n', style: TextStyle(color: Colors.red)),
             content: const Text('1つ以上の時間区分を入力してください'),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: const Text('OK', style: TextStyle(color: Colors.red)),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _selectedIndex = 1; 
+                  setState(() {});
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }else if(index == 3 && !inputDeadlineFlag){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: const Text('STEP 3 : 入力エラー\n', style: TextStyle(color: Colors.red)),
+            content: const Text('"シフト表の期間"及び"希望表の入力期間"を設定してください'),
             actions: <Widget>[
               CupertinoDialogAction(
                 child: const Text('OK'),
                 onPressed: () {
                   Navigator.pop(context);
+                  _selectedIndex = 2;
+                  setState(() {});
                 },
               ),
             ],

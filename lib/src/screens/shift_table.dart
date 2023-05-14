@@ -1,19 +1,29 @@
+List<String> weekSelect    = ["すべての週","第1週","第2週","第3週","第4週"];
+List<String> weekdaySelect = ["すべての曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日","日曜日"];
+
 class ShiftTable{
-  late int                 startWeekday;
   late List<ShiftRule>     rules;
   late List<String>        timeDivs;
   late List<ShiftTableRow> assignTable;
+  late DateTime            inputStartDate;
+  late DateTime            inputEndDate;
+  late DateTime            workStartDate;
+  late DateTime            workEndDate;
 
   ShiftTable(){
-    rules       = List<ShiftRule>.generate(0, (index) => ShiftRule(week: 0, weekday: 0, timeDivs: 0, assignNum: 0));
-    timeDivs    = List<String>.generate(0, (index) => index.toString());
-    assignTable = List<ShiftTableRow>.generate(0, (index) => ShiftTableRow("", 0));
+    rules          = List<ShiftRule>.generate(0, (index) => ShiftRule(week: 0, weekday: 0, timeDivs: 0, assignNum: 0));
+    timeDivs       = List<String>.generate(0, (index) => index.toString());
+    assignTable    = List<ShiftTableRow>.generate(0, (index) => ShiftTableRow("", 0));
+    inputStartDate = DateTime(1, 1, 1);
+    inputEndDate   = DateTime(1, 1, 1);
+    workStartDate  = DateTime(1, 1, 1);
+    workEndDate    = DateTime(1, 1, 1);
   }
 
-  regenerateShiftTable(int startWeekday_, int lastDay_){
-
-    startWeekday = startWeekday_;
-    assignTable = List<ShiftTableRow>.generate(timeDivs.length, (index) => ShiftTableRow(timeDivs[index], lastDay_));
+  generateShiftTable(){
+    int startWeekday = workStartDate.weekday;
+    int lastDay      = workEndDate.difference(workStartDate).inDays;
+    assignTable      = List<ShiftTableRow>.generate(timeDivs.length, (index) => ShiftTableRow(timeDivs[index], lastDay));
 
     final List<int> fifo1 = List<int>.generate(0, (index) => index);
     final List<int> fifo2 = List<int>.generate(0, (index) => index);
@@ -68,8 +78,14 @@ class ShiftTable{
     }
   }
 
-  addTimeDivison(String input){
+  bool addTimeDivison(String input){
+    for(int i = 0; i < timeDivs.length; i++){
+      if(timeDivs[i] == input){
+        return false;
+      }      
+    }
     timeDivs.add(input);
+    return true;
   }
 
   removeTimeDivision(int index){

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shift/src/font.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:shift/src/screens/create_schedule.dart';
 import 'package:shift/src/screens/shift_table.dart';
 
-List<String> weekSelect    = ["すべての週","第1週","第2週","第3週","第4週"];
-List<String> weekdaySelect = ["すべての曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日","日曜日"];
 int weekSelectIndex       = 0;
 int weekdaySelectIndex    = 0;
 int timeDivsSelectIndex   = 0;

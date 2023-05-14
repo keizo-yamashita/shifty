@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shift/src/font.dart';
 import 'package:shift/src/screens/create_schedule.dart';
 import 'package:shift/src/screens/shift_table.dart';
-
-String initialText = "";
 
 class InputTimeDivisions extends StatefulWidget {
   final ShiftTable shiftTable;
@@ -20,7 +19,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
     return _buildSuggestions();
   }
 
-  final myController = TextEditingController(text: initialText);
+  final myController = TextEditingController();
 
   Widget _buildSuggestions() {
     
@@ -44,6 +43,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
             const Text("時間区分の設定", style: MyFont.headlineStyleGreen),
           ],             
         ),
+        
         SizedBox(height: screenSize.height/30),
         const Text("基本となる時間区分を入力してください\n※ 後日変更可 \n※ 後日特定の日付のみ特別な時間区分に変更可", style: MyFont.commentStyle),
         SizedBox(height: screenSize.height/30),
@@ -52,7 +52,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
         ConstrainedBox(
           constraints: BoxConstraints(
             minWidth: screenSize.width * 0.1,
-            maxWidth: screenSize.width  * 0.8,
+            maxWidth: screenSize.width * 0.8,
           ),
           child: ReorderableListView.builder(
             shrinkWrap: true,
@@ -98,9 +98,28 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                   onPressed: () {
                     final input = myController.text;
                     if(input.isNotEmpty){
-                      myController.clear();
-                      widget.shiftTable.addTimeDivison(input);
-                      setState(() {});
+                      setState(() {
+                        myController.clear();
+                        if(!widget.shiftTable.addTimeDivison(input)){
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CupertinoAlertDialog(
+                                title: const Text('STEP 1 : 入力エラー\n', style: TextStyle(color: Colors.red)),
+                                content: const Text('すでに使用されている時間区分名です'),
+                                actions: <Widget>[
+                                  CupertinoDialogAction(
+                                    child: const Text('OK'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      });
                     }
                   }
                 ),
@@ -136,6 +155,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           ),
           onTap: () {
             setState(() {
+              myController.text = item;
             });
           },
         ),
