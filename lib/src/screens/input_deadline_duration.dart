@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 DateTime now = DateTime.now();
-var startWeekday = DateTime(now.year, now.month + 1, 1).weekday;
-var lastDay      = DateTime(now.year, now.month + 2, 1).add(const Duration(days: -1)).day;
 var scrollController = ScrollController();
 
 class InputDeadlineDuration extends StatefulWidget {
@@ -24,6 +22,8 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
   DateTime _inputEndDate = DateTime.now();
   DateTime _workStartDate = DateTime.now();
   DateTime _workEndDate = DateTime.now();
+
+  bool _isInputStartDateSelected = false;
   bool _isInputEndDateSelected = false;
   bool _isWorkStartDateSelected = false;
   bool _isWorkEndDateSelected = false;
@@ -31,8 +31,8 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
   Future<void> _selectDate(BuildContext context, String dateType) async {
 
     DateTime firstDate;
-    DateTime startDate;
-    DateTime lastDate = DateTime(2100);
+    DateTime startDate = DateTime.now();
+    DateTime lastDate  = DateTime(startDate.year + 1);
 
     switch (dateType) {
       case 'input_start':
@@ -69,6 +69,7 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
       setState(() {
         if (dateType == 'input_start') {
           _inputStartDate = pickedDate;
+          _isInputStartDateSelected = true;
         } else if (dateType == 'input_end') {
           _inputEndDate = pickedDate;
           _isInputEndDateSelected = true;
@@ -81,13 +82,20 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
         }
         if(_inputStartDate.compareTo(_inputEndDate) == 1){
           _inputEndDate = _inputStartDate;
+          _isInputEndDateSelected = false;
         }
         if(_inputEndDate.compareTo(_workStartDate) == 1){
           _workStartDate = _inputEndDate;
+          _isWorkStartDateSelected = false;
         }
         if(_workStartDate.compareTo(_workEndDate) == 1){
           _workEndDate = _workStartDate;
+          _isWorkEndDateSelected = false;
         }
+        widget.shiftTable.inputStartDate = _inputStartDate;
+        widget.shiftTable.inputEndDate   = _inputEndDate;
+        widget.shiftTable.workStartDate  = _workStartDate;
+        widget.shiftTable.workEndDate    = _workEndDate;
       });
     }
   }
@@ -106,7 +114,6 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
   final myController = TextEditingController();
 
   Widget _buildSuggestions() {
-    widget.shiftTable.regenerateShiftTable(startWeekday, lastDay);
     var screenSize   = MediaQuery.of(context).size;
 
     return Column(
@@ -132,55 +139,62 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
         SizedBox(height: screenSize.height/30),
 
         SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDatePickerButton(
-                context,
-                '入力開始日',
-                _inputStartDate,
-                () => _selectDate(context, 'input_start'),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: screenSize.width * 0.1,
+                maxWidth: screenSize.width  * 0.8,
+              ), 
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDatePickerButton(
+                    context,
+                    '入力開始日',
+                    _isInputStartDateSelected ? _inputStartDate : null,
+                    () => _selectDate(context, 'input_start'),
+                  ),
+                  const SizedBox(height: 16.0),
+                  _buildDatePickerButton(
+                    context,
+                    '入力締切日',
+                    _isInputEndDateSelected ? _inputEndDate : null,
+                    () => _selectDate(context, 'input_end'),
+                  ),
+                  const SizedBox(height: 16.0),
+                  _buildDatePickerButton(
+                    context,
+                    '勤務開始日',
+                    _isWorkStartDateSelected ? _workStartDate : null,
+                    () => _selectDate(context, 'work_start'),
+                  ),
+                  const SizedBox(height: 16.0),
+                  _buildDatePickerButton(
+                    context,
+                    '勤務終了日',
+                    _isWorkEndDateSelected ? _workEndDate : null,
+                    () => _selectDate(context, 'work_end'),
+                  ),
+                ]
               ),
-              const SizedBox(height: 16.0),
-              _buildDatePickerButton(
-                context,
-                '入力締切日',
-                _isInputEndDateSelected ? _inputEndDate : null,
-                () => _selectDate(context, 'input_end'),
-              ),
-              const SizedBox(height: 16.0),
-              _buildDatePickerButton(
-                context,
-                '勤務開始日',
-                _isWorkStartDateSelected ? _workStartDate : null,
-                () => _selectDate(context, 'work_start'),
-              ),
-              const SizedBox(height: 16.0),
-              _buildDatePickerButton(
-                context,
-                '勤務終了日', _isWorkEndDateSelected ? _workEndDate : null,
-                () => _selectDate(context, 'work_end'),
-              ),
-            ]
+            ),
           ),
         ),
-      ),
       ],
     );
   }
+}
   
-  Widget _buildDatePickerButton(BuildContext context, String label, DateTime? dateTime, VoidCallback onPressed){
-    return ElevatedButton(
-      onPressed: onPressed,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 16.0)),
-          Text(dateTime == null ? '未選択' : DateFormat('yyyy/MM/dd', 'ja_JP').format(dateTime), style: const TextStyle(fontSize: 16.0)),
-        ],
-      ),
-    );
-  }
+Widget _buildDatePickerButton(BuildContext context, String label, DateTime? dateTime, VoidCallback onPressed){
+  return ElevatedButton(
+    onPressed: onPressed,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: MyFont.headlineStyle2White),
+        Text(dateTime == null ? '未選択' : DateFormat('yyyy/MM/dd', 'ja_JP').format(dateTime), style: MyFont.headlineStyle2White),
+      ],
+    ),
+  );
 }

@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shift/src/font.dart';
 import 'package:shift/src/screens/shift_table.dart';
 
-DateTime now = DateTime.now();
-var startWeekday = DateTime(now.year, now.month + 1, 1).weekday;
-var lastDay      = DateTime(now.year, now.month + 2, 1).add(const Duration(days: -1)).day;
 var scrollController = ScrollController();
 
 class CheckShiftTable extends StatefulWidget {
@@ -27,8 +24,10 @@ class CheckShiftTableState extends State<CheckShiftTable> {
   final myController = TextEditingController();
 
   Widget _buildSuggestions() {
-    widget.shiftTable.regenerateShiftTable(startWeekday, lastDay);
+    widget.shiftTable.generateShiftTable();
     var screenSize   = MediaQuery.of(context).size;
+
+    int lastDay = widget.shiftTable.workEndDate.difference(widget.shiftTable.workStartDate).inDays;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,7 +71,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                       Container(
                         margin: const EdgeInsets.all(1),
                         height: 40,
-                        width:screenSize.width/8,
+                        width:40,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: MyFont.tableColumnsColor,
@@ -91,23 +90,72 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                           border: Border.all(color: MyFont.tableBorderColor, width: 1),
                         ),
                         child: (() {
-                          switch(DateTime(now.year, now.month + 1, i+1).weekday){
+                          DateTime day = widget.shiftTable.workStartDate.add(Duration(days: i));
+                          switch(day.weekday){
                             case 1:
-                              return Text('${i+1}(月)', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold));
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                                  const Text('(月)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+                                ]
+                              );
                             case 2:
-                              return Text('${i+1}(火)', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold));
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                                  const Text('(火)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+                                ]
+                              );
                             case 3:
-                              return Text('${i+1}(水)', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold));
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                                  const Text('(水)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+                                ]
+                              );
                             case 4:
-                              return Text('${i+1}(木)', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold));
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                                  const Text('(木)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+                                ]
+                              );
                             case 5:
-                              return Text('${i+1}(金)', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold));
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                                  const Text('(金)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+                                ]
+                              );
                             case 6:
-                              return Text('${i+1}(土)', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue));
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                                  const Text('(土)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue))
+                                ]
+                              );
                             case 7:
-                              return Text('${i+1}(日)', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.red));
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                                  const Text('(日)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.red))
+                                ]
+                              );
                             default:
-                              return Text('${i+1}(？)', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold));
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                                  const Text('(？)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+                                ]
+                              );
                             }
                           }
                         )(),
@@ -122,7 +170,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                       Container(
                         margin: const EdgeInsets.all(1),
                         height: 40,
-                        width:screenSize.width/5,
+                        width:40,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: MyFont.tableColumnsColor,
