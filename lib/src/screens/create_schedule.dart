@@ -80,7 +80,7 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
                 child: const Text('OK', style: TextStyle(color: Colors.red)),
                 onPressed: () {
                   Navigator.pop(context);
-                  _selectedIndex = 1; 
+                  _selectedIndex = 0; 
                   setState(() {});
                 },
               ),
@@ -88,7 +88,7 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
           );
         },
       );
-    }else if(index == 3 && !inputDeadlineFlag){
+    }else if(index == 3 && ((shiftTable.inputStartDate == DateTime(1, 1, 1)) || (shiftTable.inputEndDate == DateTime(1, 1, 1)) || (shiftTable.workStartDate == DateTime(1, 1, 1)) || (shiftTable.workEndDate == DateTime(1, 1, 1)))){
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -97,7 +97,7 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
             content: const Text('"シフト表の期間"及び"希望表の入力期間"を設定してください'),
             actions: <Widget>[
               CupertinoDialogAction(
-                child: const Text('OK'),
+                child: const Text('OK', style: TextStyle(color: Colors.red)),
                 onPressed: () {
                   Navigator.pop(context);
                   _selectedIndex = 2;

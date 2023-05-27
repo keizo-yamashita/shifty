@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shift/src/font.dart';
-import 'package:shift/src/screens/create_schedule.dart';
 import 'package:shift/src/screens/shift_table.dart';
 
 class InputTimeDivisions extends StatefulWidget {
@@ -13,15 +12,34 @@ class InputTimeDivisions extends StatefulWidget {
 }
 
 class TimeDivisionState extends State<InputTimeDivisions> {
-  
-  @override
-  Widget build(BuildContext context) {
-    return _buildSuggestions();
-  }
-
   final myController = TextEditingController();
 
-  Widget _buildSuggestions() {
+  DateTime _startTime = DateTime(1, 1, 1, 9, 0);
+  DateTime _endTime   = DateTime(1, 1, 1, 21, 0);
+  DateTime _duration  = DateTime(1, 1, 1, 0, 30);
+
+  void createMimimumDivision(DateTime start, DateTime end, DateTime duration){
+    setState(() {
+      widget.shiftTable.timeDivs.clear();
+      while(start.compareTo(end) < 0){
+        var temp = start.add(Duration(hours: duration.hour, minutes: duration.minute));
+        if(temp.compareTo(end) > 0){
+          temp = end;
+        }
+        widget.shiftTable.addTimeDivision("${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')} ~ ${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}", TimeOfDay(hour: start.hour, minute: start.minute), TimeOfDay(hour: temp.hour, minute: temp.minute));
+        start = temp;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    createMimimumDivision(_startTime, _endTime, _duration);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     
     var screenSize = MediaQuery.of(context).size;
 
@@ -45,93 +63,171 @@ class TimeDivisionState extends State<InputTimeDivisions> {
         ),
         
         SizedBox(height: screenSize.height/30),
-        const Text("基本となる時間区分を入力してください\n※ 後日変更可 \n※ 後日特定の日付のみ特別な時間区分に変更可", style: MyFont.commentStyle),
+        const Text("まずは，基本となる時間区分を設定しましょう\n勤務開始時間と勤務終了時間を入力してください", style: MyFont.commentStyle),
         SizedBox(height: screenSize.height/30),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  child: Text("始業時間", style: MyFont.headlineStyle2Green),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.green,
+                    ),
+                    borderRadius: BorderRadius.circular(7.0),
+                  ),
+                  child: CupertinoButton(
+                    onPressed: () async {
+                      final DateTime? picked = await showCupertinoModalPopup(
+                        context: context,
+                        builder: (_) => Container(
+                          height: 200,
+                          color: CupertinoColors.white,
+                          child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.time,
+                            minuteInterval: 5,
+                            initialDateTime: _startTime,
+                            onDateTimeChanged: (val) {
+                              setState(() {
+                                _startTime = val;
+                                createMimimumDivision(_startTime, _endTime, _duration);
+                              });
+                            },
+                            use24hFormat: true,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text('${_startTime.hour.toString().padLeft(2, '0')}:${_startTime.minute.toString().padLeft(2, '0')}')
+                  ),
+                ),
+              ],
+            ),
+
+            const Padding(
+              padding: EdgeInsets.only(top: 30),
+              child: Text(" 〜 ", style: MyFont.headlineStyle2Green),
+            ),
+            Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  child: Text("終業時間", style: MyFont.headlineStyle2Green),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.green,
+                    ),
+                    borderRadius: BorderRadius.circular(7.0),
+                  ),
+                  child: CupertinoButton(
+                    onPressed: () async {
+                      final DateTime? picked = await showCupertinoModalPopup(
+                        context: context,
+                        builder: (_) => Container(
+                          height: 200,
+                          color: CupertinoColors.white,
+                          child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.time,
+                            minuteInterval: 5,
+                            initialDateTime: _endTime,
+                            minimumDate: _startTime.add(const Duration(hours: 1)),
+                            onDateTimeChanged: (val) {
+                              setState(() {
+                                _endTime = val;
+                                createMimimumDivision(_startTime, _endTime, _duration);
+                              });
+                            },
+                            use24hFormat: true,
+                          )
+                        )
+                      );
+                    },
+                    child: Text('${_endTime.hour.toString().padLeft(2, '0')}:${_endTime.minute.toString().padLeft(2, '0')}')
+                  ),
+                ),
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: 20),
+              child: Text(" ... ", style: MyFont.headlineStyle2Green),
+            ),
+            Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  child: Text("管理間隔", style: MyFont.headlineStyle2Green),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.green,
+                    ),
+                    borderRadius: BorderRadius.circular(7.0),
+                  ),
+                  child: CupertinoButton(
+                    onPressed: () async {
+                      final DateTime? picked = await showCupertinoModalPopup(
+                        context: context,
+                        builder: (_) => Container(
+                          height: 200,
+                          color: CupertinoColors.white,
+                          child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.time,
+                            initialDateTime: _duration,
+                            minuteInterval: 5,
+                            maximumDate: DateTime(1, 1, 1, 6, 0),
+                            onDateTimeChanged: (val) {
+                              setState(() {
+                                _duration = val;
+                                createMimimumDivision(_startTime, _endTime, _duration);
+                              });
+                            },
+                            use24hFormat: true,
+                          )
+                        )
+                      );
+                    },
+                    child: Text('${_duration.hour.toString().padLeft(2, '0')}:${_duration.minute.toString().padLeft(2, '0')}')
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        
+        SizedBox(height: screenSize.height / 20),
+        const Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: Text("↓設定される時間区分一覧", style: MyFont.headlineStyle2Green),
+        ),
 
         // 登録した時間区分一覧
         ConstrainedBox(
           constraints: BoxConstraints(
             minWidth: screenSize.width * 0.1,
-            maxWidth: screenSize.width * 0.8,
+            maxWidth: 250,
           ),
-          child: ReorderableListView.builder(
+          child: ListView.builder(
             shrinkWrap: true,
-            buildDefaultDragHandles: false,
             itemCount: widget.shiftTable.timeDivs.length,
             itemBuilder: (context, i) => buildItem(widget.shiftTable.timeDivs[i], i, context),
-            onReorder: (int oldIndex, int newIndex) {
-              setState(() {
-                shiftTable.sortTimeDivision(oldIndex, newIndex);
-              });
-            }
           ),
         ),
-        
-        SizedBox(height: screenSize.height/30),
-
-        // 時間区分の入力欄と登録ボタン
-         Row(
-          mainAxisAlignment:MainAxisAlignment.center,
-          children: [
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: screenSize.width * 0.1,
-                maxWidth: screenSize.width  * 0.6,
-              ),
-              child: TextField(
-                controller: myController,
-                decoration: const InputDecoration(
-                  hintText: '時間区分入力欄',
-                ),
-              ),
-            ),
-
-            SizedBox(
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.green,
-                  shape: BoxShape.circle
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.add),
-                  color: Colors.white,
-                  onPressed: () {
-                    final input = myController.text;
-                    if(input.isNotEmpty){
-                      setState(() {
-                        myController.clear();
-                        if(!widget.shiftTable.addTimeDivison(input)){
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CupertinoAlertDialog(
-                                title: const Text('STEP 1 : 入力エラー\n', style: TextStyle(color: Colors.red)),
-                                content: const Text('すでに使用されている時間区分名です'),
-                                actions: <Widget>[
-                                  CupertinoDialogAction(
-                                    child: const Text('OK'),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                      });
-                    }
-                  }
-                ),
-              )
-            )
-          ]
-        ),
+        SizedBox(height: screenSize.height / 20),
       ],
     );
   }
 
-  Widget buildItem(String item, int index, BuildContext context) {
+  Widget buildItem(TimeDivision item, int index, BuildContext context) {
     return Card(
       key: Key(index.toString()),
       shape: RoundedRectangleBorder(
@@ -141,11 +237,16 @@ class TimeDivisionState extends State<InputTimeDivisions> {
       child: ReorderableDragStartListener(
         index: index,
         child: ListTile(
-          title: Text(item, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold), textHeightBehavior: MyFont.defaultBehavior),
-          leading: SizedBox(
-            child: Text('${index+1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20), textHeightBehavior: MyFont.defaultBehavior),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(item.name, style: const TextStyle(color: Colors.white, fontSize:15, fontWeight: FontWeight.bold), textHeightBehavior: MyFont.defaultBehavior, overflow: TextOverflow.ellipsis),
+              // Text("  ( ${item.startTime.hour.toString().padLeft(2, '0')}:${item.startTime.minute.toString().padLeft(2, '0')} ~ ${item.endTime.hour.toString().padLeft(2, '0')}:${item.endTime.minute.toString().padLeft(2, '0')} )", style: const TextStyle(color: Colors.white, fontSize:12), textHeightBehavior: MyFont.defaultBehavior),
+            ],
           ),
           trailing: IconButton(
+            iconSize: 20,
             onPressed: () {
               widget.shiftTable.removeTimeDivision(index);
               setState(() {});
@@ -155,7 +256,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           ),
           onTap: () {
             setState(() {
-              myController.text = item;
+              myController.text = item.name;
             });
           },
         ),

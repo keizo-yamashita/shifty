@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shift/src/font.dart';
 import 'package:shift/src/screens/shift_table.dart';
+import 'package:shift/src/screens/decorated_table_page.dart';
 
 var scrollController = ScrollController();
 
@@ -18,16 +19,87 @@ class CheckShiftTableState extends State<CheckShiftTable> {
   
   @override
   Widget build(BuildContext context) {
-    return _buildSuggestions();
-  }
 
-  final myController = TextEditingController();
-
-  Widget _buildSuggestions() {
     widget.shiftTable.generateShiftTable();
     var screenSize   = MediaQuery.of(context).size;
+    
+    double tableHeight = screenSize.height * 0.45;
+    double tableWidth  = screenSize.width * 0.9;
+    
+    const double cellHeight        = 40.0;
+    const double cellWidth         = 40.0;
+    const double rowTitleCellWidth = 80.0;
+    
+    BoxDecoration cellDecoration = const BoxDecoration(
+      border: Border(
+        top:    BorderSide(color: MyFont.tableBorderColor, width: 0.5),
+        right:  BorderSide(color: MyFont.tableBorderColor, width: 0.5),
+        bottom: BorderSide(color: MyFont.tableBorderColor, width: 0.5),
+        left:   BorderSide(color: MyFont.tableBorderColor, width: 0.5),
+      ),
+    );
+    
+    BoxDecoration titleDecoration =  const BoxDecoration(
+      border: Border(
+        top:    BorderSide(color: MyFont.tableBorderColor, width: 0.5),
+        right:  BorderSide(color: MyFont.tableBorderColor, width: 0.5),
+        bottom: BorderSide(color: MyFont.tableBorderColor, width: 0.5),
+        left:   BorderSide(color: MyFont.tableBorderColor, width: 0.5),
+      ),
+      color: MyFont.tableColumnsColor
+    );
 
-    int lastDay = widget.shiftTable.workEndDate.difference(widget.shiftTable.workStartDate).inDays;
+    Widget topLeft = Container(
+      height: cellHeight,
+      width: rowTitleCellWidth,
+      alignment: Alignment.center,
+      decoration: titleDecoration,
+      child: const Text(''),
+    );
+
+    Widget colTitles = Row(
+      children: List<int>.generate(widget.shiftTable.workEndDate.difference(widget.shiftTable.workStartDate).inDays+1,(index) => index)
+        .map<Widget>(
+          (n) => Container(
+            height: cellHeight,
+            width: cellWidth,
+            alignment: Alignment.center,
+            decoration: titleDecoration,
+            child: calenderColumn(n),
+          )
+        ).toList()
+    );
+
+    Widget rowTitles = Column(
+      children: widget.shiftTable.timeDivs
+      .map<Widget>(
+        (n) => Container(
+          height: cellHeight,
+          width:  rowTitleCellWidth,
+          alignment: Alignment.center,
+          decoration: titleDecoration,
+          child: Text(n.name, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+        ),
+      ).toList()
+    );
+
+    Widget body = Row(
+      children: 
+        widget.shiftTable.assignTable.map<Widget>(
+          (list) => Column(
+            children: list.map<Widget>(
+              (n) => Container(
+                height: cellHeight,
+                width: cellWidth,
+                alignment: Alignment.center,
+                decoration: cellDecoration,
+                child: Text(n, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+              )
+            ).toList(),
+          ),
+        )
+        .toList(),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -51,157 +123,106 @@ class CheckShiftTableState extends State<CheckShiftTable> {
         const Text("作成される基本のシフト表を確認してください", style: MyFont.commentStyle),
         SizedBox(height: screenSize.height/30),
 
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: screenSize.width * 0.1,
-            maxWidth: screenSize.width  * 0.9,
-          ),
-          child: Scrollbar(
-            thumbVisibility: true,
-            trackVisibility: true,
-            controller: scrollController,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: scrollController,
-              child: Column(
-                children: [
-                  // カレンダーの日付
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.all(1),
-                        height: 40,
-                        width:40,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: MyFont.tableColumnsColor,
-                          border: Border.all(color: MyFont.tableBorderColor, width: 1),
-                        ),
-                        child: const Text(""),
-                      ),
-                      for(int i =0 ; i < lastDay; i++)
-                      Container(
-                        margin: const EdgeInsets.all(1),
-                        height: 40,
-                        width:40,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: MyFont.tableColumnsColor,
-                          border: Border.all(color: MyFont.tableBorderColor, width: 1),
-                        ),
-                        child: (() {
-                          DateTime day = widget.shiftTable.workStartDate.add(Duration(days: i));
-                          switch(day.weekday){
-                            case 1:
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                  const Text('(月)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
-                                ]
-                              );
-                            case 2:
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                  const Text('(火)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
-                                ]
-                              );
-                            case 3:
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                  const Text('(水)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
-                                ]
-                              );
-                            case 4:
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                  const Text('(木)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
-                                ]
-                              );
-                            case 5:
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                  const Text('(金)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
-                                ]
-                              );
-                            case 6:
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                  const Text('(土)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue))
-                                ]
-                              );
-                            case 7:
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                  const Text('(日)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.red))
-                                ]
-                              );
-                            default:
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                                  const Text('(？)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
-                                ]
-                              );
-                            }
-                          }
-                        )(),
-                      ),
-                    ],
-                  ),
-                  
-                  // シフト表本体
-                  for(int i = 0; i < widget.shiftTable.timeDivs.length; i++)
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.all(1),
-                        height: 40,
-                        width:40,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: MyFont.tableColumnsColor,
-                          border: Border.all(color: MyFont.tableBorderColor, width: 1),
-                        ),
-                        child: Text(widget.shiftTable.timeDivs[i], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                      ),
-                      for(int j =0 ; j < lastDay; j++)
-                      Container(
-                        margin: const EdgeInsets.all(1),
-                        height: 40,
-                        width:40,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: MyFont.tableBorderColor, width: 1),
-                        ),
-                        child: Text('${widget.shiftTable.assignTable[i].timeDivsAssign[j]} 人', style: const TextStyle(fontSize: 10)),           
-                      )
-                    ]
-                  ),
-                  const SizedBox(height: 20),
-                ],
-              )
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.green,
+              width: 3.0
             ),
+          ),
+          child: FixedTitlesView(
+            key: const ValueKey('Test1'),
+            height:       tableHeight,
+            width:        tableWidth,
+            fixedHeight:  cellHeight,
+            fixedWidth:   rowTitleCellWidth,
+            origin:       topLeft,
+            colTitles:    colTitles,
+            rowTitles:    rowTitles,
+            body:         body
           ),
         ),
 
-        IconButton(onPressed: (){addTempleteShitTable(widget.shiftTable);}, icon: const Icon(Icons.add)),
+        SizedBox(height: screenSize.height / 30),
+        IconButton(
+          color: Colors.white,
+          
+          onPressed: (){addTempleteShitTable(widget.shiftTable);},
+          icon: const Icon(Icons.add)
+        ),
       ],
     );
-  }  
+  }
+
+  Widget calenderColumn(index){
+    DateTime day = widget.shiftTable.workStartDate.add(Duration(days: index));
+    switch(day.weekday){
+      case 1:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            const Text('(月)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+          ]
+        );
+      case 2:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            const Text('(火)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+          ]
+        );
+      case 3:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            const Text('(水)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+          ]
+        );
+      case 4:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            const Text('(木)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+          ]
+        );
+      case 5:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            const Text('(金)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+          ]
+        );
+      case 6:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            const Text('(土)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue))
+          ]
+        );
+      case 7:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            const Text('(日)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.red))
+          ]
+        );
+      default:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            const Text('(？)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+          ]
+        );
+    }
+  }
 }
 
 void addTempleteShitTable(ShiftTable shiftTable) async{

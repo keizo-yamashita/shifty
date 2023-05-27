@@ -67,8 +67,13 @@ class InputAssignNumState extends State<InputAssignNum> {
             shrinkWrap: true,
             buildDefaultDragHandles: false,
             itemCount: widget.shiftTable.rules.length,
-            itemBuilder: (context, i) => buildItem(i, 
-              weekSelect[widget.shiftTable.rules[i].week], weekdaySelect[widget.shiftTable.rules[i].weekday], ['すべての区分', ...widget.shiftTable.timeDivs][widget.shiftTable.rules[i].timeDivs], widget.shiftTable.rules[i].assignNum, context
+            itemBuilder: (context, i) => buildItem(
+              i, 
+              weekSelect[widget.shiftTable.rules[i].week], 
+              weekdaySelect[widget.shiftTable.rules[i].weekday],
+              List.generate(widget.shiftTable.timeDivs.length + 1, (index) => (index == 0) ? '全ての区分' : widget.shiftTable.timeDivs[i].name)[widget.shiftTable.rules[i].timeDivs],
+              widget.shiftTable.rules[i].assignNum,
+              context
             ),
             onReorder: (int oldIndex, int newIndex) {
               setState(() {
@@ -155,7 +160,10 @@ class InputAssignNumState extends State<InputAssignNum> {
                     border: Border.all(color: MyFont.tableBorderColor, width: 2),
                   ),
                   textMapper: (numberText) {
-                    List<String> selecter =<String>["すべての区分", ... widget.shiftTable.timeDivs];
+                    List<String> selecter = <String>["すべての区分"];
+                    for(int i = 0; i < widget.shiftTable.timeDivs.length; i++){
+                      selecter.add(widget.shiftTable.timeDivs[i].name);
+                    }
                     return selecter[int.parse(numberText)];
                   },
                 ),
@@ -220,6 +228,7 @@ class InputAssignNumState extends State<InputAssignNum> {
         index: index,
         child: ListTile(
           title: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text('"$weekSelect"',        style: const TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
               const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
