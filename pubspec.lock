@@ -77,10 +77,10 @@ packages:
     dependency: transitive
     description:
       name: collection
-      sha256: "4a07be6cb69c84d677a6c3096fcf960cc3285a8330b4603e0d463d15d9bd934c"
+      sha256: f092b211a4319e98e5ff58223576de6c2803db36221657b46c82574721240687
       url: "https://pub.dev"
     source: hosted
-    version: "1.17.1"
+    version: "1.17.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -290,6 +290,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      sha256: b2ad1c93239b094d6de1b4679c1835b1bc4332e6c6548bd2da44bd2594e6cdc5
+      url: "https://pub.dev"
+    source: hosted
+    version: "21.2.5"
+  syncfusion_flutter_datepicker:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_datepicker
+      sha256: "77f8c1ceefddfdd90c2e7cbd192d55f9a514c91018caa4cf3f17eb114b11ce24"
+      url: "https://pub.dev"
+    source: hosted
+    version: "21.2.5"
   table_calendar:
     dependency: "direct main"
     description:
@@ -298,6 +314,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.9"
+  table_sticky_headers:
+    dependency: "direct main"
+    description:
+      name: table_sticky_headers
+      sha256: "18206bf35c5c7306ac4d5efd66ea3f0b47a6c73b249523f7bc84e36344eacf3b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
   term_glyph:
     dependency: transitive
     description:
@@ -314,6 +338,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.2"
+  time_range:
+    dependency: "direct main"
+    description:
+      name: time_range
+      sha256: "51a434c9754ad61e90ca73aba8c1812e81b7004472189c794d448b707ab3c313"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
+  time_range_picker:
+    dependency: "direct main"
+    description:
+      name: time_range_picker
+      sha256: "63c3e0beba3c261f7d95e9a2ecef3a3e0bc88d4874edbbef4471c1a60c228526"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   vector_math:
     dependency: transitive
     description:

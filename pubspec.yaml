@@ -37,9 +37,13 @@ dependencies:
   firebase_core: ^2.11.0
   cloud_firestore: ^4.6.0
   table_calendar: ^3.0.9
+  time_range: ^1.1.0
+  syncfusion_flutter_datepicker: ^21.2.5
+  table_sticky_headers: ^2.0.5
   
   flutter_localizations: # 追加
     sdk: flutter # 追加
+  time_range_picker: ^2.2.0
 
 dev_dependencies:
   flutter_test:
