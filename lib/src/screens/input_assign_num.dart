@@ -243,7 +243,7 @@ class InputAssignNumState extends State<InputAssignNum> {
           leading: Text('${index+1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20), textHeightBehavior: MyFont.defaultBehavior),
           trailing: SizedBox(
             height: double.infinity,
-            child: IconButton(
+            child:  IconButton(
               onPressed: () {
                 widget.shiftTable.rules.remove(widget.shiftTable.rules[index]);
                 setState(() {});

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shift/src/font.dart';
 import 'package:shift/src/screens/shift_table.dart';
 import 'package:shift/src/screens/decorated_table_page.dart';
+import 'package:horizontal_data_table/horizontal_data_table.dart';
 
 var scrollController = ScrollController();
 
@@ -17,89 +18,16 @@ class CheckShiftTable extends StatefulWidget {
 
 class CheckShiftTableState extends State<CheckShiftTable> {
   
+  // ignore: unused_field
+  late ScrollController _verticalScrollController;
+  // ignore: unused_field
+  late ScrollController _horizontalScrollController;
+
   @override
   Widget build(BuildContext context) {
 
     widget.shiftTable.generateShiftTable();
     var screenSize   = MediaQuery.of(context).size;
-    
-    double tableHeight = screenSize.height * 0.45;
-    double tableWidth  = screenSize.width * 0.9;
-    
-    const double cellHeight        = 40.0;
-    const double cellWidth         = 40.0;
-    const double rowTitleCellWidth = 80.0;
-    
-    BoxDecoration cellDecoration = const BoxDecoration(
-      border: Border(
-        top:    BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        right:  BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        bottom: BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        left:   BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-      ),
-    );
-    
-    BoxDecoration titleDecoration =  const BoxDecoration(
-      border: Border(
-        top:    BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        right:  BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        bottom: BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        left:   BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-      ),
-      color: MyFont.tableColumnsColor
-    );
-
-    Widget topLeft = Container(
-      height: cellHeight,
-      width: rowTitleCellWidth,
-      alignment: Alignment.center,
-      decoration: titleDecoration,
-      child: const Text(''),
-    );
-
-    Widget colTitles = Row(
-      children: List<int>.generate(widget.shiftTable.workEndDate.difference(widget.shiftTable.workStartDate).inDays+1,(index) => index)
-        .map<Widget>(
-          (n) => Container(
-            height: cellHeight,
-            width: cellWidth,
-            alignment: Alignment.center,
-            decoration: titleDecoration,
-            child: calenderColumn(n),
-          )
-        ).toList()
-    );
-
-    Widget rowTitles = Column(
-      children: widget.shiftTable.timeDivs
-      .map<Widget>(
-        (n) => Container(
-          height: cellHeight,
-          width:  rowTitleCellWidth,
-          alignment: Alignment.center,
-          decoration: titleDecoration,
-          child: Text(n.name, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-        ),
-      ).toList()
-    );
-
-    Widget body = Row(
-      children: 
-        widget.shiftTable.assignTable.map<Widget>(
-          (list) => Column(
-            children: list.map<Widget>(
-              (n) => Container(
-                height: cellHeight,
-                width: cellWidth,
-                alignment: Alignment.center,
-                decoration: cellDecoration,
-                child: Text(n, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-              )
-            ).toList(),
-          ),
-        )
-        .toList(),
-    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -123,34 +51,101 @@ class CheckShiftTableState extends State<CheckShiftTable> {
         const Text("作成される基本のシフト表を確認してください", style: MyFont.commentStyle),
         SizedBox(height: screenSize.height/30),
 
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.green,
-              width: 3.0
+        SizedBox(
+          width: screenSize.width * 0.9,
+          height: screenSize.height * 0.5,
+          child: HorizontalDataTable(
+            leftHandSideColumnWidth: 100,
+            rightHandSideColumnWidth: (widget.shiftTable.workEndDate.difference(widget.shiftTable.workStartDate).inDays+1) * 50,
+            isFixedHeader: true,
+            headerWidgets: _getTitleWidget(),
+            leftSideItemBuilder: _generateFirstColumnsRow,
+            rightSideItemBuilder: _generateRightHandSideColumnRow,
+            itemCount: widget.shiftTable.timeDivs.length,
+            rowSeparatorWidget: const Divider(
+              color: MyFont.tableBorderColor,
+              height: 1.0,
+              thickness: 0.0,
             ),
-          ),
-          child: FixedTitlesView(
-            key: const ValueKey('Test1'),
-            height:       tableHeight,
-            width:        tableWidth,
-            fixedHeight:  cellHeight,
-            fixedWidth:   rowTitleCellWidth,
-            origin:       topLeft,
-            colTitles:    colTitles,
-            rowTitles:    rowTitles,
-            body:         body
+            leftHandSideColBackgroundColor: MyFont.tableColumnsColor,
+            rightHandSideColBackgroundColor: const Color(0xFFFFFFFF),
+            onScrollControllerReady: (vertical, horizontal) {
+              _verticalScrollController = vertical;
+              _horizontalScrollController = horizontal;
+            },
           ),
         ),
 
         SizedBox(height: screenSize.height / 30),
-        IconButton(
-          color: Colors.white,
-          
-          onPressed: (){addTempleteShitTable(widget.shiftTable);},
-          icon: const Icon(Icons.add)
+        
+        SizedBox(
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.green,
+              shape: BoxShape.circle
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.add),
+              color: Colors.white,
+              onPressed: () {
+                addTempleteShitTable(widget.shiftTable);
+                setState(() {});
+              }
+            ),
+          )
         ),
       ],
+    );
+  }
+
+  List<Widget> _getTitleWidget(){
+    return [
+      _getLegendItemWidget('', 100),
+      ...
+      List<Widget>.generate(widget.shiftTable.workEndDate.difference(widget.shiftTable.workStartDate).inDays+1, (index) => _getTitleItemWidget(index, 50))
+    ];
+  }
+  
+  Widget _getLegendItemWidget(String label, double width) {
+    return Container(
+      width: width,
+      height: 50,
+      padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.center,
+      child: Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _getTitleItemWidget(int index, double width) {
+    return Container(
+      width: width,
+      height: 50,
+      padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.center,
+      child: calenderColumn(index)
+    );
+  }
+
+  Widget _generateFirstColumnsRow(BuildContext context, int index){
+    return Container(
+      width: 100,
+      height: 50,
+      padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.center,
+      child: Text(widget.shiftTable.timeDivs[index].name, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
+  return Row(
+    children: widget.shiftTable.assignTable.map<Widget>(
+      (list) => Container(
+          width: 50,
+          height: 50,
+          alignment: Alignment.center,
+          child: Text(list[index], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+          )
+        ).toList()
     );
   }
 
