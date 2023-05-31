@@ -105,7 +105,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                         ),
                       );
                     },
-                    child: Text('${_startTime.hour.toString().padLeft(2, '0')}:${_startTime.minute.toString().padLeft(2, '0')}')
+                    child: Text('${_startTime.hour.toString().padLeft(2, '0')}:${_startTime.minute.toString().padLeft(2, '0')}', style: MyFont.headlineStyle2Green)
                   ),
                 ),
               ],
@@ -151,7 +151,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                         )
                       );
                     },
-                    child: Text('${_endTime.hour.toString().padLeft(2, '0')}:${_endTime.minute.toString().padLeft(2, '0')}')
+                    child: Text('${_endTime.hour.toString().padLeft(2, '0')}:${_endTime.minute.toString().padLeft(2, '0')}', style: MyFont.headlineStyle2Green)
                   ),
                 ),
               ],
@@ -183,7 +183,8 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                           child: CupertinoDatePicker(
                             mode: CupertinoDatePickerMode.time,
                             initialDateTime: _duration,
-                            minuteInterval: 5,
+                            minuteInterval: 5,                            
+                            minimumDate: DateTime(1, 1, 1, 0, 10),
                             maximumDate: DateTime(1, 1, 1, 6, 0),
                             onDateTimeChanged: (val) {
                               setState(() {
@@ -196,7 +197,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                         )
                       );
                     },
-                    child: Text('${_duration.hour.toString().padLeft(2, '0')}:${_duration.minute.toString().padLeft(2, '0')}')
+                    child: Text('${_duration.hour.toString().padLeft(2, '0')}:${_duration.minute.toString().padLeft(2, '0')}', style: MyFont.headlineStyle2Green)
                   ),
                 ),
               ],
@@ -207,16 +208,15 @@ class TimeDivisionState extends State<InputTimeDivisions> {
         SizedBox(height: screenSize.height / 20),
         const Padding(
           padding: EdgeInsets.only(bottom: 10),
-          child: Text("↓設定される時間区分一覧", style: MyFont.headlineStyle2Green),
+          child: Text("↓  設定される時間区分一覧", style: MyFont.headlineStyle2Green),
         ),
 
         // 登録した時間区分一覧
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: screenSize.width * 0.1,
-            maxWidth: 250,
-          ),
+        Container(
+          height:  55,
+          width: screenSize.width * 0.8,
           child: ListView.builder(
+            scrollDirection: Axis.horizontal,
             shrinkWrap: true,
             itemCount: widget.shiftTable.timeDivs.length,
             itemBuilder: (context, i) => buildItem(widget.shiftTable.timeDivs[i], i, context),
@@ -228,37 +228,31 @@ class TimeDivisionState extends State<InputTimeDivisions> {
   }
 
   Widget buildItem(TimeDivision item, int index, BuildContext context) {
-    return Card(
-      key: Key(index.toString()),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),      
-      ),
-      color: Colors.green,
-      child: ReorderableDragStartListener(
-        index: index,
-        child: ListTile(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(item.name, style: const TextStyle(color: Colors.white, fontSize:15, fontWeight: FontWeight.bold), textHeightBehavior: MyFont.defaultBehavior, overflow: TextOverflow.ellipsis),
-              // Text("  ( ${item.startTime.hour.toString().padLeft(2, '0')}:${item.startTime.minute.toString().padLeft(2, '0')} ~ ${item.endTime.hour.toString().padLeft(2, '0')}:${item.endTime.minute.toString().padLeft(2, '0')} )", style: const TextStyle(color: Colors.white, fontSize:12), textHeightBehavior: MyFont.defaultBehavior),
-            ],
-          ),
-          trailing: IconButton(
-            iconSize: 20,
-            onPressed: () {
-              widget.shiftTable.removeTimeDivision(index);
-              setState(() {});
-            },
-            icon: const Icon(Icons.delete),
-            color: Colors.white,
-          ),
-          onTap: () {
-            setState(() {
-              myController.text = item.name;
-            });
-          },
+    return SizedBox(
+      child: Card(
+        key: Key(index.toString()),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),      
+        ),
+        color: Colors.green,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(item.name, style: const TextStyle(color: Colors.white, fontSize:12, fontWeight: FontWeight.bold), textHeightBehavior: MyFont.defaultBehavior, overflow: TextOverflow.ellipsis),
+            ),
+            IconButton(
+              iconSize: 15,
+              onPressed: () {
+                widget.shiftTable.removeTimeDivision(index);
+                setState(() {});
+              },
+              icon: const Icon(Icons.delete),
+              color: Colors.white,
+            ),
+          ],
         ),
       ),
     );

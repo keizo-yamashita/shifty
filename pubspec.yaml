@@ -38,7 +38,6 @@ dependencies:
   cloud_firestore: ^4.6.0
   table_calendar: ^3.0.9
   time_range: ^1.1.0
-  syncfusion_flutter_datepicker: ^21.2.5
   time_range_picker: ^2.2.0
   horizontal_data_table: ^4.2.0
   

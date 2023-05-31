@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shift/src/font.dart';
 import 'package:shift/src/screens/shift_table.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -17,31 +16,9 @@ class InputDeadlineDuration extends StatefulWidget {
 
 class InputDeadlineDurationState extends State<InputDeadlineDuration> {
 
-  DateRangePickerController? controller = DateRangePickerController();
+  // DateRangePickerController? controller = DateRangePickerController();
 
   final now = DateTime.now();
-  var _inputRange = [DateTime.now(), DateTime(DateTime.now().year, DateTime.now().month + 1, 0)];
-  var _shiftRange = [DateTime(DateTime.now().year, DateTime.now().month + 1, 1), DateTime(DateTime.now().year, DateTime.now().month + 2, 0)];
-
-  void _onSelectionChanged_1(DateRangePickerSelectionChangedArgs args) {
-    setState(() { 
-      if (args.value is PickerDateRange) {
-        _shiftRange = [args.value.startDate, args.value.endDate];
-        widget.shiftTable.workStartDate = args.value.startDate;
-        widget.shiftTable.workEndDate = args.value.endDate;
-     }
-    });
-  }
-
-  void _onSelectionChanged_2(DateRangePickerSelectionChangedArgs args) {
-    setState(() { 
-      if (args.value is PickerDateRange) {
-        _inputRange = [args.value.startDate, args.value.endDate];
-        widget.shiftTable.inputStartDate = args.value.startDate;
-        widget.shiftTable.inputEndDate = args.value.endDate;
-     }
-    });
-  }
 
   @override
   void initState() {
@@ -81,18 +58,15 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
         Column(
           children: [
             const Text("シフト期間", style: MyFont.headlineStyle2Green),
-            Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(_shiftRange[0])} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(_shiftRange[1])}", style: MyFont.headlineStyle2Green),
+            ElevatedButton(
+              onPressed: (){
+                final x = pickDateRange(context, widget.shiftTable.shiftDateRange);
+                x.then((value) => widget.shiftTable.shiftDateRange = value);
+                setState(() {});
+              },
+              child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.shiftDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.shiftDateRange.end)}", style: MyFont.headlineStyle2White),
+            )
           ],
-        ),
-
-        SizedBox(
-          width: screenSize.width * 0.7,
-          child: SfDateRangePicker(
-            enablePastDates: false,
-            onSelectionChanged: _onSelectionChanged_1,
-            selectionMode: DateRangePickerSelectionMode.extendableRange,
-            initialSelectedRange: PickerDateRange(_shiftRange[0], _shiftRange[1]),
-          ),
         ),
 
         SizedBox(height: screenSize.height/30),
@@ -100,20 +74,34 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
         Column(
           children: [
             const Text("シフト希望入力期間", style: MyFont.headlineStyle2Green),
-            Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(_inputRange[0])} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(_inputRange[1])}", style: MyFont.headlineStyle2Green),
+            ElevatedButton(
+            onPressed: (){
+              final x = pickDateRange(context, widget.shiftTable.inputDateRange);
+              x.then((value) => widget.shiftTable.inputDateRange = value);
+              setState(() {});
+            },
+            child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.inputDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.inputDateRange.end)}", style: MyFont.headlineStyle2White),
+        )
           ],
         ),
 
-        SizedBox(
-          width: screenSize.width * 0.7,
-          child: SfDateRangePicker(
-            enablePastDates: false,
-            onSelectionChanged: _onSelectionChanged_2,
-            selectionMode: DateRangePickerSelectionMode.extendableRange,
-            initialSelectedRange: PickerDateRange(_inputRange[0], _inputRange[1]),
-          ),
-        ),
+
       ],
     );
   }
+
+   Future<DateTimeRange> pickDateRange(BuildContext context, DateTimeRange initialDateRange) async {
+
+    DateTimeRange? newDateRange = await showDateRangePicker(
+      context: context,
+      initialDateRange : initialDateRange,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 180)),
+    );
+    if (newDateRange != null) {
+      return Future<DateTimeRange>.value(newDateRange);
+    } else {
+      return Future<DateTimeRange>.value(initialDateRange);
+    }
+  }  
 }

@@ -49,38 +49,79 @@ class MyStatefulWidget extends StatefulWidget {
 
 class MyStatefulWidgetState extends State<MyStatefulWidget> {
   static const _screens = [
-    CreateScheduleWidget(),
     HomeScreen(),
+    CreateScheduleWidget(),
     NotificationScreen(),
     AccountScreen()
   ];
 
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  int _selectedIndex = 1;
 
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(title: const Text("シフト表作成アプリ",style: TextStyle(color: Colors.white))),
-        body: _screens[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          iconSize: 30,
-          selectedFontSize: 13,
-          unselectedFontSize: 10,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.create), label: '作成'),
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: '入力'),
-            BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'お知らせ'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'アカウント'),
-          ],
-          type: BottomNavigationBarType.fixed,
-        ));
+        drawer: Drawer(
+          width: screenSize.width * 0.7,
+          child: ListView(
+            children: <Widget>[
+              const DrawerHeader(
+                decoration: BoxDecoration( color: Colors.green),
+                child: Text('メニュー', style: TextStyle( fontSize: 15, color: Colors.white)),
+              ),
+              ListTile(
+                title: const Text('登録シフト表一覧'),
+                leading: const Icon(Icons.home, color: Colors.green, size: 30),
+                onTap: () {
+                  setState(() => _selectedIndex = 1);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text('シフト表の作成'),
+                leading: const Icon(Icons.create, color: Colors.green, size: 30),
+                onTap: () {
+                  setState(() => _selectedIndex = 1);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading:  const Icon(Icons.notifications, color: Colors.green, size: 30),
+                title: const Text('お知らせ'),
+                onTap: () {
+                  setState(() => _selectedIndex = 2);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person, color: Colors.green, size: 30),
+                title: const Text('アカウント'),
+                onTap: () {
+                  setState(() => _selectedIndex = 3);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings, color: Colors.green, size: 30),
+                title: const Text('設定'),
+                onTap: () {
+                  setState(() => _selectedIndex = 3);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.call, color: Colors.green, size: 30),
+                title: const Text('お問い合わせ'),
+                onTap: () {
+                  setState(() => _selectedIndex = 3);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
+        body: _screens[_selectedIndex]
+      );
   }
 }

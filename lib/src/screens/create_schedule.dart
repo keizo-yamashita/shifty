@@ -88,7 +88,7 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
           );
         },
       );
-    }else if(index == 3 && ((shiftTable.inputStartDate == DateTime(1, 1, 1)) || (shiftTable.inputEndDate == DateTime(1, 1, 1)) || (shiftTable.workStartDate == DateTime(1, 1, 1)) || (shiftTable.workEndDate == DateTime(1, 1, 1)))){
+    }else if(false){
       showDialog(
         context: context,
         builder: (BuildContext context) {

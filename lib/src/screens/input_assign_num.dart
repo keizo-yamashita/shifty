@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shift/src/font.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'package:shift/src/screens/shift_table.dart';
+import 'package:shift/src/functions/show_modal_window.dart';
 
-int weekSelectIndex       = 0;
-int weekdaySelectIndex    = 0;
-int timeDivsSelectIndex   = 0;
-int assignNumSelectIndex  = 1;
+// 0 : weekSelectIndex 1 : weekdaySelectIndex 2 : timeDivsSelectIndex  3 : assignNumSelectIndex
+List<int> selectorsIndex  = [0, 0, 0, 0];
 
 DateTime now = DateTime.now();
 var startWeekday = DateTime(now.year, now.month + 1, 1).weekday;
@@ -26,12 +24,7 @@ class InputAssignNumState extends State<InputAssignNum> {
   
   @override
   Widget build(BuildContext context) {
-    return _buildSuggestions();
-  }
 
-  final myController = TextEditingController();
-
-  Widget _buildSuggestions() {
     var screenSize   = MediaQuery.of(context).size;
 
     return Column(
@@ -57,82 +50,27 @@ class InputAssignNumState extends State<InputAssignNum> {
         const Text("基本となる勤務人数を設定してください\n※ 後日変更可 \n※ 上の設定から順に上書きされます", style: MyFont.commentStyle),
         SizedBox(height: screenSize.height/30),
 
-        // 登録した勤務人数ルール一覧
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: screenSize.width * 0.1,
-            maxWidth: screenSize.width  * 0.8,
-          ),
-          child: ReorderableListView.builder(
-            shrinkWrap: true,
-            buildDefaultDragHandles: false,
-            itemCount: widget.shiftTable.rules.length,
-            itemBuilder: (context, i) => buildItem(
-              i, 
-              weekSelect[widget.shiftTable.rules[i].week], 
-              weekdaySelect[widget.shiftTable.rules[i].weekday],
-              List.generate(widget.shiftTable.timeDivs.length + 1, (index) => (index == 0) ? '全ての区分' : widget.shiftTable.timeDivs[i].name)[widget.shiftTable.rules[i].timeDivs],
-              widget.shiftTable.rules[i].assignNum,
-              context
-            ),
-            onReorder: (int oldIndex, int newIndex) {
-              setState(() {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                final ShiftRule item = widget.shiftTable.rules.removeAt(oldIndex);
-                widget.shiftTable.rules.insert(newIndex, item);
-              });
-            }),
-        ),
-
-        SizedBox(height: screenSize.height/30),
         Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                NumberPicker(
-                  infiniteLoop: true,
-                  haptics: true,
-                  value: weekSelectIndex.clamp(0, 4),
-                  itemCount: 3,
-                  minValue: 0,
-                  maxValue: 4,
-                  itemHeight: 30,
-                  itemWidth:  120,
-                  textStyle: const TextStyle(fontSize: 15),
-                  selectedTextStyle: const TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold),
-                  onChanged: (value) => setState(() => weekSelectIndex = value),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: MyFont.tableBorderColor, width: 2),
-                  ),
-                  textMapper: (numberText) {
-                    return weekSelect[int.parse(numberText)];
+                ElevatedButton(
+                  onPressed: () {
+                    showList(weekSelect, 0);
                   },
+                  child: Text(weekSelect[selectorsIndex[0]])
                 ),
+
                 const SizedBox(width: 10),
                 const Text("の"),
                 const SizedBox(width: 10),
 
-                NumberPicker(
-                  infiniteLoop: true,
-                  haptics: true,
-                  value: weekdaySelectIndex.clamp(0, 7),
-                  itemCount: 3,
-                  minValue: 0,
-                  maxValue: 7,
-                  itemHeight: 30,
-                  itemWidth:  150,
-                  textStyle: const TextStyle(fontSize: 15),
-                  selectedTextStyle: const TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold),
-                  onChanged: (value) => setState(() => weekdaySelectIndex = value),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: MyFont.tableBorderColor, width: 2),
-                  ),
-                  textMapper: (numberText) {
-                    return weekdaySelect[int.parse(numberText)];
+                ElevatedButton(
+                  onPressed: () {
+                    showList(weekdaySelect, 1);
                   },
+                  child: Text(weekdaySelect[selectorsIndex[1]])
                 ),
 
                 const SizedBox(width: 10),
@@ -141,54 +79,29 @@ class InputAssignNumState extends State<InputAssignNum> {
               
               ],
             ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                NumberPicker(
-                  infiniteLoop: true,
-                  haptics: true,
-                  value: timeDivsSelectIndex.clamp(0, widget.shiftTable.timeDivs.length),
-                  itemCount: 3,
-                  minValue: 0,
-                  maxValue: widget.shiftTable.timeDivs.length,
-                  itemHeight: 30,
-                  itemWidth: 180,
-                  textStyle: const TextStyle(fontSize: 15),
-                  selectedTextStyle: const TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold),
-                  onChanged: (value) => setState(() => timeDivsSelectIndex = value),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: MyFont.tableBorderColor, width: 2),
-                  ),
-                  textMapper: (numberText) {
-                    List<String> selecter = <String>["すべての区分"];
-                    for(int i = 0; i < widget.shiftTable.timeDivs.length; i++){
-                      selecter.add(widget.shiftTable.timeDivs[i].name);
-                    }
-                    return selecter[int.parse(numberText)];
+                ElevatedButton(
+                  onPressed: () {
+                    showList(List.generate(widget.shiftTable.timeDivs.length + 1, (index) => (index == 0) ? '全ての区分' : widget.shiftTable.timeDivs[index-1].name), 2);
+                    setState(() {});
                   },
+                  child: Text(List.generate(widget.shiftTable.timeDivs.length + 1, (index) => (index == 0) ? '全ての区分' : widget.shiftTable.timeDivs[index-1].name)[selectorsIndex[2]])
                 ),
 
                 const SizedBox(width: 10),
                 const Text("の勤務人数は"),
                 const SizedBox(width: 10),
-
-                NumberPicker(
-                  infiniteLoop: true,
-                  haptics: true,
-                  value: assignNumSelectIndex,
-                  itemCount: 3,
-                  minValue: 0,
-                  maxValue: 5,
-                  itemHeight: 30,
-                  itemWidth:  40,
-                  textStyle: const TextStyle(fontSize: 15),
-                  selectedTextStyle: const TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold),
-                  onChanged: (value) => setState(() => assignNumSelectIndex = value),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: MyFont.tableBorderColor, width: 2),
-                  ),
-                ),
                 
+                ElevatedButton(
+                  onPressed: () {
+                    showList(List<String>.generate(10, (index) => index.toString()), 3);
+                  },
+                  child: Text(selectorsIndex[3].toString())
+                ),
+
                 const SizedBox(width: 10),
                 const Text("人"),
               ],
@@ -205,16 +118,69 @@ class InputAssignNumState extends State<InputAssignNum> {
                   icon: const Icon(Icons.add),
                   color: Colors.white,
                   onPressed: () {
-                    widget.shiftTable.rules.add(ShiftRule(week: weekSelectIndex, weekday: weekdaySelectIndex, timeDivs: timeDivsSelectIndex, assignNum: assignNumSelectIndex));
+                    widget.shiftTable.rules.add(ShiftRule(week: selectorsIndex[0], weekday: selectorsIndex[1], timeDivs: selectorsIndex[2], assignNum: selectorsIndex[3]));
                     setState(() {});
                   }
                 ),
               )
             ),
           ],
-        )
+        ),
+
+        SizedBox(height: screenSize.height/30),
+
+        // 登録した勤務人数ルール一覧
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: screenSize.width * 0.1,
+            maxWidth: screenSize.width  * 0.8,
+          ),
+          child: ReorderableListView.builder(
+            shrinkWrap: true,
+            buildDefaultDragHandles: false,
+            itemCount: widget.shiftTable.rules.length,
+            itemBuilder: (context, i) => buildItem(
+              i, 
+              weekSelect[widget.shiftTable.rules[i].week], 
+              weekdaySelect[widget.shiftTable.rules[i].weekday],
+              List.generate(widget.shiftTable.timeDivs.length + 1, (index) => (index == 0) ? '全ての区分' : widget.shiftTable.timeDivs[index-1].name)[widget.shiftTable.rules[i].timeDivs],
+              widget.shiftTable.rules[i].assignNum,
+              context
+            ),
+            onReorder: (int oldIndex, int newIndex) {
+              setState(() {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                final ShiftRule item = widget.shiftTable.rules.removeAt(oldIndex);
+                widget.shiftTable.rules.insert(newIndex, item);
+              });
+            }),
+        ),
       ],
     );
+  }
+
+  void showList(List<String> list, int index) {
+    var box = SizedBox(
+      height: MediaQuery.of(context).size.height * 0.5,
+      width: double.maxFinite,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: list.length,
+        itemBuilder: (BuildContext context, int result) {
+          return ListTile(
+            title: Text(list[result]),
+            onTap: () {
+              selectorsIndex[index] = result;
+              setState(() {});
+              Navigator.of(context).pop();
+            },
+          );
+        },
+      ),
+    );
+    showModalWindow(context, box);
   }
 
   Widget buildItem(int index, String weekSelect, String weekdaySelect, String timeDivsSelect, int assignNumSelect, BuildContext context) {

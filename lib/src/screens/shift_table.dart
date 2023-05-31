@@ -7,24 +7,20 @@ class ShiftTable{
   late List<ShiftRule>     rules;
   late List<TimeDivision>  timeDivs;
   late List<List<String>>  assignTable;
-  late DateTime            inputStartDate;
-  late DateTime            inputEndDate;
-  late DateTime            workStartDate;
-  late DateTime            workEndDate;
+  late DateTimeRange       shiftDateRange;
+  late DateTimeRange       inputDateRange;
 
   ShiftTable(){
     rules          = <ShiftRule>[];
     timeDivs       = <TimeDivision>[];
     assignTable    = <List<String>>[];
-    inputStartDate = DateTime(1, 1, 1);
-    inputEndDate   = DateTime(1, 1, 1);
-    workStartDate  = DateTime(1, 1, 1);
-    workEndDate    = DateTime(1, 1, 1);
+    shiftDateRange = DateTimeRange(start: DateTime.now().add(const Duration(days: 10)), end: DateTime.now().add(const Duration(days: 20)));
+    inputDateRange = DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(days: 9)));
   }
 
   generateShiftTable(){
-    int startWeekday = workStartDate.weekday;
-    assignTable      = List<List<String>>.generate(workEndDate.difference(workStartDate).inDays+1, (index) => List<String>.generate(timeDivs.length, (index) => 0.toString()));
+    int startWeekday = shiftDateRange.start.weekday;
+    assignTable      = List<List<String>>.generate(shiftDateRange.end.difference(shiftDateRange.start).inDays+1, (index) => List<String>.generate(timeDivs.length, (index) => 0.toString()));
 
     final List<int> fifo1 = List<int>.generate(0, (index) => index);
     final List<int> fifo2 = List<int>.generate(0, (index) => index);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MyFont{
-  static const TextStyle headlineStyleGreen = TextStyle(color: Colors.green, fontSize: 25, fontWeight: FontWeight.bold);
-  static const TextStyle headlineStyleWhite = TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold);
+  static const TextStyle headlineStyleGreen = TextStyle(color: Colors.green, fontSize: 20, fontWeight: FontWeight.bold);
+  static const TextStyle headlineStyleWhite = TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold);
   static const TextStyle headlineStyle2Green = TextStyle(color: Colors.green, fontSize: 15, fontWeight: FontWeight.bold);
   static const TextStyle headlineStyle2White = TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold);
   static const TextStyle commentStyle = TextStyle(color: Colors.grey, fontSize: 15);
