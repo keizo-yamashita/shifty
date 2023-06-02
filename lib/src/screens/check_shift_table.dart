@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:shift/src/font.dart';
-import 'package:shift/src/screens/shift_table.dart';
+import 'package:shift/src/functions/font.dart';
+import 'package:shift/src/functions/shift_table.dart';
 import 'package:shift/src/functions/show_modal_window.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
@@ -22,7 +22,6 @@ class CheckShiftTableState extends State<CheckShiftTable> {
   
   // ignore: unused_field
   late ScrollController _verticalScrollController;
-  // ignore: unused_field
   late ScrollController _horizontalScrollController;
 
   @override
@@ -44,13 +43,13 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text("STEP 4", style: MyFont.headlineStyleWhite),
+              child: const Text("STEP 4", style: MyFont.headlineStyleWhite20),
             ),
-            const Text("シフト表のチェック", style: MyFont.headlineStyleGreen),
+            const Text("シフト表のチェック", style: MyFont.headlineStyleGreen20),
           ],                  
         ),
         SizedBox(height: screenSize.height/30),
-        const Text("作成される基本のシフト表を確認してください", style: MyFont.commentStyle),
+        const Text("作成される基本のシフト表を確認してください", style: MyFont.commentStyle15),
         SizedBox(height: screenSize.height/30),
 
         SizedBox(
@@ -126,46 +125,6 @@ class CheckShiftTableState extends State<CheckShiftTable> {
     );
   }
 
-  Widget createShiftTemplate(){
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.7,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 18, right: 10, left: 10, bottom: 15),
-        child: SizedBox(
-          child: HorizontalDataTable(
-            leftHandSideColumnWidth: _tableTitleWidth,
-            rightHandSideColumnWidth: (widget.shiftTable.shiftDateRange.end.difference(widget.shiftTable.shiftDateRange.start).inDays+1) * _tableWidth,
-            isFixedHeader: true,
-            headerWidgets: _getTitleWidget(),
-            leftSideItemBuilder: _generateFirstColumnsRow,
-            rightSideItemBuilder: _generateRightHandSideColumnRow,
-            itemCount: widget.shiftTable.timeDivs.length,
-            rowSeparatorWidget: const Divider(
-              color: Colors.black,
-              height: 5.0,
-              thickness: 0.0,
-            ),
-            onScrollControllerReady: (vertical, horizontal) {
-              _verticalScrollController = vertical;
-              _horizontalScrollController = horizontal;
-            },
-            verticalScrollbarStyle: ScrollbarStyle(
-              thumbColor: Colors.green[200],
-              isAlwaysShown: true,
-              thickness: 5.0,
-              radius: const Radius.circular(5.0),
-            ),
-            horizontalScrollbarStyle: ScrollbarStyle(
-              thumbColor: Colors.green[200],
-              isAlwaysShown: true,
-              thickness: 5.0,
-              radius: const Radius.circular(5.0),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget calenderColumn(index){
     DateTime day = widget.shiftTable.shiftDateRange.start.add(Duration(days: index));
@@ -235,6 +194,46 @@ class CheckShiftTableState extends State<CheckShiftTable> {
           ]
         );
     }
+  }
+  Widget createShiftTemplate(){
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 18, right: 10, left: 10, bottom: 15),
+        child: SizedBox(
+          child: HorizontalDataTable(
+            leftHandSideColumnWidth: _tableTitleWidth,
+            rightHandSideColumnWidth: (widget.shiftTable.shiftDateRange.end.difference(widget.shiftTable.shiftDateRange.start).inDays+1) * _tableWidth,
+            isFixedHeader: true,
+            headerWidgets: _getTitleWidget(),
+            leftSideItemBuilder: _generateFirstColumnsRow,
+            rightSideItemBuilder: _generateRightHandSideColumnRow,
+            itemCount: widget.shiftTable.timeDivs.length,
+            rowSeparatorWidget: const Divider(
+              color: Colors.black,
+              height: 5.0,
+              thickness: 0.0,
+            ),
+            onScrollControllerReady: (vertical, horizontal) {
+              _verticalScrollController = vertical;
+              _horizontalScrollController = horizontal;
+            },
+            verticalScrollbarStyle: ScrollbarStyle(
+              thumbColor: Colors.green[200],
+              isAlwaysShown: true,
+              thickness: 5.0,
+              radius: const Radius.circular(5.0),
+            ),
+            horizontalScrollbarStyle: ScrollbarStyle(
+              thumbColor: Colors.green[200],
+              isAlwaysShown: true,
+              thickness: 5.0,
+              radius: const Radius.circular(5.0),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

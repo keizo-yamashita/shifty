@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shift/src/font.dart';
-import 'package:shift/src/screens/shift_table.dart';
+import 'package:shift/src/functions/font.dart';
+import 'package:shift/src/functions/shift_table.dart';
 import 'package:shift/src/functions/show_modal_window.dart';
 
 // 0 : weekSelectIndex 1 : weekdaySelectIndex 2 : timeDivsSelectIndex  3 : assignNumSelectIndex
@@ -40,14 +40,14 @@ class InputAssignNumState extends State<InputAssignNum> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text("STEP 2", style: MyFont.headlineStyleWhite),
+              child: const Text("STEP 2", style: MyFont.headlineStyleWhite20),
             ),
-            const Text("勤務人数の設定", style: MyFont.headlineStyleGreen),
+            const Text("勤務人数の設定", style: MyFont.headlineStyleGreen20),
           ],                  
         ),
 
         SizedBox(height: screenSize.height/30),
-        const Text("基本となる勤務人数を設定してください\n※ 後日変更可 \n※ 上の設定から順に上書きされます", style: MyFont.commentStyle),
+        const Text("基本となる勤務人数を設定してください\n※ 後日変更可 \n※ 上の設定から順に上書きされます", style: MyFont.commentStyle15),
         SizedBox(height: screenSize.height/30),
 
         Column(

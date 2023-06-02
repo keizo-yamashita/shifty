@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shift/src/font.dart';
-import 'package:shift/src/screens/shift_table.dart';
+import 'package:shift/src/functions/font.dart';
+import 'package:shift/src/functions/shift_table.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -43,28 +43,28 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text("STEP 3", style: MyFont.headlineStyleWhite),
+              child: const Text("STEP 3", style: MyFont.headlineStyleWhite20),
             ),
-            const Text("期間を設定", style: MyFont.headlineStyleGreen),
+            const Text("期間を設定", style: MyFont.headlineStyleGreen20),
           ],                  
         ),
         SizedBox(height: screenSize.height/30),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 50),
-          child: Text("「シフト期間」と「シフト希望入力期間」を決めましょう", style: MyFont.commentStyle),
+          child: Text("「シフト期間」と「シフト希望入力期間」を決めましょう", style: MyFont.commentStyle15),
         ),
         SizedBox(height: screenSize.height/30),
 
         Column(
           children: [
-            const Text("シフト期間", style: MyFont.headlineStyle2Green),
+            const Text("シフト期間", style: MyFont.headlineStyleGreen15),
             ElevatedButton(
               onPressed: (){
                 final x = pickDateRange(context, widget.shiftTable.shiftDateRange);
                 x.then((value) => widget.shiftTable.shiftDateRange = value);
                 setState(() {});
               },
-              child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.shiftDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.shiftDateRange.end)}", style: MyFont.headlineStyle2White),
+              child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.shiftDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.shiftDateRange.end)}", style: MyFont.headlineStyleWhite15),
             )
           ],
         ),
@@ -73,14 +73,14 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
 
         Column(
           children: [
-            const Text("シフト希望入力期間", style: MyFont.headlineStyle2Green),
+            const Text("シフト希望入力期間", style: MyFont.headlineStyleGreen15),
             ElevatedButton(
             onPressed: (){
               final x = pickDateRange(context, widget.shiftTable.inputDateRange);
               x.then((value) => widget.shiftTable.inputDateRange = value);
               setState(() {});
             },
-            child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.inputDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.inputDateRange.end)}", style: MyFont.headlineStyle2White),
+            child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.inputDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.inputDateRange.end)}", style: MyFont.headlineStyleWhite15),
         )
           ],
         ),

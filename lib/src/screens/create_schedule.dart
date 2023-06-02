@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:shift/src/screens/shift_table.dart';
+import 'package:shift/src/functions/shift_table.dart';
 import 'package:shift/src/screens/input_time_division.dart';
 import 'package:shift/src/screens/input_assign_num.dart';
 import 'package:shift/src/screens/input_deadline_duration.dart';
