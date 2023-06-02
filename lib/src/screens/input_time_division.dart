@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:shift/src/font.dart';
-import 'package:shift/src/screens/shift_table.dart';
+import 'package:shift/src/functions/font.dart';
+import 'package:shift/src/functions/shift_table.dart';
 
 class InputTimeDivisions extends StatefulWidget {
   final ShiftTable shiftTable;
@@ -56,14 +56,14 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text("STEP 1", style: MyFont.headlineStyleWhite),
+              child: const Text("STEP 1", style: MyFont.headlineStyleWhite20),
             ),
-            const Text("時間区分の設定", style: MyFont.headlineStyleGreen),
+            const Text("時間区分の設定", style: MyFont.headlineStyleGreen20),
           ],             
         ),
         
         SizedBox(height: screenSize.height/30),
-        const Text("まずは，基本となる時間区分を設定しましょう\n勤務開始時間と勤務終了時間を入力してください", style: MyFont.commentStyle),
+        const Text("まずは，基本となる時間区分を設定しましょう\n勤務開始時間と勤務終了時間を入力してください", style: MyFont.commentStyle15),
         SizedBox(height: screenSize.height/30),
 
         Row(
@@ -74,7 +74,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
               children: [
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 5),
-                  child: Text("始業時間", style: MyFont.headlineStyle2Green),
+                  child: Text("始業時間", style: MyFont.headlineStyleGreen15),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -105,7 +105,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                         ),
                       );
                     },
-                    child: Text('${_startTime.hour.toString().padLeft(2, '0')}:${_startTime.minute.toString().padLeft(2, '0')}')
+                    child: Text('${_startTime.hour.toString().padLeft(2, '0')}:${_startTime.minute.toString().padLeft(2, '0')}', style: MyFont.headlineStyleGreen15)
                   ),
                 ),
               ],
@@ -113,13 +113,13 @@ class TimeDivisionState extends State<InputTimeDivisions> {
 
             const Padding(
               padding: EdgeInsets.only(top: 30),
-              child: Text(" 〜 ", style: MyFont.headlineStyle2Green),
+              child: Text(" 〜 ", style: MyFont.headlineStyleGreen15),
             ),
             Column(
               children: [
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 5),
-                  child: Text("終業時間", style: MyFont.headlineStyle2Green),
+                  child: Text("終業時間", style: MyFont.headlineStyleGreen15),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -151,20 +151,20 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                         )
                       );
                     },
-                    child: Text('${_endTime.hour.toString().padLeft(2, '0')}:${_endTime.minute.toString().padLeft(2, '0')}')
+                    child: Text('${_endTime.hour.toString().padLeft(2, '0')}:${_endTime.minute.toString().padLeft(2, '0')}', style: MyFont.headlineStyleGreen15)
                   ),
                 ),
               ],
             ),
             const Padding(
               padding: EdgeInsets.only(top: 20),
-              child: Text(" ... ", style: MyFont.headlineStyle2Green),
+              child: Text(" ... ", style: MyFont.headlineStyleGreen15),
             ),
             Column(
               children: [
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 5),
-                  child: Text("管理間隔", style: MyFont.headlineStyle2Green),
+                  child: Text("管理間隔", style: MyFont.headlineStyleGreen15),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -183,7 +183,8 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                           child: CupertinoDatePicker(
                             mode: CupertinoDatePickerMode.time,
                             initialDateTime: _duration,
-                            minuteInterval: 5,
+                            minuteInterval: 5,                            
+                            minimumDate: DateTime(1, 1, 1, 0, 10),
                             maximumDate: DateTime(1, 1, 1, 6, 0),
                             onDateTimeChanged: (val) {
                               setState(() {
@@ -196,7 +197,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                         )
                       );
                     },
-                    child: Text('${_duration.hour.toString().padLeft(2, '0')}:${_duration.minute.toString().padLeft(2, '0')}')
+                    child: Text('${_duration.hour.toString().padLeft(2, '0')}:${_duration.minute.toString().padLeft(2, '0')}', style: MyFont.headlineStyleGreen15)
                   ),
                 ),
               ],
@@ -207,16 +208,15 @@ class TimeDivisionState extends State<InputTimeDivisions> {
         SizedBox(height: screenSize.height / 20),
         const Padding(
           padding: EdgeInsets.only(bottom: 10),
-          child: Text("↓設定される時間区分一覧", style: MyFont.headlineStyle2Green),
+          child: Text("↓  設定される時間区分一覧", style: MyFont.headlineStyleGreen15),
         ),
 
         // 登録した時間区分一覧
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: screenSize.width * 0.1,
-            maxWidth: 250,
-          ),
+        Container(
+          height:  55,
+          width: screenSize.width * 0.8,
           child: ListView.builder(
+            scrollDirection: Axis.horizontal,
             shrinkWrap: true,
             itemCount: widget.shiftTable.timeDivs.length,
             itemBuilder: (context, i) => buildItem(widget.shiftTable.timeDivs[i], i, context),
@@ -228,37 +228,31 @@ class TimeDivisionState extends State<InputTimeDivisions> {
   }
 
   Widget buildItem(TimeDivision item, int index, BuildContext context) {
-    return Card(
-      key: Key(index.toString()),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),      
-      ),
-      color: Colors.green,
-      child: ReorderableDragStartListener(
-        index: index,
-        child: ListTile(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(item.name, style: const TextStyle(color: Colors.white, fontSize:15, fontWeight: FontWeight.bold), textHeightBehavior: MyFont.defaultBehavior, overflow: TextOverflow.ellipsis),
-              // Text("  ( ${item.startTime.hour.toString().padLeft(2, '0')}:${item.startTime.minute.toString().padLeft(2, '0')} ~ ${item.endTime.hour.toString().padLeft(2, '0')}:${item.endTime.minute.toString().padLeft(2, '0')} )", style: const TextStyle(color: Colors.white, fontSize:12), textHeightBehavior: MyFont.defaultBehavior),
-            ],
-          ),
-          trailing: IconButton(
-            iconSize: 20,
-            onPressed: () {
-              widget.shiftTable.removeTimeDivision(index);
-              setState(() {});
-            },
-            icon: const Icon(Icons.delete),
-            color: Colors.white,
-          ),
-          onTap: () {
-            setState(() {
-              myController.text = item.name;
-            });
-          },
+    return SizedBox(
+      child: Card(
+        key: Key(index.toString()),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),      
+        ),
+        color: Colors.green,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(item.name, style: const TextStyle(color: Colors.white, fontSize:12, fontWeight: FontWeight.bold), textHeightBehavior: MyFont.defaultBehavior, overflow: TextOverflow.ellipsis),
+            ),
+            IconButton(
+              iconSize: 15,
+              onPressed: () {
+                widget.shiftTable.removeTimeDivision(index);
+                setState(() {});
+              },
+              icon: const Icon(Icons.delete),
+              color: Colors.white,
+            ),
+          ],
         ),
       ),
     );

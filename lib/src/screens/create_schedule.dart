@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:shift/src/screens/shift_table.dart';
+import 'package:shift/src/functions/shift_table.dart';
 import 'package:shift/src/screens/input_time_division.dart';
 import 'package:shift/src/screens/input_assign_num.dart';
 import 'package:shift/src/screens/input_deadline_duration.dart';
@@ -88,7 +88,7 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
           );
         },
       );
-    }else if(index == 3 && ((shiftTable.inputStartDate == DateTime(1, 1, 1)) || (shiftTable.inputEndDate == DateTime(1, 1, 1)) || (shiftTable.workStartDate == DateTime(1, 1, 1)) || (shiftTable.workEndDate == DateTime(1, 1, 1)))){
+    }else if(false){
       showDialog(
         context: context,
         builder: (BuildContext context) {

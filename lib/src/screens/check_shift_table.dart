@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:shift/src/font.dart';
-import 'package:shift/src/screens/shift_table.dart';
-import 'package:shift/src/screens/decorated_table_page.dart';
+import 'package:shift/src/functions/font.dart';
+import 'package:shift/src/functions/shift_table.dart';
+import 'package:shift/src/functions/show_modal_window.dart';
+import 'package:horizontal_data_table/horizontal_data_table.dart';
 
-var scrollController = ScrollController();
+const double _tableHeight     = 30;
+const double _tableWidth      = 40;
+const double _tableTitleWidth = 80;
 
 class CheckShiftTable extends StatefulWidget {
   final ShiftTable shiftTable;
@@ -17,89 +20,15 @@ class CheckShiftTable extends StatefulWidget {
 
 class CheckShiftTableState extends State<CheckShiftTable> {
   
+  // ignore: unused_field
+  late ScrollController _verticalScrollController;
+  late ScrollController _horizontalScrollController;
+
   @override
   Widget build(BuildContext context) {
 
     widget.shiftTable.generateShiftTable();
-    var screenSize   = MediaQuery.of(context).size;
-    
-    double tableHeight = screenSize.height * 0.45;
-    double tableWidth  = screenSize.width * 0.9;
-    
-    const double cellHeight        = 40.0;
-    const double cellWidth         = 40.0;
-    const double rowTitleCellWidth = 80.0;
-    
-    BoxDecoration cellDecoration = const BoxDecoration(
-      border: Border(
-        top:    BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        right:  BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        bottom: BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        left:   BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-      ),
-    );
-    
-    BoxDecoration titleDecoration =  const BoxDecoration(
-      border: Border(
-        top:    BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        right:  BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        bottom: BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-        left:   BorderSide(color: MyFont.tableBorderColor, width: 0.5),
-      ),
-      color: MyFont.tableColumnsColor
-    );
-
-    Widget topLeft = Container(
-      height: cellHeight,
-      width: rowTitleCellWidth,
-      alignment: Alignment.center,
-      decoration: titleDecoration,
-      child: const Text(''),
-    );
-
-    Widget colTitles = Row(
-      children: List<int>.generate(widget.shiftTable.workEndDate.difference(widget.shiftTable.workStartDate).inDays+1,(index) => index)
-        .map<Widget>(
-          (n) => Container(
-            height: cellHeight,
-            width: cellWidth,
-            alignment: Alignment.center,
-            decoration: titleDecoration,
-            child: calenderColumn(n),
-          )
-        ).toList()
-    );
-
-    Widget rowTitles = Column(
-      children: widget.shiftTable.timeDivs
-      .map<Widget>(
-        (n) => Container(
-          height: cellHeight,
-          width:  rowTitleCellWidth,
-          alignment: Alignment.center,
-          decoration: titleDecoration,
-          child: Text(n.name, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-        ),
-      ).toList()
-    );
-
-    Widget body = Row(
-      children: 
-        widget.shiftTable.assignTable.map<Widget>(
-          (list) => Column(
-            children: list.map<Widget>(
-              (n) => Container(
-                height: cellHeight,
-                width: cellWidth,
-                alignment: Alignment.center,
-                decoration: cellDecoration,
-                child: Text(n, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-              )
-            ).toList(),
-          ),
-        )
-        .toList(),
-    );
+    var screenSize = MediaQuery.of(context).size;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -114,114 +43,197 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text("STEP 4", style: MyFont.headlineStyleWhite),
+              child: const Text("STEP 4", style: MyFont.headlineStyleWhite20),
             ),
-            const Text("シフト表のテェック", style: MyFont.headlineStyleGreen),
+            const Text("シフト表のチェック", style: MyFont.headlineStyleGreen20),
           ],                  
         ),
         SizedBox(height: screenSize.height/30),
-        const Text("作成される基本のシフト表を確認してください", style: MyFont.commentStyle),
+        const Text("作成される基本のシフト表を確認してください", style: MyFont.commentStyle15),
         SizedBox(height: screenSize.height/30),
 
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(
+        SizedBox(
+          child: Container(
+            decoration: const BoxDecoration(
               color: Colors.green,
-              width: 3.0
+              shape: BoxShape.circle
             ),
-          ),
-          child: FixedTitlesView(
-            key: const ValueKey('Test1'),
-            height:       tableHeight,
-            width:        tableWidth,
-            fixedHeight:  cellHeight,
-            fixedWidth:   rowTitleCellWidth,
-            origin:       topLeft,
-            colTitles:    colTitles,
-            rowTitles:    rowTitles,
-            body:         body
-          ),
-        ),
-
-        SizedBox(height: screenSize.height / 30),
-        IconButton(
-          color: Colors.white,
-          
-          onPressed: (){addTempleteShitTable(widget.shiftTable);},
-          icon: const Icon(Icons.add)
+            child: IconButton(
+              icon: const Icon(Icons.add),
+              color: Colors.white,
+              onPressed: () {
+                showModalWindow(context, createShiftTemplate());
+                setState(() {});
+              }
+            ),
+          )
         ),
       ],
     );
   }
 
+  List<Widget> _getTitleWidget(){
+    return [
+      _getLegendItemWidget('時間区分', _tableTitleWidth),
+      ...
+      List<Widget>.generate(widget.shiftTable.shiftDateRange.end.difference(widget.shiftTable.shiftDateRange.start).inDays+1, (index) => _getTitleItemWidget(index, _tableWidth))
+    ];
+  }
+  
+  Widget _getLegendItemWidget(String label, double width) {
+    return Container(
+      width: width,
+      height: _tableHeight,
+      alignment: Alignment.center,
+      child: Text(label, style: const TextStyle(fontSize: 10)),
+    );
+  }
+
+  Widget _getTitleItemWidget(int index, double width) {
+    return Container(
+      width: width,
+      height: _tableHeight,
+      alignment: Alignment.center,
+      child: calenderColumn(index)
+    );
+  }
+
+  Widget _generateFirstColumnsRow(BuildContext context, int index){
+    return Container(
+      width: _tableTitleWidth,
+      height: _tableHeight,
+      alignment: Alignment.center,
+      child: Text(widget.shiftTable.timeDivs[index].name, style: const TextStyle(fontSize: 10)),
+    );
+  }
+
+  Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
+  return Row(
+    children: widget.shiftTable.assignTable.asMap().entries.map<Widget>(
+      (list) => Container(
+          width: _tableWidth,
+          height: _tableHeight,
+          alignment: Alignment.center,
+          child: TextButton(
+            onPressed: () => {
+              print("${list.key} $index")
+            },
+            child: Text("${list.value[index]} 人", style: const TextStyle(fontSize: 10, color: Colors.black))
+          ),
+          )
+        ).toList()
+    );
+  }
+
+
   Widget calenderColumn(index){
-    DateTime day = widget.shiftTable.workStartDate.add(Duration(days: index));
+    DateTime day = widget.shiftTable.shiftDateRange.start.add(Duration(days: index));
     switch(day.weekday){
       case 1:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-            const Text('(月)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
+            const Text('(月)', style: TextStyle(fontSize: 10))
           ]
         );
       case 2:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-            const Text('(火)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
+            const Text('(火)', style: TextStyle(fontSize: 10))
           ]
         );
       case 3:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-            const Text('(水)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
+            const Text('(水)', style: TextStyle(fontSize: 10))
           ]
         );
       case 4:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-            const Text('(木)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
+            const Text('(木)', style: TextStyle(fontSize: 10))
           ]
         );
       case 5:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-            const Text('(金)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
+            const Text('(金)', style: TextStyle(fontSize: 10))
           ]
         );
       case 6:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-            const Text('(土)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue))
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
+            const Text('(土)', style: TextStyle(fontSize: 10, color: Colors.blue))
           ]
         );
       case 7:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-            const Text('(日)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.red))
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
+            const Text('(日)', style: TextStyle(fontSize: 10, color: Colors.red))
           ]
         );
       default:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-            const Text('(？)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold))
+            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
+            const Text('(？)', style: TextStyle(fontSize: 10))
           ]
         );
     }
+  }
+  Widget createShiftTemplate(){
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 18, right: 10, left: 10, bottom: 15),
+        child: SizedBox(
+          child: HorizontalDataTable(
+            leftHandSideColumnWidth: _tableTitleWidth,
+            rightHandSideColumnWidth: (widget.shiftTable.shiftDateRange.end.difference(widget.shiftTable.shiftDateRange.start).inDays+1) * _tableWidth,
+            isFixedHeader: true,
+            headerWidgets: _getTitleWidget(),
+            leftSideItemBuilder: _generateFirstColumnsRow,
+            rightSideItemBuilder: _generateRightHandSideColumnRow,
+            itemCount: widget.shiftTable.timeDivs.length,
+            rowSeparatorWidget: const Divider(
+              color: Colors.black,
+              height: 5.0,
+              thickness: 0.0,
+            ),
+            onScrollControllerReady: (vertical, horizontal) {
+              _verticalScrollController = vertical;
+              _horizontalScrollController = horizontal;
+            },
+            verticalScrollbarStyle: ScrollbarStyle(
+              thumbColor: Colors.green[200],
+              isAlwaysShown: true,
+              thickness: 5.0,
+              radius: const Radius.circular(5.0),
+            ),
+            horizontalScrollbarStyle: ScrollbarStyle(
+              thumbColor: Colors.green[200],
+              isAlwaysShown: true,
+              thickness: 5.0,
+              radius: const Radius.circular(5.0),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
