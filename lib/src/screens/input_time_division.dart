@@ -56,14 +56,14 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text("STEP 1", style: MyFont.headlineStyleWhite20),
+              child: Text("STEP 1", style: MyFont.headlineStyleWhite20),
             ),
-            const Text("時間区分の設定", style: MyFont.headlineStyleGreen20),
+            Text("時間区分の設定", style: MyFont.headlineStyleGreen20),
           ],             
         ),
         
         SizedBox(height: screenSize.height/30),
-        const Text("まずは，基本となる時間区分を設定しましょう\n勤務開始時間と勤務終了時間を入力してください", style: MyFont.commentStyle15),
+        Text("まずは，基本となる時間区分を設定しましょう\n勤務開始時間と勤務終了時間を入力してください", style: MyFont.defaultStyleGrey15),
         SizedBox(height: screenSize.height/30),
 
         Row(
@@ -72,8 +72,8 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           children: [
             Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Text("始業時間", style: MyFont.headlineStyleGreen15),
                 ),
                 Container(
@@ -111,14 +111,14 @@ class TimeDivisionState extends State<InputTimeDivisions> {
               ],
             ),
 
-            const Padding(
-              padding: EdgeInsets.only(top: 30),
+            Padding(
+              padding: const EdgeInsets.only(top: 30),
               child: Text(" 〜 ", style: MyFont.headlineStyleGreen15),
             ),
             Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Text("終業時間", style: MyFont.headlineStyleGreen15),
                 ),
                 Container(
@@ -156,14 +156,14 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                 ),
               ],
             ),
-            const Padding(
-              padding: EdgeInsets.only(top: 20),
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
               child: Text(" ... ", style: MyFont.headlineStyleGreen15),
             ),
             Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Text("管理間隔", style: MyFont.headlineStyleGreen15),
                 ),
                 Container(
@@ -206,14 +206,14 @@ class TimeDivisionState extends State<InputTimeDivisions> {
         ),
         
         SizedBox(height: screenSize.height / 20),
-        const Padding(
-          padding: EdgeInsets.only(bottom: 10),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
           child: Text("↓  設定される時間区分一覧", style: MyFont.headlineStyleGreen15),
         ),
 
         // 登録した時間区分一覧
         Container(
-          height:  55,
+          height:  60,
           width: screenSize.width * 0.8,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -240,11 +240,11 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text(item.name, style: const TextStyle(color: Colors.white, fontSize:12, fontWeight: FontWeight.bold), textHeightBehavior: MyFont.defaultBehavior, overflow: TextOverflow.ellipsis),
+              padding: const EdgeInsets.only(left: 20),
+              child: Text("${item.startTime.format(context)}\n~\n${item.endTime.format(context)}", style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
             ),
             IconButton(
-              iconSize: 15,
+              iconSize: 20,
               onPressed: () {
                 widget.shiftTable.removeTimeDivision(index);
                 setState(() {});

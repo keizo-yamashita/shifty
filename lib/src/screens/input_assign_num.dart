@@ -40,14 +40,14 @@ class InputAssignNumState extends State<InputAssignNum> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text("STEP 2", style: MyFont.headlineStyleWhite20),
+              child: Text("STEP 2", style: MyFont.headlineStyleWhite20),
             ),
-            const Text("勤務人数の設定", style: MyFont.headlineStyleGreen20),
+            Text("勤務人数の設定", style: MyFont.headlineStyleGreen20),
           ],                  
         ),
 
         SizedBox(height: screenSize.height/30),
-        const Text("基本となる勤務人数を設定してください\n※ 後日変更可 \n※ 上の設定から順に上書きされます", style: MyFont.commentStyle15),
+        Text("基本となる勤務人数を設定してください\n※ 後日変更可 \n※ 上の設定から順に上書きされます", style: MyFont.defaultStyleGrey15),
         SizedBox(height: screenSize.height/30),
 
         Column(
@@ -59,22 +59,22 @@ class InputAssignNumState extends State<InputAssignNum> {
                   onPressed: () {
                     showList(weekSelect, 0);
                   },
-                  child: Text(weekSelect[selectorsIndex[0]])
+                  child: Text(weekSelect[selectorsIndex[0]], style: MyFont.defaultStyleWhite15)
                 ),
 
                 const SizedBox(width: 10),
-                const Text("の"),
+                Text("の", style: MyFont.defaultStyleGrey15),
                 const SizedBox(width: 10),
 
                 ElevatedButton(
                   onPressed: () {
                     showList(weekdaySelect, 1);
                   },
-                  child: Text(weekdaySelect[selectorsIndex[1]])
+                  child: Text(weekdaySelect[selectorsIndex[1]], style: MyFont.defaultStyleWhite15)
                 ),
 
                 const SizedBox(width: 10),
-                const Text("の"),
+                Text("の", style: MyFont.defaultStyleGrey15),
                 const SizedBox(width: 10),
               
               ],
@@ -88,22 +88,22 @@ class InputAssignNumState extends State<InputAssignNum> {
                     showList(List.generate(widget.shiftTable.timeDivs.length + 1, (index) => (index == 0) ? '全ての区分' : widget.shiftTable.timeDivs[index-1].name), 2);
                     setState(() {});
                   },
-                  child: Text(List.generate(widget.shiftTable.timeDivs.length + 1, (index) => (index == 0) ? '全ての区分' : widget.shiftTable.timeDivs[index-1].name)[selectorsIndex[2]])
+                  child: Text(List.generate(widget.shiftTable.timeDivs.length + 1, (index) => (index == 0) ? '全ての区分' : widget.shiftTable.timeDivs[index-1].name)[selectorsIndex[2]], style: MyFont.defaultStyleWhite15)
                 ),
 
                 const SizedBox(width: 10),
-                const Text("の勤務人数は"),
+                Text("の勤務人数は", style: MyFont.defaultStyleGrey15),
                 const SizedBox(width: 10),
                 
                 ElevatedButton(
                   onPressed: () {
                     showList(List<String>.generate(10, (index) => index.toString()), 3);
                   },
-                  child: Text(selectorsIndex[3].toString())
+                  child: Text(selectorsIndex[3].toString(), style: MyFont.defaultStyleWhite15)
                 ),
 
                 const SizedBox(width: 10),
-                const Text("人"),
+                Text("人", style: MyFont.defaultStyleGrey15),
               ],
             ),
 
@@ -196,17 +196,17 @@ class InputAssignNumState extends State<InputAssignNum> {
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Text('"$weekSelect"',        style: const TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
-              const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
-              Text('"$weekdaySelect"',     style: const TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
-              const Text(' の ',           style:       TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
-              Text('"$timeDivsSelect"',    style: const TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
-              const Text(' の勤務人数は ', style:       TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
-              Text('"$assignNumSelect"',   style: const TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
-              const Text(' 人',            style:       TextStyle(color: Colors.white, fontSize: 15), textHeightBehavior: MyFont.defaultBehavior),
+              Text('"$weekSelect"',      style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior),
+              Text(' の ',               style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior),
+              Text('"$weekdaySelect"',   style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior),
+              Text(' の ',               style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior),
+              Text('"$timeDivsSelect"',  style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior),
+              Text(' の勤務人数は ',     style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior),
+              Text('"$assignNumSelect"', style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior),
+              Text(' 人',                style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior),
             ],
           ),
-          leading: Text('${index+1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20), textHeightBehavior: MyFont.defaultBehavior),
+          leading: Text('ルール ${index+1}', style: MyFont.defaultStyleWhite15, textHeightBehavior: MyFont.defaultBehavior),
           trailing: SizedBox(
             height: double.infinity,
             child:  IconButton(

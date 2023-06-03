@@ -43,13 +43,13 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text("STEP 4", style: MyFont.headlineStyleWhite20),
+              child: Text("STEP 4", style: MyFont.headlineStyleWhite20),
             ),
-            const Text("シフト表のチェック", style: MyFont.headlineStyleGreen20),
+            Text("シフト表のチェック", style: MyFont.headlineStyleGreen20),
           ],                  
         ),
         SizedBox(height: screenSize.height/30),
-        const Text("作成される基本のシフト表を確認してください", style: MyFont.commentStyle15),
+        Text("作成される基本のシフト表を確認してください", style: MyFont.defaultStyleGrey15),
         SizedBox(height: screenSize.height/30),
 
         SizedBox(
@@ -85,7 +85,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
       width: width,
       height: _tableHeight,
       alignment: Alignment.center,
-      child: Text(label, style: const TextStyle(fontSize: 10)),
+      child: Text(label, style: MyFont.defaultStyleBlack10),
     );
   }
 
@@ -103,7 +103,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
       width: _tableTitleWidth,
       height: _tableHeight,
       alignment: Alignment.center,
-      child: Text(widget.shiftTable.timeDivs[index].name, style: const TextStyle(fontSize: 10)),
+      child: Text(widget.shiftTable.timeDivs[index].name, style: MyFont.defaultStyleBlack10),
     );
   }
 
@@ -118,7 +118,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
             onPressed: () => {
               print("${list.key} $index")
             },
-            child: Text("${list.value[index]} 人", style: const TextStyle(fontSize: 10, color: Colors.black))
+            child: Text("${list.value[index]} 人", style: MyFont.defaultStyleBlack10)
           ),
           )
         ).toList()
@@ -133,64 +133,64 @@ class CheckShiftTableState extends State<CheckShiftTable> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
-            const Text('(月)', style: TextStyle(fontSize: 10))
+            Text('${day.month}/${day.day}', style: MyFont.defaultStyleBlack10),
+            Text('(月)', style: MyFont.defaultStyleBlack10)
           ]
         );
       case 2:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
-            const Text('(火)', style: TextStyle(fontSize: 10))
+            Text('${day.month}/${day.day}', style: MyFont.defaultStyleBlack10),
+            Text('(火)', style: MyFont.defaultStyleBlack10)
           ]
         );
       case 3:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
-            const Text('(水)', style: TextStyle(fontSize: 10))
+            Text('${day.month}/${day.day}', style: MyFont.defaultStyleBlack10),
+            Text('(水)', style: MyFont.defaultStyleBlack10)
           ]
         );
       case 4:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
-            const Text('(木)', style: TextStyle(fontSize: 10))
+            Text('${day.month}/${day.day}', style: MyFont.defaultStyleBlack10),
+            Text('(木)', style: MyFont.defaultStyleBlack10)
           ]
         );
       case 5:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
-            const Text('(金)', style: TextStyle(fontSize: 10))
+            Text('${day.month}/${day.day}', style: MyFont.defaultStyleBlack10),
+            Text('(金)', style: MyFont.defaultStyleBlack10)
           ]
         );
       case 6:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
-            const Text('(土)', style: TextStyle(fontSize: 10, color: Colors.blue))
+            Text('${day.month}/${day.day}', style: MyFont.defaultStyleBlack10),
+            Text('(土)', style: MyFont.defaultStyleBlue10)
           ]
         );
       case 7:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
-            const Text('(日)', style: TextStyle(fontSize: 10, color: Colors.red))
+            Text('${day.month}/${day.day}', style: MyFont.defaultStyleBlack10),
+            Text('(日)', style: MyFont.defaultStyleRed10)
           ]
         );
       default:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${day.month}/${day.day}', style: const TextStyle(fontSize: 10)),
-            const Text('(？)', style: TextStyle(fontSize: 10))
+            Text('${day.month}/${day.day}', style: MyFont.defaultStyleBlack10),
+            Text('(？)', style: MyFont.defaultStyleBlack10)
           ]
         );
     }

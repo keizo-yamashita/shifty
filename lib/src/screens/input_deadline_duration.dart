@@ -43,21 +43,21 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text("STEP 3", style: MyFont.headlineStyleWhite20),
+              child: Text("STEP 3", style: MyFont.headlineStyleWhite20),
             ),
-            const Text("期間を設定", style: MyFont.headlineStyleGreen20),
+            Text("期間を設定", style: MyFont.headlineStyleGreen20),
           ],                  
         ),
         SizedBox(height: screenSize.height/30),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 50),
-          child: Text("「シフト期間」と「シフト希望入力期間」を決めましょう", style: MyFont.commentStyle15),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50),
+          child: Text("「シフト期間」と「シフト希望入力期間」を決めましょう", style: MyFont.defaultStyleGrey15),
         ),
         SizedBox(height: screenSize.height/30),
 
         Column(
           children: [
-            const Text("シフト期間", style: MyFont.headlineStyleGreen15),
+            Text("シフト期間", style: MyFont.headlineStyleGreen15),
             ElevatedButton(
               onPressed: (){
                 final x = pickDateRange(context, widget.shiftTable.shiftDateRange);
@@ -73,7 +73,7 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
 
         Column(
           children: [
-            const Text("シフト希望入力期間", style: MyFont.headlineStyleGreen15),
+            Text("シフト希望入力期間", style: MyFont.headlineStyleGreen15),
             ElevatedButton(
             onPressed: (){
               final x = pickDateRange(context, widget.shiftTable.inputDateRange);

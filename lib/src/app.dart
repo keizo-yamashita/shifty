@@ -9,13 +9,15 @@ import 'package:shift/src/screens/account.dart';
 import 'package:shift/src/screens/create_schedule.dart';
 import 'package:shift/src/screens/home.dart';
 import 'package:shift/src/functions/notification.dart';
-import 'package:shift/src/screens/google_login_provider.dart';
+import 'package:shift/src/functions/google_login_provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    
+    var accountProvider = Provider.of<GoogleAccountProvider>(context);
+    accountProvider.silentLogin();
     return MaterialApp(
       title: 'シフト表作成アプリ',
       theme: ThemeData(
@@ -43,76 +45,76 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class MyStatefulWidgetState extends State<MyStatefulWidget> {
-  
   final List<MenuContent> _contents = [
     MenuContent(contentTitle: "シフト表一覧", contentIcon: Icons.home, content: const CreateScheduleWidget()),
     MenuContent(contentTitle: "お知らせ", contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
     MenuContent(contentTitle: "アカウント", contentIcon: Icons.person_2, content: const AccountScreen()),
-   MenuContent(contentTitle: "設定", contentIcon: Icons.settings, content: const HomeScreen()), 
+    MenuContent(contentTitle: "設定", contentIcon: Icons.settings, content: const HomeScreen()), 
   ];
   
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     var accountProvider = Provider.of<GoogleAccountProvider>(context);
     var screenSize      = MediaQuery.of(context).size;
 
-    accountProvider.silentLogin();
-
     return Scaffold(
       // appBar: AppBar(title: const Text("",style: TextStyle(color: Colors.white))),
       drawer: Drawer(
         width: screenSize.width * 0.7,
-        child: Column(
-          children: [
-            SizedBox(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 50, 10, 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      width: 40.0,
-                      height: 40.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: Image.network(accountProvider.user?.photoUrl ?? '').image,
-                        )
-                      ),
-                    ),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(accountProvider.user?.displayName ?? '', style: MyFont.defaultStyle15, overflow: TextOverflow.ellipsis),
-                            Text(accountProvider.user?.email ?? '', style: MyFont.commentStyle15, overflow: TextOverflow.ellipsis),
-                          ],
+        child: SafeArea(
+          child: Column(
+            children: [
+              SizedBox(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 30, 10, 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        width: 45.0,
+                        height: 45.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: Image.network(accountProvider.user?.photoUrl ?? '').image,
+                          )
                         ),
                       ),
-                    ),
-                  ]
-                )
+                      Flexible(
+                        child: Padding( 
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(accountProvider.user?.displayName ?? '', style: MyFont.headlineStyleBlack20, overflow: TextOverflow.ellipsis),
+                              Text(accountProvider.user?.email ?? '', style: MyFont.defaultStyleGrey15, overflow: TextOverflow.ellipsis),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]
+                  )
+                ),
               ),
-            ),
-            for(int index = 0; index < _contents.length; index++)
-              ListTile(
-                title: Text(_contents[index].contentTitle),
-                leading: Icon(_contents[index].contentIcon, color: Colors.green, size: 30),
-                onTap: () {
-                  setState(() => _selectedIndex = index);
-                  Navigator.pop(context);
-                },
-              ),      
-          ],
+              for(int index = 0; index < _contents.length; index++)
+                ListTile(
+                  title: Text(_contents[index].contentTitle, style: MyFont.headlineStyleBlack15),
+                  leading: Icon(_contents[index].contentIcon, color: Colors.green, size: 30),
+                  onTap: () {
+                    setState(() => _selectedIndex = index);
+                    Navigator.pop(context);
+                  },
+                ),      
+            ],
+          ),
         ),
       ),
 
       body: SafeArea(
+        bottom: false,
         child: (accountProvider.user != null) ? 
           _contents[_selectedIndex].content : 
           Center(
@@ -158,7 +160,7 @@ class MyStatefulWidgetState extends State<MyStatefulWidget> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
-                  child: Text(buttonTitle, style: TextStyle(fontSize: 20, color: textColor, fontWeight: FontWeight.w600)),
+                  child: Text(buttonTitle, style: MyFont.headlineStyleBlack20),
                 )
               ],
             ),
