@@ -12,7 +12,7 @@ void main() async{
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   sleep(const Duration(seconds: 1));
-  FlutterNativeSplash.remove();
+  
   runApp(
     ChangeNotifierProvider(
       create: (context) => GoogleAccountProvider(),

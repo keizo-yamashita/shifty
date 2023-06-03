@@ -14,7 +14,7 @@ class MyFont{
   static TextStyle defaultStyleWhite15  = GoogleFonts.mPlus1(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold);
   static TextStyle defaultStyleGrey13   = GoogleFonts.mPlus1(color: Colors.grey,  fontSize: 13, fontWeight: FontWeight.bold, height: 0.8);
   static TextStyle defaultStyleBlack13  = GoogleFonts.mPlus1(color: Colors.black, fontSize: 13, fontWeight: FontWeight.bold, height: 0.8);
-  static TextStyle defaultStyleWhite13  = GoogleFonts.mPlus1(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold, height: 0.8);
+  static TextStyle defaultStyleWhite13  = GoogleFonts.mPlus1(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold);
   static TextStyle defaultStyleGrey10   = GoogleFonts.mPlus1(color: Colors.grey,  fontSize: 9,  fontWeight: FontWeight.bold);
   static TextStyle defaultStyleBlack10  = GoogleFonts.mPlus1(color: Colors.black, fontSize: 9,  fontWeight: FontWeight.bold);
   static TextStyle defaultStyleWhite10  = GoogleFonts.mPlus1(color: Colors.white, fontSize: 9,  fontWeight: FontWeight.bold);

@@ -213,7 +213,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
 
         // 登録した時間区分一覧
         Container(
-          height:  60,
+          height:  70,
           width: screenSize.width * 0.8,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -241,7 +241,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 20),
-              child: Text("${item.startTime.format(context)}\n~\n${item.endTime.format(context)}", style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+              child: Text("${item.startTime.hour.toString().padLeft(2, '0')}:${item.startTime.minute.toString().padLeft(2, '0')}\n 〜 \n${item.endTime.hour.toString().padLeft(2, '0')}:${item.endTime.minute.toString().padLeft(2, '0')}", style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
             ),
             IconButton(
               iconSize: 20,

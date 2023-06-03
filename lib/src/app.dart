@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 // my file
 import 'package:shift/src/functions/font.dart';
@@ -18,6 +19,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     var accountProvider = Provider.of<GoogleAccountProvider>(context);
     accountProvider.silentLogin();
+    FlutterNativeSplash.remove();
+    
     return MaterialApp(
       title: 'シフト表作成アプリ',
       theme: ThemeData(
