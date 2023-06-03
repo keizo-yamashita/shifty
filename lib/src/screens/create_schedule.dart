@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shift/src/functions/shift_table.dart';
-import 'package:shift/src/screens/input_time_division.dart';
-import 'package:shift/src/screens/input_assign_num.dart';
-import 'package:shift/src/screens/input_deadline_duration.dart';
-import 'package:shift/src/screens/check_shift_table.dart';
+import 'package:shift/src/screens/create_shift/input_time_division.dart';
+import 'package:shift/src/screens/create_shift/make_rules.dart';
+import 'package:shift/src/screens/create_shift/input_date_duration.dart';
+import 'package:shift/src/screens/create_shift/check_shift_table.dart';
 
 // シフト表の作成に必要な変数
-ShiftTable shiftTable  = ShiftTable();
-bool inputTimeDivsFlag = false;
-bool inputDeadlineFlag = false;
+ShiftTable _shiftTable  = ShiftTable();
+bool _inputTimeDivsFlag = false;
+bool _inputDeadlineFlag = false;
 int _selectedIndex     = 0;
 
 class CreateScheduleWidget extends StatefulWidget {
@@ -26,10 +26,10 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
     var screenSize = MediaQuery.of(context).size;
     
     final screens = [
-      InputTimeDivisions(shiftTable: shiftTable),
-      InputAssignNum(shiftTable: shiftTable),
-      InputDeadlineDuration(shiftTable: shiftTable),
-      CheckShiftTable(shiftTable: shiftTable),
+      InputTimeDivisions(shiftTable:    _shiftTable),
+      InputAssignNum(shiftTable:        _shiftTable),
+      InputDeadlineDuration(shiftTable: _shiftTable),
+      CheckShiftTable(shiftTable:       _shiftTable),
     ];
 
     return Scaffold(
@@ -68,7 +68,7 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
   }
 
   void _onCreateScheduleItemTapped(int index) {
-    if(index != 0 && shiftTable.timeDivs.isEmpty){
+    if(index != 0 && _shiftTable.timeDivs.isEmpty){
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -81,26 +81,6 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
                 onPressed: () {
                   Navigator.pop(context);
                   _selectedIndex = 0; 
-                  setState(() {});
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }else if(false){
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: const Text('STEP 3 : 入力エラー\n', style: TextStyle(color: Colors.red)),
-            content: const Text('"シフト表の期間"及び"希望表の入力期間"を設定してください'),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                child: const Text('OK', style: TextStyle(color: Colors.red)),
-                onPressed: () {
-                  Navigator.pop(context);
-                  _selectedIndex = 2;
                   setState(() {});
                 },
               ),

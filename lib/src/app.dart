@@ -6,11 +6,13 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 // my file
 import 'package:shift/src/functions/font.dart';
-import 'package:shift/src/screens/account.dart';
-import 'package:shift/src/screens/create_schedule.dart';
-import 'package:shift/src/screens/home.dart';
-import 'package:shift/src/functions/notification.dart';
 import 'package:shift/src/functions/google_login_provider.dart';
+
+import 'package:shift/src/screens/home.dart';
+import 'package:shift/src/screens/create_schedule.dart';
+import 'package:shift/src/screens/account.dart';
+import 'package:shift/src/functions/notification.dart';
+import 'package:shift/src/screens/setting.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -20,7 +22,7 @@ class MyApp extends StatelessWidget {
     var accountProvider = Provider.of<GoogleAccountProvider>(context);
     accountProvider.silentLogin();
     FlutterNativeSplash.remove();
-    
+
     return MaterialApp(
       title: 'シフト表作成アプリ',
       theme: ThemeData(
@@ -49,7 +51,8 @@ class MyStatefulWidget extends StatefulWidget {
 
 class MyStatefulWidgetState extends State<MyStatefulWidget> {
   final List<MenuContent> _contents = [
-    MenuContent(contentTitle: "シフト表一覧", contentIcon: Icons.home, content: const CreateScheduleWidget()),
+    MenuContent(contentTitle: "シフト表一覧", contentIcon: Icons.home, content: const HomeWidget()),
+    MenuContent(contentTitle: "シフト表作成", contentIcon: Icons.create, content: const CreateScheduleWidget()),
     MenuContent(contentTitle: "お知らせ", contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
     MenuContent(contentTitle: "アカウント", contentIcon: Icons.person_2, content: const AccountScreen()),
     MenuContent(contentTitle: "設定", contentIcon: Icons.settings, content: const HomeScreen()), 
@@ -128,7 +131,21 @@ class MyStatefulWidgetState extends State<MyStatefulWidget> {
               ],
             )
           )
-      ) 
+      ),
+      
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (int index){
+          setState((){
+            _selectedIndex = index;
+          });
+        },
+        iconSize: 30,
+        selectedFontSize: 13,
+        unselectedFontSize: 10,
+        items: List<BottomNavigationBarItem>.generate(_contents.length, (index) => BottomNavigationBarItem(icon: Icon(_contents[index].contentIcon), label: _contents[index].contentTitle)),
+        type: BottomNavigationBarType.fixed
+      ),
     );
   }
 

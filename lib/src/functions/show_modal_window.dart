@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 Future<dynamic> showModalWindow(BuildContext context, Widget child){
   return showModalBottomSheet(
+    useRootNavigator: true,
     //モーダルの背景の色、透過
     backgroundColor: Colors.transparent,
     //ドラッグ可能にする（高さもハーフサイズからフルサイズになる様子）
@@ -9,7 +11,6 @@ Future<dynamic> showModalWindow(BuildContext context, Widget child){
     context: context,
     builder: (BuildContext context) {
       return Container(
-        margin: const EdgeInsets.only(top: 128, right: 8, left: 8),
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -20,5 +21,22 @@ Future<dynamic> showModalWindow(BuildContext context, Widget child){
         child: child,
       );
     }
+  );
+}
+
+Future<dynamic> showModalWindowCupertino(BuildContext context, Widget child, double height){
+  return showCupertinoModalPopup(
+    context: context,
+    builder: (_) => Container(
+      height: height,
+      color: CupertinoColors.white,
+      child: SizedBox(
+      height: MediaQuery.of(context).size.height * 0.3,
+      width: double.maxFinite,
+      child: Material(
+        child: child
+      ),
+    )
+    )
   );
 }
