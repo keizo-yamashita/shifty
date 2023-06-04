@@ -185,6 +185,8 @@ class TimeDivisionState extends State<InputTimeDivisions> {
     double _height = 40;
     double _boader = 2;
 
+    var timeDivs = widget._shiftTable.timeDivs;
+    
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -193,13 +195,10 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           width: 50,
           child: Column(
             children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: _timeDivsTemp.length,
-                itemBuilder: (context, i) => SizedBox(
-                  height: _height + _boader,
-                  child: Text("${_timeDivsTemp[i].startTime.hour.toString().padLeft(2, '0')}:${_timeDivsTemp[i].startTime.minute.toString().padLeft(2, '0')} -", style: MyFont.headlineStyleGreen15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
-                ),
+              for(final timeDiv in _timeDivsTemp)
+              SizedBox(
+                height: _height + _boader,
+                child: Text("${timeDiv.startTime.hour.toString().padLeft(2, '0')}:${timeDiv.startTime.minute.toString().padLeft(2, '0')} -", style: MyFont.headlineStyleGreen15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
               ),
               SizedBox(
                 height: _height + _boader,
@@ -213,46 +212,38 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           child: Column(
             children: [
               const Padding(padding: EdgeInsets.all(5)),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget._shiftTable.timeDivs.length,
-                itemBuilder: (context, i) {
-                  
-                  var target   = widget._shiftTable.timeDivs[i];
-                  var duration = ((target.endTime.hour*60 + target.endTime.minute) - (target.startTime.hour*60+target.startTime.minute)) / _durationTemp;
-
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(_boader/2),
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              if(i+1 != widget._shiftTable.timeDivs.length){
-                                widget._shiftTable.timeDivs[i].endTime =  widget._shiftTable.timeDivs[i+1].endTime;
-                                widget._shiftTable.timeDivs[i].name = "${widget._shiftTable.timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${widget._shiftTable.timeDivs[i].startTime.minute.toString().padLeft(2, '0')} 〜 ${widget._shiftTable.timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${widget._shiftTable.timeDivs[i].endTime.minute.toString().padLeft(2, '0')}";
-                                widget._shiftTable.timeDivs.removeAt(i+1);
-                              }
-                            });
-                          },
-                          splashColor: MyFont.backGroundColor,
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: MyFont.primaryColor,
-                              borderRadius: BorderRadius.circular(10.0)
-                            ),
-                            height: (_height*duration)+(_boader*(duration-1)),
-                            child: Center(
-                              child: Text("${widget._shiftTable.timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${widget._shiftTable.timeDivs[i].startTime.minute.toString().padLeft(2, '0')} 〜 ${widget._shiftTable.timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${widget._shiftTable.timeDivs[i].endTime.minute.toString().padLeft(2, '0')}", style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis)
-                            )
-                          ),
+              for(int i = 0; i < widget._shiftTable.timeDivs.length; i++)
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(_boader/2),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          if(i+1 != timeDivs.length){
+                            timeDivs[i].endTime =  timeDivs[i+1].endTime;
+                            timeDivs[i].name = "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')} 〜 ${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}";
+                            timeDivs.removeAt(i+1);
+                          }
+                        });
+                      },
+                      splashColor: MyFont.backGroundColor,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: MyFont.primaryColor,
+                          borderRadius: BorderRadius.circular(10.0)
+                        ),
+                        height: (_height*(( (timeDivs[i].endTime.hour*60 + timeDivs[i].endTime.minute) - (timeDivs[i].startTime.hour*60+timeDivs[i].startTime.minute) ) / _durationTemp).ceil())
+                        +(_boader*((((timeDivs[i].endTime.hour*60 + timeDivs[i].endTime.minute) - (timeDivs[i].startTime.hour*60+timeDivs[i].startTime.minute)) / _durationTemp).ceil()-1)),
+                        child: Center(
+                          child: Text("${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')} 〜 ${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}", style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis)
                         )
                       ),
-                    ],
-                  );
-                }
-              ),
+                    )
+                  ),
+                ],
+              )
             ],
           ),
         ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shift/src/functions/font.dart';
-import 'package:shift/src/screens/create_schedule.dart';
+import 'package:shift/src/screens/createScreen/create_schedule.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({Key? key}) : super(key: key);
@@ -16,13 +16,16 @@ class HomeWidgetState extends State<HomeWidget> {
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: MyFont.backGroundColor,
-        backgroundColor: MyFont.primaryColor,
-        child: const Icon(Icons.add, size: 40),
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (c) => const CreateScheduleWidget()));
-        },
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: FloatingActionButton(
+          foregroundColor: MyFont.backGroundColor,
+          backgroundColor: MyFont.primaryColor,
+          child: const Icon(Icons.add, size: 40),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (c) => const CreateScheduleWidget()));
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Center(
