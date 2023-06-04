@@ -107,9 +107,9 @@ class ShiftTable{
 }
 
 class TimeDivision{
-  final TimeOfDay startTime;
-  final TimeOfDay endTime;
-  final String name;
+  TimeOfDay startTime;
+  TimeOfDay endTime;
+  String name;
 
   TimeDivision({
     required this.name,

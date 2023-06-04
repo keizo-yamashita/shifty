@@ -10,15 +10,18 @@ Future<dynamic> showModalWindow(BuildContext context, Widget child){
     isScrollControlled: true,
     context: context,
     builder: (BuildContext context) {
-      return Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
           ),
+          child: child,
         ),
-        child: child,
       );
     }
   );

@@ -1,78 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 // my file
 import 'package:shift/src/functions/font.dart';
 import 'package:shift/src/functions/google_login_provider.dart';
 
+import 'package:shift/src/screens/sign_in.dart';
 import 'package:shift/src/screens/home.dart';
-import 'package:shift/src/screens/create_schedule.dart';
 import 'package:shift/src/screens/account.dart';
-import 'package:shift/src/functions/notification.dart';
+import 'package:shift/src/screens/notification.dart';
 import 'package:shift/src/screens/setting.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
+class AppWidget extends StatefulWidget {
+  const AppWidget({Key? key}) : super(key: key);
   @override
-  Widget build(BuildContext context) {
-    var accountProvider = Provider.of<GoogleAccountProvider>(context);
-    accountProvider.silentLogin();
-    FlutterNativeSplash.remove();
-
-    return MaterialApp(
-      title: 'シフト表作成アプリ',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      localizationsDelegates:const  [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('ja', ''),],
-
-      home: const MyStatefulWidget(),
-      scrollBehavior: const MaterialScrollBehavior().copyWith(
-        dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown},
-      ),
-    );
-  }
+  State<AppWidget> createState() => AppWidgetState();
 }
 
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key? key}) : super(key: key);
-  @override
-  State<MyStatefulWidget> createState() => MyStatefulWidgetState();
-}
-
-class MyStatefulWidgetState extends State<MyStatefulWidget> {
+class AppWidgetState extends State<AppWidget> {
   final List<MenuContent> _contents = [
-    MenuContent(contentTitle: "シフト表一覧", contentIcon: Icons.home, content: const HomeWidget()),
-    MenuContent(contentTitle: "シフト表作成", contentIcon: Icons.create, content: const CreateScheduleWidget()),
-    MenuContent(contentTitle: "お知らせ", contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
-    MenuContent(contentTitle: "アカウント", contentIcon: Icons.person_2, content: const AccountScreen()),
-    MenuContent(contentTitle: "設定", contentIcon: Icons.settings, content: const HomeScreen()), 
+    MenuContent(contentTitle: "マイシフト", contentIcon: Icons.home,                            content: const HomeWidget()),
+    // MenuContent(contentTitle: "シフト表作成", contentIcon: Icons.create,                          content: const CreateScheduleWidget()),
+    MenuContent(contentTitle: "お知らせ",     contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
+    MenuContent(contentTitle: "アカウント",   contentIcon: Icons.person_2,                        content: const AccountScreen()),
+    MenuContent(contentTitle: "設定",         contentIcon: Icons.settings,                        content: const HomeScreen()), 
   ];
   
   int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    
     var accountProvider = Provider.of<GoogleAccountProvider>(context);
     var screenSize      = MediaQuery.of(context).size;
 
-    return Scaffold(
-      // appBar: AppBar(title: const Text("",style: TextStyle(color: Colors.white))),
+    // Sign In Cheack
+    return (accountProvider.user == null) ? const SignInScreen() : 
+    
+    Scaffold(
+      //AppBar
+      appBar: AppBar(
+        title: Text(_contents[_selectedIndex].contentTitle ,style: MyFont.headlineStyleGreen20),
+        backgroundColor: MyFont.backGroundColor,
+        foregroundColor: MyFont.primaryColor,
+        bottomOpacity: 2.0,
+        elevation: 2.0,
+      ),
+
+      // Main Contents
+      body: SafeArea(
+        bottom: false,
+        child: _contents[_selectedIndex].content
+      ),
+      
+      // Drawer
       drawer: Drawer(
         width: screenSize.width * 0.7,
-        child: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(
+        child: Column(
+          children: [
+            Container(
+              decoration: const BoxDecoration(color: MyFont.primaryColor),
+              child: SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10, 30, 10, 20),
                   child: Row(
@@ -95,8 +83,8 @@ class MyStatefulWidgetState extends State<MyStatefulWidget> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(accountProvider.user?.displayName ?? '', style: MyFont.headlineStyleBlack20, overflow: TextOverflow.ellipsis),
-                              Text(accountProvider.user?.email ?? '', style: MyFont.defaultStyleGrey15, overflow: TextOverflow.ellipsis),
+                              Text(accountProvider.user?.displayName ?? '', style: MyFont.headlineStyleWhite20, overflow: TextOverflow.ellipsis),
+                              Text(accountProvider.user?.email ?? '', style: MyFont.defaultStyleWhite15, overflow: TextOverflow.ellipsis),
                             ],
                           ),
                         ),
@@ -105,99 +93,48 @@ class MyStatefulWidgetState extends State<MyStatefulWidget> {
                   )
                 ),
               ),
-              for(int index = 0; index < _contents.length; index++)
-                ListTile(
-                  title: Text(_contents[index].contentTitle, style: MyFont.headlineStyleBlack15),
-                  leading: Icon(_contents[index].contentIcon, color: Colors.green, size: 30),
-                  onTap: () {
-                    setState(() => _selectedIndex = index);
-                    Navigator.pop(context);
-                  },
-                ),      
-            ],
-          ),
+            ),
+            for(int index = 0; index < _contents.length; index++)
+            ListTile(
+              title: Text(_contents[index].contentTitle, style: MyFont.headlineStyleBlack15),
+              leading: Icon(_contents[index].contentIcon, color: MyFont.primaryColor, size: 30),
+              onTap: () {
+                setState(() => _selectedIndex = index);
+                Navigator.pop(context);
+              },
+            ),      
+          ],
         ),
-      ),
-
-      body: SafeArea(
-        bottom: false,
-        child: (accountProvider.user != null) ? 
-          _contents[_selectedIndex].content : 
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                signInButton(accountProvider, "assets/google_logo.png", "Google でサインインする", Colors.white, Colors.black),
-              ],
-            )
-          )
       ),
       
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (int index){
-          setState((){
-            _selectedIndex = index;
-          });
-        },
-        iconSize: 30,
-        selectedFontSize: 13,
-        unselectedFontSize: 10,
-        items: List<BottomNavigationBarItem>.generate(_contents.length, (index) => BottomNavigationBarItem(icon: Icon(_contents[index].contentIcon), label: _contents[index].contentTitle)),
-        type: BottomNavigationBarType.fixed
-      ),
-    );
-  }
-
-  Widget signInButton(GoogleAccountProvider account, String imageUri, String buttonTitle, Color baseColor, Color textColor){
-    
-    return OutlinedButton(
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(baseColor),
-        shape: MaterialStateProperty.all(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40),
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            blurRadius: 2,
+            spreadRadius: 2,
           ),
+        ]),
+
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (int index){
+            setState((){
+              _selectedIndex = index;
+            });
+          },
+          backgroundColor: MyFont.backGroundColor,
+          selectedItemColor: MyFont.primaryColor,
+          unselectedItemColor: MyFont.hiddenColor,
+          iconSize: 30,
+          selectedFontSize: 13,
+          unselectedFontSize: 10,
+          items: List<BottomNavigationBarItem>.generate(_contents.length, (index) => BottomNavigationBarItem(icon: Icon(_contents[index].contentIcon), label: _contents[index].contentTitle)),
+          type: BottomNavigationBarType.fixed
         ),
       ),
-      onPressed: () async {
-        setState(() {
-          account.login();
-        });
-      },
-      child: Column(
-        mainAxisAlignment:  MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image(
-                  image: AssetImage(imageUri),
-                  height: 35.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(buttonTitle, style: MyFont.headlineStyleBlack20),
-                )
-              ],
-            ),
-          ),
-        ],
-      )
     );
   }
-}
-
-class MyCustomScrollBehavior extends MaterialScrollBehavior {
-  // Override behavior methods and getters like dragDevices
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-  };
 }
 
 class MenuContent {

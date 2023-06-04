@@ -8,12 +8,6 @@
       "languageVersion": "2.18"
     },
     {
-      "name": "archive",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/archive-3.3.7",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "args",
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/args-2.4.1",
       "packageUri": "lib/",
@@ -68,20 +62,8 @@
       "languageVersion": "2.18"
     },
     {
-      "name": "convert",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/convert-3.1.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.18"
-    },
-    {
       "name": "crypto",
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/crypto-3.0.3",
-      "packageUri": "lib/",
-      "languageVersion": "2.19"
-    },
-    {
-      "name": "csslib",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/csslib-0.17.3",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
@@ -170,12 +152,6 @@
       "languageVersion": "2.18"
     },
     {
-      "name": "flutter_native_splash",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/flutter_native_splash-2.3.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.18"
-    },
-    {
       "name": "flutter_test",
       "rootUri": "file:///Library/Flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -236,12 +212,6 @@
       "languageVersion": "2.19"
     },
     {
-      "name": "html",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/html-0.15.3",
-      "packageUri": "lib/",
-      "languageVersion": "2.17"
-    },
-    {
       "name": "http",
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/http-0.13.6",
       "packageUri": "lib/",
@@ -252,12 +222,6 @@
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/http_parser-4.0.2",
       "packageUri": "lib/",
       "languageVersion": "2.12"
-    },
-    {
-      "name": "image",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/image-4.0.17",
-      "packageUri": "lib/",
-      "languageVersion": "2.15"
     },
     {
       "name": "intl",
@@ -350,12 +314,6 @@
       "languageVersion": "2.17"
     },
     {
-      "name": "petitparser",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/petitparser-5.4.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.19"
-    },
-    {
       "name": "platform",
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/platform-3.1.0",
       "packageUri": "lib/",
@@ -366,12 +324,6 @@
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.4",
       "packageUri": "lib/",
       "languageVersion": "2.17"
-    },
-    {
-      "name": "pointycastle",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/pointycastle-3.7.3",
-      "packageUri": "lib/",
-      "languageVersion": "2.14"
     },
     {
       "name": "process",
@@ -390,6 +342,24 @@
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/quiver-3.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.17"
+    },
+    {
+      "name": "sign_in_with_apple",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/sign_in_with_apple-4.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "sign_in_with_apple_platform_interface",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/sign_in_with_apple_platform_interface-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "sign_in_with_apple_web",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/sign_in_with_apple_web-1.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "simple_gesture_detector",
@@ -446,6 +416,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "time_planner",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/time_planner-0.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "time_range_picker",
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/time_range_picker-2.2.0",
       "packageUri": "lib/",
@@ -454,12 +430,6 @@
     {
       "name": "typed_data",
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/typed_data-1.3.2",
-      "packageUri": "lib/",
-      "languageVersion": "2.17"
-    },
-    {
-      "name": "universal_io",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/universal_io-2.2.2",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -482,25 +452,13 @@
       "languageVersion": "2.17"
     },
     {
-      "name": "xml",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/xml-6.3.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.19"
-    },
-    {
-      "name": "yaml",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/yaml-3.1.2",
-      "packageUri": "lib/",
-      "languageVersion": "2.19"
-    },
-    {
       "name": "shift",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2023-06-03T05:56:30.400855Z",
+  "generated": "2023-06-04T09:10:53.342673Z",
   "generator": "pub",
   "generatorVersion": "3.1.0-160.0.dev"
 }

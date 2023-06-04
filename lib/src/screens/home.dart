@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:shift/src/functions/font.dart';
+import 'package:shift/src/screens/create_schedule.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({Key? key}) : super(key: key);
@@ -16,19 +16,23 @@ class HomeWidgetState extends State<HomeWidget> {
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        foregroundColor: MyFont.backGroundColor,
+        backgroundColor: MyFont.primaryColor,
+        child: const Icon(Icons.add, size: 40),
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (c) => const CreateScheduleWidget()));
+        },
+      ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: screenSize.height/20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(onPressed:(){}, child: Text("登録する", style: MyFont.headlineStyleGreen15)),
-                ElevatedButton(onPressed:(){}, child: Text("作成する", style: MyFont.headlineStyleGreen15)),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: screenSize.height/20),
+              Text("登録されているシフト表はありません", style: MyFont.defaultStyleGrey15),
             ],
-            )
-          ],
+          ),
         ),
       )
     );
