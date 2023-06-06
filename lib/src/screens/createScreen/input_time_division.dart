@@ -24,80 +24,84 @@ class TimeDivisionState extends State<InputTimeDivisions> {
   @override
   Widget build(BuildContext context) {
     
-    var screenSize = MediaQuery.of(context).size;
+    var appBarHeight = AppBar().preferredSize.height;
+    var screenSize   = MediaQuery.of(context).size;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment:MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
-              margin: const EdgeInsets.only(right: 20),
-              decoration: BoxDecoration(
-                color: MyFont.primaryColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text("STEP 1", style: MyFont.headlineStyleWhite20),
-            ),
-            Text("時間区分の設定", style: MyFont.headlineStyleGreen20),
-          ],             
-        ),
-        
-        SizedBox(height: screenSize.height/30),
-        Text("まずは，基本となる時間区分を設定しましょう", style: MyFont.defaultStyleGrey15),
-        SizedBox(height: screenSize.height/30),
-
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            buildInputBox("始業時間", buildTimePicker(_startTime, DateTime(1,1,1,0,0), DateTime(1,1,1,23,59), 5, setStartTime)),
-            Padding(
-              padding: const EdgeInsets.only(top: 30),
-              child: Text(" 〜 ", style: MyFont.headlineStyleGreen15),
-            ),
-            buildInputBox("終業時間", buildTimePicker(_endTime, _startTime.add(const Duration(hours: 1)), DateTime(1,1,1,23,59), 5, setEndTime)),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Text(" ... ", style: MyFont.headlineStyleGreen15),
-            ),
-            buildInputBox("管理間隔", buildTimePicker(_duration, DateTime(1,1,1,0,10), DateTime(1,1,1,6,0), 5, setDuration)),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Text("     ", style: MyFont.headlineStyleGreen15),
-            ),
-            buildInputBox("", InkWell(
-              onTap: () {
-                setState(() {
-                  createMimimumDivision(_startTime, _endTime, _duration);
-                });
-              },
-              child: Container(
-                height: 50,
-                width: 60,
-                padding: const EdgeInsets.all(12.0),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: screenSize.height/20 + appBarHeight), 
+          Row(
+            mainAxisAlignment:MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
+                margin: const EdgeInsets.only(right: 20),
                 decoration: BoxDecoration(
                   color: MyFont.primaryColor,
-                  borderRadius: BorderRadius.circular(9), 
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Icon(
-                  size: 20,
-                  Icons.check,  
-                  color: MyFont.backGroundColor
-                ),
+                child: Text("STEP 1", style: MyFont.headlineStyleWhite20),
               ),
-            ))
-          ],
-        ),
-
-        const Divider(height: 50, thickness: 1),
-
-        // 登録した時間区分一覧
-        (widget._shiftTable.timeDivs.isEmpty) ? Text("登録されている時間区分がありません", style: MyFont.defaultStyleGrey15) : buildScheduleEditor(),
-        SizedBox(height: screenSize.height / 20),
-      ],
+              Text("時間区分の設定", style: MyFont.headlineStyleGreen20),
+            ],             
+          ),
+          
+          SizedBox(height: screenSize.height/30),
+          Text("まずは，基本となる時間区分を設定しましょう", style: MyFont.defaultStyleGrey15),
+          SizedBox(height: screenSize.height/30),
+    
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              buildInputBox("始業時間", buildTimePicker(_startTime, DateTime(1,1,1,0,0), DateTime(1,1,1,23,59), 5, setStartTime)),
+              Padding(
+                padding: const EdgeInsets.only(top: 30),
+                child: Text(" 〜 ", style: MyFont.headlineStyleGreen15),
+              ),
+              buildInputBox("終業時間", buildTimePicker(_endTime, _startTime.add(const Duration(hours: 1)), DateTime(1,1,1,23,59), 5, setEndTime)),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Text(" ... ", style: MyFont.headlineStyleGreen15),
+              ),
+              buildInputBox("管理間隔", buildTimePicker(_duration, DateTime(1,1,1,0,10), DateTime(1,1,1,6,0), 5, setDuration)),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Text("     ", style: MyFont.headlineStyleGreen15),
+              ),
+              buildInputBox("", InkWell(
+                onTap: () {
+                  setState(() {
+                    createMimimumDivision(_startTime, _endTime, _duration);
+                  });
+                },
+                child: Container(
+                  height: 50,
+                  width: 60,
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: MyFont.primaryColor,
+                    borderRadius: BorderRadius.circular(9), 
+                  ),
+                  child: const Icon(
+                    size: 20,
+                    Icons.check,  
+                    color: MyFont.backGroundColor
+                  ),
+                ),
+              ))
+            ],
+          ),
+    
+          const Divider(height: 50, thickness: 1),
+    
+          // 登録した時間区分一覧
+          (widget._shiftTable.timeDivs.isEmpty) ? Text("登録されている時間区分がありません", style: MyFont.defaultStyleGrey15) : buildScheduleEditor(),
+          SizedBox(height: screenSize.height / 20 + appBarHeight),
+        ],
+      ),
     );
   }
 
@@ -107,7 +111,15 @@ class TimeDivisionState extends State<InputTimeDivisions> {
 
     return SizedBox(
       height: 50,
-      child: CupertinoButton(
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          backgroundColor: MyFont.backGroundColor,
+          shadowColor: MyFont.hiddenColor, 
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          side: const BorderSide(color: MyFont.primaryColor),
+        ),
         onPressed: () async {
           await showModalWindow(context, SizedBox(
             height: MediaQuery.of(context).size.height * 0.4,
@@ -153,12 +165,6 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           child: Text(title, style: MyFont.headlineStyleGreen15),
         ),
         Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: MyFont.primaryColor,
-            ),
-            borderRadius: BorderRadius.circular(10.0),
-          ),
           child: child
         )
       ],

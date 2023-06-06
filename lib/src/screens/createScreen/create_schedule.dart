@@ -21,8 +21,6 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
 
   @override
   Widget build(BuildContext context) {
-
-    var screenSize = MediaQuery.of(context).size;
     
     final screens = [
       InputTimeDivisions(shiftTable:    _shiftTable),
@@ -35,39 +33,23 @@ class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
       //AppBar
       appBar: AppBar(
         title: Text("シフト表の作成",style: MyFont.headlineStyleGreen20),
-        backgroundColor: MyFont.backGroundColor,
+        backgroundColor: MyFont.backGroundColor.withOpacity(0.9),
         foregroundColor: MyFont.primaryColor,
         bottomOpacity: 2.0,
         elevation: 2.0,
       ),
-
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment:  CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: screenSize.height/20),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: screenSize.width * 0.6,
-                maxWidth: screenSize.width * 1.0,
-              ),
-              child: screens[_selectedIndex], 
-            ),
-            SizedBox(height: screenSize.height / 20),
-          ],
-        ),
-      ),
       
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+
+      body: screens[_selectedIndex],
+
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            blurRadius: 1,
-            spreadRadius: 1,
-          ),
-        ]),
+        decoration: const BoxDecoration(
+          color: Colors.transparent,
+        ),
         child: BottomNavigationBar(
-          backgroundColor: MyFont.backGroundColor,
+          backgroundColor: MyFont.backGroundColor.withOpacity(0.9),
           selectedItemColor: MyFont.primaryColor,
           unselectedItemColor: MyFont.hiddenColor,
           currentIndex: _selectedIndex,

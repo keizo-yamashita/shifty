@@ -28,67 +28,72 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
 
   @override
   Widget build(BuildContext context) {
+    var appBarHeight = AppBar().preferredSize.height;
     var screenSize = MediaQuery.of(context).size;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment:MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
-              margin: const EdgeInsets.only(right: 20),
-              decoration: BoxDecoration(
-                color: MyFont.primaryColor,
-                borderRadius: BorderRadius.circular(20),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: screenSize.height / 20 + appBarHeight),
+          Row(
+            mainAxisAlignment:MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
+                margin: const EdgeInsets.only(right: 20),
+                decoration: BoxDecoration(
+                  color: MyFont.primaryColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text("STEP 3", style: MyFont.headlineStyleWhite20),
               ),
-              child: Text("STEP 3", style: MyFont.headlineStyleWhite20),
-            ),
-            Text("期間を設定", style: MyFont.headlineStyleGreen20),
-          ],                  
-        ),
-        SizedBox(height: screenSize.height/30),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50),
-          child: Text("「シフト期間」と「シフト希望入力期間」を決めましょう", style: MyFont.defaultStyleGrey15),
-        ),
-        SizedBox(height: screenSize.height/30),
-
-        Column(
-          children: [
-            Text("シフト期間", style: MyFont.headlineStyleGreen15),
-            ElevatedButton(
+              Text("期間を設定", style: MyFont.headlineStyleGreen20),
+            ],                  
+          ),
+          SizedBox(height: screenSize.height/30),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50),
+            child: Text("「シフト期間」と「シフト希望入力期間」を決めましょう", style: MyFont.defaultStyleGrey15),
+          ),
+          SizedBox(height: screenSize.height/30),
+    
+          Column(
+            children: [
+              Text("シフト期間", style: MyFont.headlineStyleGreen15),
+              ElevatedButton(
+                style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MyFont.primaryColor)),
+                onPressed: (){
+                  final x = pickDateRange(context, widget.shiftTable.shiftDateRange);
+                  setState(() {
+                    x.then((value) => widget.shiftTable.shiftDateRange = value);
+                    print( widget.shiftTable.shiftDateRange.start.day.toString());
+                  }); 
+                },
+                child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.shiftDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.shiftDateRange.end)}", style: MyFont.headlineStyleWhite15),
+              )
+            ],
+          ),
+    
+          SizedBox(height: screenSize.height/20),
+    
+          Column(
+            children: [
+              Text("シフト希望入力期間", style: MyFont.headlineStyleGreen15),
+              ElevatedButton(
               style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MyFont.primaryColor)),
               onPressed: (){
-                final x = pickDateRange(context, widget.shiftTable.shiftDateRange);
-                setState(() {
-                  x.then((value) => widget.shiftTable.shiftDateRange = value);
-                  print( widget.shiftTable.shiftDateRange.start.day.toString());
-                });
+                final x = pickDateRange(context, widget.shiftTable.inputDateRange);
+                x.then((value) => widget.shiftTable.inputDateRange = value);
+                setState(() {});
               },
-              child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.shiftDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.shiftDateRange.end)}", style: MyFont.headlineStyleWhite15),
-            )
-          ],
-        ),
-
-        SizedBox(height: screenSize.height/30),
-
-        Column(
-          children: [
-            Text("シフト希望入力期間", style: MyFont.headlineStyleGreen15),
-            ElevatedButton(
-            style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MyFont.primaryColor)),
-            onPressed: (){
-              final x = pickDateRange(context, widget.shiftTable.inputDateRange);
-              x.then((value) => widget.shiftTable.inputDateRange = value);
-              setState(() {});
-            },
-            child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.inputDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.inputDateRange.end)}", style: MyFont.headlineStyleWhite15),
-        )
-          ],
-        ),
-      ],
+              child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.inputDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget.shiftTable.inputDateRange.end)}", style: MyFont.headlineStyleWhite15),
+          )
+            ],
+          ),
+          SizedBox(height: screenSize.height / 20 + appBarHeight),
+        ],
+      ),
     );
   }
 

@@ -28,47 +28,52 @@ class CheckShiftTableState extends State<CheckShiftTable> {
   Widget build(BuildContext context) {
 
     widget.shiftTable.generateShiftTable();
+    var appBarHeight = AppBar().preferredSize.height;
     var screenSize = MediaQuery.of(context).size;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment:MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
-              margin: const EdgeInsets.only(right: 20),
-              decoration: BoxDecoration(
-                color: MyFont.primaryColor,
-                borderRadius: BorderRadius.circular(20),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: screenSize.height / 20 + appBarHeight),
+          Row(
+            mainAxisAlignment:MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
+                margin: const EdgeInsets.only(right: 20),
+                decoration: BoxDecoration(
+                  color: MyFont.primaryColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text("STEP 4", style: MyFont.headlineStyleWhite20),
               ),
-              child: Text("STEP 4", style: MyFont.headlineStyleWhite20),
-            ),
-            Text("シフト表のチェック", style: MyFont.headlineStyleGreen20),
-          ],                  
-        ),
-        SizedBox(height: screenSize.height/30),
-        Text("作成される基本のシフト表を確認してください", style: MyFont.defaultStyleGrey15),
-        SizedBox(height: screenSize.height/30),
-
-        SizedBox(
-          child: Container(
-            decoration: const BoxDecoration(
-              color: MyFont.primaryColor,
-              shape: BoxShape.circle
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.add),
-              color: MyFont.backGroundColor,
-              onPressed: () {
-                showModalWindow(context, createShiftTemplate());
-                setState(() {});
-              }
-            ),
-          )
-        ),
-      ],
+              Text("シフト表のチェック", style: MyFont.headlineStyleGreen20),
+            ],                  
+          ),
+          SizedBox(height: screenSize.height/30),
+          Text("作成される基本のシフト表を確認してください", style: MyFont.defaultStyleGrey15),
+          SizedBox(height: screenSize.height/30),
+    
+          SizedBox(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: MyFont.primaryColor,
+                shape: BoxShape.circle
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.add),
+                color: MyFont.backGroundColor,
+                onPressed: () {
+                  showModalWindow(context, createShiftTemplate());
+                  setState(() {});
+                }
+              ),
+            )
+          ),
+          SizedBox(height: screenSize.height / 20 + appBarHeight),
+        ],
+      ),
     );
   }
 

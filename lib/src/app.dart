@@ -41,17 +41,17 @@ class AppWidgetState extends State<AppWidget> {
       //AppBar
       appBar: AppBar(
         title: Text(_contents[_selectedIndex].contentTitle ,style: MyFont.headlineStyleGreen20),
-        backgroundColor: MyFont.backGroundColor,
+        backgroundColor: MyFont.backGroundColor.withOpacity(0.9),
         foregroundColor: MyFont.primaryColor,
         bottomOpacity: 2.0,
         elevation: 2.0,
       ),
 
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+
       // Main Contents
-      body: SafeArea(
-        bottom: false,
-        child: _contents[_selectedIndex].content
-      ),
+      body: _contents[_selectedIndex].content,
       
       // Drawer
       drawer: Drawer(
@@ -107,31 +107,21 @@ class AppWidgetState extends State<AppWidget> {
         ),
       ),
       
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            blurRadius: 2,
-            spreadRadius: 2,
-          ),
-        ]),
-
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: (int index){
-            setState((){
-              _selectedIndex = index;
-            });
-          },
-          backgroundColor: MyFont.backGroundColor,
-          selectedItemColor: MyFont.primaryColor,
-          unselectedItemColor: MyFont.hiddenColor,
-          iconSize: 30,
-          selectedFontSize: 13,
-          unselectedFontSize: 10,
-          items: List<BottomNavigationBarItem>.generate(_contents.length, (index) => BottomNavigationBarItem(icon: Icon(_contents[index].contentIcon), label: _contents[index].contentTitle)),
-          type: BottomNavigationBarType.fixed
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (int index){
+          setState((){
+            _selectedIndex = index;
+          });
+        },
+        backgroundColor: MyFont.backGroundColor.withOpacity(0.9),
+        selectedItemColor: MyFont.primaryColor,
+        unselectedItemColor: MyFont.hiddenColor,
+        iconSize: 30,
+        selectedFontSize: 13,
+        unselectedFontSize: 10,
+        items: List<BottomNavigationBarItem>.generate(_contents.length, (index) => BottomNavigationBarItem(icon: Icon(_contents[index].contentIcon), label: _contents[index].contentTitle)),
+        type: BottomNavigationBarType.fixed
       ),
     );
   }

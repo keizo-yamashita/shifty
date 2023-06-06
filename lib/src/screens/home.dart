@@ -13,11 +13,12 @@ class HomeWidgetState extends State<HomeWidget> {
   @override
   Widget build(BuildContext context) {
 
+    var appBarHeight = AppBar().preferredSize.height;
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       floatingActionButton: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: EdgeInsets.only(bottom: appBarHeight, right: screenSize.width/20),
         child: FloatingActionButton(
           foregroundColor: MyFont.backGroundColor,
           backgroundColor: MyFont.primaryColor,
@@ -27,12 +28,16 @@ class HomeWidgetState extends State<HomeWidget> {
           },
         ),
       ),
+
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: screenSize.height/20),
+              SizedBox(height: screenSize.height/10 + appBarHeight),
               Text("登録されているシフト表はありません", style: MyFont.defaultStyleGrey15),
             ],
           ),
