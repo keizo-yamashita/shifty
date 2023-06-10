@@ -4,6 +4,7 @@ List<String> weekSelect    = ["すべての週","第1週","第2週","第3週","�
 List<String> weekdaySelect = ["すべての曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日","日曜日"];
 
 class ShiftTable{
+  late String              name;
   late List<ShiftRule>     rules;
   late List<TimeDivision>  timeDivs;
   late List<List<String>>  assignTable;
@@ -11,6 +12,7 @@ class ShiftTable{
   late DateTimeRange       inputDateRange;
 
   ShiftTable(){
+    name           = "";
     rules          = <ShiftRule>[];
     timeDivs       = <TimeDivision>[];
     assignTable    = <List<String>>[];
@@ -69,7 +71,7 @@ class ShiftTable{
     }
   }
 
-  bool addTimeDivision(String name, TimeOfDay startTime, TimeOfDay endTime){
+  bool addTimeDivision(String name, DateTime startTime, DateTime endTime){
     for(int i = 0; i < timeDivs.length; i++){
       if(timeDivs[i].name == name){
         return false;
@@ -87,28 +89,11 @@ class ShiftTable{
       }
     }
   }
-
-  sortTimeDivision(int oldIndex, int newIndex){
-    if (oldIndex < newIndex) {
-      newIndex -= 1;
-    }
-    for(int i = 0; i < rules.length; i++){
-      if(rules[i].timeDivs == (oldIndex+1)){
-        rules[i].timeDivs = newIndex+1;
-      }else if((newIndex + 1 <= rules[i].timeDivs) && (rules[i].timeDivs < oldIndex + 1)){
-        rules[i].timeDivs += 1;
-      }else if((oldIndex + 1 < rules[i].timeDivs) && (rules[i].timeDivs <= newIndex + 1)){
-        rules[i].timeDivs -= 1;
-      }
-    }
-    final TimeDivision item = timeDivs.removeAt(oldIndex);
-    timeDivs.insert(newIndex, item);
-  }
 }
 
 class TimeDivision{
-  TimeOfDay startTime;
-  TimeOfDay endTime;
+  DateTime startTime;
+  DateTime endTime;
   String name;
 
   TimeDivision({

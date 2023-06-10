@@ -6,12 +6,11 @@ import 'package:shift/src/screens/splashScreen/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:shift/src/functions/google_login_provider.dart';
-import 'package:shift/src/functions/font.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
+  
   runApp(
     ChangeNotifierProvider(
       create: (context) => GoogleAccountProvider(),
@@ -30,6 +29,9 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Shifty',
+      theme: ThemeData(
+        primaryColor: Colors.deepOrangeAccent,
+      ),
       debugShowCheckedModeBanner: false,
       localizationsDelegates:const  [
         GlobalMaterialLocalizations.delegate,

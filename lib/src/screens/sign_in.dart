@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shift/src/functions/font.dart';
@@ -32,10 +33,10 @@ class SignInScreen extends StatelessWidget {
     );
   }
 
-    Widget signInButton(BuildContext context, String imageUri, String buttonTitle, Color baseColor, TextStyle textStyle){
+  Widget signInButton(BuildContext context, String imageUri, String buttonTitle, Color baseColor, TextStyle textStyle){
     
     var accountProvider = Provider.of<GoogleAccountProvider>(context);
-
+    
     return OutlinedButton(
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(baseColor),
@@ -46,7 +47,7 @@ class SignInScreen extends StatelessWidget {
         ),
       ),
       onPressed: () async {
-        accountProvider.login(); 
+        accountProvider.login();
       },
       child: Column(
         mainAxisAlignment:  MainAxisAlignment.center,
