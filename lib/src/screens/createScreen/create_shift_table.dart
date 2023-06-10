@@ -11,13 +11,13 @@ import 'package:shift/src/screens/createScreen/screens/register_shift_table.dart
 ShiftTable _shiftTable = ShiftTable();
 int _selectedIndex     = 0;
 
-class CreateScheduleWidget extends StatefulWidget {
-  const CreateScheduleWidget({Key? key}) : super(key: key);
+class CreateShiftTableWidget extends StatefulWidget {
+  const CreateShiftTableWidget({Key? key}) : super(key: key);
   @override
-  State<CreateScheduleWidget> createState() => CreateScheduleWidgetState();
+  State<CreateShiftTableWidget> createState() => CreateShiftTableWidgetState();
 }
 
-class CreateScheduleWidgetState extends State<CreateScheduleWidget> {
+class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
 
   @override
   Widget build(BuildContext context) {

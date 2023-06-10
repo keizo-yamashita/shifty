@@ -10,7 +10,7 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     
     var accountProvider = Provider.of<GoogleAccountProvider>(context);
-    var screenSize = MediaQuery.of(context).size;
+    var screenSize      = MediaQuery.of(context).size;
 
     return Center(
       child: Column(

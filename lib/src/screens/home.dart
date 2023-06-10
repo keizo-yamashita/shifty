@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shift/src/functions/font.dart';
 import 'package:shift/src/screens/createScreen/create_shift_table.dart';
+import 'package:shift/src/screens/inputScreen/input_request.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({Key? key}) : super(key: key);
@@ -27,7 +28,7 @@ class HomeWidgetState extends State<HomeWidget> {
           backgroundColor: MyFont.primaryColor,
           child: const Icon(Icons.add, size: 40),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (c) => const CreateScheduleWidget()));
+            Navigator.push(context, MaterialPageRoute(builder: (c) => const CreateShiftTableWidget()));
           },
         ),
       ),
@@ -52,7 +53,8 @@ class HomeWidgetState extends State<HomeWidget> {
                     return snapshot.data!;
                   }
                 },
-              )
+              ),
+              SizedBox(height: screenSize.height/10 + appBarHeight),
             ],
           ),
         ),
@@ -87,21 +89,30 @@ class HomeWidgetState extends State<HomeWidget> {
             padding: const EdgeInsets.all(8.0),
             child: Container(
               decoration: BoxDecoration(
-                color: MyFont.primaryColor,
+                border: Border.all(
+                  color: MyFont.primaryColor,
+                  width: 1,
+                ),
+                color: MyFont.backGroundColor,
                 borderRadius: BorderRadius.circular(10.0)
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Text(shift.get('name'), style: MyFont.headlineStyleWhite20, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
-                    ),
-                    Text("リクエスト期間 : ${DateFormat('yyyy/MM/dd').format(shift.get('request-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(shift.get('request-end').toDate())}", style: MyFont.defaultStyleWhite15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
-                    Text("　シフト期間　 : ${DateFormat('yyyy/MM/dd').format(shift.get('work-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(shift.get('work-end').toDate())}", style: MyFont.defaultStyleWhite15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
-                  ],
+                child: InkWell(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Text(shift.get('name'), style: MyFont.headlineStyleGreen20, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                      ),
+                      Text("リクエスト期間 : ${DateFormat('yyyy/MM/dd').format(shift.get('request-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(shift.get('request-end').toDate())}", style: MyFont.defaultStyleGrey15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                      Text("　シフト期間　 : ${DateFormat('yyyy/MM/dd').format(shift.get('work-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(shift.get('work-end').toDate())}", style: MyFont.defaultStyleGrey15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (c) => const InputRequestWidget()));
+                  }
                 ),
               )
             ),
