@@ -88,7 +88,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                   child: const Icon(
                     size: 20,
                     Icons.check,  
-                    color: MyFont.backGroundColor
+                    color: MyFont.backgroundColor
                   ),
                 ),
               ))
@@ -113,7 +113,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
       height: 50,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          backgroundColor: MyFont.backGroundColor,
+          backgroundColor: MyFont.backgroundColor,
           shadowColor: MyFont.hiddenColor, 
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -233,7 +233,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                           }
                         });
                       },
-                      splashColor: MyFont.backGroundColor,
+                      splashColor: MyFont.backgroundColor,
                       borderRadius: BorderRadius.circular(10),
                       child: Container(
                         decoration: BoxDecoration(

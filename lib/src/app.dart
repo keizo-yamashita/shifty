@@ -41,7 +41,7 @@ class AppWidgetState extends State<AppWidget> {
       //AppBar
       appBar: AppBar(
         title: Text(_contents[_selectedIndex].contentTitle ,style: MyFont.headlineStyleGreen20),
-        backgroundColor: MyFont.backGroundColor.withOpacity(0.9),
+        backgroundColor: MyFont.backgroundColor.withOpacity(0.9),
         foregroundColor: MyFont.primaryColor,
         bottomOpacity: 2.0,
         elevation: 2.0,
@@ -114,7 +114,7 @@ class AppWidgetState extends State<AppWidget> {
             _selectedIndex = index;
           });
         },
-        backgroundColor: MyFont.backGroundColor.withOpacity(0.9),
+        backgroundColor: MyFont.backgroundColor.withOpacity(0.9),
         selectedItemColor: MyFont.primaryColor,
         unselectedItemColor: MyFont.hiddenColor,
         iconSize: 30,

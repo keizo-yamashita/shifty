@@ -36,8 +36,8 @@ class InputRequestWidgetState extends State<InputRequestWidget> {
       child: Scaffold(
         //AppBar
         appBar: AppBar(
-          title: Text("シフト表の作成",style: MyFont.headlineStyleGreen20),
-          backgroundColor: MyFont.backGroundColor.withOpacity(0.9),
+          title: Text("シフト希望表の入力",style: MyFont.headlineStyleGreen20),
+          backgroundColor: MyFont.backgroundColor.withOpacity(0.9),
           foregroundColor: MyFont.primaryColor,
           bottomOpacity: 2.0,
           elevation: 2.0,
@@ -53,7 +53,7 @@ class InputRequestWidgetState extends State<InputRequestWidget> {
             color: Colors.transparent,
           ),
           child: BottomNavigationBar(
-            backgroundColor: MyFont.backGroundColor.withOpacity(0.9),
+            backgroundColor: MyFont.backgroundColor.withOpacity(0.9),
             selectedItemColor: MyFont.primaryColor,
             unselectedItemColor: MyFont.hiddenColor,
             currentIndex: _selectedIndex,

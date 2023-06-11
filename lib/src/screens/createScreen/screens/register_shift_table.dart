@@ -100,7 +100,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.check),
-                    color: MyFont.backGroundColor,
+                    color: MyFont.backgroundColor,
                     onPressed: () {
                       showModalWindow(context, createShiftTemplate());
                     }
@@ -115,7 +115,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.add),
-                    color: MyFont.backGroundColor,
+                    color: MyFont.backgroundColor,
                     onPressed: () {
                       if(widget._shiftTable.name.isEmpty){
                         showDialog(

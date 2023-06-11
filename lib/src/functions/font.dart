@@ -40,10 +40,11 @@ class MyFont{
   static const TextHeightBehavior defaultBehavior = TextHeightBehavior(applyHeightToLastDescent: false, applyHeightToFirstAscent: false);
 
   // Colors
-  static const backGroundColor = Color(0xffffffff);
-  static const primaryColor    = Color(0xff14C38E);
-  static const secondaryColor  = Color(0xffB8F1B0);
-  static const hiddenColor     = Color(0xff000000);
+  static const backgroundColor          = Color(0xffffffff);
+  static const secondaryBackgroundColor = Color.fromARGB(255, 255, 254, 250);
+  static const primaryColor             = Color(0xff14C38E);
+  static const secondaryColor           = Color(0xffB8F1B0);
+  static const hiddenColor              = Color(0xff000000);
 
   static const gradientDecolation = BoxDecoration(
     gradient: LinearGradient(

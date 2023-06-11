@@ -37,7 +37,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
         //AppBar
         appBar: AppBar(
           title: Text("シフト表の作成",style: MyFont.headlineStyleGreen20),
-          backgroundColor: MyFont.backGroundColor.withOpacity(0.9),
+          backgroundColor: MyFont.backgroundColor.withOpacity(0.9),
           foregroundColor: MyFont.primaryColor,
           bottomOpacity: 2.0,
           elevation: 2.0,
@@ -53,7 +53,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
             color: Colors.transparent,
           ),
           child: BottomNavigationBar(
-            backgroundColor: MyFont.backGroundColor.withOpacity(0.9),
+            backgroundColor: MyFont.backgroundColor.withOpacity(0.9),
             selectedItemColor: MyFont.primaryColor,
             unselectedItemColor: MyFont.hiddenColor,
             currentIndex: _selectedIndex,
