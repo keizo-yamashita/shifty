@@ -23,7 +23,7 @@ class HomeWidgetState extends State<HomeWidget> {
 
     return Scaffold(
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: appBarHeight, right: screenSize.width/20),
+        padding: EdgeInsets.only(bottom: appBarHeight + screenSize.height/40, right: screenSize.width/20),
         child: FloatingActionButton(
           foregroundColor: MyFont.backgroundColor,
           backgroundColor: MyFont.primaryColor,

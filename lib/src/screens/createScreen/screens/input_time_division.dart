@@ -29,28 +29,11 @@ class TimeDivisionState extends State<InputTimeDivisions> {
 
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(height: screenSize.height/10 + appBarHeight), 
-          Row(
-            mainAxisAlignment:MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
-                margin: const EdgeInsets.only(right: 20),
-                decoration: BoxDecoration(
-                  color: MyFont.primaryColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text("STEP 1", style: MyFont.headlineStyleWhite20),
-              ),
-              Text("時間区分の設定", style: MyFont.headlineStyleGreen20),
-            ],             
-          ),
-          
-          SizedBox(height: screenSize.height/30),
           Text("まずは，基本となる時間区分を設定しましょう", style: MyFont.defaultStyleGrey15),
-          SizedBox(height: screenSize.height/30),
+          SizedBox(height: screenSize.height/40),
     
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +78,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
             ],
           ),
     
-          const Divider(height: 50, thickness: 1),
+          const Divider(height: 30, thickness: 1),
     
           // 登録した時間区分一覧
           (widget._shiftTable.timeDivs.isEmpty) ? Text("登録されている時間区分がありません", style: MyFont.defaultStyleGrey15) : buildScheduleEditor(),
@@ -179,7 +162,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
         if(temp.compareTo(end) > 0){
           temp = end;
         }
-        widget._shiftTable.addTimeDivision("${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')} ~ ${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}", DateTime(1, 1, 1, start.hour, start.minute), DateTime(1, 1, 1, temp.hour, temp.minute));
+        widget._shiftTable.addTimeDivision("${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}-${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}", DateTime(1, 1, 1, start.hour, start.minute), DateTime(1, 1, 1, temp.hour, temp.minute));
         start = temp;
       }
       _timeDivsTemp = List.of(widget._shiftTable.timeDivs);
@@ -204,11 +187,11 @@ class TimeDivisionState extends State<InputTimeDivisions> {
               for(final timeDiv in _timeDivsTemp)
                 SizedBox(
                   height: height + boader,
-                  child: Text("${timeDiv.startTime.hour.toString().padLeft(2, '0')}:${timeDiv.startTime.minute.toString().padLeft(2, '0')} -", style: MyFont.headlineStyleGreen15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                  child: Text("${timeDiv.startTime.hour.toString().padLeft(2, '0')}:${timeDiv.startTime.minute.toString().padLeft(2, '0')}-", style: MyFont.headlineStyleGreen15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
                 ),
               SizedBox(
                 height: height + boader,
-                child: Text("${_timeDivsTemp.last.endTime.hour.toString().padLeft(2, '0')}:${_timeDivsTemp.last.endTime.minute.toString().padLeft(2, '0')} -", style: MyFont.headlineStyleGreen15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                child: Text("${_timeDivsTemp.last.endTime.hour.toString().padLeft(2, '0')}:${_timeDivsTemp.last.endTime.minute.toString().padLeft(2, '0')}-", style: MyFont.headlineStyleGreen15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
               ),
             ],
           ),
@@ -228,7 +211,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                         setState(() {
                           if(i+1 != timeDivs.length){
                             timeDivs[i].endTime =  timeDivs[i+1].endTime;
-                            timeDivs[i].name = "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')} 〜 ${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}";
+                            timeDivs[i].name = "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')}-${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}";
                             timeDivs.removeAt(i+1);
                           }
                         });
@@ -243,7 +226,7 @@ class TimeDivisionState extends State<InputTimeDivisions> {
                         height: (height*(( (timeDivs[i].endTime.hour*60 + timeDivs[i].endTime.minute) - (timeDivs[i].startTime.hour*60+timeDivs[i].startTime.minute) ) / _durationTemp).ceil())
                         +(boader*((((timeDivs[i].endTime.hour*60 + timeDivs[i].endTime.minute) - (timeDivs[i].startTime.hour*60+timeDivs[i].startTime.minute)) / _durationTemp).ceil()-1)),
                         child: Center(
-                          child: Text("${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')} 〜 ${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}", style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis)
+                          child: Text("${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')}-${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}", style: MyFont.defaultStyleWhite13, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis)
                         )
                       ),
                     )

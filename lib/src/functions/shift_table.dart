@@ -7,7 +7,7 @@ class ShiftTable{
   late String              name;
   late List<ShiftRule>     rules;
   late List<TimeDivision>  timeDivs;
-  late List<List<String>>  assignTable;
+  late List<List<int>>     assignTable;
   late DateTimeRange       shiftDateRange;
   late DateTimeRange       inputDateRange;
 
@@ -15,14 +15,14 @@ class ShiftTable{
     name           = "";
     rules          = <ShiftRule>[];
     timeDivs       = <TimeDivision>[];
-    assignTable    = <List<String>>[];
+    assignTable    = <List<int>>[];
     shiftDateRange = DateTimeRange(start: DateTime.now().add(const Duration(days: 10)), end: DateTime.now().add(const Duration(days: 20)));
     inputDateRange = DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(days: 9)));
   }
 
   generateShiftTable(){
     int startWeekday = shiftDateRange.start.weekday;
-    assignTable      = List<List<String>>.generate(shiftDateRange.end.difference(shiftDateRange.start).inDays+1, (index) => List<String>.generate(timeDivs.length, (index) => 0.toString()));
+    assignTable      = List<List<int>>.generate(timeDivs.length, (index) => List<int>.generate(shiftDateRange.end.difference(shiftDateRange.start).inDays+1, (index) => 0));
 
     final List<int> fifo1 = List<int>.generate(0, (index) => index);
     final List<int> fifo2 = List<int>.generate(0, (index) => index);
@@ -60,12 +60,12 @@ class ShiftTable{
       if(rules[rulesIndex].timeDivs == 0){
         for(int i = 0; i < fifo2.length; i++){
           for(int j = 0; j < assignTable[0].length; j++){
-            assignTable[fifo2[i]][j] = rules[rulesIndex].assignNum.toString();
+            assignTable[j][fifo2[i]] = rules[rulesIndex].assignNum;
           }
         }
       }else{
         for(int i = 0; i < fifo2.length; i++){
-          assignTable[fifo2[i]][rules[rulesIndex].timeDivs-1] = rules[rulesIndex].assignNum.toString();
+          assignTable[rules[rulesIndex].timeDivs-1][fifo2[i]] = rules[rulesIndex].assignNum;
         }
       }
     }

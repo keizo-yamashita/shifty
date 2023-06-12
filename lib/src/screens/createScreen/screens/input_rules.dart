@@ -30,26 +30,8 @@ class InputAssignNumState extends State<InputAssignNum> {
 
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: screenSize.height / 10 + appBarHeight),
-          Row(
-            mainAxisAlignment:MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
-                margin: const EdgeInsets.only(right: 20),
-                decoration: BoxDecoration(
-                  color: MyFont.primaryColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text("STEP 2", style: MyFont.headlineStyleWhite20),
-              ),
-              Text("勤務人数の設定", style: MyFont.headlineStyleGreen20),
-            ],                  
-          ),
-    
-          SizedBox(height: screenSize.height/30),
+        children: [          
+          SizedBox(height: screenSize.height / 10 + appBarHeight),    
           Text("基本となる勤務人数を設定してください\n※ 後日変更可 \n※ 上の設定から順に上書きされます", style: MyFont.defaultStyleGrey15),
           SizedBox(height: screenSize.height/30),
     

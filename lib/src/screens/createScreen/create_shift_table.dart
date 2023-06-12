@@ -6,6 +6,7 @@ import 'package:shift/src/screens/createScreen/screens/input_time_division.dart'
 import 'package:shift/src/screens/createScreen/screens/input_rules.dart';
 import 'package:shift/src/screens/createScreen/screens/input_date_duration.dart';
 import 'package:shift/src/screens/createScreen/screens/register_shift_table.dart';
+import 'package:shift/src/screens/createScreen/screens/test_dot.dart';
 
 // シフト表の作成に必要な変数
 ShiftTable _shiftTable = ShiftTable();
@@ -27,6 +28,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
       InputAssignNum(shiftTable:        _shiftTable),
       InputDeadlineDuration(shiftTable: _shiftTable),
       CheckShiftTable(shiftTable:       _shiftTable),
+      TestDot(shiftTable:               _shiftTable),
     ];
 
     return GestureDetector(
@@ -66,6 +68,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
               BottomNavigationBarItem(icon: Icon(Icons.people_alt),               label: 'STEP2'),
               BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined),  label: 'STEP3'),
               BottomNavigationBarItem(icon: Icon(Icons.check),                    label: 'STEP4'),
+              BottomNavigationBarItem(icon: Icon(Icons.palette),                  label: 'TEST'),
             ],
             type: BottomNavigationBarType.fixed,
           ),

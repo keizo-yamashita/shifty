@@ -24,7 +24,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
 
   @override
   Widget build(BuildContext context) {
-    
+    // set input text and cursor positon 
     final TextEditingController textConroller = TextEditingController(text: widget._shiftTable.name);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       textConroller.selection = TextSelection.fromPosition(TextPosition(offset: textConroller.text.length));
@@ -36,25 +36,9 @@ class CheckShiftTableState extends State<CheckShiftTable> {
 
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(height: screenSize.height / 10 + appBarHeight),
-          Row(
-            mainAxisAlignment:MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
-                margin: const EdgeInsets.only(right: 20),
-                decoration: BoxDecoration(
-                  color: MyFont.primaryColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text("STEP 4", style: MyFont.headlineStyleWhite20),
-              ),
-              Text("シフト表のチェック", style: MyFont.headlineStyleGreen20),
-            ],                  
-          ),
-          SizedBox(height: screenSize.height/30),
           Text("作成される基本のシフト表を確認してください", style: MyFont.defaultStyleGrey15),
           SizedBox(height: screenSize.height/30),
           
@@ -252,7 +236,6 @@ class CheckShiftTableState extends State<CheckShiftTable> {
   }
 
   Widget createShiftTemplate(){
-    // late ScrollController _verticalScrollController;
 
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
