@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:shift/src/functions/font.dart';
 import 'package:shift/src/functions/shift_table.dart';
 import 'package:shift/src/functions/show_modal_window.dart';
+import 'package:shift/src/functions/trace_detector/hit_detector.dart';
 
 const double _tableHeight      = 15;
 const double _tableWidth       = 15;
 const double _tableTitleHeight = 30;
 const double _tableTitleWidth  = 60;
+
+int x = 0;
+int y = 0;
 
 class TestDot extends StatefulWidget {
   final ShiftTable _shiftTable;
@@ -21,11 +25,13 @@ class TestDot extends StatefulWidget {
 }
 
 class TestDotState extends State<TestDot> {
+  
+  int tableSize = 15;
 
   @override
   Widget build(BuildContext context) {
 
-    // widget._shiftTable.generateShiftTable();
+    widget._shiftTable.generateShiftTable();
     var appBarHeight = AppBar().preferredSize.height;
     var screenSize = MediaQuery.of(context).size;
 
@@ -36,36 +42,75 @@ class TestDotState extends State<TestDot> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(height: screenSize.height/10 + appBarHeight),
-        Text("作成される基本のシフト表を確認してください", style: MyFont.defaultStyleGrey15),
-        SizedBox(height: screenSize.height/30),
+        // Text("作成される基本のシフト表を確認してください", style: MyFont.defaultStyleGrey15),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: MyFont.backgroundColor,
+                shadowColor: MyFont.hiddenColor, 
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                side: const BorderSide(color: MyFont.primaryColor),
+              ),
+              onPressed: (){ 
+                setState(() {
+                  tableSize = (tableSize - 1).clamp(10, 20);
+                });
+              },
+              child: const Icon(Icons.zoom_in, color: MyFont.primaryColor)
+            ),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: MyFont.backgroundColor,
+                shadowColor: MyFont.hiddenColor, 
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                side: const BorderSide(color: MyFont.primaryColor),
+              ),
+              onPressed: (){ 
+                setState(() {
+                  tableSize = (tableSize + 1).clamp(10, 20);
+                });
+              },
+              child: const Icon(Icons.zoom_out, color: MyFont.primaryColor)
+            ),
+          ],
+        ),
+
+        Matrix(
+          selected: Coordinate(column: x, row: y),
+          onChangeSelect: (p0){
+            setState(() {
+              x = p0!.column;
+              y = p0.row;
+            });
+          },
+          columnCount: tableSize,
+          rowCount: tableSize
+        ),
     
-        // buildShiftTemplate(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _getLegendItemWidget("", _tableTitleWidth),
-            for(int i =0; i < tableWidth; i++)
-            _getTitleItemWidget(i, _tableWidth)
-          ],
-        ),
-        for(int i = 0; i < tableHeight; i++)
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _generateFirstColumnsRow(context, i),
-            _generateRightHandSideColumnRow(context, i, tableWidth),
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     _getLegendItemWidget("", _tableTitleWidth),
+        //     for(int i =0; i < tableWidth; i++)
+        //     _getTitleItemWidget(i, _tableWidth)
+        //   ],
+        // ),
+        // for(int i = 0; i < tableHeight; i++)
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     _generateFirstColumnsRow(context, i),
+        //     _generateRightHandSideColumnRow(context, i, tableWidth),
+        //   ],
+        // ),
       ],
     );
-  }
-
-  List<Widget> _getTitleWidget(){
-    return [
-      _getLegendItemWidget('', _tableTitleWidth),
-      ...
-      List<Widget>.generate(widget._shiftTable.shiftDateRange.end.difference(widget._shiftTable.shiftDateRange.start).inDays+1, (index) => _getTitleItemWidget(index, _tableWidth))
-    ];
   }
   
   Widget _getLegendItemWidget(String label, double width) {

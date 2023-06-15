@@ -4,12 +4,15 @@ import 'package:provider/provider.dart';
 // my file
 import 'package:shift/src/functions/font.dart';
 import 'package:shift/src/functions/google_login_provider.dart';
-
+import 'package:shift/src/functions/trace_detector/hit_detector.dart';
 import 'package:shift/src/screens/sign_in.dart';
 import 'package:shift/src/screens/home.dart';
 import 'package:shift/src/screens/account.dart';
 import 'package:shift/src/screens/notification.dart';
 import 'package:shift/src/screens/setting.dart';
+
+int x = 0;
+int y = 0;
 
 class AppWidget extends StatefulWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -52,7 +55,7 @@ class AppWidgetState extends State<AppWidget> {
 
       // Main Contents
       body: _contents[_selectedIndex].content,
-      
+
       // Drawer
       drawer: Drawer(
         width: screenSize.width * 0.7,

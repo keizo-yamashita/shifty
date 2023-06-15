@@ -8,13 +8,13 @@
 		<data>
 		85iaADE5tc/NukRC+KGdiZaZ0ZA=
 		</data>
+		<key>flutter_assets/AssetManifest.bin</key>
+		<data>
+		42c5cFblH3Zc5loIQSLZy7MdMQU=
+		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
 		PQeW6A9XYBNwtKZzo/A139zMud0=
-		</data>
-		<key>flutter_assets/AssetManifest.smcbin</key>
-		<data>
-		42c5cFblH3Zc5loIQSLZy7MdMQU=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -22,7 +22,7 @@
 		</data>
 		<key>flutter_assets/NOTICES.Z</key>
 		<data>
-		8cDiWlw0E8cQG/3EpbP5muylGjM=
+		8O0XfjeRzSUEqqyLcLAk9fQkEIQ=
 		</data>
 		<key>flutter_assets/assets/apple_logo.png</key>
 		<data>
@@ -51,18 +51,18 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>flutter_assets/AssetManifest.bin</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xLm3ODymggexT02Zhx+QN9RAIQAQiHShP+pkjqN6+zI=
+			</data>
+		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			VjChvvLTy5w/cWhRytCTKLxvlFdGYzFnmvGVsT8uRjw=
-			</data>
-		</dict>
-		<key>flutter_assets/AssetManifest.smcbin</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			xLm3ODymggexT02Zhx+QN9RAIQAQiHShP+pkjqN6+zI=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -76,7 +76,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			0fNN3rXau7Zoyv4WLtAwaiJYQ1JD8AhstnOrG5uXKi4=
+			NZByMQrMKMW+1uyIlG6JPz4rmbFMfJ7PhemNZOzi7EY=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/apple_logo.png</key>
