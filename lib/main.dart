@@ -5,15 +5,22 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:shift/src/screens/splashScreen/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
+
+// myh package
 import 'package:shift/src/functions/google_login_provider.dart';
+import 'package:shift/src/functions/shift_table_provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => GoogleAccountProvider(),
+    MultiProvider(
+      providers:[
+        ChangeNotifierProvider(create: (context) => GoogleAccountProvider()),
+        ChangeNotifierProvider(create: (context) => CreateShiftTableProvider()),
+        ChangeNotifierProvider(create: (context) => InputShiftRequestProvider()),
+      ],
       child: const MyApp(),
     )
   );

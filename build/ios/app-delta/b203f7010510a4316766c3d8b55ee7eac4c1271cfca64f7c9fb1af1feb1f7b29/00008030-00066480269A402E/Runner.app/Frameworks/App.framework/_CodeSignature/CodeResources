@@ -22,7 +22,7 @@
 		</data>
 		<key>flutter_assets/NOTICES.Z</key>
 		<data>
-		8O0XfjeRzSUEqqyLcLAk9fQkEIQ=
+		TeSQfSvGW4CnH90SUBGQMuwns6w=
 		</data>
 		<key>flutter_assets/assets/apple_logo.png</key>
 		<data>
@@ -40,6 +40,14 @@
 		<data>
 		/CUoTuPQqqdexfyOT9lpJhV+2MQ=
 		</data>
+		<key>flutter_assets/isolate_snapshot_data</key>
+		<data>
+		d75kcB0O9fvhICCr4V2czV+YPPY=
+		</data>
+		<key>flutter_assets/kernel_blob.bin</key>
+		<data>
+		uEmUgsBu66HeDXJ2m5CQaaEfFKM=
+		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
 		P7bb/oR3EhwqCIH1M6LyTuBIWYU=
@@ -47,6 +55,10 @@
 		<key>flutter_assets/shaders/ink_sparkle.frag</key>
 		<data>
 		KL+7f3IYR/Y9WDlxxUeDmgGoluc=
+		</data>
+		<key>flutter_assets/vm_snapshot_data</key>
+		<data>
+		21ocnjBOZoh0AJo2fsYEUENg+AQ=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -76,7 +88,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			NZByMQrMKMW+1uyIlG6JPz4rmbFMfJ7PhemNZOzi7EY=
+			USZ4qIbDA2DCXmbD6FrFkf3uu2QoQVfnVdH4BPfrcpY=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/apple_logo.png</key>
@@ -107,6 +119,20 @@
 			2YZbZxoJ1oPROoYwidiCXg9ho3aWzl19RIvIAjqmJFM=
 			</data>
 		</dict>
+		<key>flutter_assets/isolate_snapshot_data</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bEFjkTJo6B1tynE+aKjNsxusTsjxqCQb2PgHjZttdRE=
+			</data>
+		</dict>
+		<key>flutter_assets/kernel_blob.bin</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			QyR2OhyzMQuNJispw3NlQ/k4f/xvcw3/suEzfBZtbVg=
+			</data>
+		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<dict>
 			<key>hash2</key>
@@ -119,6 +145,13 @@
 			<key>hash2</key>
 			<data>
 			v6u8YtYjslOLIIb1rrgcOW817fxVEiBaprKuV+f6FpY=
+			</data>
+		</dict>
+		<key>flutter_assets/vm_snapshot_data</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9zz8plYY9hOGwd/Vjw/Rrc/JkMsPtR9B5VCU0tP/a4I=
 			</data>
 		</dict>
 	</dict>

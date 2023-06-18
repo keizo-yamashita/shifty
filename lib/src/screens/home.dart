@@ -1,11 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+// my package
 import 'package:shift/src/functions/font.dart';
+import 'package:shift/src/functions/shift_table.dart';
+import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
+import 'package:shift/src/functions/shift_table_provider.dart';
 import 'package:shift/src/screens/createScreen/create_shift_table.dart';
-import 'package:shift/src/screens/inputScreen/input_request.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({Key? key}) : super(key: key);
@@ -24,19 +28,28 @@ class HomeWidgetState extends State<HomeWidget> {
     return Scaffold(
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: appBarHeight + screenSize.height/40, right: screenSize.width/20),
-        child: FloatingActionButton(
-          foregroundColor: MyFont.backgroundColor,
-          backgroundColor: MyFont.primaryColor,
-          child: const Icon(Icons.add, size: 40),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (c) => const CreateShiftTableWidget()));
-          },
+        child: Builder(
+          builder: (context) {
+            return FloatingActionButton(
+              foregroundColor: MyFont.backgroundColor,
+              backgroundColor: MyFont.primaryColor,
+              child: const Icon(Icons.add, size: 40),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (c) => const CreateShiftTableWidget()));
+              },
+            );
+          }
         ),
       ),
-
+    
       extendBody: true,
       extendBodyBehindAppBar: true,
-
+    
+      ////////////////////////////////////////////////////////////////////////////////////////////
+      /// 登録しているシフト表の一覧を表示 (管理モード，従業員モードどちらも)
+      /// StreamBuilder 使用
+      ////////////////////////////////////////////////////////////////////////////////////////////
+    
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -52,7 +65,7 @@ class HomeWidgetState extends State<HomeWidget> {
                   if (snapshot.hasError) {
                     return Text('SteremBuilder でエラーが発生しました: ${snapshot.error}');
                   }
-
+    
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator(color: MyFont.primaryColor);
                   }
@@ -62,7 +75,7 @@ class HomeWidgetState extends State<HomeWidget> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator(color: MyFont.primaryColor);
                       } else if (snapshot.hasError) {
-                        return Text('FeatureBuilderでエラーが発生しました: ${snapshot.error}');
+                        return Text('FeatureBuilder でエラーが発生しました: ${snapshot.error}');
                       } else {
                         return snapshot.data!;
                       }
@@ -77,6 +90,10 @@ class HomeWidgetState extends State<HomeWidget> {
       )
     );
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  /// 登録シフト表のアイテム化
+  ////////////////////////////////////////////////////////////////////////////////////////////
 
   Future<Widget> buildMyShift() async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -120,13 +137,47 @@ class HomeWidgetState extends State<HomeWidget> {
                           padding: const EdgeInsets.only(bottom: 20),
                           child: Text(shift.get('name'), style: MyFont.headlineStyleGreen20, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
                         ),
-                        Text("リクエスト期間 : ${DateFormat('yyyy/MM/dd').format(shift.get('request-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(shift.get('request-end').toDate())}", style: MyFont.defaultStyleGrey15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
-                        Text("　シフト期間　 : ${DateFormat('yyyy/MM/dd').format(shift.get('work-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(shift.get('work-end').toDate())}", style: MyFont.defaultStyleGrey15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                        Text("リクエスト期間 : ${DateFormat('yy/MM/dd').format(shift.get('request-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(shift.get('request-end').toDate())}", style: MyFont.defaultStyleGrey15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                        Text("　シフト期間　 : ${DateFormat('yy/MM/dd').format(shift.get('work-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(shift.get('work-end').toDate())}", style: MyFont.defaultStyleGrey15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (c) => const InputRequestWidget()));
+                    var name           = shift.get('name');
+                    var assignRules    = <AssignRule>[];
+                    var timeDivsMap    = shift.get('time-division');
+                    var timeDivs       = List<TimeDivision>.generate(
+                      timeDivsMap.length, (index) => TimeDivision(
+                        name: timeDivsMap[index]['name'],
+                        startTime: timeDivsMap[index]['start-time'].toDate(),
+                        endTime: timeDivsMap[index]['end-time'].toDate()
+                      )
+                    );
+
+                    var dateRange = [
+                      DateTimeRange(start: shift.get('work-start').toDate(), end: shift.get('work-end').toDate()),
+                      DateTimeRange(start: shift.get('request-start').toDate(), end: shift.get('request-end').toDate())
+                    ];
+                    
+                    var assignmentsMap = shift.get('assignment');
+                    var assignments    = List<List<int>>.generate(
+                      timeDivs.length,
+                      (index) => assignmentsMap[index.toString()].cast<int>()
+                    );
+
+                    var shiftTable = ShiftTable(
+                      name: name,
+                      assignRules: assignRules,
+                      requestRules: <RequestRule>[],
+                      timeDivs: timeDivs,
+                      assignTable: assignments,
+                      requestTable: assignments.map((e) => e.map((e) => 0).toList().cast<int>()).toList(),
+                      shiftDateRange: dateRange
+                    );
+                    shiftTable.generateShiftTable(true);
+                    Provider.of<InputShiftRequestProvider>(context, listen: false).shiftTable = shiftTable;
+                    print(shiftTable.assignTable);
+                    Navigator.push(context, MaterialPageRoute(builder: (c) => const InputShiftRequestWidget()));
                   },
                   onLongPress: () {
                     removeTable(firestore, shift.id);
@@ -145,6 +196,10 @@ class HomeWidgetState extends State<HomeWidget> {
       );
     }
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  /// Firebaseからのデータベース(シフト表の削除)
+  ////////////////////////////////////////////////////////////////////////////////////////////
 
   removeTable(FirebaseFirestore firestore, String tableId) async {
     firestore.collection('shift-table').doc(tableId).delete().then((_) {

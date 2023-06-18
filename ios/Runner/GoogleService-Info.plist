@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>480752722157-d2geam0748jb7qjikbd0cfflbm74d69m.apps.googleusercontent.com</string>
+	<string>480752722157-4equ8bllnab7bpict44suvf34s2hbj9t.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.480752722157-d2geam0748jb7qjikbd0cfflbm74d69m</string>
+	<string>com.googleusercontent.apps.480752722157-4equ8bllnab7bpict44suvf34s2hbj9t</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCj8-iCr7Op0Gd3-5jKnfozFTfV3RiVjFU</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.shift20230530</string>
+	<string>com.example.shift20230616</string>
 	<key>PROJECT_ID</key>
 	<string>work-shift-automator</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:480752722157:ios:a9ac90643398a8dd9c2ce4</string>
+	<string>1:480752722157:ios:83703a59303c55a69c2ce4</string>
 </dict>
 </plist>

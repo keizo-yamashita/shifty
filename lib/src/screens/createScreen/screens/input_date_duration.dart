@@ -42,11 +42,11 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
                 ElevatedButton(
                   style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MyFont.primaryColor)),
                   onPressed: (){
-                    final x = pickDateRange(context, widget._shiftTable.shiftDateRange);
-                    x.then((value) => widget._shiftTable.shiftDateRange = value);
+                    final x = pickDateRange(context, widget._shiftTable.shiftDateRange[0]);
+                    x.then((value) => widget._shiftTable.shiftDateRange[0] = value);
                     setState(() {}); 
                   },
-                  child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget._shiftTable.shiftDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget._shiftTable.shiftDateRange.end)}", style: MyFont.headlineStyleWhite15),
+                  child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget._shiftTable.shiftDateRange[0].start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget._shiftTable.shiftDateRange[0].end)}", style: MyFont.headlineStyleWhite15),
                 )
               ],
             ),
@@ -54,16 +54,17 @@ class InputDeadlineDurationState extends State<InputDeadlineDuration> {
             SizedBox(height: screenSize.height/20),
             
             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text("シフト希望入力期間", style: MyFont.headlineStyleGreen15),
                 ElevatedButton(
                   style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(MyFont.primaryColor)),
                   onPressed: (){
-                    final x = pickDateRange(context, widget._shiftTable.inputDateRange);
-                    x.then((value) => widget._shiftTable.inputDateRange = value);
-                    setState(() {});
+                    final x = pickDateRange(context, widget._shiftTable.shiftDateRange[1]);
+                    x.then((value) => widget._shiftTable.shiftDateRange[1] = value);
+                    setState(() {}); 
                   },
-                  child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget._shiftTable.inputDateRange.start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget._shiftTable.inputDateRange.end)}", style: MyFont.headlineStyleWhite15),
+                  child: Text("${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget._shiftTable.shiftDateRange[1].start)} - ${DateFormat('yyyy/MM/dd', 'ja_JP').format(widget._shiftTable.shiftDateRange[1].end)}", style: MyFont.headlineStyleWhite15),
                 )
               ],
             ),

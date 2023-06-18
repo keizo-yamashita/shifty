@@ -34,17 +34,18 @@ class MyFont{
   static const Color tableColumnsColor = primaryColor;
   static const Color tableBorderColor  = secondaryColor;
 
-  static TextStyle tableTitleStyle(Color color){ return GoogleFonts.mPlus1(color: color, fontSize: 11, fontWeight: FontWeight.w800);}
-  static TextStyle tableDefaultStyle(Color color){ return GoogleFonts.mPlus1(color: color, fontSize: 11, fontWeight: FontWeight.normal);}
+  static TextStyle tableTitleStyle(Color color){ return GoogleFonts.mPlus1(color: color, fontSize: 10, fontWeight: FontWeight.w400);}
+  static TextStyle tableDefaultStyle(Color color){ return GoogleFonts.mPlus1(color: color, fontSize: 10, fontWeight: FontWeight.normal);}
 
-  static const TextHeightBehavior defaultBehavior = TextHeightBehavior(applyHeightToLastDescent: false, applyHeightToFirstAscent: false);
+ static const TextHeightBehavior defaultBehavior = TextHeightBehavior(applyHeightToLastDescent: false, applyHeightToFirstAscent: false);
 
   // Colors
   static const backgroundColor          = Color(0xffffffff);
   static const secondaryBackgroundColor = Color.fromARGB(255, 255, 254, 250);
   static const primaryColor             = Color(0xff14C38E);
   static const secondaryColor           = Color(0xffB8F1B0);
-  static const hiddenColor              = Color(0xff000000);
+  static const hiddenColor              = Color(0xff888888);
+  static const defaultColor             = Color(0xff000000);
 
   static const gradientDecolation = BoxDecoration(
     gradient: LinearGradient(

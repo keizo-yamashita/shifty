@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:shift/src/functions/font.dart';
 import 'package:shift/src/functions/shift_table.dart';
 import 'package:shift/src/functions/show_modal_window.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class InputTimeDivisions extends StatefulWidget {
   final ShiftTable _shiftTable;
@@ -22,65 +24,151 @@ class TimeDivisionState extends State<InputTimeDivisions> {
   static int                 _durationTemp = 30;
   
   @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('ja_JP', null).then((_) => setState(() {}));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    
+
+    // set input text and cursor positon 
+    final TextEditingController textConroller = TextEditingController(text: widget._shiftTable.name);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      textConroller.selection = TextSelection.fromPosition(TextPosition(offset: textConroller.text.length));
+    });
+
     var appBarHeight = AppBar().preferredSize.height;
     var screenSize   = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
+      
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(height: screenSize.height/10 + appBarHeight), 
-          Text("まずは，基本となる時間区分を設定しましょう", style: MyFont.defaultStyleGrey15),
+          SizedBox(height: screenSize.height/10 + appBarHeight),
+          ////////////////////////////////////////////////////////////////////////////
+          /// シフト名の名前の入力
+          ////////////////////////////////////////////////////////////////////////////
+          Text("作成するシフト表の名前を入力してください", style: MyFont.defaultStyleGrey15),
           SizedBox(height: screenSize.height/40),
-    
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              buildInputBox("始業時間", buildTimePicker(_startTime, DateTime(1,1,1,0,0), DateTime(1,1,1,23,59), 5, setStartTime)),
-              Padding(
-                padding: const EdgeInsets.only(top: 30),
-                child: Text(" 〜 ", style: MyFont.headlineStyleGreen15),
-              ),
-              buildInputBox("終業時間", buildTimePicker(_endTime, _startTime.add(const Duration(hours: 1)), DateTime(1,1,1,23,59), 5, setEndTime)),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Text(" ... ", style: MyFont.headlineStyleGreen15),
-              ),
-              buildInputBox("管理間隔", buildTimePicker(_duration, DateTime(1,1,1,0,10), DateTime(1,1,1,6,0), 5, setDuration)),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Text("     ", style: MyFont.headlineStyleGreen15),
-              ),
-              buildInputBox("", InkWell(
-                onTap: () {
-                  setState(() {
-                    createMimimumDivision(_startTime, _endTime, _duration);
-                  });
-                },
-                child: Container(
-                  height: 50,
-                  width: 60,
-                  padding: const EdgeInsets.all(12.0),
-                  decoration: BoxDecoration(
+          SizedBox(
+            width: screenSize.width * 0.90,
+            child: TextField(
+              controller: textConroller,
+              cursorColor: MyFont.primaryColor,
+              decoration: InputDecoration(
+                prefixIconColor: MyFont.primaryColor,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(
                     color: MyFont.primaryColor,
-                    borderRadius: BorderRadius.circular(9), 
-                  ),
-                  child: const Icon(
-                    size: 20,
-                    Icons.check,  
-                    color: MyFont.backgroundColor
                   ),
                 ),
-              ))
-            ],
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(
+                    color: MyFont.primaryColor,
+                  ),
+                ),
+                prefixIcon: const Icon(Icons.input),
+                hintText: 'シフト表名を入力してください',
+                hintStyle: MyFont.defaultStyleGrey15,
+              ),
+              keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.go,
+              onChanged: (value){widget._shiftTable.name = value;},
+            ),
+          ),
+          const Divider(height: 30, thickness: 1),
+
+          ////////////////////////////////////////////////////////////////////////////
+          /// シフト期間とシフト希望入力期間を入力
+          ////////////////////////////////////////////////////////////////////////////      
+          Text("「シフト期間」「シフト希望入力期間を入力しましょう", style: MyFont.defaultStyleGrey15),
+          SizedBox(height: screenSize.height/40),
+          SizedBox(
+            width: screenSize.width * 0.9,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: screenSize.width * 0.44,
+                  child: buildInputBox(
+                    "シフト期間",
+                    buildDateRangePicker(widget._shiftTable.shiftDateRange, 0)
+                  ),
+                ),
+                SizedBox(width: screenSize.width * 0.02),
+                SizedBox(
+                  width: screenSize.width * 0.44,
+                  child: buildInputBox(
+                    "シフト希望入力期間",
+                    buildDateRangePicker(widget._shiftTable.shiftDateRange, 1)
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 30, thickness: 1),
+
+          ////////////////////////////////////////////////////////////////////////////
+          /// 基本時間区分の入力
+          ////////////////////////////////////////////////////////////////////////////
+          Text("次に，基本となる時間区分を設定しましょう", style: MyFont.defaultStyleGrey15, textAlign: TextAlign.left),
+          SizedBox(height: screenSize.height/40),
+    
+          SizedBox(
+            width: screenSize.width * 0.90,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                buildInputBox("始業時間", buildTimePicker(_startTime, DateTime(1,1,1,0,0), DateTime(1,1,1,23,59), 5, setStartTime)),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: Text(" 〜 ", style: MyFont.headlineStyleGreen15),
+                ),
+                buildInputBox("終業時間", buildTimePicker(_endTime, _startTime.add(const Duration(hours: 1)), DateTime(1,1,1,23,59), 5, setEndTime)),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: Text(" ... ", style: MyFont.headlineStyleGreen15),
+                ),
+                buildInputBox("管理間隔", buildTimePicker(_duration, DateTime(1,1,1,0,10), DateTime(1,1,1,6,0), 5, setDuration)),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: Text("     ", style: MyFont.headlineStyleGreen15),
+                ),
+                buildInputBox("", InkWell(
+                  onTap: () {
+                    setState(() {
+                      createMimimumDivision(_startTime, _endTime, _duration);
+                    });
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 60,
+                    padding: const EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: MyFont.primaryColor,
+                      borderRadius: BorderRadius.circular(9), 
+                    ),
+                    child: const Icon(
+                      size: 20,
+                      Icons.check,  
+                      color: MyFont.backgroundColor
+                    ),
+                  ),
+                ))
+              ],
+            ),
           ),
     
           const Divider(height: 30, thickness: 1),
     
-          // 登録した時間区分一覧
+          ////////////////////////////////////////////////////////////////////////////
+          /// 登録した時間区分一覧
+          ////////////////////////////////////////////////////////////////////////////
+          SizedBox(height: screenSize.height/40),
           (widget._shiftTable.timeDivs.isEmpty) ? Text("登録されている時間区分がありません", style: MyFont.defaultStyleGrey15) : buildScheduleEditor(),
           SizedBox(height: screenSize.height / 20 + appBarHeight),
         ],
@@ -88,6 +176,61 @@ class TimeDivisionState extends State<InputTimeDivisions> {
     );
   }
 
+  Widget buildDateRangePicker(List<DateTimeRange> dateRange, int index){
+    
+    return SizedBox(
+      height: 50,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          backgroundColor: MyFont.backgroundColor,
+          shadowColor: MyFont.hiddenColor, 
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          side: const BorderSide(color: MyFont.primaryColor),
+        ),
+        onPressed: () async {
+          final x = pickDateRange(context, dateRange[index]);
+          x.then((value) => dateRange[index] = value);
+          setState(() {});
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(DateFormat('yy/MM/dd', 'ja_JP').format(dateRange[index].start), style: MyFont.headlineStyleGreen15),
+            Text("-", style: MyFont.headlineStyleGreen15),
+            Text(DateFormat('yy/MM/dd', 'ja_JP').format(dateRange[index].end), style: MyFont.headlineStyleGreen15),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<DateTimeRange> pickDateRange(BuildContext context, DateTimeRange initialDateRange) async {
+
+    DateTimeRange? newDateRange = await showDateRangePicker(
+      context: context,
+      initialDateRange : initialDateRange,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 180)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(primary: MyFont.primaryColor),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (newDateRange != null) {
+      setState(() {});
+      return Future<DateTimeRange>.value(newDateRange);
+    } else {
+      setState(() {});
+      return Future<DateTimeRange>.value(initialDateRange);
+    }
+  } 
+  
   Widget buildTimePicker(DateTime init, DateTime min, DateTime max, int interval, Function(DateTime) callback){
     
     DateTime temp = init;
@@ -104,20 +247,20 @@ class TimeDivisionState extends State<InputTimeDivisions> {
           side: const BorderSide(color: MyFont.primaryColor),
         ),
         onPressed: () async {
-          await showModalWindow(context, SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4,
-            width: double.maxFinite,
-            child: CupertinoDatePicker(
-              mode: CupertinoDatePickerMode.time,
-              initialDateTime: init,
-              minuteInterval: interval,
-              minimumDate: min,
-              maximumDate: max,
-              onDateTimeChanged: (val){ setState(() { temp = val; callback(val); }); },
-              use24hFormat: true,
-              ),
-            )
-          );
+          // await showModalWindow(context, SizedBox(
+          //   height: MediaQuery.of(context).size.height * 0.4,
+          //   width: double.maxFinite,
+          //   child: CupertinoDatePicker(
+          //     mode: CupertinoDatePickerMode.time,
+          //     initialDateTime: init,
+          //     minuteInterval: interval,
+          //     minimumDate: min,
+          //     maximumDate: max,
+          //     onDateTimeChanged: (val){ setState(() { temp = val; callback(val); }); },
+          //     use24hFormat: true,
+          //     ),
+          //   )
+          // );
         },
         child: Text('${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}', style: MyFont.headlineStyleGreen15)
       ),
@@ -143,12 +286,12 @@ class TimeDivisionState extends State<InputTimeDivisions> {
   Widget buildInputBox(String title, Widget child){
     return Column(
       children: [
+        Container(
+          child: child
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(title, style: MyFont.headlineStyleGreen15),
-        ),
-        Container(
-          child: child
         )
       ],
     );

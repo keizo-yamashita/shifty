@@ -107,7 +107,7 @@ class InputAssignNumState extends State<InputAssignNum> {
                     icon: const Icon(Icons.add),
                     color: Colors.white,
                     onPressed: () {
-                      widget.shiftTable.rules.add(ShiftRule(week: selectorsIndex[0], weekday: selectorsIndex[1], timeDivs: selectorsIndex[2], assignNum: selectorsIndex[3]));
+                      // widget.shiftTable.rules.add(ShiftRule(week: selectorsIndex[0], weekday: selectorsIndex[1], timeDivs: selectorsIndex[2], assignNum: selectorsIndex[3]));
                       setState(() {});
                     }
                   ),
@@ -124,16 +124,16 @@ class InputAssignNumState extends State<InputAssignNum> {
               minWidth: screenSize.width * 0.1,
               maxWidth: screenSize.width  * 0.8,
             ),
-            child: (widget.shiftTable.rules.isEmpty) ? Text("登録されているルールがありません", style: MyFont.defaultStyleGrey15) : ReorderableListView.builder(
+            child: (widget.shiftTable.assignRules.isEmpty) ? Text("登録されているルールがありません", style: MyFont.defaultStyleGrey15) : ReorderableListView.builder(
               shrinkWrap: true,
               buildDefaultDragHandles: false,
-              itemCount: widget.shiftTable.rules.length,
+              itemCount: widget.shiftTable.assignRules.length,
               itemBuilder: (context, i) => buildItem(
                 i, 
-                weekSelect[widget.shiftTable.rules[i].week], 
-                weekdaySelect[widget.shiftTable.rules[i].weekday],
-                List.generate(widget.shiftTable.timeDivs.length + 1, (index) => (index == 0) ? '全ての区分' : widget.shiftTable.timeDivs[index-1].name)[widget.shiftTable.rules[i].timeDivs],
-                widget.shiftTable.rules[i].assignNum,
+                weekSelect[widget.shiftTable.assignRules[i].week], 
+                weekdaySelect[widget.shiftTable.assignRules[i].weekday],
+                List.generate(widget.shiftTable.timeDivs.length + 1, (index) => (index == 0) ? '全ての区分' : widget.shiftTable.timeDivs[index-1].name)[widget.shiftTable.assignRules[i].timeDivs1],
+                widget.shiftTable.assignRules[i].assignNum,
                 context
               ),
               onReorder: (int oldIndex, int newIndex) {
@@ -141,8 +141,8 @@ class InputAssignNumState extends State<InputAssignNum> {
                   if (oldIndex < newIndex) {
                     newIndex -= 1;
                   }
-                  final ShiftRule item = widget.shiftTable.rules.removeAt(oldIndex);
-                  widget.shiftTable.rules.insert(newIndex, item);
+                  final AssignRule item = widget.shiftTable.assignRules.removeAt(oldIndex);
+                  widget.shiftTable.assignRules.insert(newIndex, item);
                 });
               }),
           ),
@@ -176,7 +176,7 @@ class InputAssignNumState extends State<InputAssignNum> {
         },
       ),
     );
-    showModalWindow(context, box);
+    // showModalWindow(context, box);
   }
 
   Widget buildItem(int index, String weekSelect, String weekdaySelect, String timeDivsSelect, int assignNumSelect, BuildContext context) {
@@ -207,7 +207,7 @@ class InputAssignNumState extends State<InputAssignNum> {
             height: double.infinity,
             child:  IconButton(
               onPressed: () {
-                widget.shiftTable.rules.remove(widget.shiftTable.rules[index]);
+                widget.shiftTable.assignRules.remove(widget.shiftTable.assignRules[index]);
                 setState(() {});
               },
               icon: const Icon(Icons.delete),

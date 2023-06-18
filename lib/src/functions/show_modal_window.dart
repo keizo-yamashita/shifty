@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-Future<dynamic> showModalWindow(BuildContext context, Widget child){
+Future<dynamic> showModalWindow(BuildContext context, double height, Widget child){
   return showModalBottomSheet(
     useRootNavigator: true,
     //モーダルの背景の色、透過
@@ -20,8 +20,26 @@ Future<dynamic> showModalWindow(BuildContext context, Widget child){
               topRight: Radius.circular(20),
             ),
           ),
-          child: child,
-        ),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * height,
+            width: double.maxFinite,
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                Container(
+                  width: 100,
+                  height: 3,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                ),
+                const SizedBox(height: 10),
+                child
+              ],
+            )
+          ),
+        )
       );
     }
   );

@@ -30,7 +30,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
       textConroller.selection = TextSelection.fromPosition(TextPosition(offset: textConroller.text.length));
     });
 
-    widget._shiftTable.generateShiftTable();
+    widget._shiftTable.generateShiftTable(true);
     var appBarHeight = AppBar().preferredSize.height;
     var screenSize = MediaQuery.of(context).size;
 
@@ -86,7 +86,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
                     icon: const Icon(Icons.check),
                     color: MyFont.backgroundColor,
                     onPressed: () {
-                      showModalWindow(context, createShiftTemplate());
+                      // showModalWindow(context, createShiftTemplate());
                     }
                   ),
                 )
@@ -156,7 +156,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
     return [
       _getLegendItemWidget('', _tableTitleWidth),
       ...
-      List<Widget>.generate(widget._shiftTable.shiftDateRange.end.difference(widget._shiftTable.shiftDateRange.start).inDays+1, (index) => _getTitleItemWidget(index, _tableWidth))
+      List<Widget>.generate(widget._shiftTable.shiftDateRange[0].end.difference(widget._shiftTable.shiftDateRange[0].start).inDays+1, (index) => _getTitleItemWidget(index, _tableWidth))
     ];
   }
   
@@ -208,7 +208,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
 
   Widget calenderColumn(index){
     var weekdayJP = ["月", "火", "水", "木", "金", "土", "日"];
-    DateTime  date = widget._shiftTable.shiftDateRange.start.add(Duration(days: index));
+    DateTime  date = widget._shiftTable.shiftDateRange[0].start.add(Duration(days: index));
     
     final Text day, weekday;
 
@@ -236,7 +236,6 @@ class CheckShiftTableState extends State<CheckShiftTable> {
   }
 
   Widget createShiftTemplate(){
-
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
       child: Padding(
@@ -244,7 +243,7 @@ class CheckShiftTableState extends State<CheckShiftTable> {
         child: SizedBox(
           child: HorizontalDataTable(
             leftHandSideColumnWidth: _tableTitleWidth,
-            rightHandSideColumnWidth: (widget._shiftTable.shiftDateRange.end.difference(widget._shiftTable.shiftDateRange.start).inDays+1) * _tableWidth,
+            rightHandSideColumnWidth: (widget._shiftTable.shiftDateRange[0].end.difference(widget._shiftTable.shiftDateRange[0].start).inDays+1) * _tableWidth,
             isFixedHeader: true,
             headerWidgets: _getTitleWidget(),
             leftSideItemBuilder: _generateFirstColumnsRow,
@@ -273,10 +272,10 @@ void registerShitTable(ShiftTable shiftTable) async{
   final table = {
     'user-id'       : uid,
     'name'          : shiftTable.name,
-    'request-start' : shiftTable.inputDateRange.start,
-    'request-end'   : shiftTable.inputDateRange.end,
-    'work-start'    : shiftTable.shiftDateRange.start,
-    'work-end'      : shiftTable.shiftDateRange.end,
+    'request-start' : shiftTable.shiftDateRange[1].start,
+    'request-end'   : shiftTable.shiftDateRange[1].end,
+    'work-start'    : shiftTable.shiftDateRange[0].start,
+    'work-end'      : shiftTable.shiftDateRange[0].end,
     'time-division' : FieldValue.arrayUnion(List.generate(shiftTable.timeDivs.length, (index) => {
       'name' : shiftTable.timeDivs[index].name, 'start-time' : shiftTable.timeDivs[index].startTime, 'end-time' : shiftTable.timeDivs[index].endTime
     }))

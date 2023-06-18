@@ -5,71 +5,160 @@ List<String> weekdaySelect = ["すべての曜日","月曜日","火曜日","水�
 
 class ShiftTable{
   late String              name;
-  late List<ShiftRule>     rules;
+  late List<AssignRule>    assignRules;
+  late List<RequestRule>    requestRules;
   late List<TimeDivision>  timeDivs;
   late List<List<int>>     assignTable;
-  late DateTimeRange       shiftDateRange;
-  late DateTimeRange       inputDateRange;
+  late List<List<int>>     requestTable;
+  late List<DateTimeRange> shiftDateRange;
 
-  ShiftTable(){
-    name           = "";
-    rules          = <ShiftRule>[];
-    timeDivs       = <TimeDivision>[];
-    assignTable    = <List<int>>[];
-    shiftDateRange = DateTimeRange(start: DateTime.now().add(const Duration(days: 10)), end: DateTime.now().add(const Duration(days: 20)));
-    inputDateRange = DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(days: 9)));
+  ShiftTable({
+    String?              name,
+    List<AssignRule>?    assignRules,
+    List<RequestRule>?   requestRules,
+    List<TimeDivision>?  timeDivs,
+    List<List<int>>?     assignTable,
+    List<List<int>>?     requestTable,
+    List<DateTimeRange>? shiftDateRange,
+  }) {
+    this.name           = name ?? "";
+    this.assignRules    = assignRules ?? <AssignRule>[];
+    this.requestRules   = requestRules ?? <RequestRule>[];
+    this.timeDivs       = timeDivs ?? <TimeDivision>[];
+    this.assignTable    = assignTable ?? <List<int>>[];
+    this.requestTable    = requestTable ?? <List<int>>[];
+    this.shiftDateRange = shiftDateRange ?? [
+      DateTimeRange(start: DateTime.now().add(const Duration(days: 10)), end: DateTime.now().add(const Duration(days: 20))),
+      DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(days: 9)))
+    ];
   }
 
-  generateShiftTable(){
-    int startWeekday = shiftDateRange.start.weekday;
-    assignTable      = List<List<int>>.generate(timeDivs.length, (index) => List<int>.generate(shiftDateRange.end.difference(shiftDateRange.start).inDays+1, (index) => 0));
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  シフト表の作成関数
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  
+  generateShiftTable(bool initFlag){
+    /// 初期化を必要とする場合，及び時間区分，シフト期間が変更された場合に初期化
+    if( initFlag || timeDivs.length != assignTable.length || 
+        shiftDateRange[0].end.difference(shiftDateRange[0].start).inDays+1 != assignTable[0].length){
+      
+      assignTable = List<List<int>>.generate(
+        timeDivs.length,
+        (index) => List<int>.generate(shiftDateRange[0].end.difference(shiftDateRange[0].start).inDays+1, (index) => 0)
+      );
+    }
+  }
 
-    final List<int> fifo1 = List<int>.generate(0, (index) => index);
-    final List<int> fifo2 = List<int>.generate(0, (index) => index);
+  applyRuleToAssinTable(AssignRule rule){
+    int startWeekday = shiftDateRange[0].start.weekday;
+    List<int> fifo1 = List<int>.generate(0, (index) => index);
+    List<int> fifo2 = List<int>.generate(0, (index) => index);
     
     int weekdayTemp = startWeekday;
 
-    for(int rulesIndex = 0; rulesIndex < rules.length; rulesIndex++){
-      weekdayTemp = startWeekday;
-      fifo1.clear();
-      fifo2.clear();
-      if(rules[rulesIndex].week == 0){
-        fifo1.addAll(List<int>.generate(assignTable.length, (index) => index));
-      }else{
-        fifo1.addAll(List<int>.generate(7, (index) => (rules[rulesIndex].week - 1) * 7 + index));
-      }
+    weekdayTemp = startWeekday;
+    fifo1.clear();
+    fifo2.clear();
+    
+    /// fifo1にルールを適応すべき週間を入れていく
+    if(rule.week == 0){
+      fifo1.addAll(List<int>.generate(assignTable[0].length, (index) => index));
+    }else{
+      fifo1.addAll(List<int>.generate(7, (index) => (rule.week - 1) * 7 + index));
+    }
+    // fifo1からfifo2へ特定の曜日のみを抽出する
+    if(rule.weekday != 0){
+      weekdayTemp = (fifo1[0] + weekdayTemp - 1) % 7  + 1;
 
-      if(rules[rulesIndex].weekday != 0){
-        weekdayTemp = (fifo1[0] + weekdayTemp - 1) % 7  + 1;
-
-        for(int i = 0; i < fifo1.length; i++){
-          if(rules[rulesIndex].weekday == weekdayTemp){
-            fifo2.add(fifo1[i]);
-          }
-          weekdayTemp++;
-          if(weekdayTemp > 7){
-            weekdayTemp = weekdayTemp - 7;
-          }
-        }
-      }else{
-        for(int i = 0; i < fifo1.length; i++){
+      for(int i = 0; i < fifo1.length; i++){
+        if(rule.weekday == weekdayTemp){
           fifo2.add(fifo1[i]);
         }
-      }
-
-      if(rules[rulesIndex].timeDivs == 0){
-        for(int i = 0; i < fifo2.length; i++){
-          for(int j = 0; j < assignTable[0].length; j++){
-            assignTable[j][fifo2[i]] = rules[rulesIndex].assignNum;
-          }
+        weekdayTemp++;
+        if(weekdayTemp > 7){
+          weekdayTemp = weekdayTemp - 7;
         }
-      }else{
-        for(int i = 0; i < fifo2.length; i++){
-          assignTable[rules[rulesIndex].timeDivs-1][fifo2[i]] = rules[rulesIndex].assignNum;
+      }
+    }else{
+      fifo2 = fifo1;
+    }
+    // 指定された時間区分に対してルールを適応していく
+    if(rule.timeDivs1 == 0){
+      for(int i = 0; i < fifo2.length; i++){
+        for(int j = 0; j < assignTable.length; j++){
+          assignTable[j][fifo2[i]] = rule.assignNum;
+        }
+      }
+    }else{
+      for(int i = 0; i < fifo2.length; i++){
+        if(rule.timeDivs2 == 0 || rule.timeDivs1 == rule.timeDivs2){
+          assignTable[rule.timeDivs1-1][fifo2[i]] = rule.assignNum;
+        }else{
+          for(int i = rule.timeDivs1-1; i < rule.timeDivs2; i++){
+            assignTable[rule.timeDivs1-1][fifo2[i]] = rule.assignNum;
+          }
         }
       }
     }
   }
+
+  applyRuleToRequestTable(RequestRule rule){
+    int startWeekday = shiftDateRange[0].start.weekday;
+
+    List<int> fifo1 = List<int>.generate(0, (index) => index);
+    List<int> fifo2 = List<int>.generate(0, (index) => index);
+    
+    int weekdayTemp = startWeekday;
+
+    weekdayTemp = startWeekday;
+    fifo1.clear();
+    fifo2.clear();
+    
+    /// fifo1にルールを適応すべき週間を入れていく
+    if(rule.week == 0){
+      fifo1.addAll(List<int>.generate(assignTable[0].length, (index) => index));
+    }else{
+      fifo1.addAll(List<int>.generate(7, (index) => (rule.week - 1) * 7 + index));
+    }
+    // fifo1からfifo2へ特定の曜日のみを抽出する
+    if(rule.weekday != 0){
+      weekdayTemp = (fifo1[0] + weekdayTemp - 1) % 7  + 1;
+
+      for(int i = 0; i < fifo1.length; i++){
+        if(rule.weekday == weekdayTemp){
+          fifo2.add(fifo1[i]);
+        }
+        weekdayTemp++;
+        if(weekdayTemp > 7){
+          weekdayTemp = weekdayTemp - 7;
+        }
+      }
+    }else{
+      fifo2 = fifo1;
+    }
+    // 指定された時間区分に対してルールを適応していく
+    if(rule.timeDivs1 == 0){
+      for(int i = 0; i < fifo2.length; i++){
+        for(int j = 0; j < requestTable.length; j++){
+          requestTable[j][fifo2[i]] = rule.request;
+        }
+      }
+    }else{
+      for(int i = 0; i < fifo2.length; i++){
+        if(rule.timeDivs2 == 0 || rule.timeDivs1 == rule.timeDivs2){
+          requestTable[rule.timeDivs1-1][fifo2[i]] = rule.request;
+        }else{
+          for(int i = rule.timeDivs1-1; i < rule.timeDivs2; i++){
+            requestTable[rule.timeDivs1-1][fifo2[i]] = rule.request;
+          }
+        }
+      }
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  /// 時間区分を追加する
+  ////////////////////////////////////////////////////////////////////////////////////////////
 
   bool addTimeDivision(String name, DateTime startTime, DateTime endTime){
     for(int i = 0; i < timeDivs.length; i++){
@@ -79,15 +168,6 @@ class ShiftTable{
     }
     timeDivs.add(TimeDivision(name: name, startTime: startTime, endTime: endTime));
     return true;
-  }
-
-  removeTimeDivision(int index){
-    timeDivs.removeAt(index);
-    for(int i = 0; i < rules.length; i++){
-      if(rules[i].timeDivs == index + 1){
-        rules.removeAt(i);
-      }
-    }
   }
 }
 
@@ -103,16 +183,34 @@ class TimeDivision{
   });
 }
 
-class ShiftRule{
-  ShiftRule({
+class AssignRule{
+  AssignRule({
     required this.week,
     required this.weekday,
-    required this.timeDivs,
+    required this.timeDivs1,
+    required this.timeDivs2,
     required this.assignNum,
   });
 
   final int week;
   final int weekday;
-  int timeDivs;
+  int timeDivs1;
+  int timeDivs2;
   final int assignNum;
+}
+
+class RequestRule{
+  RequestRule({
+    required this.week,
+    required this.weekday,
+    required this.timeDivs1,
+    required this.timeDivs2,
+    required this.request,
+  });
+
+  final int week;
+  final int weekday;
+  int timeDivs1;
+  int timeDivs2;
+  final int request;
 }

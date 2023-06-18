@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 // my file
 import 'package:shift/src/functions/font.dart';
 import 'package:shift/src/functions/google_login_provider.dart';
-import 'package:shift/src/functions/trace_detector/hit_detector.dart';
 import 'package:shift/src/screens/sign_in.dart';
 import 'package:shift/src/screens/home.dart';
 import 'package:shift/src/screens/account.dart';
@@ -23,7 +22,6 @@ class AppWidget extends StatefulWidget {
 class AppWidgetState extends State<AppWidget> {
   final List<MenuContent> _contents = [
     MenuContent(contentTitle: "マイシフト", contentIcon: Icons.home,                            content: const HomeWidget()),
-    // MenuContent(contentTitle: "シフト表作成", contentIcon: Icons.create,                          content: const CreateScheduleWidget()),
     MenuContent(contentTitle: "お知らせ",     contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
     MenuContent(contentTitle: "アカウント",   contentIcon: Icons.person_2,                        content: const AccountScreen()),
     MenuContent(contentTitle: "設定",         contentIcon: Icons.settings,                        content: const HomeScreen()), 

@@ -63,12 +63,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCj8-iCr7Op0Gd3-5jKnfozFTfV3RiVjFU',
-    appId: '1:480752722157:ios:a9ac90643398a8dd9c2ce4',
+    appId: '1:480752722157:ios:83703a59303c55a69c2ce4',
     messagingSenderId: '480752722157',
     projectId: 'work-shift-automator',
     storageBucket: 'work-shift-automator.appspot.com',
-    iosClientId: '480752722157-d2geam0748jb7qjikbd0cfflbm74d69m.apps.googleusercontent.com',
-    iosBundleId: 'com.example.shift20230530',
+    iosClientId: '480752722157-4equ8bllnab7bpict44suvf34s2hbj9t.apps.googleusercontent.com',
+    iosBundleId: 'com.example.shift20230616',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
