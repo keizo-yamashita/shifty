@@ -8,13 +8,13 @@ import 'package:shift/src/functions/font.dart';
 /////////////////////////////////////////////////////////////////////////////////
 
 class ColoringSheet extends StatelessWidget {
-  final double sheetWidth;
-  final double sheetHeight;
-  final List<Widget> tableColumnTitle;
-  final List<Widget> tableRowTitle;
-  final List<List<int>> tableCell;
-  final List<Color> colorTable;
-  final Coordinate? selected;                  // selected point cordinate
+  final double            sheetWidth;
+  final double            sheetHeight;
+  final List<Widget>      tableColumnTitle;
+  final List<Widget>      tableRowTitle;
+  final List<List<int>>   tableCell;
+  final List<List<Color>> colorTable;
+  final Coordinate?       selected;            // selected point cordinate
   final Function(Coordinate?)? onChangeSelect; // chage select callback
   final Function?              onInputEnd;     // notifiy input end for create input buffer
   final Function(double?)?     onSwipeRight;   // swipe right
@@ -107,7 +107,7 @@ class ColoringSheet extends StatelessWidget {
             },
             onScaleEnd: (!enablePinch) ? null : (ScaleEndDetails data) {
               if(tableScale != 1.0){
-                print("end ${tableScale}");
+                print("end $tableScale");
                 onPinch?.call(tableScale);
                 tableScale = 1.0;
               }
@@ -142,7 +142,7 @@ class ColoringSheet extends StatelessWidget {
                       tableRowTitle[row],
                       for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
                         ( column < tableColumnTitle.length)
-                        ? _cell(row, column, colorTable[tableCell[row][column]], true)
+                        ? _cell(row, column, colorTable[tableCell[row][column]][0], true)
                         : _cell(row, column, MyFont.hiddenColor, false)
                     ],
                   )
@@ -167,46 +167,33 @@ class ColoringSheet extends StatelessWidget {
 
     final coordinate = Coordinate(column: column, row: row);
     
-    // noticefy currennt cell diffarent from selected cell 
     void onSelected() {
       if (selected != coordinate) {
         onChangeSelect?.call(coordinate);
       }
     }
+    
+    var assignNum = editable ? tableCell[row][column] : 0;
 
-    if(!editable){
-      return SheetCell(
-        color: Colors.grey[300],
-        isSelected: false,
-        coordinate: coordinate,
-        onSelected: (){},
-      );
-    }
-
-    if (!enableEdit) {
-      return SheetCell(
-        color: color,
-        isSelected: false,
-        coordinate: coordinate,
-        onSelected: onSelected,
-      );
-    }
-
-    if (selected != null && selected!.row == row && selected!.column == column) {
-      return SheetCell(
-        color: color,
-        isSelected: true,
-        coordinate: coordinate,
-        onSelected: onSelected,
-      );
-    } else {
-      return SheetCell(
-        color: color,
-        isSelected: false,
-        coordinate: coordinate,
-        onSelected: onSelected,
-      );
-    }
+    return AspectRatio(
+      aspectRatio: 1.0,
+      child: HitTestDetector(
+        onTouch: (editable) ? onSelected : null,
+        child:  Padding(
+          padding: const EdgeInsets.all(0.5),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all( color: Colors.grey),
+              color: editable ? colorTable[assignNum][0] : Colors.grey[400],
+              borderRadius: BorderRadius.circular(2.0)
+            ),
+            child: editable
+              ? Center(child: Text(assignNum.toString(), style: TextStyle(color: colorTable[assignNum][1], fontSize: 8)))
+              : null,
+          )
+        )
+      ),
+    );
   }
 
   // judge this cell is onTaped
@@ -227,103 +214,6 @@ class ColoringSheet extends StatelessWidget {
         }
       }
     }
-  }
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-// Matrix Cell Class
-/////////////////////////////////////////////////////////////////////////////////
-
-class SheetCell extends StatelessWidget {
-  final Color? color;
-  final Coordinate? coordinate;
-  final bool isSelected; 
-  final VoidCallback? onSelected;
-
-  const SheetCell({
-    Key? key,
-    this.color,
-    this.coordinate,
-    this.isSelected = false,
-    this.onSelected
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.0,
-      child: HitTestDetector(
-        onTouch: isSelected ? null : onSelected,
-        child: _cell(isSelected, color),
-      ),
-    );
-  }
-
-  Widget _cell(bool isSelected, Color? color) {
-    if (isSelected) {
-      return _SelectedCell(color: color);
-    } else {
-      return _DeselectedCell(color: color);
-    }
-  }
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-// Unselected Cell
-/////////////////////////////////////////////////////////////////////////////////
-
-class _DeselectedCell extends StatelessWidget {
-
-  final Color? color;
-
-  _DeselectedCell({
-    Key? key,
-    this.color
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(0.5),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.grey
-          ),
-          color: color,
-          borderRadius: BorderRadius.circular(2.0)
-        ),
-      )
-    );
-  }
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-// Selected Cell Class
-/////////////////////////////////////////////////////////////////////////////////
-
-class _SelectedCell extends StatelessWidget {
-  final Color? color;
-
-  _SelectedCell({
-    Key? key,
-    this.color
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(0.5),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.grey
-          ),
-          color: color,
-          borderRadius: BorderRadius.circular(2.0)
-        ),
-      )
-    );
   }
 }
 
@@ -372,4 +262,24 @@ class Coordinate {
     required this.column,
     required this.row,
   });
+}
+
+class DiagonalLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 1.0;
+
+    // 左下から右上に斜線を描く
+    canvas.drawLine(const Offset(0, 0), Offset(size.width, size.height), paint);
+    canvas.drawLine(Offset(0, size.height), Offset(size.width, 0), paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    // ここでは常に再描画するようにしていますが、パフォーマンスの観点から、
+    // 描画に影響するプロパティが変更された場合のみtrueを返すようにすると良いでしょう。
+    return false;
+  }
 }

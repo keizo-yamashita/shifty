@@ -67,12 +67,13 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
             TextButton(
               child: Text("確認", style: MyFont.headlineStyleGreen20),
               onPressed: () {
+                FocusScope.of(context).unfocus();
                 if(_shiftTable.timeDivs.isEmpty){
                   _onCreateScheduleItemTapped(context, "1つ以上の時間区分を入力してください");
                 }else if(_shiftTable.name == ''){
                   _onCreateScheduleItemTapped(context, "シフト表の名前を指定してください");
                 }else{
-                  _shiftTable.generateShiftTable(false);
+                  _shiftTable.initTable();
                   Provider.of<CreateShiftTableProvider>(context, listen: false).shiftTable = _shiftTable;
                   Navigator.push(context, MaterialPageRoute(builder: (c) => const CheckShiftTableWidget()));
                 }

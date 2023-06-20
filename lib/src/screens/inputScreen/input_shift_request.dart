@@ -27,20 +27,6 @@ bool _enableEdit    = false;
 bool _enablePinch   = false;
 int  _inkValue      = 1;
 
-List<Color> _colorTable = [
-  Colors.white,
-  Colors.green[50]!, 
-  Colors.green[100]!,
-  Colors.green[200]!, 
-  Colors.green[300]!, 
-  Colors.green[400]!, 
-  Colors.green[500]!, 
-  Colors.green[600]!,
-  Colors.green[700]!, 
-  Colors.green[800]!, 
-  Colors.green[900]!
-];
-
 UndoRedo<List<List<int>>> undoRedoCtrl = UndoRedo(_bufferMax);
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,7 +111,7 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
             tableColumnTitle: List<Widget>.generate(_shiftTable.requestTable[0].length, (index) => buildColunTitleWidget(index)),
             tableRowTitle:    List<Widget>.generate(_shiftTable.requestTable.length, (index) => buildRowTitleWidget(context, index)),
             tableCell:        _shiftTable.requestTable,
-            colorTable:       _colorTable,
+            colorTable:       colorTable,
             selected:         coordinate,
             onChangeSelect:   (p0){
               setState(() {
@@ -222,59 +208,64 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
     });
   }
 
-  void upadte(){
-     setState((){});setState((){});
-  }
-
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  スクロールによる上下左右移動の実装
   ////////////////////////////////////////////////////////////////////////////////////////////
   
   void moveUpAction(double value){
-    
-    var firstRowPrev = firstRow;
-    firstRow = (firstRow - 1).clamp(0, lastRow);
-    lastRow  = lastRow + firstRow - firstRowPrev;
+    setState(() {
+      var firstRowPrev = firstRow;
+      firstRow = (firstRow - 1).clamp(0, lastRow);
+      lastRow  = lastRow + firstRow - firstRowPrev;
+    });
   }
 
   void moveBottomAction(double value){
-    var rowSize = lastRow - firstRow;
-    var lastRowPrev = lastRow;
-    if(rowSize < _shiftTable.requestTable.length){
-      lastRow  = (lastRow + 1).clamp(0, _shiftTable.requestTable.length);
-      firstRow = firstRow+lastRow-lastRowPrev;
-    }else{
-      lastRow  = rowSize;
-      firstRow = 0;
-    }
+    setState(() {
+      var rowSize = lastRow - firstRow;
+      var lastRowPrev = lastRow;
+      if(rowSize < _shiftTable.assignTable.length){
+        lastRow  = (lastRow + 1).clamp(0, _shiftTable.assignTable.length);
+        firstRow = firstRow+lastRow-lastRowPrev;
+      }else{
+        lastRow  = rowSize;
+        firstRow = 0;
+      }
+    });
   } 
   
   void moveRightAction(double value){
-    var columnSize = lastColumn - firstColumn;
-    var lastColumnPrev = lastColumn;
-    if(columnSize < _shiftTable.requestTable[0].length){
-      lastColumn  = (lastColumn + 1).clamp(0, _shiftTable.requestTable[0].length);
-      firstColumn = firstColumn+lastColumn-lastColumnPrev;
-    }else{
-      lastColumn  = columnSize;
-      firstColumn = 0;
-    }
+    setState(() {
+      var columnSize = lastColumn - firstColumn;
+      var lastColumnPrev = lastColumn;
+      if(columnSize < _shiftTable.assignTable[0].length){
+        lastColumn  = (lastColumn + 1).clamp(0, _shiftTable.assignTable[0].length);
+        firstColumn = firstColumn+lastColumn-lastColumnPrev;
+      }else{
+        lastColumn  = columnSize;
+        firstColumn = 0;
+      }
+    });
   } 
   
   void moveLeftAction(double value){
-    var firstColumnPrev = firstColumn;
-    firstColumn = (firstColumn - 1).clamp(0, lastColumn);
-    lastColumn  = lastColumn + firstColumn - firstColumnPrev;
+    setState(() {
+      var firstColumnPrev = firstColumn;
+      firstColumn = (firstColumn - 1).clamp(0, lastColumn);
+      lastColumn  = lastColumn + firstColumn - firstColumnPrev;
+    });
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  redo undo 機能の実装
   ////////////////////////////////////////////////////////////////////////////////////////////
   void insertBuffer(List<List<int>> table){
-    undoRedoCtrl.insertBuffer(table.map((e) => List.from(e).cast<int>()).toList());
-    for(int i =0; i < undoRedoCtrl.buffer.length; i++){
-      print("${undoRedoCtrl.buffer.length} ${undoRedoCtrl.bufferIndex} ${undoRedoCtrl.buffer[i][0][0]}");
-    }
+    setState(() {
+      undoRedoCtrl.insertBuffer(table.map((e) => List.from(e).cast<int>()).toList());
+      for(int i =0; i < undoRedoCtrl.buffer.length; i++){
+        print("${undoRedoCtrl.buffer.length} ${undoRedoCtrl.bufferIndex} ${undoRedoCtrl.buffer[i][0][0]}");
+      }
+    });
   }
 
   void paintUndoRedo(bool undo){
@@ -435,7 +426,7 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
                 title: Row(
                   mainAxisAlignment:  MainAxisAlignment.center,
                   children: [
-                    Container(width: 25, height: 25, decoration: BoxDecoration(color: _colorTable[index], border: Border.all(color: MyFont.defaultColor))),
+                    Container(width: 25, height: 25, decoration: BoxDecoration(color: colorTable[index][0], border: Border.all(color: MyFont.defaultColor))),
                     const SizedBox(width: 30),
                     Text("${list[index]} 人", style: MyFont.defaultStyleBlack13,textAlign: TextAlign.center),
                   ],
@@ -455,7 +446,6 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
   }
 
   void buildAutoFillModalWindow(BuildContext context){
-    var rules;
     showModalWindow(
       context,
       0.5,
@@ -498,7 +488,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
     /// Auto-Fillの引数の入力UI (viewHistoryがTrueであれば，履歴表示画面を表示)
     ////////////////////////////////////////////////////////////////////////////////////////////
     
-    return (!viewHistry) ? Padding(
+    return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Column(
         children: [
@@ -526,18 +516,10 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
               Text("人", style: MyFont.defaultStyleGrey15),
             ],
           ),
-          const SizedBox(height: 50),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment:  MainAxisAlignment.end,
             children: [
-              buildTextButton(
-                "履歴", false, 60,
-                (){
-                  setState(() {
-                    viewHistry = true;
-                  });
-                }
-              ),
               buildTextButton(
                 "OK", false, 60,
                 (){
@@ -548,7 +530,6 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                     timeDivs2: selectorsIndex[3],
                     request:   selectorsIndex[4]
                   );
-                  table.requestRules.add(rule);
                   widget._shiftTable.applyRuleToRequestTable(rule);
                   Navigator.pop(context, rule); // これだけでModalWindowのFuture<dynamic>から返せる
                   setState(() {});
@@ -558,41 +539,6 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
             ],
           ),
         ],
-      ),
-    )
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ///  履歴表示　UI
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    : Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: SingleChildScrollView(
-        child: SizedBox(
-          width: 250,
-          height: MediaQuery.of(context).size.height * 0.40,
-          child: (widget._shiftTable.requestRules.isEmpty) ? Center(child: Text("登録されている履歴がありません", style: MyFont.defaultStyleGrey15)) : ReorderableListView.builder(
-            shrinkWrap: true,
-            buildDefaultDragHandles: false,
-            itemCount: widget._shiftTable.requestRules.length,
-            itemBuilder: (context, i) => registerAutoFill(
-              i, 
-              weekSelect[widget._shiftTable.requestRules[i].week], 
-              weekdaySelect[widget._shiftTable.requestRules[i].weekday],
-              timeDivs1List[widget._shiftTable.requestRules[i].timeDivs1],
-              timeDivs2List[widget._shiftTable.requestRules[i].timeDivs2],
-              widget._shiftTable.requestRules[i].request.toString(),
-              context
-            ),
-            onReorder: (int oldIndex, int newIndex) {
-              setState(() {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                final RequestRule item = widget._shiftTable.requestRules.removeAt(oldIndex);
-                widget._shiftTable.requestRules.insert(newIndex, item);
-              });
-            }
-          ),
-        ),
       ),
     );
   }
@@ -698,7 +644,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
             ),
             IconButton(
               onPressed: () {
-                widget._shiftTable.requestRules.remove(widget._shiftTable.requestRules[index]);
+                // widget._shiftTable.requestRules.remove(widget._shiftTable.requestRules[index]);
                 setState(() {});
               },
               icon: const Icon(Icons.delete, size: 20),

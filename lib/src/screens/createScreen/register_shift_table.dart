@@ -2,8 +2,6 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 // my package
 import 'package:shift/src/functions/font.dart';
@@ -26,20 +24,6 @@ const int _bufferMax      = 50;
 bool _enableEdit    = false;
 bool _enablePinch   = false;
 int  _inkValue      = 1;
-
-List<Color> _colorTable = [
-  Colors.white,
-  Colors.green[50]!, 
-  Colors.green[100]!,
-  Colors.green[200]!, 
-  Colors.green[300]!, 
-  Colors.green[400]!, 
-  Colors.green[500]!, 
-  Colors.green[600]!,
-  Colors.green[700]!, 
-  Colors.green[800]!, 
-  Colors.green[900]!
-];
 
 UndoRedo<List<List<int>>> undoRedoCtrl = UndoRedo(_bufferMax);
 
@@ -107,7 +91,7 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
               buildIconButton(
                 Icons.draw_rounded, _enableEdit,
                 (){_enableEdit = !_enableEdit; _enablePinch = false;},
-                (){ buildInkChangeModaleWindow(List<String>.generate(10, (index) => index.toString()));}
+                (){ buildInkChangeModaleWindow();}
               ),
               buildIconButton( Icons.hdr_auto_outlined, true, (){ buildAutoFillModalWindow(context); }, (){}),
               buildIconButton( Icons.undo,  undoRedoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
@@ -130,7 +114,7 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
             tableColumnTitle: List<Widget>.generate(_shiftTable.assignTable[0].length, (index) => buildColunTitleWidget(index)),
             tableRowTitle:    List<Widget>.generate(_shiftTable.assignTable.length, (index) => buildRowTitleWidget(context, index)),
             tableCell:        _shiftTable.assignTable,
-            colorTable:       _colorTable,
+            colorTable:       colorTable,
             selected:         coordinate,
             onChangeSelect:   (p0){
               setState(() {
@@ -227,59 +211,64 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
     });
   }
 
-  void upadte(){
-     setState((){});setState((){});
-  }
-
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  スクロールによる上下左右移動の実装
   ////////////////////////////////////////////////////////////////////////////////////////////
   
   void moveUpAction(double value){
-    
-    var firstRowPrev = firstRow;
-    firstRow = (firstRow - 1).clamp(0, lastRow);
-    lastRow  = lastRow + firstRow - firstRowPrev;
+    setState(() {
+      var firstRowPrev = firstRow;
+      firstRow = (firstRow - 1).clamp(0, lastRow);
+      lastRow  = lastRow + firstRow - firstRowPrev;
+    });
   }
 
   void moveBottomAction(double value){
-    var rowSize = lastRow - firstRow;
-    var lastRowPrev = lastRow;
-    if(rowSize < _shiftTable.assignTable.length){
-      lastRow  = (lastRow + 1).clamp(0, _shiftTable.assignTable.length);
-      firstRow = firstRow+lastRow-lastRowPrev;
-    }else{
-      lastRow  = rowSize;
-      firstRow = 0;
-    }
+    setState(() {
+      var rowSize = lastRow - firstRow;
+      var lastRowPrev = lastRow;
+      if(rowSize < _shiftTable.assignTable.length){
+        lastRow  = (lastRow + 1).clamp(0, _shiftTable.assignTable.length);
+        firstRow = firstRow+lastRow-lastRowPrev;
+      }else{
+        lastRow  = rowSize;
+        firstRow = 0;
+      }
+    });
   } 
   
   void moveRightAction(double value){
-    var columnSize = lastColumn - firstColumn;
-    var lastColumnPrev = lastColumn;
-    if(columnSize < _shiftTable.assignTable[0].length){
-      lastColumn  = (lastColumn + 1).clamp(0, _shiftTable.assignTable[0].length);
-      firstColumn = firstColumn+lastColumn-lastColumnPrev;
-    }else{
-      lastColumn  = columnSize;
-      firstColumn = 0;
-    }
+    setState(() {
+      var columnSize = lastColumn - firstColumn;
+      var lastColumnPrev = lastColumn;
+      if(columnSize < _shiftTable.assignTable[0].length){
+        lastColumn  = (lastColumn + 1).clamp(0, _shiftTable.assignTable[0].length);
+        firstColumn = firstColumn+lastColumn-lastColumnPrev;
+      }else{
+        lastColumn  = columnSize;
+        firstColumn = 0;
+      }
+    });
   } 
   
   void moveLeftAction(double value){
-    var firstColumnPrev = firstColumn;
-    firstColumn = (firstColumn - 1).clamp(0, lastColumn);
-    lastColumn  = lastColumn + firstColumn - firstColumnPrev;
+    setState(() {
+      var firstColumnPrev = firstColumn;
+      firstColumn = (firstColumn - 1).clamp(0, lastColumn);
+      lastColumn  = lastColumn + firstColumn - firstColumnPrev;
+    });
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  redo undo 機能の実装
   ////////////////////////////////////////////////////////////////////////////////////////////
   void insertBuffer(List<List<int>> table){
-    undoRedoCtrl.insertBuffer(table.map((e) => List.from(e).cast<int>()).toList());
-    for(int i =0; i < undoRedoCtrl.buffer.length; i++){
-      print("${undoRedoCtrl.buffer.length} ${undoRedoCtrl.bufferIndex} ${undoRedoCtrl.buffer[i][0][0]}");
-    }
+    setState(() {
+      undoRedoCtrl.insertBuffer(table.map((e) => List.from(e).cast<int>()).toList());
+      for(int i =0; i < undoRedoCtrl.buffer.length; i++){
+        print("${undoRedoCtrl.buffer.length} ${undoRedoCtrl.bufferIndex} ${undoRedoCtrl.buffer[i][0][0]}");
+      }
+    });
   }
 
   void paintUndoRedo(bool undo){
@@ -332,43 +321,6 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
       child: Text(_shiftTable.timeDivs[index].name, style: MyFont.tableTitleStyle(Colors.black), textHeightBehavior: MyFont.defaultBehavior),
     );
   }
-
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  作成したシフト表をFirebaseへ登録
-  ////////////////////////////////////////////////////////////////////////////////////////////
-
-  void registerShitTable() async{
-
-    ShiftTable shiftTable = _shiftTable;
-
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    FirebaseAuth      auth      = FirebaseAuth.instance;
-
-    final User? user = auth.currentUser;
-    final uid = user?.uid;
-
-    final table = {
-      'user-id'       : uid,
-      'name'          : shiftTable.name,
-      'request-start' : shiftTable.shiftDateRange[1].start,
-      'request-end'   : shiftTable.shiftDateRange[1].end,
-      'work-start'    : shiftTable.shiftDateRange[0].start,
-      'work-end'      : shiftTable.shiftDateRange[0].end,
-      'time-division' : FieldValue.arrayUnion(List.generate(shiftTable.timeDivs.length, (index) => {
-        'name' : shiftTable.timeDivs[index].name, 'start-time' : shiftTable.timeDivs[index].startTime, 'end-time' : shiftTable.timeDivs[index].endTime
-      })),
-      'assignment'    : shiftTable.assignTable.asMap().map((index, value) => MapEntry(index.toString(), value))
-    };
-
-    var refarence = await firestore.collection('shift-table').add(table);
-
-    final request = {
-      'user-id'       : uid,
-      'table-refarence' : refarence
-    };
-
-    await firestore.collection('shift-request').add(request);
-  }
   
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  作成したシフト表登録の確認ダイアログ (確認機能付き)
@@ -397,7 +349,7 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
                         CupertinoDialogAction(
                           child: Text('OK', style: MyFont.headlineStyleGreen15),
                           onPressed: () {
-                            registerShitTable();
+                            _shiftTable.pushShitTable();
                             Navigator.pop(context);
                             Navigator.pop(context);
                             Navigator.pop(context);
@@ -426,13 +378,13 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
   ///  シフト表に塗る色を選択する
   ////////////////////////////////////////////////////////////////////////////////////////////
   
-  void buildInkChangeModaleWindow(List<String> list) {
+  void buildInkChangeModaleWindow() {
     var box = SizedBox(
       height: MediaQuery.of(context).size.height * 0.3,
       width: double.maxFinite,
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: list.length,
+        itemCount: assignNumSelect.length,
         itemBuilder: (BuildContext context, int index) {
           return Column(
             children: [
@@ -440,9 +392,9 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
                 title: Row(
                   mainAxisAlignment:  MainAxisAlignment.center,
                   children: [
-                    Container(width: 25, height: 25, decoration: BoxDecoration(color: _colorTable[index], border: Border.all(color: MyFont.defaultColor))),
+                    Container(width: 25, height: 25, decoration: BoxDecoration(color: colorTable[index][0], border: Border.all(color: MyFont.defaultColor))),
                     const SizedBox(width: 30),
-                    Text("${list[index]} 人", style: MyFont.defaultStyleBlack13,textAlign: TextAlign.center),
+                    Text("$index 人", style: MyFont.defaultStyleBlack13,textAlign: TextAlign.center),
                   ],
                 ),
                 onTap: () {
@@ -460,10 +412,9 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
   }
 
   void buildAutoFillModalWindow(BuildContext context){
-    var rules;
     showModalWindow(
       context,
-      0.5,
+      0.4,
       AutoFillWidget(shiftTable: _shiftTable)
     ).then((value) {
       if(value != null){
@@ -494,16 +445,15 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print("");
     var table        = widget._shiftTable;
     var timeDivs1List = List.generate(table.timeDivs.length + 1, (index) => (index == 0) ? '全て' : table.timeDivs[index-1].name);
     var timeDivs2List = List.generate(table.timeDivs.length + 1, (index) => (index == 0) ? '-' : table.timeDivs[index-1].name);
 
     ////////////////////////////////////////////////////////////////////////////////////////////
-    /// Auto-Fillの引数の入力UI (viewHistoryがTrueであれば，履歴表示画面を表示)
+    /// Auto-Fillの引数の入力UI
     ////////////////////////////////////////////////////////////////////////////////////////////
     
-    return (!viewHistry) ? Padding(
+    return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Column(
         children: [
@@ -531,18 +481,18 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
               Text("人", style: MyFont.defaultStyleGrey15),
             ],
           ),
-          const SizedBox(height: 50),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment:  MainAxisAlignment.end,
             children: [
-              buildTextButton(
-                "履歴", false, 60,
-                (){
-                  setState(() {
-                    viewHistry = true;
-                  });
-                }
-              ),
+              // buildTextButton(
+              //   "履歴", false, 60,
+              //   (){
+              //     setState(() {
+              //       viewHistry = true;
+              //     });
+              //   }
+              // ),
               buildTextButton(
                 "OK", false, 60,
                 (){
@@ -553,7 +503,6 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                     timeDivs2: selectorsIndex[3],
                     assignNum: selectorsIndex[4]
                   );
-                  table.assignRules.add(rule);
                   widget._shiftTable.applyRuleToAssinTable(rule);
                   Navigator.pop(context, rule); // これだけでModalWindowのFuture<dynamic>から返せる
                   setState(() {});
@@ -564,42 +513,42 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
           ),
         ],
       ),
-    )
+    );
     ////////////////////////////////////////////////////////////////////////////////////////////
     ///  履歴表示　UI
     ////////////////////////////////////////////////////////////////////////////////////////////
-    : Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: SingleChildScrollView(
-        child: SizedBox(
-          width: 250,
-          height: MediaQuery.of(context).size.height * 0.40,
-          child: (widget._shiftTable.assignRules.isEmpty) ? Center(child: Text("登録されている履歴がありません", style: MyFont.defaultStyleGrey15)) : ReorderableListView.builder(
-            shrinkWrap: true,
-            buildDefaultDragHandles: false,
-            itemCount: widget._shiftTable.assignRules.length,
-            itemBuilder: (context, i) => registerAutoFill(
-              i, 
-              weekSelect[widget._shiftTable.assignRules[i].week], 
-              weekdaySelect[widget._shiftTable.assignRules[i].weekday],
-              timeDivs1List[widget._shiftTable.assignRules[i].timeDivs1],
-              timeDivs2List[widget._shiftTable.assignRules[i].timeDivs2],
-              widget._shiftTable.assignRules[i].assignNum.toString(),
-              context
-            ),
-            onReorder: (int oldIndex, int newIndex) {
-              setState(() {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                final AssignRule item = widget._shiftTable.assignRules.removeAt(oldIndex);
-                widget._shiftTable.assignRules.insert(newIndex, item);
-              });
-            }
-          ),
-        ),
-      ),
-    );
+    // : Padding(
+    //   padding: const EdgeInsets.all(10.0),
+    //   child: SingleChildScrollView(
+    //     child: SizedBox(
+    //       width: 250,
+    //       height: MediaQuery.of(context).size.height * 0.40,
+    //       child: (widget._shiftTable.assignRules.isEmpty) ? Center(child: Text("登録されている履歴がありません", style: MyFont.defaultStyleGrey15)) : ReorderableListView.builder(
+    //         shrinkWrap: true,
+    //         buildDefaultDragHandles: false,
+    //         itemCount: widget._shiftTable.assignRules.length,
+    //         itemBuilder: (context, i) => registerAutoFill(
+    //           i, 
+    //           weekSelect[widget._shiftTable.assignRules[i].week], 
+    //           weekdaySelect[widget._shiftTable.assignRules[i].weekday],
+    //           timeDivs1List[widget._shiftTable.assignRules[i].timeDivs1],
+    //           timeDivs2List[widget._shiftTable.assignRules[i].timeDivs2],
+    //           widget._shiftTable.assignRules[i].assignNum.toString(),
+    //           context
+    //         ),
+    //         onReorder: (int oldIndex, int newIndex) {
+    //           setState(() {
+    //             if (oldIndex < newIndex) {
+    //               newIndex -= 1;
+    //             }
+    //             final AssignRule item = widget._shiftTable.assignRules.removeAt(oldIndex);
+    //             widget._shiftTable.assignRules.insert(newIndex, item);
+    //           });
+    //         }
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -703,7 +652,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
             ),
             IconButton(
               onPressed: () {
-                widget._shiftTable.assignRules.remove(widget._shiftTable.assignRules[index]);
+                // widget._shiftTable.assignRules.remove(widget._shiftTable.assignRules[index]);
                 setState(() {});
               },
               icon: const Icon(Icons.delete, size: 20),

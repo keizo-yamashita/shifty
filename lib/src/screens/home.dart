@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////////////////
+/// import
+////////////////////////////////////////////////////////////////////////////////////////////
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +14,10 @@ import 'package:shift/src/functions/shift_table.dart';
 import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
 import 'package:shift/src/functions/shift_table_provider.dart';
 import 'package:shift/src/screens/createScreen/create_shift_table.dart';
+
+////////////////////////////////////////////////////////////////////////////////////////////
+/// Home 画面
+////////////////////////////////////////////////////////////////////////////////////////////
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({Key? key}) : super(key: key);
@@ -102,21 +110,23 @@ class HomeWidgetState extends State<HomeWidget> {
     final User? user = auth.currentUser;
     final uid = user?.uid;
 
+    // 自分のユーザIDが含まれるシフトリクエストをとってくる
     var snapshot = await firestore.collection('shift-request').where('user-id', isEqualTo: uid).get();
 
+    // とってきたシフトリクエストが参照しているシフト表を取ってくる
     List<DocumentSnapshot> shifts = [];
-
     for(var doc in snapshot.docs){
       DocumentReference ref = doc.get('table-refarence');
       DocumentSnapshot table = await ref.get();
       shifts.add(table);
     }
-    
+
+    // ウィジェットを作成する
     if(snapshot.docs.isEmpty){
       return Text("登録されているシフト表はありません", style: MyFont.defaultStyleGrey15);
     }else{
       return Column(
-        children: [
+        children: [          
           for(var shift in shifts)
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -142,47 +152,21 @@ class HomeWidgetState extends State<HomeWidget> {
                       ],
                     ),
                   ),
-                  onPressed: () {
-                    var name           = shift.get('name');
-                    var assignRules    = <AssignRule>[];
-                    var timeDivsMap    = shift.get('time-division');
-                    var timeDivs       = List<TimeDivision>.generate(
-                      timeDivsMap.length, (index) => TimeDivision(
-                        name: timeDivsMap[index]['name'],
-                        startTime: timeDivsMap[index]['start-time'].toDate(),
-                        endTime: timeDivsMap[index]['end-time'].toDate()
-                      )
-                    );
-
-                    var dateRange = [
-                      DateTimeRange(start: shift.get('work-start').toDate(), end: shift.get('work-end').toDate()),
-                      DateTimeRange(start: shift.get('request-start').toDate(), end: shift.get('request-end').toDate())
-                    ];
-                    
-                    var assignmentsMap = shift.get('assignment');
-                    var assignments    = List<List<int>>.generate(
-                      timeDivs.length,
-                      (index) => assignmentsMap[index.toString()].cast<int>()
-                    );
-
-                    var shiftTable = ShiftTable(
-                      name: name,
-                      assignRules: assignRules,
-                      requestRules: <RequestRule>[],
-                      timeDivs: timeDivs,
-                      assignTable: assignments,
-                      requestTable: assignments.map((e) => e.map((e) => 0).toList().cast<int>()).toList(),
-                      shiftDateRange: dateRange
-                    );
-                    shiftTable.generateShiftTable(true);
+                  onPressed: () { 
+                    var shiftTable = ShiftTable();
+                    shiftTable.pullShiftTable(shift);
+                    shiftTable.initTable();
                     Provider.of<InputShiftRequestProvider>(context, listen: false).shiftTable = shiftTable;
-                    print(shiftTable.assignTable);
                     Navigator.push(context, MaterialPageRoute(builder: (c) => const InputShiftRequestWidget()));
                   },
                   onLongPress: () {
-                    removeTable(firestore, shift.id);
+                    // 
+                    if(shift.get('user-id') == uid)
+                    removeTableHard(shift.id);
                   },
                 ),
+
+                // もしそのシフト表の管理者だったら右上に管理者アイコンを表示
                 if(shift.get('user-id') == uid)
                 const Positioned(
                   right: 20,
@@ -201,13 +185,45 @@ class HomeWidgetState extends State<HomeWidget> {
   /// Firebaseからのデータベース(シフト表の削除)
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  removeTable(FirebaseFirestore firestore, String tableId) async {
+  removeTableHard(String tableId) async {
+    
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // シフト表を削除する
     firestore.collection('shift-table').doc(tableId).delete().then((_) {
     print("Document successfully deleted!");
     }).catchError((error) {
       print("Error removing document: $error");
     });
     
+    // 削除したシフトと表を元にするシフトリクエストを削除する
+    firestore.collection('shift-request').where('table-refarence', isEqualTo: firestore.collection('shift-table').doc(tableId)).get().then((querySnapshot) {
+      // 各ドキュメントに対して削除操作を行う
+      for(var doc in querySnapshot.docs){
+        doc.reference.delete().then((_) {
+          print("Document successfully deleted!");
+        }).catchError((error) {
+          print("Error removing document: $error");
+        });
+        setState(() {});
+      }
+    }).catchError((error) {
+      print("Error getting documents: $error");
+    });
+  }
+
+  removeTableSoft(String tableId) async {
+    
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // シフト表を削除する
+    firestore.collection('shift-table').doc(tableId).delete().then((_) {
+    print("Document successfully deleted!");
+    }).catchError((error) {
+      print("Error removing document: $error");
+    });
+    
+    // 削除したシフトと表を元にするシフトリクエストを削除する
     firestore.collection('shift-request').where('table-refarence', isEqualTo: firestore.collection('shift-table').doc(tableId)).get().then((querySnapshot) {
       // 各ドキュメントに対して削除操作を行う
       for(var doc in querySnapshot.docs){

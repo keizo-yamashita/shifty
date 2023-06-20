@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-List<String> weekSelect    = ["すべての週","第1週","第2週","第3週","第4週"];
-List<String> weekdaySelect = ["すべての曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日","日曜日"];
+List<String> weekSelect      = ["すべての週","第1週","第2週","第3週","第4週"];
+List<String> weekdaySelect   = ["すべての曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日","日曜日"];
+List<String> assignNumSelect = ["0 人", "1 人", "2 人", "3 人", "4 人", "5 人", "6 人", "7 人", "8 人", "9 人", "10 人"];
+
+List<List<Color>> colorTable = [
+  [ Colors.white, Colors.grey],
+  [ Colors.green[50]!, Colors.grey], 
+  [ Colors.green[100]!, Colors.grey], 
+  [ Colors.green[200]!, Colors.grey], 
+  [ Colors.green[300]!, Colors.grey], 
+  [ Colors.green[400]!, Colors.grey], 
+  [ Colors.green[500]!, Colors.grey], 
+  [ Colors.green[600]!, Colors.grey], 
+  [ Colors.green[700]!, Colors.white], 
+  [ Colors.green[800]!, Colors.white], 
+  [ Colors.green[900]!, Colors.white], 
+];
 
 class ShiftTable{
   late String              name;
-  late List<AssignRule>    assignRules;
-  late List<RequestRule>    requestRules;
   late List<TimeDivision>  timeDivs;
   late List<List<int>>     assignTable;
   late List<List<int>>     requestTable;
@@ -14,16 +29,12 @@ class ShiftTable{
 
   ShiftTable({
     String?              name,
-    List<AssignRule>?    assignRules,
-    List<RequestRule>?   requestRules,
     List<TimeDivision>?  timeDivs,
     List<List<int>>?     assignTable,
     List<List<int>>?     requestTable,
     List<DateTimeRange>? shiftDateRange,
   }) {
     this.name           = name ?? "";
-    this.assignRules    = assignRules ?? <AssignRule>[];
-    this.requestRules   = requestRules ?? <RequestRule>[];
     this.timeDivs       = timeDivs ?? <TimeDivision>[];
     this.assignTable    = assignTable ?? <List<int>>[];
     this.requestTable    = requestTable ?? <List<int>>[];
@@ -37,9 +48,9 @@ class ShiftTable{
   ///  シフト表の作成関数
   ////////////////////////////////////////////////////////////////////////////////////////////
   
-  generateShiftTable(bool initFlag){
+  initTable(){
     /// 初期化を必要とする場合，及び時間区分，シフト期間が変更された場合に初期化
-    if( initFlag || timeDivs.length != assignTable.length || 
+    if(timeDivs.length != assignTable.length || 
         shiftDateRange[0].end.difference(shiftDateRange[0].start).inDays+1 != assignTable[0].length){
       
       assignTable = List<List<int>>.generate(
@@ -47,8 +58,20 @@ class ShiftTable{
         (index) => List<int>.generate(shiftDateRange[0].end.difference(shiftDateRange[0].start).inDays+1, (index) => 0)
       );
     }
+    if(timeDivs.length != requestTable.length || 
+        shiftDateRange[0].end.difference(shiftDateRange[0].start).inDays+1 != requestTable[0].length){
+      
+      requestTable = List<List<int>>.generate(
+        timeDivs.length,
+        (index) => List<int>.generate(shiftDateRange[0].end.difference(shiftDateRange[0].start).inDays+1, (index) => 0)
+      );
+    }
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  シフト表に勤務人数のルールを1つ適用
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  
   applyRuleToAssinTable(AssignRule rule){
     int startWeekday = shiftDateRange[0].start.weekday;
     List<int> fifo1 = List<int>.generate(0, (index) => index);
@@ -102,6 +125,10 @@ class ShiftTable{
     }
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  シフト希望表に希望ルールを1つ適用
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  
   applyRuleToRequestTable(RequestRule rule){
     int startWeekday = shiftDateRange[0].start.weekday;
 
@@ -169,18 +196,86 @@ class ShiftTable{
     timeDivs.add(TimeDivision(name: name, startTime: startTime, endTime: endTime));
     return true;
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  作成したシフト表をFirebaseへ登録
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+  void pushShitTable() async{
+
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    FirebaseAuth      auth      = FirebaseAuth.instance;
+
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
+
+    final table = {
+      'user-id'       : uid,
+      'name'          : name,
+      'request-start' : shiftDateRange[1].start,
+      'request-end'   : shiftDateRange[1].end,
+      'work-start'    : shiftDateRange[0].start,
+      'work-end'      : shiftDateRange[0].end,
+      'time-division' : FieldValue.arrayUnion( List.generate(timeDivs.length, (index) => { 'name' : timeDivs[index].name, 'start-time' : timeDivs[index].startTime, 'end-time' : timeDivs[index].endTime})),
+      'assignment'    : assignTable.asMap().map((index, value) => MapEntry(index.toString(), value))
+    };
+
+    var refarence = await firestore.collection('shift-table').add(table);
+
+    final request = {
+      'user-id'       : uid,
+      'table-refarence' : refarence
+    };
+
+    await firestore.collection('shift-request').add(request);
+  }
+
+  void pullShiftTable(DocumentSnapshot<Object?> snapshot) async{
+    
+    name = snapshot.get('name');
+    
+    var timeDivsMap = snapshot.get('time-division');
+    
+    timeDivs = List<TimeDivision>.generate(
+      timeDivsMap.length, (index) => TimeDivision(
+        name: timeDivsMap[index]['name'],
+        startTime: timeDivsMap[index]['start-time'].toDate(),
+        endTime: timeDivsMap[index]['end-time'].toDate()
+      )
+    );
+
+    shiftDateRange = [
+      DateTimeRange(start: snapshot.get('work-start').toDate(), end: snapshot.get('work-end').toDate()),
+      DateTimeRange(start: snapshot.get('request-start').toDate(), end: snapshot.get('request-end').toDate())
+    ];
+    
+    var assignMap = snapshot.get('assignment');
+
+    
+    assignTable = List<List<int>>.generate(
+      timeDivs.length,
+      (index) => assignMap[index.toString()].cast<int>()
+    );
+
+    var requestMap = snapshot.get('request');
+
+    requestTable = List<List<int>>.generate(
+      timeDivs.length,
+      (index) => requestMap[index.toString()].cast<int>()
+    );
+  }
 }
 
 class TimeDivision{
-  DateTime startTime;
-  DateTime endTime;
-  String name;
-
   TimeDivision({
     required this.name,
     required this.startTime,
     required this.endTime
   });
+
+  DateTime startTime;
+  DateTime endTime;
+  String name;
 }
 
 class AssignRule{
