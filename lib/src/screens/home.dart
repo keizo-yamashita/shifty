@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shift/src/functions/dialog.dart';
 
 // my package
 import 'package:shift/src/functions/font.dart';
@@ -114,11 +115,12 @@ class HomeWidgetState extends State<HomeWidget> {
     var snapshot = await firestore.collection('shift-request').where('user-id', isEqualTo: uid).get();
 
     // とってきたシフトリクエストが参照しているシフト表を取ってくる
-    List<DocumentSnapshot> shifts = [];
+    List<Widget> shiftCard = [];
     for(var doc in snapshot.docs){
-      DocumentReference ref = doc.get('table-refarence');
-      DocumentSnapshot table = await ref.get();
-      shifts.add(table);
+      String                    id = doc.id;
+      DocumentReference  reference = doc.get('table-refarence');
+      DocumentSnapshot    refTable = await reference.get();
+      shiftCard.add(buildShiftCard(id, refTable, uid));
     }
 
     // ウィジェットを作成する
@@ -127,62 +129,84 @@ class HomeWidgetState extends State<HomeWidget> {
     }else{
       return Column(
         children: [          
-          for(var shift in shifts)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Stack(
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                    backgroundColor: MyFont.secondaryBackgroundColor,
-                    foregroundColor: MyFont.secondaryColor,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: Text(shift.get('name'), style: MyFont.headlineStyleGreen20, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
-                        ),
-                        Text("リクエスト期間 : ${DateFormat('yy/MM/dd').format(shift.get('request-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(shift.get('request-end').toDate())}", style: MyFont.defaultStyleGrey15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
-                        Text("　シフト期間　 : ${DateFormat('yy/MM/dd').format(shift.get('work-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(shift.get('work-end').toDate())}", style: MyFont.defaultStyleGrey15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
-                      ],
-                    ),
-                  ),
-                  onPressed: () { 
-                    var shiftTable = ShiftTable();
-                    shiftTable.pullShiftTable(shift);
-                    shiftTable.initTable();
-                    Provider.of<InputShiftRequestProvider>(context, listen: false).shiftTable = shiftTable;
-                    Navigator.push(context, MaterialPageRoute(builder: (c) => const InputShiftRequestWidget()));
-                  },
-                  onLongPress: () {
-                    // 
-                    if(shift.get('user-id') == uid)
-                    removeTableHard(shift.id);
-                  },
-                ),
-
-                // もしそのシフト表の管理者だったら右上に管理者アイコンを表示
-                if(shift.get('user-id') == uid)
-                const Positioned(
-                  right: 20,
-                  top: 20,
-                  child: Icon(Icons.admin_panel_settings, size: 30.0, color: MyFont.primaryColor),
-                ),
-              ],
-            ),
-          ),
+          for(var shift in shiftCard)
+          shift
         ]
       );
     }
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  /// Firebaseからのデータベース(シフト表の削除)
+  /// Firestoreからシフト表の削除(シフト表の削除)
+  ////////////////////////////////////////////////////////////////////////////////////////////  
+  
+  Widget buildShiftCard(String id, DocumentSnapshot reference, String? uid){
+    
+    var tableName = reference.get('name');
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Stack(
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              backgroundColor: MyFont.secondaryBackgroundColor,
+              foregroundColor: MyFont.secondaryColor,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(tableName, style: MyFont.headlineStyleGreen20, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                  ),
+                  Text("リクエスト期間 : ${DateFormat('yy/MM/dd').format(reference.get('request-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(reference.get('request-end').toDate())}", style: MyFont.defaultStyleGrey15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                  Text("　シフト期間　 : ${DateFormat('yy/MM/dd').format(reference.get('work-start').toDate())} - ${DateFormat('yyyy/MM/dd').format(reference.get('work-end').toDate())}", style: MyFont.defaultStyleGrey15, textHeightBehavior: MyFont.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
+            onPressed: () { 
+              var shiftTable = ShiftTable();
+              shiftTable.pullShiftTable(reference);
+              shiftTable.initTable(); 
+              Provider.of<InputShiftRequestProvider>(context, listen: false).shiftTable = shiftTable;
+              Navigator.push(context, MaterialPageRoute(builder: (c) => const InputShiftRequestWidget()));
+            },
+            onLongPress: () {
+              if(reference.get('user-id') == uid) {
+                showConfirmDialog(context, "確認",
+                  "シフト表'$tableName'\nを削除しますか？\n管理者が削除を行うと，\n'$tableName'への登録データはすべて削除されます",
+                  "シフト表'$tableName'を削除しました", (){
+                  removeTableHard(reference.id);
+                  Navigator.pop(context);
+                });
+              } else {
+                showConfirmDialog(context, "確認", "シフト表'$tableName'を削除しますか？", "シフト表'$tableName'を削除しました", (){
+                  removeTableSoft(id);
+                  removeTableHard(reference.id);
+                  Navigator.pop(context);
+                });
+              }
+            },
+          ),
+
+          // もしそのシフト表の管理者だったら右上に管理者アイコンを表示
+          if(reference.get('user-id') == uid)
+          const Positioned(
+            right: 20,
+            top: 20,
+            child: Icon(Icons.admin_panel_settings, size: 30.0, color: MyFont.primaryColor),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  /// Firestoreからシフト表の削除(シフト表の削除)
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   removeTableHard(String tableId) async {
@@ -212,30 +236,15 @@ class HomeWidgetState extends State<HomeWidget> {
     });
   }
 
-  removeTableSoft(String tableId) async {
+  removeTableSoft(String id) async {
     
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     // シフト表を削除する
-    firestore.collection('shift-table').doc(tableId).delete().then((_) {
+    firestore.collection('shift-request').doc(id).delete().then((_) {
     print("Document successfully deleted!");
     }).catchError((error) {
       print("Error removing document: $error");
-    });
-    
-    // 削除したシフトと表を元にするシフトリクエストを削除する
-    firestore.collection('shift-request').where('table-refarence', isEqualTo: firestore.collection('shift-table').doc(tableId)).get().then((querySnapshot) {
-      // 各ドキュメントに対して削除操作を行う
-      for(var doc in querySnapshot.docs){
-        doc.reference.delete().then((_) {
-          print("Document successfully deleted!");
-        }).catchError((error) {
-          print("Error removing document: $error");
-        });
-        setState(() {});
-      }
-    }).catchError((error) {
-      print("Error getting documents: $error");
-    });
-  }
+    });   
+   }
 }

@@ -1,10 +1,10 @@
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // my package
 import 'package:shift/src/functions/font.dart';
+import 'package:shift/src/functions/dialog.dart';
 import 'package:shift/src/functions/shift_table.dart';
 import 'package:shift/src/functions/hit_detector.dart';
 import 'package:shift/src/functions/undo_redo.dart';
@@ -25,8 +25,6 @@ bool _enableEdit    = false;
 bool _enablePinch   = false;
 int  _inkValue      = 1;
 
-UndoRedo<List<List<int>>> undoRedoCtrl = UndoRedo(_bufferMax);
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// シフト表の最終チェックに使用するページ (勤務人数も指定)
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,20 +39,15 @@ class CheckShiftTableWidget extends StatefulWidget {
 
 class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
 
-  bool initFlag                = false;
+  static UndoRedo<List<List<int>>> undoredoCtrl = UndoRedo(_bufferMax);
+
   static int firstColumn       = 0;
   static int firstRow          = 0;
   static int lastColumn        = _columnCountMax;
   static int lastRow           = _rowCountMax;
   static Coordinate coordinate = Coordinate(column: 0, row: 0);
-  static List<List<List<int>>> assignTableBuffer = [];
   
   ShiftTable _shiftTable = ShiftTable();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +55,7 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
     var screenSize = MediaQuery.of(context).size;
     
     _shiftTable = Provider.of<CreateShiftTableProvider>(context, listen: false).shiftTable;
-    if(undoRedoCtrl.buffer.isEmpty){
+    if(undoredoCtrl.buffer.isEmpty){
       insertBuffer(_shiftTable.assignTable);
     }
 
@@ -94,9 +87,17 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
                 (){ buildInkChangeModaleWindow();}
               ),
               buildIconButton( Icons.hdr_auto_outlined, true, (){ buildAutoFillModalWindow(context); }, (){}),
-              buildIconButton( Icons.undo,  undoRedoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
-              buildIconButton( Icons.redo,  undoRedoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){}),
-              buildIconButton( Icons.check, true, (){showConfirmDialog(context);}, (){}),
+              buildIconButton( Icons.undo,  undoredoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
+              buildIconButton( Icons.redo,  undoredoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){}),
+              buildIconButton( Icons.check, true, (){
+                showConfirmDialog(context, "確認", "このシフト表を登録しますか？", "シフト表を登録しました", (){
+                  _shiftTable.pushShitTable();
+                  crearVariable();
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                }
+              );}, (){}),
             ],
           ),
           
@@ -264,9 +265,9 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
   ////////////////////////////////////////////////////////////////////////////////////////////
   void insertBuffer(List<List<int>> table){
     setState(() {
-      undoRedoCtrl.insertBuffer(table.map((e) => List.from(e).cast<int>()).toList());
-      for(int i =0; i < undoRedoCtrl.buffer.length; i++){
-        print("${undoRedoCtrl.buffer.length} ${undoRedoCtrl.bufferIndex} ${undoRedoCtrl.buffer[i][0][0]}");
+      undoredoCtrl.insertBuffer(table.map((e) => List.from(e).cast<int>()).toList());
+      for(int i =0; i < undoredoCtrl.buffer.length; i++){
+        print("${undoredoCtrl.buffer.length} ${undoredoCtrl.bufferIndex} ${undoredoCtrl.buffer[i][0][0]}");
       }
     });
   }
@@ -274,11 +275,11 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
   void paintUndoRedo(bool undo){
     setState(() {
       if(undo){
-        _shiftTable.assignTable = undoRedoCtrl.undo().map((e) => List.from(e).cast<int>()).toList();
+        _shiftTable.assignTable = undoredoCtrl.undo().map((e) => List.from(e).cast<int>()).toList();
       }else{
-        _shiftTable.assignTable = undoRedoCtrl.redo().map((e) => List.from(e).cast<int>()).toList();
+        _shiftTable.assignTable = undoredoCtrl.redo().map((e) => List.from(e).cast<int>()).toList();
       }
-      print("${undoRedoCtrl.buffer.length} ${undoRedoCtrl.bufferIndex} ${_shiftTable.assignTable[0][0]}");
+      print("${undoredoCtrl.buffer.length} ${undoredoCtrl.bufferIndex} ${_shiftTable.assignTable[0][0]}");
     });
   }
 
@@ -321,59 +322,7 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
       child: Text(_shiftTable.timeDivs[index].name, style: MyFont.tableTitleStyle(Colors.black), textHeightBehavior: MyFont.defaultBehavior),
     );
   }
-  
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  作成したシフト表登録の確認ダイアログ (確認機能付き)
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  
-  void showConfirmDialog(BuildContext context){
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text('確認\n', style: MyFont.headlineStyleGreen15),
-          content: Text('このシフト表を登録しますか？', style: MyFont.headlineStyleBlack15),
-          actions: <Widget>[
-            // Apply Button
-            CupertinoDialogAction(
-              child: Text('OK', style: MyFont.headlineStyleGreen15),
-              onPressed: () {
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CupertinoAlertDialog(
-                      title: Text('完了\n', style: MyFont.headlineStyleGreen15),
-                      content: const Text('シフト表を登録しました！'),
-                      actions: <Widget>[
-                        CupertinoDialogAction(
-                          child: Text('OK', style: MyFont.headlineStyleGreen15),
-                          onPressed: () {
-                            _shiftTable.pushShitTable();
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            // Canncel Button
-            CupertinoDialogAction(
-              child: Text('Cancel', style: MyFont.headlineStyleGreen15),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-  
+    
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  シフト表に塗る色を選択する
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -422,6 +371,16 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
         insertBuffer(_shiftTable.assignTable);
       }
     });
+  }
+
+  void crearVariable(){
+    Provider.of<CreateShiftTableProvider>(context, listen: false).shiftTable = ShiftTable();
+    firstColumn = 0;
+    firstRow    = 0;
+    lastColumn  = _columnCountMax;
+    lastRow     = _rowCountMax;
+    coordinate  = Coordinate(column: 0, row: 0);
+    undoredoCtrl = UndoRedo(_bufferMax);
   }
 }
 
@@ -477,7 +436,20 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                 ],
               ),
               Text("の区分は", style: MyFont.defaultStyleGrey15),
-              buildTextButton( selectorsIndex[4].toString(), false, 50, (){ buildSelectorModaleWindow(List<String>.generate(10, (index) => index.toString()), 4); }),
+              buildTextButton(
+                selectorsIndex[4].toString(), false, 50, (){
+                  buildSelectorModaleWindow(List<Widget>.generate(11, (index) => 
+                    Row(
+                      mainAxisAlignment:  MainAxisAlignment.center,
+                      children: [
+                        Container(width: 25, height: 25, decoration: BoxDecoration(color: colorTable[index][0], border: Border.all(color: MyFont.defaultColor))),
+                        const SizedBox(width: 30),
+                        Text("$index 人", style: MyFont.defaultStyleBlack13,textAlign: TextAlign.center),
+                      ],
+                    )
+                  ), 4);
+                }
+              ),
               Text("人", style: MyFont.defaultStyleGrey15),
             ],
           ),
@@ -514,6 +486,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
         ],
       ),
     );
+
     ////////////////////////////////////////////////////////////////////////////////////////////
     ///  履歴表示　UI
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -584,7 +557,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
   ///  buildTextButtonさらに選択モーダルウィンドウを表示するための実装
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  void buildSelectorModaleWindow(List<String> list, int resultIndex) {
+  void buildSelectorModaleWindow(List list, int resultIndex) {
     var box = SizedBox(
       height: MediaQuery.of(context).size.height * 0.3,
       width: double.maxFinite,
@@ -595,7 +568,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
           return Column(
             children: [
               ListTile(
-                title: Text(list[index], style: MyFont.headlineStyleBlack15,textAlign: TextAlign.center),
+                title: (list.runtimeType == List<String>) ? Text(list[index], style: MyFont.headlineStyleBlack15,textAlign: TextAlign.center) : list[index],
                 onTap: () {
                   selectorsIndex[resultIndex] = index;
                   setState(() {});

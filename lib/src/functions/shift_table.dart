@@ -198,7 +198,7 @@ class ShiftTable{
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  作成したシフト表をFirebaseへ登録
+  ///  作成したシフト表を Firebase へ登録
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   void pushShitTable() async{
@@ -230,6 +230,10 @@ class ShiftTable{
     await firestore.collection('shift-request').add(request);
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  作成したシフト表を Firebase から取ってくる
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
   void pullShiftTable(DocumentSnapshot<Object?> snapshot) async{
     
     name = snapshot.get('name');
@@ -257,12 +261,12 @@ class ShiftTable{
       (index) => assignMap[index.toString()].cast<int>()
     );
 
-    var requestMap = snapshot.get('request');
+    // var requestMap = snapshot.get('request');
 
-    requestTable = List<List<int>>.generate(
-      timeDivs.length,
-      (index) => requestMap[index.toString()].cast<int>()
-    );
+    // requestTable = List<List<int>>.generate(
+    //   timeDivs.length,
+    //   (index) => requestMap[index.toString()].cast<int>()
+    // );
   }
 }
 
@@ -276,6 +280,8 @@ class TimeDivision{
   DateTime startTime;
   DateTime endTime;
   String name;
+
+  TimeDivision.copy(TimeDivision origin) : this(name: origin.name, startTime: origin.startTime, endTime: origin.endTime);
 }
 
 class AssignRule{

@@ -10,8 +10,7 @@ import 'package:shift/src/functions/shift_table.dart';
 import 'package:shift/src/functions/shift_table_provider.dart';
 import 'package:shift/src/screens/createScreen/register_shift_table.dart';
 import 'package:shift/src/functions/show_modal_window.dart';
-
-
+import 'package:shift/src/functions/undo_redo.dart';
 
 class CreateShiftTableWidget extends StatefulWidget {
   const CreateShiftTableWidget({Key? key}) : super(key: key);
@@ -30,9 +29,10 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
 
   ShiftTable _shiftTable = ShiftTable();
 
+  static UndoRedo<List<TimeDivision>> undoredoCtrl = UndoRedo<List<TimeDivision>>(50);
+
   @override
   void initState() {
-    
     super.initState();
     initializeDateFormatting('ja_JP', null).then((_) => setState(() {}));
   }
@@ -41,6 +41,10 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
   Widget build(BuildContext context) {
 
     _shiftTable = Provider.of<CreateShiftTableProvider>(context, listen: false).shiftTable;
+    
+    if(undoredoCtrl.buffer.isEmpty){
+      insertBuffer(_shiftTable.timeDivs);
+    }
 
     // set input text and cursor positon 
     final TextEditingController textConroller = TextEditingController(text: _shiftTable.name);
@@ -82,6 +86,18 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
           ],
         ),
         
+        floatingActionButton: (_shiftTable.timeDivs.isEmpty) ? null : Padding(
+          padding: EdgeInsets.only(bottom: screenSize.height/40, right: screenSize.width/20),
+          child: FloatingActionButton(
+            foregroundColor: MyFont.backgroundColor,
+            backgroundColor: (undoredoCtrl.enableUndo()) ? MyFont.primaryColor: MyFont.hiddenColor,
+            onPressed: (!undoredoCtrl.enableUndo()) ? null :(){
+              timeDivsUndoRedo(true);
+            },
+            child: const Icon(Icons.undo, size: 40)
+          ),
+        ),
+
         extendBody: true,
         extendBodyBehindAppBar: true,
     
@@ -188,6 +204,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
                       onTap: () {
                         setState(() {
                           createMimimumDivision(_startTime, _endTime, _duration);
+                          insertBuffer(_shiftTable.timeDivs);
                         });
                       },
                       child: Container(
@@ -224,7 +241,40 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
       ),
     );
   }
-   
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  redo undo 機能の実装
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  void insertBuffer(List<TimeDivision> timeDivs){
+    setState(() {
+      undoredoCtrl.insertBuffer(timeDivs.map((e) => TimeDivision.copy(e)).toList());
+      print("${undoredoCtrl.buffer.length} ${undoredoCtrl.bufferIndex}");
+    });
+  }
+
+  void timeDivsUndoRedo(bool undo){
+    setState(() {
+      if(undo){
+        _shiftTable.timeDivs = undoredoCtrl.undo().map((e) => TimeDivision.copy(e)).toList();
+      }else{
+        _shiftTable.timeDivs = undoredoCtrl.redo().map((e) => TimeDivision.copy(e)).toList();
+      }
+      print("undo");
+      for(int i = 0; i < undoredoCtrl.buffer.length; i++){
+        print("buffer : $i");
+        for(int j = 0; j < undoredoCtrl.buffer[i].length; j++){
+          print("${undoredoCtrl.buffer.length} ${undoredoCtrl.bufferIndex} ${undoredoCtrl.buffer[i][j].name} ${undoredoCtrl.buffer[i][j].startTime} ${undoredoCtrl.buffer[i][j].endTime}");
+        }
+      }
+    });
+  }
+  
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  /// 確認ボタンを押した時の処理
+  /// 引数のmessageを表示
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  
   void _onCreateScheduleItemTapped(BuildContext context, String message) {
     showDialog(
       context: context,
@@ -321,12 +371,12 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
             width: double.maxFinite,
             child: CupertinoDatePicker(
               mode: CupertinoDatePickerMode.time,
-              initialDateTime: init,
-              minuteInterval: interval,
-              minimumDate: min,
-              maximumDate: max,
-              onDateTimeChanged: (val){ setState(() { temp = val; callback(val); }); },
-              use24hFormat: true,
+                initialDateTime: init,
+                minuteInterval: interval,
+                minimumDate: min,
+                maximumDate: max,
+                onDateTimeChanged: (val){ setState(() { temp = val; callback(val); }); },
+                use24hFormat: true,
               ),
             )
           );
@@ -438,6 +488,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
                             timeDivs.removeAt(i+1);
                           }
                         });
+                        insertBuffer(timeDivs);
                       },
                       splashColor: MyFont.backgroundColor,
                       borderRadius: BorderRadius.circular(10),

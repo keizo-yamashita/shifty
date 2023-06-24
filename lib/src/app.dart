@@ -5,13 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:shift/src/functions/font.dart';
 import 'package:shift/src/functions/google_login_provider.dart';
 import 'package:shift/src/screens/sign_in.dart';
+import 'package:shift/src/functions/deep_link_mixin.dart';
 import 'package:shift/src/screens/home.dart';
 import 'package:shift/src/screens/account.dart';
 import 'package:shift/src/screens/notification.dart';
 import 'package:shift/src/screens/setting.dart';
-
-int x = 0;
-int y = 0;
+import 'package:shift/src/screens/createScreen/create_shift_table.dart';
 
 class AppWidget extends StatefulWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -19,7 +18,8 @@ class AppWidget extends StatefulWidget {
   State<AppWidget> createState() => AppWidgetState();
 }
 
-class AppWidgetState extends State<AppWidget> {
+class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
+
   final List<MenuContent> _contents = [
     MenuContent(contentTitle: "マイシフト", contentIcon: Icons.home,                            content: const HomeWidget()),
     MenuContent(contentTitle: "お知らせ",     contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
@@ -28,6 +28,31 @@ class AppWidgetState extends State<AppWidget> {
   ];
   
   int _selectedIndex = 0;
+
+  String? catchLink;
+  String? parameter;
+  
+
+  /////////////////////////////////////////////////////////////////////////////
+  /// Deep Link 用関数
+  /////////////////////////////////////////////////////////////////////////////
+  @override
+  void onDeepLinkNotify(Uri? uri) {
+    final link = uri.toString();
+    catchLink = link;
+    parameter = getQueryParameter(link);
+    if(parameter != null){
+      Navigator.push( context, MaterialPageRoute(builder: (context) => const CreateShiftTableWidget()));
+    }
+    setState(() {});
+  }
+
+  String? getQueryParameter(String? link) {
+    if (link == null) return null;
+    final uri = Uri.parse(link);
+    String? tableId = uri.queryParameters['id'];
+    return tableId;
+  }
 
   @override
   Widget build(BuildContext context) {

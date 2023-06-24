@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 // my package
 import 'package:shift/src/functions/font.dart';
+import 'package:shift/src/functions/dialog.dart';
 import 'package:shift/src/functions/shift_table.dart';
 import 'package:shift/src/functions/hit_detector.dart';
 import 'package:shift/src/functions/undo_redo.dart';
@@ -27,7 +28,6 @@ bool _enableEdit    = false;
 bool _enablePinch   = false;
 int  _inkValue      = 1;
 
-UndoRedo<List<List<int>>> undoRedoCtrl = UndoRedo(_bufferMax);
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// シフト表の最終チェックに使用するページ (勤務人数も指定)
@@ -43,6 +43,7 @@ class InputShiftRequestWidget extends StatefulWidget {
 
 class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
 
+  static UndoRedo<List<List<int>>> undoredoCtrl = UndoRedo(_bufferMax);
   bool initFlag                = false;
   static int firstColumn       = 0;
   static int firstRow          = 0;
@@ -59,7 +60,7 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
     var screenSize = MediaQuery.of(context).size;
     
     _shiftTable = Provider.of<InputShiftRequestProvider>(context, listen: false).shiftTable;
-    if(undoRedoCtrl.buffer.isEmpty){
+    if(undoredoCtrl.buffer.isEmpty){
       insertBuffer(_shiftTable.requestTable);
     }
 
@@ -91,9 +92,15 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
                 (){ buildInkChangeModaleWindow(List<String>.generate(10, (index) => index.toString()));}
               ),
               buildIconButton( Icons.hdr_auto_outlined, true, (){ buildAutoFillModalWindow(context); }, (){}),
-              buildIconButton( Icons.undo,  undoRedoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
-              buildIconButton( Icons.redo,  undoRedoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){}),
-              buildIconButton( Icons.check, true, (){showConfirmDialog(context);}, (){}),
+              buildIconButton( Icons.undo,  undoredoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
+              buildIconButton( Icons.redo,  undoredoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){}),
+              buildIconButton( Icons.check, true, (){
+                showConfirmDialog(
+                  context, "確認", "このシフト希望を登録しますか？", "シフト希望を登録しました", (){
+                  Navigator.pop(context);
+                  // _shiftTable.pushShitTable();
+                });
+              }, (){}),
             ],
           ),
           
@@ -139,7 +146,6 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
   ///  ページ上部のツールボタン作成に使用 (onPress OnLongPress 2つの関数を使用)
   ///  OnLongPress に 0.5 秒の検出時間がかかるので，GestureDetector で検出したほうがいいかも
   ////////////////////////////////////////////////////////////////////////////////////////////
-  
   Widget buildIconButton(IconData icon, bool flag, Function onPressed, Function onLongPressed){
     return Padding(
       padding: const EdgeInsets.all(3.0),
@@ -261,9 +267,9 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
   ////////////////////////////////////////////////////////////////////////////////////////////
   void insertBuffer(List<List<int>> table){
     setState(() {
-      undoRedoCtrl.insertBuffer(table.map((e) => List.from(e).cast<int>()).toList());
-      for(int i =0; i < undoRedoCtrl.buffer.length; i++){
-        print("${undoRedoCtrl.buffer.length} ${undoRedoCtrl.bufferIndex} ${undoRedoCtrl.buffer[i][0][0]}");
+      undoredoCtrl.insertBuffer(table.map((e) => List.from(e).cast<int>()).toList());
+      for(int i =0; i < undoredoCtrl.buffer.length; i++){
+        print("${undoredoCtrl.buffer.length} ${undoredoCtrl.bufferIndex} ${undoredoCtrl.buffer[i][0][0]}");
       }
     });
   }
@@ -271,11 +277,11 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
   void paintUndoRedo(bool undo){
     setState(() {
       if(undo){
-        _shiftTable.requestTable = undoRedoCtrl.undo().map((e) => List.from(e).cast<int>()).toList();
+        _shiftTable.requestTable = undoredoCtrl.undo().map((e) => List.from(e).cast<int>()).toList();
       }else{
-        _shiftTable.requestTable = undoRedoCtrl.redo().map((e) => List.from(e).cast<int>()).toList();
+        _shiftTable.requestTable = undoredoCtrl.redo().map((e) => List.from(e).cast<int>()).toList();
       }
-      print("${undoRedoCtrl.buffer.length} ${undoRedoCtrl.bufferIndex} ${_shiftTable.requestTable[0][0]}");
+      print("${undoredoCtrl.buffer.length} ${undoredoCtrl.bufferIndex} ${_shiftTable.requestTable[0][0]}");
     });
   }
 
@@ -354,58 +360,6 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
     // };
 
     // await firestore.collection('shift-request').add(request);
-  }
-  
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  作成したシフト表登録の確認ダイアログ (確認機能付き)
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  
-  void showConfirmDialog(BuildContext context){
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text('確認\n', style: MyFont.headlineStyleGreen15),
-          content: Text('このシフト表を登録しますか？', style: MyFont.headlineStyleBlack15),
-          actions: <Widget>[
-            // Apply Button
-            CupertinoDialogAction(
-              child: Text('OK', style: MyFont.headlineStyleGreen15),
-              onPressed: () {
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CupertinoAlertDialog(
-                      title: Text('完了\n', style: MyFont.headlineStyleGreen15),
-                      content: const Text('シフト表を登録しました！'),
-                      actions: <Widget>[
-                        CupertinoDialogAction(
-                          child: Text('OK', style: MyFont.headlineStyleGreen15),
-                          onPressed: () {
-                            registerShitTable();
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            // Canncel Button
-            CupertinoDialogAction(
-              child: Text('Cancel', style: MyFont.headlineStyleGreen15),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
   
   ////////////////////////////////////////////////////////////////////////////////////////////

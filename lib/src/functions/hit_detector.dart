@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:math';
 import 'package:shift/src/functions/font.dart';
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -136,23 +135,23 @@ class ColoringSheet extends StatelessWidget {
                     ],
                   ),
                   for (var row = rowFirstIndex; row < rowFirstIndex + rowCount; row++)
-                  (row < tableRowTitle.length)
-                  ? TableRow(
-                    children: [
-                      tableRowTitle[row],
-                      for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
-                        ( column < tableColumnTitle.length)
-                        ? _cell(row, column, colorTable[tableCell[row][column]][0], true)
-                        : _cell(row, column, MyFont.hiddenColor, false)
-                    ],
-                  )
-                  : TableRow(
-                    children: [
-                      Text("- - -", style: MyFont.tableTitleStyle(Colors.black), textAlign: TextAlign.center, textHeightBehavior: MyFont.defaultBehavior),
-                      for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
-                      _cell(row, column, MyFont.hiddenColor, false)
-                    ],
-                  )
+                    (row < tableRowTitle.length)
+                      ? TableRow(
+                        children: [
+                          tableRowTitle[row],
+                          for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
+                            ( column < tableColumnTitle.length)
+                            ? _cell(row, column, colorTable[tableCell[row][column]][0], true)
+                            : _cell(row, column, MyFont.hiddenColor, false)
+                        ],
+                      )
+                      : TableRow(
+                        children: [
+                          Text("- - -", style: MyFont.tableTitleStyle(Colors.black), textAlign: TextAlign.center, textHeightBehavior: MyFont.defaultBehavior),
+                          for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
+                          _cell(row, column, MyFont.hiddenColor, false)
+                        ],
+                      )
                 ],
               ),
             ),

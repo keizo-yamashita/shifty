@@ -282,8 +282,28 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 
 #if defined(__OBJC__)
 
-@class NSString;
+@class NSDateFormatter;
 @class FIRHeartbeatsPayload;
+@class NSString;
+
+/// A utility class intended to be used only in testing contexts.
+SWIFT_CLASS_NAMED("HeartbeatLoggingTestUtils")
+@interface FIRHeartbeatLoggingTestUtils : NSObject
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) NSDateFormatter * _Nonnull dateFormatter;)
++ (NSDateFormatter * _Nonnull)dateFormatter SWIFT_WARN_UNUSED_RESULT;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) FIRHeartbeatsPayload * _Nonnull emptyHeartbeatsPayload;)
++ (FIRHeartbeatsPayload * _Nonnull)emptyHeartbeatsPayload SWIFT_WARN_UNUSED_RESULT;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) FIRHeartbeatsPayload * _Nonnull nonEmptyHeartbeatsPayload;)
++ (FIRHeartbeatsPayload * _Nonnull)nonEmptyHeartbeatsPayload SWIFT_WARN_UNUSED_RESULT;
++ (BOOL)assertEncodedPayloadString:(NSString * _Nonnull)encoded isEqualToLiteralString:(NSString * _Nonnull)literal withError:(NSError * _Nullable * _Nullable)error;
+/// Removes all underlying storage containers used by the module.
+///
+/// throws:
+/// An error if the storage container could not be removed.
++ (BOOL)removeUnderlyingHeartbeatStorageContainersAndReturnError:(NSError * _Nullable * _Nullable)error;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
 
 /// An object that provides API to log and flush heartbeats from a synchronized storage container.
 SWIFT_CLASS_NAMED("_ObjC_HeartbeatController")
