@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class MyFont{
   static TextStyle headlineStyleGreen20 = GoogleFonts.mPlus1(color: primaryColor,   fontSize: 20, fontWeight: FontWeight.bold);
   static TextStyle headlineStyleGreen15 = GoogleFonts.mPlus1(color: primaryColor,   fontSize: 15, fontWeight: FontWeight.bold);
+  static TextStyle headlineStyleGreen13 = GoogleFonts.mPlus1(color: primaryColor,   fontSize: 13, fontWeight: FontWeight.bold);
   
   static TextStyle headlineStyleWhite20 = GoogleFonts.mPlus1(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold);
   static TextStyle headlineStyleWhite15 = GoogleFonts.mPlus1(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold);

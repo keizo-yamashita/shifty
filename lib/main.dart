@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:shift/src/screens/splashScreen/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 
 // myh package
 import 'package:shift/src/functions/google_login_provider.dart';
@@ -31,6 +32,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+    // 画面の向きを縦方向に固定
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     var accountProvider = Provider.of<GoogleAccountProvider>(context);
     accountProvider.silentLogin();
 

@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		42c5cFblH3Zc5loIQSLZy7MdMQU=
+		n0KOTVaBYEo+d5Q/sxwJsSPclEM=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		PQeW6A9XYBNwtKZzo/A139zMud0=
+		CsJLLtcOW2tag5uZLWqGN1ieXk8=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -22,7 +22,7 @@
 		</data>
 		<key>flutter_assets/NOTICES.Z</key>
 		<data>
-		W3kIF4RtHxrb8J/mN5OPBYZFgNE=
+		fRIteair3afbtyit45DFf07UUoI=
 		</data>
 		<key>flutter_assets/assets/apple_logo.png</key>
 		<data>
@@ -31,6 +31,14 @@
 		<key>flutter_assets/assets/google_logo.png</key>
 		<data>
 		T+WuY3ah+mRuBfmKfurrawB1Gl0=
+		</data>
+		<key>flutter_assets/assets/shifty_icon.png</key>
+		<data>
+		9RA0xByVGAKiUJc2HgYtAZoUS3E=
+		</data>
+		<key>flutter_assets/assets/shifty_icon.vectornator</key>
+		<data>
+		9pdn0QrGSdmJ15aIdWIDHHDz3Zo=
 		</data>
 		<key>flutter_assets/assets/shifty_logo.png</key>
 		<data>
@@ -55,14 +63,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			xLm3ODymggexT02Zhx+QN9RAIQAQiHShP+pkjqN6+zI=
+			4nmchuhR7US4Sa0vZYSDpiWmm1LElvRL0R+EKZvBNgY=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			VjChvvLTy5w/cWhRytCTKLxvlFdGYzFnmvGVsT8uRjw=
+			c2noFwLCn4yieUOBl4JmwDcycJkz0obGIFwMdtB99NI=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -76,7 +84,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			CF/ldzk/cm0eGQ88UkpJIqF0BKQxMKFPrFAMtg+6k2s=
+			Gl8PEur2QUOJ07x8jRQK6G0LTcmDzW7M6c7bf67D8HU=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/apple_logo.png</key>
@@ -91,6 +99,20 @@
 			<key>hash2</key>
 			<data>
 			k+uA3AHpIOqn8j+Zj2flpfxV4CuOZr09j1/vCX2IVl8=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/shifty_icon.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NFasaAj29zLR+BGLYjmJbArp2Cdygv3b8nQgvgIGL4s=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/shifty_icon.vectornator</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xSLq8q6lVGrtA6j4sIsA31Mrn6nVSpT2X9I/Aqpa5YQ=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/shifty_logo.png</key>

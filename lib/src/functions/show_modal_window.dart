@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:shift/src/functions/font.dart';
+
+//////////////////////////////////////////////////////////////////////
+/// Show Modal Window
+/// Contain Child Widget : child is usually create by buildModalWindowCointainer method.
+//////////////////////////////////////////////////////////////////////
+
 Future<dynamic> showModalWindow(BuildContext context, double height, Widget child){
   return showModalBottomSheet(
     useRootNavigator: true,
@@ -45,6 +52,11 @@ Future<dynamic> showModalWindow(BuildContext context, double height, Widget chil
   );
 }
 
+//////////////////////////////////////////////////////////////////////
+/// Show Modal Window for Cupertino
+/// Contain Child Widget : child is usually create build list method.
+//////////////////////////////////////////////////////////////////////
+
 Future<dynamic> showModalWindowCupertino(BuildContext context, Widget child, double height){
   return showCupertinoModalPopup(
     context: context,
@@ -60,4 +72,29 @@ Future<dynamic> showModalWindowCupertino(BuildContext context, Widget child, dou
     )
     )
   );
+}
+
+Widget buildModalWindowContainer(double height, List list, Function(BuildContext, int) onTapped){
+    return SizedBox(
+      height: height,
+      width: double.maxFinite,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: list.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Column(
+            children: [
+              ListTile(
+                title: (list.runtimeType == List<String>) ? Text(list[index], style: MyFont.headlineStyleBlack15,textAlign: TextAlign.center) : list[index],
+                onTap: () {
+                  onTapped(context, index);
+                  Navigator.of(context).pop();
+                },
+              ),
+              const Divider(thickness: 2)
+            ],
+          );
+        },
+      ),
+    );
 }

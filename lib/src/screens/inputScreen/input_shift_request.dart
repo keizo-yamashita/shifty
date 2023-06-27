@@ -1,15 +1,12 @@
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 // my package
 import 'package:shift/src/functions/font.dart';
 import 'package:shift/src/functions/dialog.dart';
 import 'package:shift/src/functions/shift_table.dart';
-import 'package:shift/src/functions/hit_detector.dart';
+import 'package:shift/src/functions/hit_detector_table.dart';
 import 'package:shift/src/functions/undo_redo.dart';
 import 'package:shift/src/functions/show_modal_window.dart';
 import 'package:shift/src/functions/shift_table_provider.dart';
@@ -43,14 +40,14 @@ class InputShiftRequestWidget extends StatefulWidget {
 
 class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
 
-  static UndoRedo<List<List<int>>> undoredoCtrl = UndoRedo(_bufferMax);
+  UndoRedo<List<List<int>>> undoredoCtrl = UndoRedo(_bufferMax);
   bool initFlag                = false;
-  static int firstColumn       = 0;
-  static int firstRow          = 0;
-  static int lastColumn        = _columnCountMax;
-  static int lastRow           = _rowCountMax;
-  static Coordinate coordinate = Coordinate(column: 0, row: 0);
-  static List<List<List<int>>> requestTableBuffer = [];
+  int firstColumn       = 0;
+  int firstRow          = 0;
+  int lastColumn        = _columnCountMax;
+  int lastRow           = _rowCountMax;
+  Coordinate coordinate = Coordinate(column: 0, row: 0);
+  List<List<List<int>>> requestTableBuffer = [];
   
   ShiftTable _shiftTable = ShiftTable();
 
@@ -98,7 +95,7 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
                 showConfirmDialog(
                   context, "確認", "このシフト希望を登録しますか？", "シフト希望を登録しました", (){
                   Navigator.pop(context);
-                  // _shiftTable.pushShitTable();
+                  _shiftTable.updateShiftRequest();
                 });
               }, (){}),
             ],
@@ -117,7 +114,8 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
             sheetHeight:      screenSize.height * 0.7,
             tableColumnTitle: List<Widget>.generate(_shiftTable.requestTable[0].length, (index) => buildColunTitleWidget(index)),
             tableRowTitle:    List<Widget>.generate(_shiftTable.requestTable.length, (index) => buildRowTitleWidget(context, index)),
-            tableCell:        _shiftTable.requestTable,
+            tableCell:        _shiftTable.requestTable.map((e) => e.map((e) => (e == 1) ? true : false).toList()).toList(),
+            tableCellValid:   _shiftTable.assignTable.map((e) => e.map((e) => e > 0).toList()).toList(),
             colorTable:       colorTable,
             selected:         coordinate,
             onChangeSelect:   (p0){
@@ -146,6 +144,7 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
   ///  ページ上部のツールボタン作成に使用 (onPress OnLongPress 2つの関数を使用)
   ///  OnLongPress に 0.5 秒の検出時間がかかるので，GestureDetector で検出したほうがいいかも
   ////////////////////////////////////////////////////////////////////////////////////////////
+  
   Widget buildIconButton(IconData icon, bool flag, Function onPressed, Function onLongPressed){
     return Padding(
       padding: const EdgeInsets.all(3.0),
@@ -326,77 +325,39 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  作成したシフト表をFirebaseへ登録
-  ////////////////////////////////////////////////////////////////////////////////////////////
-
-  void registerShitTable() async{
-
-    // ShiftTable shiftTable = _shiftTable;
-
-    // FirebaseFirestore firestore = FirebaseFirestore.instance;
-    // FirebaseAuth      auth      = FirebaseAuth.instance;
-
-    // final User? user = auth.currentUser;
-    // final uid = user?.uid;
-
-    // final table = {
-    //   'user-id'       : uid,
-    //   'name'          : shiftTable.name,
-    //   'request-start' : shiftTable.shiftDateRange[1].start,
-    //   'request-end'   : shiftTable.shiftDateRange[1].end,
-    //   'work-start'    : shiftTable.shiftDateRange[0].start,
-    //   'work-end'      : shiftTable.shiftDateRange[0].end,
-    //   'time-division' : FieldValue.arrayUnion(List.generate(shiftTable.timeDivs.length, (index) => {
-    //     'name' : shiftTable.timeDivs[index].name, 'start-time' : shiftTable.timeDivs[index].startTime, 'end-time' : shiftTable.timeDivs[index].endTime
-    //   })),
-    //   'assignment'    : shiftTable.requestTable.asMap().map((index, value) => MapEntry(index.toString(), value))
-    // };
-
-    // var refarence = await firestore.collection('shift-table').add(table);
-
-    // final request = {
-    //   'user-id'       : uid,
-    //   'table-refarence' : refarence
-    // };
-
-    // await firestore.collection('shift-request').add(request);
-  }
-  
-  ////////////////////////////////////////////////////////////////////////////////////////////
   ///  シフト表に塗る色を選択する
   ////////////////////////////////////////////////////////////////////////////////////////////
   
   void buildInkChangeModaleWindow(List<String> list) {
-    var box = SizedBox(
-      height: MediaQuery.of(context).size.height * 0.3,
-      width: double.maxFinite,
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: list.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Column(
+    showModalWindow(
+      context,
+      0.35,
+      buildModalWindowContainer(
+        MediaQuery.of(context).size.height * 0.30,
+        [
+          Row(
+            mainAxisAlignment:  MainAxisAlignment.center,
             children: [
-              ListTile(
-                title: Row(
-                  mainAxisAlignment:  MainAxisAlignment.center,
-                  children: [
-                    Container(width: 25, height: 25, decoration: BoxDecoration(color: colorTable[index][0], border: Border.all(color: MyFont.defaultColor))),
-                    const SizedBox(width: 30),
-                    Text("${list[index]} 人", style: MyFont.defaultStyleBlack13,textAlign: TextAlign.center),
-                  ],
-                ),
-                onTap: () {
-                  _inkValue = index;
-                  Navigator.of(context).pop();
-                },
-              ),
-              const Divider(thickness: 2)
+              Container(width: 25, height: 25, decoration: BoxDecoration(color: colorTable[5][0], border: Border.all(color: MyFont.defaultColor))),
+              const SizedBox(width: 30),
+              Text("OK", style: MyFont.defaultStyleBlack13,textAlign: TextAlign.center),
             ],
-          );
-        },
-      ),
+          ),
+          Row(
+            mainAxisAlignment:  MainAxisAlignment.center,
+            children: [
+              Container(width: 25, height: 25, decoration: BoxDecoration(color: colorTable[0][0], border: Border.all(color: MyFont.defaultColor))),
+              const SizedBox(width: 30),
+              Text("NG", style: MyFont.defaultStyleBlack13,textAlign: TextAlign.center),
+            ],
+          )
+        ],
+        (BuildContext context, int index){
+          setState(() {});
+          _inkValue = index; 
+        }
+      )
     );
-    showModalWindow(context, 0.35, box);
   }
 
   void buildAutoFillModalWindow(BuildContext context){
@@ -433,7 +394,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print("");
+
     var table        = widget._shiftTable;
     var timeDivs1List = List.generate(table.timeDivs.length + 1, (index) => (index == 0) ? '全て' : table.timeDivs[index-1].name);
     var timeDivs2List = List.generate(table.timeDivs.length + 1, (index) => (index == 0) ? '-' : table.timeDivs[index-1].name);
@@ -449,9 +410,9 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              buildTextButton( weekSelect[selectorsIndex[0]], false, 100, (){ buildSelectorModaleWindow(weekSelect, 0); } ),
+              buildTextButton( weekSelect[selectorsIndex[0]], false, 110, (){ buildSelectorModaleWindow(weekSelect, 0); } ),
               Text("の", style: MyFont.defaultStyleGrey15),
-              buildTextButton( weekdaySelect[selectorsIndex[1]], false, 110, (){ buildSelectorModaleWindow(weekdaySelect, 1); }),
+              buildTextButton( weekdaySelect[selectorsIndex[1]], false, 130, (){ buildSelectorModaleWindow(weekdaySelect, 1); }),
               Text("の", style: MyFont.defaultStyleGrey15),
             ],
           ),
@@ -461,13 +422,12 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
             children: [
               Column(
                 children: [
-                  buildTextButton( timeDivs1List[selectorsIndex[2]], false, 120, (){ buildSelectorModaleWindow(timeDivs1List, 2); }),
-                  buildTextButton( timeDivs2List[selectorsIndex[3]], false, 120, (){ buildSelectorModaleWindow(timeDivs2List, 3); }),
+                  buildTextButton( timeDivs1List[selectorsIndex[2]], false, 130, (){ buildSelectorModaleWindow(timeDivs1List, 2); }),
+                  buildTextButton( timeDivs2List[selectorsIndex[3]], false, 130, (){ buildSelectorModaleWindow(timeDivs2List, 3); }),
                 ],
               ),
               Text("の区分は", style: MyFont.defaultStyleGrey15),
-              buildTextButton( selectorsIndex[4].toString(), false, 50, (){ buildSelectorModaleWindow(List<String>.generate(10, (index) => index.toString()), 4); }),
-              Text("人", style: MyFont.defaultStyleGrey15),
+              buildTextButton((selectorsIndex[4] == 1) ? "OK" : "NG", false, 60, (){ buildSelectorModaleWindow(List<String>.generate(2, (index) => (index == 1) ? "OK" : "NG"), 4); })
             ],
           ),
           const SizedBox(height: 10),
@@ -475,7 +435,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
             mainAxisAlignment:  MainAxisAlignment.end,
             children: [
               buildTextButton(
-                "OK", false, 60,
+                "入力", true, 60,
                 (){
                   var rule = RequestRule(
                     week:      selectorsIndex[0],
@@ -489,7 +449,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                   setState(() {});
                 }
               ),
-              const SizedBox(width: 45)
+              const SizedBox(width: 25)
             ],
           ),
         ],
@@ -530,38 +490,26 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
   ///  buildTextButtonさらに選択モーダルウィンドウを表示するための実装
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  void buildSelectorModaleWindow(List<String> list, int resultIndex) {
-    var box = SizedBox(
-      height: MediaQuery.of(context).size.height * 0.3,
-      width: double.maxFinite,
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: list.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Column(
-            children: [
-              ListTile(
-                title: Text(list[index], style: MyFont.headlineStyleBlack15,textAlign: TextAlign.center),
-                onTap: () {
-                  selectorsIndex[resultIndex] = index;
-                  setState(() {});
-                  Navigator.of(context).pop();
-                },
-              ),
-              const Divider(thickness: 2)
-            ],
-          );
-        },
-      ),
+  void buildSelectorModaleWindow(List list, int resultIndex) {
+    showModalWindow(
+      context,
+      0.35,
+      buildModalWindowContainer(
+        MediaQuery.of(context).size.height * 0.30,
+        list,
+        (BuildContext context, int index){
+          selectorsIndex[resultIndex] = index;
+          setState(() {});
+        }
+      )
     );
-    showModalWindow(context, 0.35, box);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  Auto-Fill条件を登録
   ////////////////////////////////////////////////////////////////////////////////////////////
   
-  Widget registerAutoFill(int index, String weekSelect, String weekdaySelect, String timeDivs1Select, String timeDivs2Select,  String assignNumSelect, BuildContext context) {
+  Widget registerAutoFill(int index, String weekSelect, String weekdaySelect, String timeDivs1Select, String timeDivs2Select,  String requestSelect, BuildContext context) {
     return ReorderableDragStartListener(
       key: Key(index.toString()),
       index: index,
@@ -590,9 +538,8 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                   Text(timeDivs1Select, style: MyFont.defaultStyleGrey13, textHeightBehavior: MyFont.defaultBehavior),
                   Text(' - ',           style: MyFont.defaultStyleGrey13, textHeightBehavior: MyFont.defaultBehavior),
                   Text(timeDivs2Select, style: MyFont.defaultStyleGrey13, textHeightBehavior: MyFont.defaultBehavior),
-                  Text(' の勤務人数は ',  style: MyFont.defaultStyleGrey13, textHeightBehavior: MyFont.defaultBehavior),
-                  Text(assignNumSelect, style: MyFont.defaultStyleGrey13, textHeightBehavior: MyFont.defaultBehavior),
-                  Text(' 人',           style: MyFont.defaultStyleGrey13, textHeightBehavior: MyFont.defaultBehavior),
+                  Text(' は ',          style: MyFont.defaultStyleGrey13, textHeightBehavior: MyFont.defaultBehavior),
+                  Text(requestSelect,   style: MyFont.defaultStyleGrey13, textHeightBehavior: MyFont.defaultBehavior),
                 ],
               ),
             ),

@@ -47,7 +47,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
     }
 
     // set input text and cursor positon 
-    final TextEditingController textConroller = TextEditingController(text: _shiftTable.name);
+    final TextEditingController textConroller = TextEditingController(text: _shiftTable.tableName);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       textConroller.selection = TextSelection.fromPosition(TextPosition(offset: textConroller.text.length));
     });
@@ -74,7 +74,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
                 FocusScope.of(context).unfocus();
                 if(_shiftTable.timeDivs.isEmpty){
                   _onCreateScheduleItemTapped(context, "1つ以上の時間区分を入力してください");
-                }else if(_shiftTable.name == ''){
+                }else if(_shiftTable.tableName == ''){
                   _onCreateScheduleItemTapped(context, "シフト表の名前を指定してください");
                 }else{
                   _shiftTable.initTable();
@@ -87,7 +87,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
         ),
         
         floatingActionButton: (_shiftTable.timeDivs.isEmpty) ? null : Padding(
-          padding: EdgeInsets.only(bottom: screenSize.height/40, right: screenSize.width/20),
+          padding: EdgeInsets.only(bottom: screenSize.height/60, right: screenSize.width/60),
           child: FloatingActionButton(
             foregroundColor: MyFont.backgroundColor,
             backgroundColor: (undoredoCtrl.enableUndo()) ? MyFont.primaryColor: MyFont.hiddenColor,
@@ -109,7 +109,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
               ////////////////////////////////////////////////////////////////////////////
               /// シフト名の名前の入力
               ////////////////////////////////////////////////////////////////////////////
-              Text("作成するシフト表の名前を入力してください", style: MyFont.defaultStyleGrey15),
+              Text("作成するシフト表の名前を決めましょう", style: MyFont.defaultStyleGrey15),
               SizedBox(height: screenSize.height/40),
               SizedBox(
                 width: screenSize.width * 0.90,
@@ -133,13 +133,13 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
                       ),
                     ),
                     prefixIcon: const Icon(Icons.input),
-                    hintText: 'シフト表名を入力してください',
+                    hintText: 'シフト表名 (ex) 〇〇店〇月シフト表',
                     hintStyle: MyFont.defaultStyleGrey15,
                     
                   ),
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.go,
-                  onChanged: (value){_shiftTable.name = value;},
+                  onChanged: (value){_shiftTable.tableName = value;},
                 ),
               ),
               const Divider(height: 30, thickness: 1),
@@ -188,12 +188,12 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
                     buildInputBox("始業時間", buildTimePicker(_startTime, DateTime(1,1,1,0,0), DateTime(1,1,1,23,59), 5, setStartTime)),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 30),
-                      child: Text(" 〜 ", style: MyFont.headlineStyleGreen15),
+                      child: Text("〜", style: MyFont.headlineStyleGreen15),
                     ),
                     buildInputBox("終業時間", buildTimePicker(_endTime, _startTime.add(const Duration(hours: 1)), DateTime(1,1,1,23,59), 5, setEndTime)),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 30),
-                      child: Text(" ... ", style: MyFont.headlineStyleGreen15),
+                      child: Text("...", style: MyFont.headlineStyleGreen15),
                     ),
                     buildInputBox("管理間隔", buildTimePicker(_duration, DateTime(1,1,1,0,10), DateTime(1,1,1,6,0), 5, setDuration)),
                     Padding(
@@ -209,7 +209,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
                       },
                       child: Container(
                         height: 50,
-                        width: 60,
+                        width: 50,
                         padding: const EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
                           color: MyFont.primaryColor,
@@ -316,9 +316,9 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(DateFormat('yy/MM/dd', 'ja_JP').format(dateRange[index].start), style: MyFont.headlineStyleGreen15),
-            Text("-", style: MyFont.headlineStyleGreen15),
-            Text(DateFormat('yy/MM/dd', 'ja_JP').format(dateRange[index].end), style: MyFont.headlineStyleGreen15),
+            Text(DateFormat('MM/dd', 'ja_JP').format(dateRange[index].start), style: MyFont.headlineStyleGreen15),
+            Text(" - ", style: MyFont.headlineStyleGreen15),
+            Text(DateFormat('MM/dd', 'ja_JP').format(dateRange[index].end), style: MyFont.headlineStyleGreen15),
           ],
         ),
       ),

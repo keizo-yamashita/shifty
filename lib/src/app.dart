@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 
 // my file
 import 'package:shift/src/functions/font.dart';
 import 'package:shift/src/functions/google_login_provider.dart';
-import 'package:shift/src/screens/sign_in.dart';
 import 'package:shift/src/functions/deep_link_mixin.dart';
-import 'package:shift/src/screens/home.dart';
-import 'package:shift/src/screens/account.dart';
-import 'package:shift/src/screens/notification.dart';
-import 'package:shift/src/screens/setting.dart';
+
+import 'package:shift/src/screens/signInScreen/sign_in.dart';
+import 'package:shift/src/screens/homeScreen/home.dart';
+import 'package:shift/src/screens/homeScreen/account.dart';
+import 'package:shift/src/screens/homeSCreen/notification.dart';
+import 'package:shift/src/screens/homeSCreen/setting.dart';
 import 'package:shift/src/screens/createScreen/create_shift_table.dart';
 
 class AppWidget extends StatefulWidget {
@@ -57,8 +59,14 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
   @override
   Widget build(BuildContext context) {
     
-    var accountProvider = Provider.of<GoogleAccountProvider>(context);
-    var screenSize      = MediaQuery.of(context).size;
+    var accountProvider           = Provider.of<GoogleAccountProvider>(context);
+    var screenSize                = MediaQuery.of(context).size;
+
+    // 画面の向きを縦方向に固定
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
 
     // Sign In Cheack
     return (accountProvider.user == null) ? const SignInScreen() : 
@@ -133,21 +141,24 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
         ),
       ),
       
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (int index){
-          setState((){
-            _selectedIndex = index;
-          });
-        },
-        backgroundColor: MyFont.backgroundColor.withOpacity(0.9),
-        selectedItemColor: MyFont.primaryColor,
-        unselectedItemColor: MyFont.hiddenColor,
-        iconSize: 30,
-        selectedFontSize: 13,
-        unselectedFontSize: 10,
-        items: List<BottomNavigationBarItem>.generate(_contents.length, (index) => BottomNavigationBarItem(icon: Icon(_contents[index].contentIcon), label: _contents[index].contentTitle)),
-        type: BottomNavigationBarType.fixed
+      bottomNavigationBar: SizedBox(
+        height: screenSize.height * 0.12,
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (int index){
+            setState((){
+              _selectedIndex = index;
+            });
+          },
+          backgroundColor: MyFont.backgroundColor.withOpacity(0.9),
+          selectedItemColor: MyFont.primaryColor,
+          unselectedItemColor: MyFont.hiddenColor,
+          iconSize: 30,
+          selectedFontSize: 13,
+          unselectedFontSize: 10,
+          items: List<BottomNavigationBarItem>.generate(_contents.length, (index) => BottomNavigationBarItem(icon: Icon(_contents[index].contentIcon), label: _contents[index].contentTitle)),
+          type: BottomNavigationBarType.fixed
+        ),
       ),
     );
   }
