@@ -5,7 +5,7 @@ PODS:
   - AppAuth/Core (1.6.2)
   - AppAuth/ExternalUserAgent (1.6.2):
     - AppAuth/Core
-  - cloud_firestore (4.8.0):
+  - cloud_firestore (4.8.2):
     - Firebase/Firestore (= 10.10.0)
     - firebase_core
     - Flutter
@@ -18,7 +18,7 @@ PODS:
   - Firebase/Firestore (10.10.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 10.10.0)
-  - firebase_auth (4.6.2):
+  - firebase_auth (4.6.3):
     - Firebase/Auth (= 10.10.0)
     - firebase_core
     - Flutter
@@ -146,9 +146,9 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
-  cloud_firestore: 4dd02c206e4b7e93ff081cdd0e7fa304112bf906
+  cloud_firestore: 818ebb1a8235177a0dcf7005c14aed5408b8342c
   Firebase: facd334e557a979bd03a0b58d90fd56b52b8aba0
-  firebase_auth: 27829de4f51a06d305467eebc237157adc145571
+  firebase_auth: 9905bc3d82328b5050a8b7cb410a959f150b6549
   firebase_core: 85b6664038311940ad60584eaabc73103c61f5de
   FirebaseAppCheckInterop: 255b6c0292fe5da995c8b2df0c02f6a3ca7f61b4
   FirebaseAuth: 5ddbe23ebc4e647469261f5c59cd12a04f37c8e6

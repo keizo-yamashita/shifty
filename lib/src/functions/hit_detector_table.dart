@@ -65,107 +65,104 @@ class ColoringSheet extends StatelessWidget {
     
     double tableScale = 1.0;
 
-    return Container(
-      color: Colors.green,
-      child: AspectRatio(
-        aspectRatio: 32/32,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            background ?? Container(),
-            GestureDetector(
-              onPanDown: (enablePinch) ? null : (detail) {
-                if(enableEdit){
-                  _judgeHit(context, detail.globalPosition);
+    return AspectRatio(
+      aspectRatio: 24/32,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          background ?? Container(),
+          GestureDetector(
+            onPanDown: (enablePinch) ? null : (detail) {
+              if(enableEdit){
+                _judgeHit(context, detail.globalPosition);
+              }
+            },
+            onPanStart: (enablePinch) ? null : (detail) {
+              if(enableEdit){
+                _judgeHit(context, detail.globalPosition);
+              }
+            },
+            onPanUpdate: (enablePinch) ? null : (detail) {
+              if(enableEdit){
+                _judgeHit(context, detail.globalPosition);
+              }else{
+                if (detail.delta.dx > 7) {
+                  onSwipeLeft?.call(detail.delta.dx);
+                } else if (detail.delta.dx < -7) {
+                  onSwipeRight?.call(detail.delta.dx);
                 }
-              },
-              onPanStart: (enablePinch) ? null : (detail) {
-                if(enableEdit){
-                  _judgeHit(context, detail.globalPosition);
+                if (detail.delta.dy > 7) {
+                  onSwipeUp?.call(detail.delta.dy);
+                } else if (detail.delta.dy < -7) {
+                  onSwipeBottom?.call(detail.delta.dy);
                 }
-              },
-              onPanUpdate: (enablePinch) ? null : (detail) {
-                if(enableEdit){
-                  _judgeHit(context, detail.globalPosition);
-                }else{
-                  if (detail.delta.dx > 7) {
-                    onSwipeLeft?.call(detail.delta.dx);
-                  } else if (detail.delta.dx < -7) {
-                    onSwipeRight?.call(detail.delta.dx);
-                  }
-                  if (detail.delta.dy > 7) {
-                    onSwipeUp?.call(detail.delta.dy);
-                  } else if (detail.delta.dy < -7) {
-                    onSwipeBottom?.call(detail.delta.dy);
-                  }
-                }
-              },
-              onPanEnd: (enablePinch) ? null : (details) {
-                if(enableEdit){
-                  onInputEnd?.call();
-                }
-              },
-              
-              onScaleUpdate: (!enablePinch) ? null : (ScaleUpdateDetails data) {
-                if(data.scale != 1.0){
-                  print(tableScale);
-                  tableScale = data.scale;
-                }
-              },
-              onScaleEnd: (!enablePinch) ? null : (ScaleEndDetails data) {
-                if(tableScale != 1.0){
-                  print("end $tableScale");
-                  onPinch?.call(tableScale);
-                  tableScale = 1.0;
-                }
-              },
+              }
+            },
+            onPanEnd: (enablePinch) ? null : (details) {
+              if(enableEdit){
+                onInputEnd?.call();
+              }
+            },
+            
+            onScaleUpdate: (!enablePinch) ? null : (ScaleUpdateDetails data) {
+              if(data.scale != 1.0){
+                print(tableScale);
+                tableScale = data.scale;
+              }
+            },
+            onScaleEnd: (!enablePinch) ? null : (ScaleEndDetails data) {
+              if(tableScale != 1.0){
+                print("end $tableScale");
+                onPinch?.call(tableScale);
+                tableScale = 1.0;
+              }
+            },
     
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: IntrinsicColumnWidth()
-                  },
-                  children: [
-                    TableRow(
-                      children: [
-                        Container(),
-                        for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
-                          (column < tableColumnTitle.length)
-                          ? tableColumnTitle[column]
-                          : Column(
-                            children: [
-                              Text("-", style: MyFont.tableTitleStyle(Colors.black), textAlign: TextAlign.center, textHeightBehavior: MyFont.defaultBehavior),
-                              Text("-", style: MyFont.tableTitleStyle(Colors.black), textAlign: TextAlign.center, textHeightBehavior: MyFont.defaultBehavior),
-                            ],
-                          ),
-                      ],
-                    ),
-                    for (var row = rowFirstIndex; row < rowFirstIndex + rowCount; row++)
-                      (row < tableRowTitle.length)
-                        ? TableRow(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                columnWidths: const <int, TableColumnWidth>{
+                  0: IntrinsicColumnWidth()
+                },
+                children: [
+                  TableRow(
+                    children: [
+                      Container(),
+                      for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
+                        (column < tableColumnTitle.length)
+                        ? tableColumnTitle[column]
+                        : Column(
                           children: [
-                            tableRowTitle[row],
-                            for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
-                              ( column < tableColumnTitle.length)
-                              ? (tableCellValid[row][column]) ? _cell(row, column, true) : _cell(row, column, false)
-                              : _cell(row, column, false)
+                            Text("-", style: MyFont.tableTitleStyle(Colors.black), textAlign: TextAlign.center, textHeightBehavior: MyFont.defaultBehavior),
+                            Text("-", style: MyFont.tableTitleStyle(Colors.black), textAlign: TextAlign.center, textHeightBehavior: MyFont.defaultBehavior),
                           ],
-                        )
-                        : TableRow(
-                          children: [
-                            Text("- - -", style: MyFont.tableTitleStyle(Colors.black), textAlign: TextAlign.center, textHeightBehavior: MyFont.defaultBehavior),
-                            for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
-                            _cell(row, column, false)
-                          ],
-                        )
-                  ],
-                ),
+                        ),
+                    ],
+                  ),
+                  for (var row = rowFirstIndex; row < rowFirstIndex + rowCount; row++)
+                    (row < tableRowTitle.length)
+                      ? TableRow(
+                        children: [
+                          tableRowTitle[row],
+                          for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
+                            ( column < tableColumnTitle.length)
+                            ? (tableCellValid[row][column]) ? _cell(row, column, true) : _cell(row, column, false)
+                            : _cell(row, column, false)
+                        ],
+                      )
+                      : TableRow(
+                        children: [
+                          Text("- - -", style: MyFont.tableTitleStyle(Colors.black), textAlign: TextAlign.center, textHeightBehavior: MyFont.defaultBehavior),
+                          for (var column = columnFirstIndex; column < columnFirstIndex + columnCount; column++)
+                          _cell(row, column, false)
+                        ],
+                      )
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -20,6 +20,7 @@ import 'package:shift/src/functions/shift_table_provider.dart';
 import 'package:shift/src/screens/createScreen/create_shift_table.dart';
 import 'package:shift/src/screens/createScreen/add_shift_table.dart';
 import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
+import 'package:shift/src/screens/manageScreen/test.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// Home 画面
@@ -195,7 +196,8 @@ class HomeWidgetState extends State<HomeWidget> {
               table.tableName,
               (){
                 Provider.of<InputShiftRequestProvider>(context, listen: false).shiftTable = table;
-                Navigator.push(context, MaterialPageRoute(builder: (c) => const ManageShiftTableWidget()));
+                // Navigator.push(context, MaterialPageRoute(builder: (c) => const ManageShiftTableWidget()));
+                Navigator.push(context, MaterialPageRoute(builder: (c) => const Test()));
               },
               (){
                 showSelectDialog(
