@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>SHIFTY</string>
+	<string>Shifty</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -29,6 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>shifty</string>
 				<string>com.googleusercontent.apps.480752722157-4equ8bllnab7bpict44suvf34s2hbj9t</string>
 			</array>
 		</dict>
@@ -62,20 +63,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<!-- Deep Links　ここから -->
-    <key>FlutterDeepLinkingEnabled</key>
-    <true/>
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-        <string>shifty</string>
-        </array>
-        </dict>
-    </array>
-	<!-- Deep Links　ここまで追加 -->
 </dict>
 </plist>

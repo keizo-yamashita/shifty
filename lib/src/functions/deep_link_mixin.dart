@@ -2,10 +2,13 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////
 
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:uni_links/uni_links.dart';
 
+////////////////////////////////////////////////////////////////////////////////
+/// deep link mixin
+////////////////////////////////////////////////////////////////////////////////
 
 mixin DeepLinkMixin<T extends StatefulWidget> on State<T> {
  
@@ -27,5 +30,20 @@ mixin DeepLinkMixin<T extends StatefulWidget> on State<T> {
 
   void _onNewNotify(Uri? uri) {
     if (mounted) onDeepLinkNotify(uri);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// deep link Provider
+////////////////////////////////////////////////////////////////////////////////
+
+class DeepLinkProvider extends ChangeNotifier {
+
+  String _shiftFrameId = "";
+  String get shiftFrameId => _shiftFrameId;
+
+  set shiftFrameId(String id) {
+    _shiftFrameId = id;
+    notifyListeners();
   }
 }

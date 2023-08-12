@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shift/src/functions/font.dart';
+import 'package:shift/src/functions/style.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class NotificationScreen extends StatelessWidget {
               return Container(
                 height: 80,
                 width: 80,
-                color: MyFont.primaryColor,
+                color: MyStyle.primaryColor,
               );
             },
             padding: EdgeInsets.zero,
