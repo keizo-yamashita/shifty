@@ -2,10 +2,16 @@
 This project is a starting point for a Flutter application.
 
 ## シフト表枠組み作成 UI
-![messageImage_1683125092554](https://user-images.githubusercontent.com/127015900/235976228-65fb1dbd-3481-4870-9c23-6f7a59d890f6.jpg)
-![messageImage_1683125169963](https://user-images.githubusercontent.com/127015900/235976244-b6acd0c7-ec4b-414c-9fd2-7b4fe241f03c.jpg)
-![messageImage_1683125187425](https://user-images.githubusercontent.com/127015900/235976259-85c73d02-18b7-40ca-a3b9-8a51deda4178.jpg)
-![messageImage_1683125206435](https://user-images.githubusercontent.com/127015900/235976334-4d38ed74-8f58-44bb-adb9-9ccd346c48df.jpg)
+![sample00](assets/shiftt-release/6.7/00.png)
+![sample01](assets/shiftt-release/6.7/01.png)
+![sample02](assets/shiftt-release/6.7/02.png)
+![sample03](assets/shiftt-release/6.7/03.png)
+![sample04](assets/shiftt-release/6.7/04.png)
+![sample05](assets/shiftt-release/6.7/05.png)
+![sample06](assets/shiftt-release/6.7/06.png)
+![sample07](assets/shiftt-release/6.7/07.png)
+![sample08](assets/shiftt-release/6.7/08.png)
+![sample09](assets/shiftt-release/6.7/09.png)
 
 ## シフト希望表入力　UI
 内容は無いようだ
