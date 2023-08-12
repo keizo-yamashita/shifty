@@ -57,7 +57,7 @@
     },
     {
       "name": "collection",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/collection-1.17.2",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/collection-1.18.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -381,15 +381,15 @@
     },
     {
       "name": "stack_trace",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/stack_trace-1.11.0",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/stack_trace-1.11.1",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "stream_channel",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/stream_channel-2.1.1",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/stream_channel-2.1.2",
       "packageUri": "lib/",
-      "languageVersion": "2.14"
+      "languageVersion": "2.19"
     },
     {
       "name": "string_scanner",
@@ -411,9 +411,9 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/test_api-0.6.0",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/test_api-0.6.1",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.0"
     },
     {
       "name": "time_planner",
@@ -440,6 +440,12 @@
       "languageVersion": "2.14"
     },
     {
+      "name": "web",
+      "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/web-0.1.4-beta",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
       "name": "win32",
       "rootUri": "file:///Users/ymstkz/.pub-cache/hosted/pub.dev/win32-4.1.4",
       "packageUri": "lib/",
@@ -458,7 +464,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2023-06-09T12:44:39.042383Z",
+  "generated": "2023-08-12T06:22:38.209415Z",
   "generator": "pub",
-  "generatorVersion": "3.1.0-171.0.dev"
+  "generatorVersion": "3.2.0-42.0.dev"
 }
