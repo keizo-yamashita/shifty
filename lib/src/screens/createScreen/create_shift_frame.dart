@@ -1,18 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+/// import
+////////////////////////////////////////////////////////////////////////////////
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-// my package
-import 'package:shift/src/functions/style.dart';
-import 'package:shift/src/functions/sing_in/sign_in_provider.dart';
-import 'package:shift/src/functions/shift/shift_frame.dart';
-import 'package:shift/src/functions/shift/shift_provider.dart';
+import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/mylibs/sing_in/sign_in_provider.dart';
+import 'package:shift/src/mylibs/shift/shift_frame.dart';
+import 'package:shift/src/mylibs/shift/shift_provider.dart';
+import 'package:shift/src/mylibs/modal_window.dart';
+import 'package:shift/src/mylibs/setting_provider.dart';
+import 'package:shift/src/mylibs/undo_redo.dart';
 import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
-import 'package:shift/src/functions/modal_window.dart';
-import 'package:shift/src/functions/setting_provider.dart';
-import 'package:shift/src/functions/undo_redo.dart';
 
 class CreateShiftTableWidget extends StatefulWidget {
   const CreateShiftTableWidget({Key? key}) : super(key: key);
@@ -92,9 +95,8 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
                   _onCreateScheduleItemTapped(context, "1つ以上の時間区分を入力してください");
                 }else if(_shiftFrame.shiftName == ''){
                   _onCreateScheduleItemTapped(context, "シフト表の名前を指定してください");
-                }else if( _shiftFrame.shiftDateRange[0].start.difference(_shiftFrame.shiftDateRange[1].end).inDays <= 1){
-                  print( _shiftFrame.shiftDateRange[0].start.difference(_shiftFrame.shiftDateRange[1].end).inDays);
-                  _onCreateScheduleItemTapped(context, "「リクエスト期間」「シフト期間」には1日以上の間隔を空けてください。\n※ リクエストに対するシフトを作成する期間が必要なため");
+                }else if( _shiftFrame.shiftDateRange[0].start.difference(_shiftFrame.shiftDateRange[1].end).inDays < 1){
+                  _onCreateScheduleItemTapped(context, "「リクエスト期間」「シフト期間」には1日以上の間隔を空けてください。\n※ リクエストに対するシフトを作成する期間が必要なためです。");
                 }else{
                   _shiftFrame.initTable();
                   Provider.of<ShiftFrameProvider>(context, listen: false).shiftFrame = _shiftFrame;
@@ -177,7 +179,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
               ////////////////////////////////////////////////////////////////////////////
               /// シフト期間とシフト希望入力期間を入力
               ////////////////////////////////////////////////////////////////////////////      
-              Text("「シフト期間」「リクエスト期間」を入力しましょう", style: MyStyle.defaultStyleGrey15),
+              Text("「リクエスト期間」「シフト期間」を入力しましょう", style: MyStyle.defaultStyleGrey15),
               SizedBox(height: _screenSize.height * 0.04),
               SizedBox(
                 width: _screenSize.width * 0.9,
@@ -187,16 +189,16 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
                     SizedBox(
                       width: _screenSize.width * 0.44,
                       child: buildInputBox(
-                        "シフト期間",
-                        buildDateRangePicker(_shiftFrame.shiftDateRange, 0)
+                        "リクエスト期間",
+                        buildDateRangePicker(_shiftFrame.shiftDateRange, 1)
                       ),
                     ),
                     SizedBox(width: _screenSize.width * 0.02),
                     SizedBox(
                       width: _screenSize.width * 0.44,
                       child: buildInputBox(
-                        "リクエスト期間",
-                        buildDateRangePicker(_shiftFrame.shiftDateRange, 1)
+                        "シフト期間",
+                        buildDateRangePicker(_shiftFrame.shiftDateRange, 0)
                       ),
                     ),
                   ],

@@ -5,17 +5,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
+import 'package:shift/src/screens/signInScreen/sign_in.dart';
 import 'dart:async';
 import 'package:uni_links/uni_links.dart';
 import 'package:google_fonts/google_fonts.dart';
 // my file
-import 'package:shift/src/functions/style.dart';
-import 'package:shift/src/functions/sing_in/sign_in_provider.dart';
-import 'package:shift/src/functions/deep_link_mixin.dart';
+import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/mylibs/sing_in/sign_in_provider.dart';
+import 'package:shift/src/mylibs/deep_link_mixin.dart';
 
 import 'package:shift/src/screens/homeScreen/home.dart';
 import 'package:shift/src/screens/homeScreen/account.dart';
-import 'package:shift/src/functions/setting_provider.dart';
+import 'package:shift/src/mylibs/setting_provider.dart';
 // import 'package:shift/src/screens/homeSCreen/notification.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
 
@@ -61,12 +62,14 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
     
     var signInProvider = Provider.of<SignInProvider>(context);
     var screenSize     = MediaQuery.of(context).size;
-
+    
     var settingProvider = Provider.of<SettingProvider>(context, listen: false);
     settingProvider.loadPreferences();
 
     // Sign In Cheack
-    return Scaffold(
+    return 
+    (signInProvider.user != null)
+    ? Scaffold(
       //AppBar
       appBar: AppBar(
         title: Text(_contents[_selectedIndex].contentTitle ,style: MyStyle.headlineStyleGreen20),
@@ -104,7 +107,7 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      (signInProvider.user != null && signInProvider.user!.providerData[0].photoURL != null)
+                      (signInProvider.user != null && signInProvider.user!.providerData.isNotEmpty && signInProvider.user!.providerData[0].photoURL != null)
                       ? Container(
                         width: 45.0,
                         height: 45.0,
@@ -131,8 +134,8 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
                           ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(signInProvider.user?.providerData[0].displayName ?? signInProvider.user?.uid ?? "", style: MyStyle.headlineStyleWhite20, overflow: TextOverflow.ellipsis),
-                              Text(signInProvider.user?.providerData[0].email ?? '', style: GoogleFonts.mPlus1(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                              Text((!signInProvider.user!.isAnonymous) ? (signInProvider.user?.providerData[0].displayName ?? signInProvider.user?.uid ?? "") :  "ゲストユーザ", style: MyStyle.headlineStyleWhite20, overflow: TextOverflow.ellipsis),
+                              Text((!signInProvider.user!.isAnonymous) ? (signInProvider.user?.providerData[0].email ?? '') : signInProvider.user?.uid ?? "", style: GoogleFonts.mPlus1(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
                             ],
                           )
                           : Column(
@@ -160,7 +163,8 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
           ],
         ),
       ),
-    );
+    )
+    : const SignInScreen();
   }
 
   /////////////////////////////////////////////////////////////////////////////

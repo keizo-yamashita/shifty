@@ -7,13 +7,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-// my package
-import 'package:shift/src/functions/style.dart';
-import 'package:shift/src/functions/dialog.dart';
-
-import 'package:shift/src/functions/sing_in/sign_in_provider.dart';
-import 'package:shift/src/functions/shift/shift_frame.dart';
-import 'package:shift/src/functions/shift/shift_request.dart';
+import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/mylibs/dialog.dart';
+import 'package:shift/src/mylibs/sing_in/sign_in_provider.dart';
+import 'package:shift/src/mylibs/shift/shift_frame.dart';
+import 'package:shift/src/mylibs/shift/shift_request.dart';
 
 
 class AddShiftRequestWidget extends StatefulWidget {

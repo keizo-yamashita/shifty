@@ -1,6 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:shift/src/functions/style.dart';
+////////////////////////////////////////////////////////////////////////////////////////////
+/// import
+////////////////////////////////////////////////////////////////////////////////////////////
 
+import 'package:flutter/material.dart';
+import 'package:shift/src/mylibs/style.dart';
+
+
+// 未実装
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({Key? key}) : super(key: key);
 

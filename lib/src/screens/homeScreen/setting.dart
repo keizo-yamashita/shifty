@@ -1,8 +1,12 @@
+////////////////////////////////////////////////////////////////////////////////////////////
+/// import
+////////////////////////////////////////////////////////////////////////////////////////////
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:shift/src/functions/style.dart';
-import 'package:shift/src/functions/setting_provider.dart';
+import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/mylibs/setting_provider.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);

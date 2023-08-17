@@ -4,18 +4,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// my package
-import 'package:shift/src/functions/style.dart';
-import 'package:shift/src/functions/dialog.dart';
-import 'package:shift/src/functions/shift/shift_frame.dart';
-import 'package:shift/src/functions/shift/shift_request.dart';
-import 'package:shift/src/functions/shift_editor/shift_request_editor.dart';
-import 'package:shift/src/functions/shift_editor/shift_response_editor.dart';
-import 'package:shift/src/functions/shift_editor/coordinate.dart';
-import 'package:shift/src/functions/undo_redo.dart';
-import 'package:shift/src/functions/modal_window.dart';
-import 'package:shift/src/functions/setting_provider.dart';
-import 'package:shift/src/functions/shift/shift_provider.dart';
+import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/mylibs/dialog.dart';
+import 'package:shift/src/mylibs/shift/shift_frame.dart';
+import 'package:shift/src/mylibs/shift/shift_request.dart';
+import 'package:shift/src/mylibs/shift_editor/shift_request_editor.dart';
+import 'package:shift/src/mylibs/shift_editor/shift_response_editor.dart';
+import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
+import 'package:shift/src/mylibs/undo_redo.dart';
+import 'package:shift/src/mylibs/modal_window.dart';
+import 'package:shift/src/mylibs/setting_provider.dart';
+import 'package:shift/src/mylibs/shift/shift_provider.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数

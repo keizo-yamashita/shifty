@@ -12,19 +12,19 @@ import 'package:flutter/services.dart';
 import 'package:share/share.dart';
 
 // my package
-import 'package:shift/src/functions/style.dart';
-import 'package:shift/src/functions/dialog.dart';
-import 'package:shift/src/functions/shift/shift_frame.dart';
-import 'package:shift/src/functions/shift/shift_request.dart';
-import 'package:shift/src/functions/sing_in/sign_in_provider.dart';
-import 'package:shift/src/screens/signInScreen/sign_in.dart';
-import 'package:shift/src/functions/shift/shift_table.dart';
+import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/mylibs/dialog.dart';
+import 'package:shift/src/mylibs/shift/shift_frame.dart';
+import 'package:shift/src/mylibs/shift/shift_request.dart';
+import 'package:shift/src/mylibs/sing_in/sign_in_provider.dart';
+import 'package:shift/src/mylibs/shift/shift_table.dart';
+import 'package:shift/src/mylibs/deep_link_mixin.dart';
+import 'package:shift/src/mylibs/setting_provider.dart';
+import 'package:shift/src/mylibs/shift/shift_provider.dart';
 import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
-import 'package:shift/src/functions/shift/shift_provider.dart';
+import 'package:shift/src/screens/signInScreen/sign_in.dart';
 import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
-import 'package:shift/src/functions/deep_link_mixin.dart';
-import 'package:shift/src/functions/setting_provider.dart';
 import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shift/src/app.dart';
-import 'package:shift/src/functions/deep_link_mixin.dart';
-import 'package:shift/src/functions/style.dart';
+import 'package:shift/src/mylibs/deep_link_mixin.dart';
+import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/functions/sing_in/sign_in_provider.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
 
@@ -16,6 +16,7 @@ class SplashScreen extends StatefulWidget {
 
 class SplashScreenState extends State<SplashScreen> with DeepLinkMixin{
   
+  // URL からアクセする場合の画面遷移
   @override
   void onDeepLinkNotify(Uri? uri) {  
     String? parameter = uri!.queryParameters['id'];
