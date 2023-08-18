@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shift/src/app.dart';
 import 'package:shift/src/mylibs/deep_link_mixin.dart';
 import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/functions/sing_in/sign_in_provider.dart';
+import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
 
 class SplashScreen extends StatefulWidget {

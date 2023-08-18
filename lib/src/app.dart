@@ -11,7 +11,7 @@ import 'package:uni_links/uni_links.dart';
 import 'package:google_fonts/google_fonts.dart';
 // my file
 import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/sing_in/sign_in_provider.dart';
+import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/mylibs/deep_link_mixin.dart';
 
 import 'package:shift/src/screens/homeScreen/home.dart';

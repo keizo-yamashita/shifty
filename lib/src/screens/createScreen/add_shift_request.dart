@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
-import 'package:shift/src/mylibs/sing_in/sign_in_provider.dart';
+import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift/shift_request.dart';
 

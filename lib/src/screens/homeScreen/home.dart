@@ -16,7 +16,7 @@ import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift/shift_request.dart';
-import 'package:shift/src/mylibs/sing_in/sign_in_provider.dart';
+import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/mylibs/shift/shift_table.dart';
 import 'package:shift/src/mylibs/deep_link_mixin.dart';
 import 'package:shift/src/mylibs/setting_provider.dart';

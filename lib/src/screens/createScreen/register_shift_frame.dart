@@ -11,7 +11,7 @@ import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/undo_redo.dart';
 import 'package:shift/src/mylibs/modal_window.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/sing_in/sign_in_provider.dart';
+import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/mylibs/shift_editor/shift_frame_editor.dart';
 import 'package:shift/src/mylibs/setting_provider.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';

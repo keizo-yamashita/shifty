@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shift/src/mylibs/dialog.dart';
-import 'package:shift/src/mylibs/sing_in/sign_in_provider.dart';
+import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/screens/signInScreen/sign_in.dart';
 import 'package:shift/src/screens/signInScreen/link_account.dart';
 import 'package:shift/src/mylibs/style.dart';
