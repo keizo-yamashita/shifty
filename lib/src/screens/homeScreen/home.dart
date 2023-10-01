@@ -250,11 +250,17 @@ class HomeWidgetState extends State<HomeWidget> {
       List<Widget> shiftCard = [];
       for(var snapshotMyShiftFrame in docs){
         var frame = await ShiftFrame().pullShiftFrame(snapshotMyShiftFrame);
-        
+        var followers_num = 0;
+        await FirebaseFirestore.instance.collection('shift-follower').where('reference', isEqualTo: snapshotMyShiftFrame.reference).orderBy('created-at', descending: false).get().then(
+          (snapshotReqs) async {
+            followers_num = snapshotReqs.docs.length;
+          }
+        );
         shiftCard.add(
           frame.buildShiftTableCard(
             frame.shiftName,
             _screenSize.width * 0.8,
+            followers_num,
             () async{
               List<ShiftRequest> requests = [];
               FirebaseFirestore.instance.collection('shift-follower').where('reference', isEqualTo: snapshotMyShiftFrame.reference).orderBy('created-at', descending: false).get().then(
@@ -269,6 +275,15 @@ class HomeWidgetState extends State<HomeWidget> {
                   }
                 }
               );
+            },
+            (){
+              var message = "[Shifty] シフト表入力依頼です。\n";
+              message += "下記のリンクより入力してください。\n";
+              message += "シフト名      : ${frame.shiftName} \n";
+              message += "　シフト期間　 : ${DateFormat('MM/dd').format(frame.shiftDateRange[0].start)} - ${DateFormat('MM/dd').format(frame.shiftDateRange[0].end)}\n";
+              message += "リクエスト期間 : ${DateFormat('MM/dd').format(frame.shiftDateRange[1].start)} - ${DateFormat('MM/dd').format(frame.shiftDateRange[1].end)}\n";
+              message += "shifty://user/?id=${frame.shiftId}";
+              Share.share(message);
             },
             isDark,
             (){

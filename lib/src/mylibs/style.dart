@@ -34,8 +34,9 @@ class MyStyle{
   static TextStyle defaultStyleWhite13  = GoogleFonts.mPlus1(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold);
   static TextStyle defaultStyleWhite10  = GoogleFonts.mPlus1(color: Colors.white, fontSize: 9,  fontWeight: FontWeight.bold);
 
+  static TextStyle defaultStyleRed18    = GoogleFonts.mPlus1(color: Colors.red,   fontSize: 18, fontWeight: FontWeight.bold);
   static TextStyle defaultStyleRed15    = GoogleFonts.mPlus1(color: Colors.red,   fontSize: 15, fontWeight: FontWeight.bold);
-  static TextStyle defaultStyleRed13    = GoogleFonts.mPlus1(color: Colors.red,   fontSize: 13,  fontWeight: FontWeight.bold);
+  static TextStyle defaultStyleRed13    = GoogleFonts.mPlus1(color: Colors.red,   fontSize: 13, fontWeight: FontWeight.bold);
   static TextStyle defaultStyleRed10    = GoogleFonts.mPlus1(color: Colors.red,   fontSize: 9,  fontWeight: FontWeight.bold);
 
   static TextStyle defaultStyleBlue15   = GoogleFonts.mPlus1(color: Colors.blue,  fontSize: 15, fontWeight: FontWeight.bold);
@@ -45,7 +46,7 @@ class MyStyle{
   static const Color tableColumnsColor = primaryColor;
   static const Color tableBorderColor  = secondaryColor;
 
-  static TextStyle tableTitleStyle([Color? color, double? size]){ return GoogleFonts.mPlus1(color: color, fontSize: size ?? 10, fontWeight: FontWeight.bold);}
+  static TextStyle tableTitleStyle([Color? color, double? size]){ return GoogleFonts.mPlus1(color: color, fontWeight: FontWeight.bold);}
 
  static const TextHeightBehavior defaultBehavior = TextHeightBehavior(applyHeightToLastDescent: false, applyHeightToFirstAscent: false);
 

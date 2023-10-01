@@ -134,8 +134,8 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
                           ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text((!signInProvider.user!.isAnonymous) ? (signInProvider.user?.providerData[0].displayName ?? signInProvider.user?.uid ?? "") :  "ゲストユーザ", style: MyStyle.headlineStyleWhite20, overflow: TextOverflow.ellipsis),
-                              Text((!signInProvider.user!.isAnonymous) ? (signInProvider.user?.providerData[0].email ?? '') : signInProvider.user?.uid ?? "", style: GoogleFonts.mPlus1(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                              FittedBox(fit: BoxFit.fitWidth, child: Text((!signInProvider.user!.isAnonymous) ? (signInProvider.user?.providerData[0].displayName ?? signInProvider.user?.uid ?? "") :  "ゲストユーザ", style: MyStyle.headlineStyleWhite20, overflow: TextOverflow.ellipsis)),
+                              FittedBox(fit: BoxFit.fitWidth, child: Text((!signInProvider.user!.isAnonymous) ? (signInProvider.user?.providerData[0].email ?? '') : signInProvider.user?.uid ?? "", style: GoogleFonts.mPlus1(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)),
                             ],
                           )
                           : Column(
@@ -213,20 +213,12 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       // About Shift Table Buttons 
                       const SizedBox(height: 20),
                       TextButton(
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 10,
-                              child : _displayInfoFlag[0] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
-                            ),
-                            const SizedBox(width: 10),
-                            Text("「フォロー中のシフト表」について", style: MyStyle.headlineStyleGreen18),
-                          ],
-                        ),
+                            child: _displayInfoFlag[0]
+                            ? Text("- 「フォロー中のシフト表」について", style: MyStyle.headlineStyleGreen18)
+                            : Text("+「フォロー中のシフト表」について", style: MyStyle.headlineStyleGreen18),
                         onPressed: (){
                           _displayInfoFlag[0] = !_displayInfoFlag[0];
                           setState(() {});
@@ -267,16 +259,9 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
                       // About Shift Request View 
                       const SizedBox(height: 20),
                       TextButton(
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 10,
-                              child : _displayInfoFlag[1] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
-                            ),
-                            const SizedBox(width: 10),
-                            Text("「管理中のシフト表」について", style: MyStyle.headlineStyleGreen18),
-                          ],
-                        ),
+                        child : _displayInfoFlag[1]
+                          ? Text("- 「管理中のシフト表」について", style: MyStyle.headlineStyleGreen18)
+                          : Text("+「管理中のシフト表」について", style: MyStyle.headlineStyleGreen18),
                         onPressed: (){
                           _displayInfoFlag[1] = !_displayInfoFlag[1];
                           setState(() {});

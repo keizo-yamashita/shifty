@@ -123,44 +123,45 @@ class ShiftFrameEditor extends StatelessWidget {
 
   List<Widget> _getTitleWidget(){
 
-    double fontSize = titleHeight / 30 * 10;
-
     List<String> weekdayJP = ["月", "火", "水", "木", "金", "土", "日"];
     Text         day, weekday;
 
     var columnNum = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1;
 
-    var titleList = [Container(
+    var titleList = [
+      Container(
         width: titleWidth,
         height: titleHeight,
         alignment: Alignment.center,
         child: Text("", style: MyStyle.defaultStyleBlack10),
-      )];
+      )
+    ];
 
     for(int i = 0; i < columnNum; i++){
       DateTime     date = shiftFrame.shiftDateRange[0].start.add(Duration(days: i));
 
       if(date.weekday == 6){
-        day     = Text('${date.day}', style: MyStyle.tableTitleStyle(Colors.blue, fontSize)); 
-        weekday = Text(weekdayJP[date.weekday - 1], style: MyStyle.tableTitleStyle(Colors.blue, fontSize));
+        day     = Text('${date.day}', style: MyStyle.tableTitleStyle(Colors.blue)); 
+        weekday = Text(weekdayJP[date.weekday - 1], style: MyStyle.tableTitleStyle(Colors.blue));
       }else if(date.weekday == 7){
-        day     = Text('${date.day}', style: MyStyle.tableTitleStyle(Colors.red, fontSize)); 
-        weekday = Text(weekdayJP[date.weekday - 1], style: MyStyle.tableTitleStyle(Colors.red, fontSize));
+        day     = Text('${date.day}', style: MyStyle.tableTitleStyle(Colors.red)); 
+        weekday = Text(weekdayJP[date.weekday - 1], style: MyStyle.tableTitleStyle(Colors.red));
       }else{
-        day     = Text('${date.day}', style: MyStyle.tableTitleStyle(null, fontSize)); 
-        weekday = Text(weekdayJP[date.weekday - 1], style: MyStyle.tableTitleStyle(null, fontSize));
+        day     = Text('${date.day}', style: MyStyle.tableTitleStyle((isDark) ?Colors.white : Colors.black54)); 
+        weekday = Text(weekdayJP[date.weekday - 1], style: MyStyle.tableTitleStyle((isDark) ?Colors.white : Colors.black54));
       }
       titleList.add(
         Container(
           width: cellWidth,
           height: titleHeight,
+          padding: const EdgeInsets.symmetric(vertical: 2),
           alignment: Alignment.center,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              day,
-              weekday
+              SizedBox(height: (titleHeight-4)/2, child: FittedBox(fit: BoxFit.fitWidth, child: day)),
+              SizedBox(height: (titleHeight-4)/2, child: FittedBox(fit: BoxFit.fitWidth ,child: weekday))
             ]
           )
         )
@@ -170,12 +171,15 @@ class ShiftFrameEditor extends StatelessWidget {
   }
 
   Widget _generateFirstColumnsRow(BuildContext context, int index){
-    double fontSize = titleWidth / 70 * 10;
     return Container(
       width: titleWidth,
       height: cellHeight,
+      padding: const EdgeInsets.symmetric(horizontal: 2),
       alignment: Alignment.center,
-      child: Text(shiftFrame.timeDivs[index].name, style:  MyStyle.tableTitleStyle(null, fontSize)),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(shiftFrame.timeDivs[index].name, style:  MyStyle.tableTitleStyle((isDark) ?Colors.white : Colors.black54))
+      )
     );
   }
 

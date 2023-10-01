@@ -227,7 +227,7 @@ class ShiftFrame{
   /// シフト表をカード化する
   ////////////////////////////////////////////////////////////////////////////////////////////  
   
-  Widget buildShiftTableCard(String title, double width, Function onPressed, bool isDark, Function onLongPressed){
+  Widget buildShiftTableCard(String title, double width, int followersNum, Function onPressed, Function onPressedShare, bool isDark, Function onLongPressed){
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -241,13 +241,16 @@ class ShiftFrame{
                 backgroundColor:  isDark ? Colors.grey[800] : MyStyle.backgroundColor,
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Text(title, style: MyStyle.headlineStyleGreen20, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: SizedBox(
+                        width:  width*0.6,
+                        child: Text(title, style: MyStyle.headlineStyleGreen18, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis)
+                      ),
                     ),
                     Text(
                       "　シフト期間　 : ${DateFormat('MM/dd').format(shiftDateRange[0].start)} - ${DateFormat('MM/dd').format(shiftDateRange[0].end)}",
@@ -263,6 +266,13 @@ class ShiftFrame{
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis
                     ),
+                    Text(
+                      "　フォロワー数 : $followersNum 人",
+                      style: MyStyle.defaultStyleGrey15,
+                      textHeightBehavior: MyStyle.defaultBehavior,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis
+                    ),
                   ],
                 ),
               ),
@@ -274,15 +284,18 @@ class ShiftFrame{
               }
             ),
           ),
-          // Positioned(
-          //   left: 10,
-          //   top: 10,
-          //   child: SizedBox(
-          //     width: width * 0.4,
-          //     child: Text("フォロワー : 0 人", style: MyStyle.defaultStyleGrey15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis)
-          //   )
-          // ),
-        ],
+          Positioned(
+            right: 10,
+            top: 0,
+            child: SizedBox(
+            width: width * 0.2,
+              child: IconButton(
+                onPressed: (){ onPressedShare(); },
+                icon: const Icon(Icons.ios_share, size: 20, color: MyStyle.primaryColor)
+              ),
+            )
+          )
+        ],  
       ),
     );
   }
