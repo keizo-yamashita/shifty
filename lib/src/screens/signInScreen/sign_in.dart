@@ -3,21 +3,24 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 import 'dart:math';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// my package
+import 'package:shift/main.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
-import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 
-class SignInScreen extends StatefulWidget {
+final GlobalKey<ScaffoldState> _signInScaffoldKey = GlobalKey<ScaffoldState>();
+
+class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  SignInScreenState createState() => SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class SignInScreenState extends ConsumerState<SignInScreen> {
   
   final inputMailController = TextEditingController(text: "");
   final inputPasswordController = TextEditingController(text: "");
@@ -28,6 +31,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {  
 
     return Scaffold(
+      key: _signInScaffoldKey,
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () {
@@ -111,9 +115,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    signInButton(context, "mail-create", "", "新規登録", Colors.tealAccent, MyStyle.headlineStyleBlack18, 75, inputMailController.text, inputPasswordController.text),
+                    signInButton(context, ref, "mail-create", "", "新規登録", Colors.tealAccent, MyStyle.headlineStyleBlack18, 75, inputMailController.text, inputPasswordController.text),
                     const SizedBox(width: 20),
-                    signInButton(context, "mail-signin", "", "ログイン", Colors.yellow[100]!, MyStyle.headlineStyleBlack18, 75, inputMailController.text, inputPasswordController.text),
+                    signInButton(context, ref, "mail-signin", "", "ログイン", Colors.yellow[100]!, MyStyle.headlineStyleBlack18, 75, inputMailController.text, inputPasswordController.text),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -121,16 +125,16 @@ class _SignInScreenState extends State<SignInScreen> {
                 const SizedBox(height: 10),
                 Text('プロバイダーを用いてログイン', style: MyStyle.headlineStyleWhite20),
                 const SizedBox(height: 10),
-                signInButton(context, "google", "assets/google_logo.png", "sign in with Google", Colors.white, MyStyle.headlineStyleBlack18),
+                signInButton(context, ref, "google", "assets/google_logo.png", "sign in with Google", Colors.white, MyStyle.headlineStyleBlack18),
                 const SizedBox(height: 10),
-                signInButton(context, "apple", "assets/apple_logo.png",   "sign in with Apple ID", Colors.black, MyStyle.headlineStyleWhite18),
+                signInButton(context, ref, "apple", "assets/apple_logo.png",   "sign in with Apple ID", Colors.black, MyStyle.headlineStyleWhite18),
                 
                 const SizedBox(height: 10),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.8, child: const Divider(color: Colors.white,)),
                 const SizedBox(height: 10),
                 Text('ゲストユーザとしてログイン', style: MyStyle.headlineStyleWhite20),
                 const SizedBox(height: 10),
-                signInButton(context, "guest", "assets/person2.png", "ゲストログイン", Colors.tealAccent, MyStyle.headlineStyleBlack18),
+                signInButton(context, ref, "guest", "assets/person2.png", "ゲストログイン", Colors.tealAccent, MyStyle.headlineStyleBlack18),
               ],
             ),
           ),
@@ -139,9 +143,7 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Widget signInButton(BuildContext context, String providerName, String imageUri, String buttonTitle, Color baseColor, TextStyle textStyle, [double? width, String? mail, String? password]){
-    
-    var accountProvider = Provider.of<SignInProvider>(context);
+  Widget signInButton(BuildContext context, WidgetRef ref, String providerName, String imageUri, String buttonTitle, Color baseColor, TextStyle textStyle, [double? width, String? mail, String? password]){
     
     return SizedBox(
       height: 50,
@@ -158,30 +160,31 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         onPressed: isDisabled ? null : (){
           isDisabled = true;
+          
           ////////////////////////////////////////////////////////////////////////////////////////////
           /// メールでログインする場合 (新規登録から)
           ////////////////////////////////////////////////////////////////////////////////////////////
           if(providerName == "mail-create"){
             if(mail == "" || password == ""){
-              showAlertDialog(context, "エラー", "メールアドレスとパスワードを\n入力してください。", true);
+              showAlertDialog(context, ref, "エラー", "メールアドレスとパスワードを\n入力してください。", true);
               isDisabled = false;
             }
             else if(password!.length < 6 ){
-              showAlertDialog(context, "エラー", "パスワードは6文字以上で\n入力してください。", true);
+              showAlertDialog( context, ref, "エラー", "パスワードは6文字以上で\n入力してください。", true);
               isDisabled = false;
             }
             else{
-              showConfirmDialog(context, "確認",
+              showConfirmDialog(context, ref, "確認",
                 "このメールアドレスとパスワードで\n新規登録しますか？", "",
                 (){
-                  accountProvider.login(providerName, false, mail, password).then(
+                  ref.read(signInProvider).login(providerName, false, mail, password).then(
                     (message){
                       if(message != ""){
-                        showAlertDialog(context, "エラー", message, true);
+                        showAlertDialog(context, ref, "エラー", message, true);
                         isDisabled = false;
                       }
                       else{
-                        showAlertDialog(context, "確認", "新規登録しました。", false);
+                        showAlertDialog(context, ref, "確認", "新規登録しました。", false);
                         isDisabled = false;
                       }
                     }
@@ -200,22 +203,22 @@ class _SignInScreenState extends State<SignInScreen> {
           ////////////////////////////////////////////////////////////////////////////////////////////
           if(providerName == "mail-signin"){
             if(mail == "" || password == ""){
-              showAlertDialog(context, "エラー", "メールアドレスとパスワードを\n入力してください。", true);
+              showAlertDialog(context, ref, "エラー", "メールアドレスとパスワードを\n入力してください。", true);
               isDisabled = false;
             }
             else if(password!.length < 6 ){
-              showAlertDialog(context, "エラー", "パスワードは6文字以上で\n入力してください。", true);
+              showAlertDialog(context, ref, "エラー", "パスワードは6文字以上で\n入力してください。", true);
               isDisabled = false;
             }
             else{
-              accountProvider.login(providerName, false, mail, password).then(
+              ref.read(signInProvider).login(providerName, false, mail, password).then(
                 (message){
                   if(message != ""){
-                    showAlertDialog(context, "エラー", message, true);
+                    showAlertDialog(context, ref, "エラー", message, true);
                     isDisabled = false;
                   }
                   else{
-                    showAlertDialog(context, "確認", "ログインしました。", false);
+                    showAlertDialog(context, ref, "確認", "ログインしました。", false);
                     isDisabled = false;
                   }
                 }
@@ -231,12 +234,12 @@ class _SignInScreenState extends State<SignInScreen> {
           ////////////////////////////////////////////////////////////////////////////////////////////
           else if(providerName == 'guest'){
             showConfirmDialog(
-              context, "確認",
+              context, ref, "確認",
               "ゲストユーザとして\nログインしますか？\n\n注意 : ゲストアカウントでは\n複数の端末でアカウントを\n共有することができません。", "",
               (){
-                accountProvider.login(providerName, false).then(
+                ref.read(signInProvider).login(providerName, false).then(
                   (message){
-                    showAlertDialog(context, "確認", "ゲストユーザとして\nログインしました。", false);
+                    showAlertDialog(context, ref, "確認", "ゲストユーザとして\nログインしました。", false);
                     isDisabled = false;
                   }
                 ).catchError(
@@ -252,14 +255,14 @@ class _SignInScreenState extends State<SignInScreen> {
           /// その他の方法でログインする場合
           ////////////////////////////////////////////////////////////////////////////////////////////
           else{
-            accountProvider.login(providerName, false).then(
+            ref.read(signInProvider).login(providerName, false).then(
               (message){
                 if(message != ""){
-                  showAlertDialog(context, "エラー", message, true);
+                  showAlertDialog(context, ref, "エラー", message, true);
                   isDisabled = false;
                 }
                 else{
-                  // showAlertDialog(context, "確認", "ログインしました。", false);
+                  // showAlertDialog(context, ref, "確認", "ログインしました。", false);
                   isDisabled = false;
                 }
               }

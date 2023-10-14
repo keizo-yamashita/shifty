@@ -2,8 +2,9 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
@@ -13,8 +14,6 @@ import 'package:shift/src/mylibs/shift_editor/shift_response_editor.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 import 'package:shift/src/mylibs/undo_redo.dart';
 import 'package:shift/src/mylibs/modal_window.dart';
-import 'package:shift/src/mylibs/setting_provider.dart';
-import 'package:shift/src/mylibs/shift/shift_provider.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数
@@ -41,15 +40,15 @@ List<bool> _displayInfoFlag = [false, false, false, false];
 /// シフト表の最終チェックに使用するページ (勤務人数も指定)
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-class InputShiftRequestWidget extends StatefulWidget {
+class InputShiftRequestWidget extends ConsumerStatefulWidget {
   
   const InputShiftRequestWidget({Key? key}) : super(key: key);
   
   @override
-  State<InputShiftRequestWidget> createState() => InputShiftRequestWidgetState();
+  InputShiftRequestWidgetState createState() => InputShiftRequestWidgetState();
 }
 
-class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
+class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget> {
 
   UndoRedo<List<List<int>>> undoredoCtrl = UndoRedo(_bufferMax);
 
@@ -62,10 +61,9 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
 
     _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom);
 
-    _shiftRequest = Provider.of<ShiftRequestProvider>(context, listen: false).shiftRequest;
+    _shiftRequest = ref.read(shiftRequestProvider).shiftRequest;
 
-    var settingProvider = Provider.of<SettingProvider>(context, listen: false);
-    settingProvider.loadPreferences();
+    ref.read(settingProvider).loadPreferences();
 
     if(undoredoCtrl.buffer.isEmpty){
       insertBuffer(_shiftRequest.requestTable);
@@ -84,7 +82,7 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
               icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
               tooltip: "使い方",
               onPressed: () async {
-                showInfoDialog(settingProvider.enableDarkTheme);
+                showInfoDialog(ref.read(settingProvider).enableDarkTheme);
               }
             ),
           ),
@@ -97,12 +95,12 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
                 DateTime now = DateTime.now();
                 if(now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0){
                   showConfirmDialog(
-                    context, "確認", "このリクエストを登録しますか？", "リクエストを登録しました", (){
+                    context, ref, "確認", "このリクエストを登録しますか？", "リクエストを登録しました", (){
                     Navigator.pop(context);
                     _shiftRequest.updateShiftRequest();
                   });
                 }else{
-                  showAlertDialog(context, "注意", "リクエスト期間内でないため，登録できません\n編集が必要な場合は管理者に連絡してください", true);
+                  showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，登録できません\n編集が必要な場合は管理者に連絡してください", true);
                 }
               }
             ),
@@ -132,7 +130,7 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
                   if(now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0){
                     buildAutoFillModalWindow(context);
                   }else{
-                    showAlertDialog(context, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                    showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
                   }
                 }, (){}),
                 buildIconButton(
@@ -143,7 +141,7 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
                     if(now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0){
                       _enableEdit = !_enableEdit;
                     }else{
-                      showAlertDialog(context, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                      showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
                     }
                   },
                   (){
@@ -152,7 +150,7 @@ class InputShiftRequestWidgetState extends State<InputShiftRequestWidget> {
                       buildInkChangeModaleWindow();
                       _enableEdit = true;
                     }else{
-                      showAlertDialog(context, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                      showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
                     }
                   }
                 ),

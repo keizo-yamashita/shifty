@@ -1,18 +1,20 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// my package
+import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
-import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 
-class LinkAccountScreen extends StatefulWidget {
+class LinkAccountScreen extends ConsumerStatefulWidget {
   const LinkAccountScreen({Key? key}) : super(key: key);
 
   @override
-  State<LinkAccountScreen> createState() => _LinkAccountScreenState();
+  LinkAccountScreenState createState() => LinkAccountScreenState();
 }
 
-class _LinkAccountScreenState extends State<LinkAccountScreen> {
+class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
   
   final inputMailController = TextEditingController(text: "");
   final inputPasswordController = TextEditingController(text: "");
@@ -116,15 +118,15 @@ class _LinkAccountScreenState extends State<LinkAccountScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                linkButton(context, "mail-signin", "assets/mail.png", "新規登録 & ログイン", Colors.yellow[100]!, MyStyle.headlineStyleBlack18, 180, inputMailController.text, inputPasswordController.text),
+                linkButton(context, ref, "mail-signin", "assets/mail.png", "新規登録 & ログイン", Colors.yellow[100]!, MyStyle.headlineStyleBlack18, 180, inputMailController.text, inputPasswordController.text),
                 const SizedBox(height: 10),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.8, child: const Divider(color: Colors.white,)),
                 const SizedBox(height: 10),
                 Text('プロバイダーを用いてログイン', style: MyStyle.headlineStyleWhite20),
                 const SizedBox(height: 20),
-                linkButton(context, "google", "assets/google_logo.png", "sign in with Google", Colors.white, MyStyle.headlineStyleBlack18),
+                linkButton(context, ref, "google", "assets/google_logo.png", "sign in with Google", Colors.white, MyStyle.headlineStyleBlack18),
                 const SizedBox(height: 10),
-                linkButton(context, "apple", "assets/apple_logo.png",   "sign in with Apple ID", Colors.black, MyStyle.headlineStyleWhite18),
+                linkButton(context, ref, "apple", "assets/apple_logo.png",   "sign in with Apple ID", Colors.black, MyStyle.headlineStyleWhite18),
               ],
             ),
           ),
@@ -133,9 +135,7 @@ class _LinkAccountScreenState extends State<LinkAccountScreen> {
     );
   }
 
-  Widget linkButton(BuildContext context, String providerName, String imageUri, String buttonTitle, Color baseColor, TextStyle textStyle, [double? width, String? mail, String? password]){
-    
-    var accountProvider = Provider.of<SignInProvider>(context);
+  Widget linkButton(BuildContext context, WidgetRef ref, String providerName, String imageUri, String buttonTitle, Color baseColor, TextStyle textStyle, [double? width, String? mail, String? password]){
     
     return SizedBox(
       height: 50,
@@ -157,26 +157,26 @@ class _LinkAccountScreenState extends State<LinkAccountScreen> {
           ////////////////////////////////////////////////////////////////////////////////////////////
           if(providerName == "mail-signin"){
             if(mail == "" || password == ""){
-              showAlertDialog(context, "エラー", "メールアドレスとパスワードを\n入力してください。", true);
+              showAlertDialog(context, ref, "エラー", "メールアドレスとパスワードを\n入力してください。", true);
               isDisabled = false;
             }
             else if(password!.length < 6 ){
-              showAlertDialog(context, "エラー", "パスワードは6文字以上で\n入力してください。", true);
+              showAlertDialog(context, ref, "エラー", "パスワードは6文字以上で\n入力してください。", true);
               isDisabled = false;
             }
             else{
-              showConfirmDialog(context, "確認",
+              showConfirmDialog(context, ref, "確認",
                 "このメールアドレスとパスワードで\n新規登録しますか？", "",
                 (){
-                  accountProvider.login(providerName, true, mail, password).then(
+                  ref.read(signInProvider).login(providerName, true, mail, password).then(
                     (message){
                       if(message != ""){
-                        showAlertDialog(context, "エラー", message, true);
+                        showAlertDialog(context, ref, "エラー", message, true);
                         isDisabled = false;
                       }
                       else{
                         Navigator.pop(context);
-                        showAlertDialog(context, "確認", "新規登録後、連携しました。", false);
+                        showAlertDialog(context, ref, "確認", "新規登録後、連携しました。", false);
                         isDisabled = false;
                       }
                     }
@@ -194,15 +194,15 @@ class _LinkAccountScreenState extends State<LinkAccountScreen> {
           /// その他の方法でログインする場合
           ////////////////////////////////////////////////////////////////////////////////////////////
           else{
-            accountProvider.login(providerName, true).then(
+            ref.read(signInProvider).login(providerName, true).then(
               (message){
                 if(message != ""){
-                  showAlertDialog(context, "エラー", message, true);
+                  showAlertDialog(context, ref, "エラー", message, true);
                   isDisabled = false;
                 }
                 else{
                   Navigator.pop(context);
-                  showAlertDialog(context, "確認", "連携しました。", false);
+                  showAlertDialog(context, ref, "確認", "連携しました。", false);
                   isDisabled = false;
                 }
               }

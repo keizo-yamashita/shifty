@@ -5,25 +5,25 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
-import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift/shift_request.dart';
 
 
-class AddShiftRequestWidget extends StatefulWidget {
+class AddShiftRequestWidget extends ConsumerStatefulWidget {
   const AddShiftRequestWidget({Key? key, this.tableId}) : super(key: key);
 
   final String? tableId;
 
   @override
-  State<AddShiftRequestWidget> createState() => AddShiftRequestWidgetState();
+  AddShiftRequestWidgetState createState() => AddShiftRequestWidgetState();
 }
 
-class AddShiftRequestWidgetState extends State<AddShiftRequestWidget> {
+class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
 
   // set input text and cursor positon 
   late TextEditingController textTableIdConroller; 
@@ -43,8 +43,6 @@ class AddShiftRequestWidgetState extends State<AddShiftRequestWidget> {
 
     _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top);
     
-    var signInProvider = Provider.of<SignInProvider>(context);
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -67,7 +65,7 @@ class AddShiftRequestWidgetState extends State<AddShiftRequestWidget> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(height: _screenSize.height * 0.04),
-                if(signInProvider.user == null)
+                if(ref.read(signInProvider).user == null)
                 Column(
                   children: [
                     Text("注意 : 未ログイン状態です。", style: MyStyle.defaultStyleRed15),
@@ -185,8 +183,8 @@ class AddShiftRequestWidgetState extends State<AddShiftRequestWidget> {
                       var tableId     = textTableIdConroller.text;
                       var displayName = textDisplayNameConroller.text;
                       
-                      if(signInProvider.user == null){
-                        showAlertDialog(context, "ログインエラー", "未ログイン状態では\nフォローできません。\n'ホーム画面'及び'アカウント画面'から\n'ログイン画面'に移動してください。", true);
+                      if(ref.read(signInProvider).user == null){
+                        showAlertDialog(context, ref, "ログインエラー", "未ログイン状態では\nフォローできません。\n'ホーム画面'及び'アカウント画面'から\n'ログイン画面'に移動してください。", true);
                       }
                       else{
                         // Table ID が入力されているか
@@ -211,7 +209,7 @@ class AddShiftRequestWidgetState extends State<AddShiftRequestWidget> {
             
                                     for(var snapshot in snapshots.docs){
                                       if(displayName == snapshot.get('display-name')){
-                                        showAlertDialog( context, "エラー", "すでに同じ表示名が使用されているようです\n別の表示名を入力してください", true);
+                                        showAlertDialog( context, ref, "エラー", "すでに同じ表示名が使用されているようです\n別の表示名を入力してください", true);
                                         errorFlag = true;
                                         break;
                                       }
@@ -221,6 +219,7 @@ class AddShiftRequestWidgetState extends State<AddShiftRequestWidget> {
                                       
                                       showConfirmDialog(
                                         context,
+                                        ref,
                                         "確認", "'${shiftFrame.shiftName}'をフォローしますか？",
                                         "'${shiftFrame.shiftName}'をフォローしました",
                                         (){
@@ -233,20 +232,20 @@ class AddShiftRequestWidgetState extends State<AddShiftRequestWidget> {
                                     }
                                   });
                                 }else{
-                                  showAlertDialog( context, "エラー", "あなたの表示名を\n入力してください", true);
+                                  showAlertDialog( context, ref, "エラー", "あなたの表示名を\n入力してください", true);
                                 }
                               }else{
-                                showAlertDialog( context, "エラー", "このシフト表は現在リクエスト期間中ではないようです\n管理者に確認してください", true);
+                                showAlertDialog( context, ref, "エラー", "このシフト表は現在リクエスト期間中ではないようです\n管理者に確認してください", true);
                               }
                             }else{
                               // IDがなかった時
-                              showAlertDialog( context, "エラー", "入力したIDのシフト表は\n見つかりませんでした", true);
+                              showAlertDialog( context, ref, "エラー", "入力したIDのシフト表は\n見つかりませんでした", true);
                             }
                           });
                         }
                         else{
                           // IDが入力されていない
-                          showAlertDialog( context, "エラー", "シフト表のIDが\n入力されていません。", true);
+                          showAlertDialog( context, ref, "エラー", "シフト表のIDが\n入力されていません。", true);
                         }
                       }
                     },

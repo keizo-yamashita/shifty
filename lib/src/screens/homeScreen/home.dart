@@ -4,23 +4,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:share/share.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
+import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift/shift_request.dart';
-import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/mylibs/shift/shift_table.dart';
-import 'package:shift/src/mylibs/deep_link_mixin.dart';
-import 'package:shift/src/mylibs/setting_provider.dart';
-import 'package:shift/src/mylibs/shift/shift_provider.dart';
 import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
 import 'package:shift/src/screens/signInScreen/sign_in.dart';
 import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
@@ -31,13 +28,13 @@ import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
 /// Home 画面
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-class HomeWidget extends StatefulWidget{
+class HomeWidget extends ConsumerStatefulWidget{
   const HomeWidget({Key? key}) : super(key: key);
   @override
-  State<HomeWidget> createState() => HomeWidgetState();
+  HomeWidgetState createState() => HomeWidgetState();
 }
 
-class HomeWidgetState extends State<HomeWidget> {
+class HomeWidgetState extends ConsumerState<HomeWidget> {
   
   bool isOwner     = false;
   Size _screenSize = const Size(0, 0);
@@ -48,16 +45,13 @@ class HomeWidgetState extends State<HomeWidget> {
     var appBarHeight = AppBar().preferredSize.height;
     _screenSize      = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - appBarHeight);
 
-    String id = Provider.of<DeepLinkProvider>(context).shiftFrameId;
+    String id = ref.read(deepLinkProvider).shiftFrameId;
 
     if(id != ""){
       Navigator.push(context, MaterialPageRoute(builder: (c) => AddShiftRequestWidget(tableId: id)));
-      Provider.of<DeepLinkProvider>(context).shiftFrameId = "";
+      ref.read(deepLinkProvider).shiftFrameId = "";
     }
-
-    var signInProvider = Provider.of<SignInProvider>(context);
-    var settingProvider = Provider.of<SettingProvider>(context, listen: false);
-    settingProvider.loadPreferences();    
+    ref.read(settingProvider).loadPreferences();    
 
     return Scaffold(
       floatingActionButton: Padding(
@@ -72,11 +66,12 @@ class HomeWidgetState extends State<HomeWidget> {
           onPressed: () async {
             showSelectDialog(
               context, 
+              ref,
               "追加方法", "シフト表の作成方法を選択してください",
               ["シフト表を作成する", "シフト表をフォローする"]
             ).then((value){
               if(value == 0){
-                Provider.of<ShiftFrameProvider>(context, listen: false).shiftFrame = ShiftFrame();
+                ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
                 Navigator.push(context, MaterialPageRoute(builder: (c) => const CreateShiftTableWidget()));
               }                
               if(value == 1){
@@ -106,7 +101,7 @@ class HomeWidgetState extends State<HomeWidget> {
               SizedBox(
                 width: _screenSize.width  * 0.8,
                 child: ListTile(
-                  title: Text((isOwner == settingProvider.defaultShiftView) ? "フォロー中のシフト表" : "管理中のシフト表", style: MyStyle.headlineStyleGreen18),
+                  title: Text((isOwner == ref.read(settingProvider).defaultShiftView) ? "フォロー中のシフト表" : "管理中のシフト表", style: MyStyle.headlineStyleGreen18),
                   leading: CupertinoSwitch(
                     thumbColor: MyStyle.primaryColor,
                     activeColor : MyStyle.primaryColor.withAlpha(100),
@@ -122,7 +117,7 @@ class HomeWidgetState extends State<HomeWidget> {
 
               SizedBox(height: _screenSize.height * 0.03),
 
-              (signInProvider.user != null && isOwner != settingProvider.defaultShiftView) ? StreamBuilder<QuerySnapshot>(
+              (ref.read(signInProvider).user != null && isOwner != ref.read(settingProvider).defaultShiftView) ? StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance.collection('shift-leader').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
@@ -132,7 +127,7 @@ class HomeWidgetState extends State<HomeWidget> {
                     return const CircularProgressIndicator(color: MyStyle.primaryColor);
                   }
                   return FutureBuilder<Widget>(
-                    future: buildMyShiftFrame(snapshot.data!.docs, settingProvider.enableDarkTheme),
+                    future: buildMyShiftFrame(snapshot.data!.docs, ref.read(settingProvider).enableDarkTheme),
                     builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator(color: MyStyle.primaryColor);
@@ -145,7 +140,7 @@ class HomeWidgetState extends State<HomeWidget> {
                   );
                 },
               )
-              : (signInProvider.user != null)
+              : (ref.read(signInProvider).user != null)
               ? StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance.collection('shift-follower').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -156,7 +151,7 @@ class HomeWidgetState extends State<HomeWidget> {
                     return const CircularProgressIndicator(color: MyStyle.primaryColor);
                   }
                   return FutureBuilder<Widget>(
-                    future: buildMyShiftRequest(snapshot.data!.docs, settingProvider.enableDarkTheme ),
+                    future: buildMyShiftRequest(snapshot.data!.docs, ref.read(settingProvider).enableDarkTheme ),
                     builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator(color: MyStyle.primaryColor);
@@ -219,12 +214,12 @@ class HomeWidgetState extends State<HomeWidget> {
             frame.shiftName,
             _screenSize.width * 0.8,
             (){
-              Provider.of<ShiftRequestProvider>(context, listen: false).shiftRequest = request;
+              ref.read(shiftRequestProvider).shiftRequest = request;
               Navigator.push(context, MaterialPageRoute(builder: (c) => const InputShiftRequestWidget()));
             },
             isDark,
             (){
-              showConfirmDialog(context, "確認", "シフト表'${frame.shiftName}'のフォローを解除しますか？", "シフト表'${frame.shiftName}'のフォローを解除しました", (){
+              showConfirmDialog(context, ref, "確認", "シフト表'${frame.shiftName}'のフォローを解除しますか？", "シフト表'${frame.shiftName}'のフォローを解除しました", (){
                 removeTableSoft(request.requestId);
               });
             }
@@ -250,17 +245,17 @@ class HomeWidgetState extends State<HomeWidget> {
       List<Widget> shiftCard = [];
       for(var snapshotMyShiftFrame in docs){
         var frame = await ShiftFrame().pullShiftFrame(snapshotMyShiftFrame);
-        var followers_num = 0;
+        var followersNum = 0;
         await FirebaseFirestore.instance.collection('shift-follower').where('reference', isEqualTo: snapshotMyShiftFrame.reference).orderBy('created-at', descending: false).get().then(
           (snapshotReqs) async {
-            followers_num = snapshotReqs.docs.length;
+            followersNum = snapshotReqs.docs.length;
           }
         );
         shiftCard.add(
           frame.buildShiftTableCard(
             frame.shiftName,
             _screenSize.width * 0.8,
-            followers_num,
+            followersNum,
             () async{
               List<ShiftRequest> requests = [];
               FirebaseFirestore.instance.collection('shift-follower').where('reference', isEqualTo: snapshotMyShiftFrame.reference).orderBy('created-at', descending: false).get().then(
@@ -270,7 +265,7 @@ class HomeWidgetState extends State<HomeWidget> {
                     requests.add(request.copy());
                   }
                   if(context.mounted){
-                    Provider.of<ShiftTableProvider>(context, listen: false).shiftTable = ShiftTable(frame, requests);
+                    ref.read(shiftTableProvider).shiftTable = ShiftTable(frame, requests);
                     Navigator.push(context, MaterialPageRoute(builder: (c) => const ManageShiftTableWidget()));
                   }
                 }
@@ -288,7 +283,8 @@ class HomeWidgetState extends State<HomeWidget> {
             isDark,
             (){
               showSelectDialog(
-                context, 
+                context,
+                ref,
                 frame.shiftName,
                 "",
                 ["シフト表IDをコピーする", "シフト表をSNSで共有する", "シフト表を削除する"]
@@ -296,7 +292,7 @@ class HomeWidgetState extends State<HomeWidget> {
                 
                 if(value == 0){
                   Clipboard.setData(ClipboardData(text: frame.shiftId));
-                  showAlertDialog( context, "確認", "ID:'${frame.shiftId}'を\nコピーしました！", false);
+                  showAlertDialog( context, ref, "確認", "ID:'${frame.shiftId}'を\nコピーしました！", false);
                 }
                 if(value == 1){
                   var message = "[Shifty] シフト表入力依頼です。\n";
@@ -308,7 +304,7 @@ class HomeWidgetState extends State<HomeWidget> {
                   Share.share(message);
                 }
                 if(value == 2){
-                  showConfirmDialog(context, "確認",
+                  showConfirmDialog(context, ref, "確認",
                     "シフト表'${frame.shiftName}'\nを削除しますか？\n管理者が削除を行うと，\n'${frame.shiftName}'への登録データはすべて削除されます",
                     "シフト表'${frame.shiftName}'を削除しました",
                     (){

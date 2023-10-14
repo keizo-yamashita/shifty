@@ -1,24 +1,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
-
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shift/src/screens/createScreen/add_shift_request.dart';
-import 'package:shift/src/screens/signInScreen/sign_in.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:shift/src/mylibs/dialog.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:google_fonts/google_fonts.dart';
-// my file
-import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
-import 'package:shift/src/mylibs/deep_link_mixin.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:shift/main.dart';
+import 'package:shift/src/screens/createScreen/add_shift_request.dart';
+import 'package:shift/src/screens/signInScreen/sign_in.dart';
+import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/mylibs/deep_link_mixin.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
 import 'package:shift/src/screens/homeScreen/account.dart';
-import 'package:shift/src/mylibs/setting_provider.dart';
-// import 'package:shift/src/screens/homeSCreen/notification.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
+// import 'package:shift/src/screens/homeSCreen/notification.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// App Widget
@@ -26,19 +24,19 @@ import 'package:shift/src/screens/homeSCreen/setting.dart';
 
 List<bool> _displayInfoFlag = [false, false];
 
-class AppWidget extends StatefulWidget {
+class AppWidget extends ConsumerStatefulWidget {
   const AppWidget({Key? key}) : super(key: key);
   @override
-  State<AppWidget> createState() => AppWidgetState();
+  AppWidgetState createState() => AppWidgetState();
 }
 
-class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
+class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
 
   final List<MenuContent> _contents = [
     MenuContent(contentTitle: "ホーム", contentIcon: Icons.home,                            content: const HomeWidget()),
-    // MenuContent(contentTitle: "お知らせ",   contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
     MenuContent(contentTitle: "アカウント", contentIcon: Icons.person_2,                        content: const AccountScreen()),
     MenuContent(contentTitle: "設定",      contentIcon: Icons.settings,                        content: const SettingScreen()), 
+    // MenuContent(contentTitle: "お知らせ",   contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
   ];
   
   int _selectedIndex = 0;
@@ -48,7 +46,7 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
     super.initState();
     checkInitialLink().then((tableId){
       if(tableId != ""){
-        Provider.of<DeepLinkProvider>(context).shiftFrameId = tableId;
+        ref.read(deepLinkProvider).shiftFrameId = tableId;
       }
     });
   }
@@ -60,110 +58,107 @@ class AppWidgetState extends State<AppWidget> with DeepLinkMixin{
   @override
   Widget build(BuildContext context) {
     
-    var signInProvider = Provider.of<SignInProvider>(context);
-    var screenSize     = MediaQuery.of(context).size;
+    var screenSize = MediaQuery.of(context).size;
     
-    var settingProvider = Provider.of<SettingProvider>(context, listen: false);
-    settingProvider.loadPreferences();
+    ref.read(settingProvider).loadPreferences();
 
     // Sign In Cheack
     return 
-    (signInProvider.user != null)
-    ? Scaffold(
-      //AppBar
-      appBar: AppBar(
-        title: Text(_contents[_selectedIndex].contentTitle ,style: MyStyle.headlineStyleGreen20),
-        bottomOpacity: 2.0,
-        actions: [
-          if(_selectedIndex == 0)
-          Padding(
-            padding: const EdgeInsets.only(right: 5.0),
-            child: IconButton( 
-              icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
-              tooltip: "使い方",
-              onPressed: () async {
-                showInfoDialog(settingProvider.enableDarkTheme);
-              }
-            ),
-          ),
-        ],
-      ),
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-
-      // Main Contents
-      body: _contents[_selectedIndex].content,
-
-      // Drawer
-      drawer: Drawer(
-        width: screenSize.shortestSide * 0.7,
-        child: Column(
-          children: [
-            Container(
-              decoration: const BoxDecoration(color: MyStyle.primaryColor),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 30, 10, 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      (signInProvider.user != null && signInProvider.user!.providerData.isNotEmpty && signInProvider.user!.providerData[0].photoURL != null)
-                      ? Container(
-                        width: 45.0,
-                        height: 45.0,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: Image.network(signInProvider.user!.providerData[0].photoURL!).image
-                          )
-                        ),
-                      )
-                      : Container(
-                        width: 45.0,
-                        height: 45.0,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle
-                        ),
-                        child: const Icon(Icons.account_circle_outlined, color: MyStyle.backgroundColor, size: 45),
-                      ),
-                      Flexible(
-                        child: Padding( 
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: (signInProvider.user != null )
-                          ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              FittedBox(fit: BoxFit.fitWidth, child: Text((!signInProvider.user!.isAnonymous) ? (signInProvider.user?.providerData[0].displayName ?? signInProvider.user?.uid ?? "") :  "ゲストユーザ", style: MyStyle.headlineStyleWhite20, overflow: TextOverflow.ellipsis)),
-                              FittedBox(fit: BoxFit.fitWidth, child: Text((!signInProvider.user!.isAnonymous) ? (signInProvider.user?.providerData[0].email ?? '') : signInProvider.user?.uid ?? "", style: GoogleFonts.mPlus1(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)),
-                            ],
-                          )
-                          : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("未ログイン", style: MyStyle.headlineStyleWhite20, overflow: TextOverflow.ellipsis),
-                            ],
-                          )
-                        ),
-                      ),
-                    ]
-                  )
-                ),
+    (ref.watch(signInProvider).user != null) ? Scaffold(
+        //AppBar
+        appBar: AppBar(
+          title: Text(_contents[_selectedIndex].contentTitle ,style: MyStyle.headlineStyleGreen20),
+          bottomOpacity: 2.0,
+          actions: [
+            if(_selectedIndex == 0)
+            Padding(
+              padding: const EdgeInsets.only(right: 5.0),
+              child: IconButton( 
+                icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
+                tooltip: "使い方",
+                onPressed: () async {
+                  showInfoDialog(ref.read(settingProvider).enableDarkTheme);
+                }
               ),
             ),
-            for(int index = 0; index < _contents.length; index++)
-            ListTile(
-              title: Text(_contents[index].contentTitle, style: MyStyle.headlineStyle15),
-              leading: Icon(_contents[index].contentIcon, color: MyStyle.primaryColor, size: 30),
-              onTap: () {
-                setState(() => _selectedIndex = index);
-                Navigator.pop(context);
-              },
-            ),      
           ],
         ),
-      ),
-    )
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+      
+        // Main Contents
+        body: _contents[_selectedIndex].content,
+      
+        // Drawer
+        drawer: Drawer(
+          width: screenSize.shortestSide * 0.7,
+          child: Column(
+            children: [
+              Container(
+                decoration: const BoxDecoration(color: MyStyle.primaryColor),
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 30, 10, 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        (ref.read(signInProvider).user != null && ref.read(signInProvider).user!.providerData.isNotEmpty && ref.read(signInProvider).user!.providerData[0].photoURL != null)
+                        ? Container(
+                          width: 45.0,
+                          height: 45.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: Image.network(ref.read(signInProvider).user!.providerData[0].photoURL!).image
+                            )
+                          ),
+                        )
+                        : Container(
+                          width: 45.0,
+                          height: 45.0,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle
+                          ),
+                          child: const Icon(Icons.account_circle_outlined, color: MyStyle.backgroundColor, size: 45),
+                        ),
+                        Flexible(
+                          child: Padding( 
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: (ref.read(signInProvider).user != null )
+                            ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FittedBox(fit: BoxFit.fitWidth, child: Text((!ref.read(signInProvider).user!.isAnonymous) ? (ref.read(signInProvider).user?.providerData[0].displayName ?? ref.read(signInProvider).user?.uid ?? "") :  "ゲストユーザ", style: MyStyle.headlineStyleWhite20, overflow: TextOverflow.ellipsis)),
+                                FittedBox(fit: BoxFit.fitWidth, child: Text((!ref.read(signInProvider).user!.isAnonymous) ? (ref.read(signInProvider).user?.providerData[0].email ?? '') : ref.read(signInProvider).user?.uid ?? "", style: GoogleFonts.mPlus1(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)),
+                              ],
+                            )
+                            : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("未ログイン", style: MyStyle.headlineStyleWhite20, overflow: TextOverflow.ellipsis),
+                              ],
+                            )
+                          ),
+                        ),
+                      ]
+                    )
+                  ),
+                ),
+              ),
+              for(int index = 0; index < _contents.length; index++)
+              ListTile(
+                title: Text(_contents[index].contentTitle, style: MyStyle.headlineStyle15),
+                leading: Icon(_contents[index].contentIcon, color: MyStyle.primaryColor, size: 30),
+                onTap: () {
+                  setState(() => _selectedIndex = index);
+                  Navigator.pop(context);
+                },
+              ),      
+            ],
+          ),
+        ),
+      )
     : const SignInScreen();
   }
 
