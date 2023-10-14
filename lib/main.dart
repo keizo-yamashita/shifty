@@ -8,8 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:provider/provider.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // myh package
 import 'package:shift/src/mylibs/style.dart';
@@ -20,39 +19,37 @@ import 'package:shift/src/mylibs/shift/shift_provider.dart';
 import 'package:shift/src/mylibs/setting_provider.dart';
 // import 'package:dart_openai/dart_openai.dart';
 
+final signInProvider       = ChangeNotifierProvider((ref) => SignInProvider());
+final settingProvider      = ChangeNotifierProvider((ref) => SettingProvider());
+final shiftFrameProvider   = ChangeNotifierProvider((ref) => ShiftFrameProvider());
+final shiftRequestProvider = ChangeNotifierProvider((ref) => ShiftRequestProvider());
+final shiftTableProvider   = ChangeNotifierProvider((ref) => ShiftTableProvider());
+final deepLinkProvider     = ChangeNotifierProvider((ref) => DeepLinkProvider());
+
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
-    MultiProvider(
-      providers:[
-        ChangeNotifierProvider(create: (context) => SignInProvider()),
-        ChangeNotifierProvider(create: (context) => SettingProvider()),
-        ChangeNotifierProvider(create: (context) => ShiftFrameProvider()),
-        ChangeNotifierProvider(create: (context) => ShiftRequestProvider()),
-        ChangeNotifierProvider(create: (context) => ShiftTableProvider()),
-        ChangeNotifierProvider(create: (context) => DeepLinkProvider()),
-      ],
-      child: const MyApp(),
+    const ProviderScope(
+      child: MyApp()
     )
   );
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   MyAppState createState() => MyAppState();
 }
 
-class MyAppState extends State<MyApp>{
+class MyAppState extends ConsumerState<MyApp>{
 
   @override
   Widget build(BuildContext context) {
 
-    var settingProvider = Provider.of<SettingProvider>(context);
-    settingProvider.loadPreferences();
+    ref.read(settingProvider).loadPreferences();
     
     return MaterialApp(
       title: 'Shifty',
@@ -75,7 +72,7 @@ class MyAppState extends State<MyApp>{
       ),
       darkTheme: ThemeData(
         primaryColor: MyStyle.primaryColor,
-        // scaffoldBackgroundColor: Colors.grey[800],
+        scaffoldBackgroundColor: Colors.grey[800],
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.grey[900]?.withOpacity(0.9),
           foregroundColor: MyStyle.primaryColor,
@@ -89,7 +86,7 @@ class MyAppState extends State<MyApp>{
         
       ),
       
-      themeMode: (settingProvider.enableDarkTheme) ? ThemeMode.dark : ThemeMode.light,
+      themeMode: (ref.read(settingProvider).enableDarkTheme) ? ThemeMode.dark : ThemeMode.light,
 
       debugShowCheckedModeBanner: false,
       localizationsDelegates:const  [
@@ -106,4 +103,3 @@ class MyAppState extends State<MyApp>{
     );
   }
 }
-

@@ -1,20 +1,25 @@
+
+////////////////////////////////////////////////////////////////////////////////////////////
+/// import
+////////////////////////////////////////////////////////////////////////////////////////////
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:shift/main.dart';
 import 'package:shift/src/app.dart';
 import 'package:shift/src/mylibs/deep_link_mixin.dart';
 import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
  
   @override
-  State<SplashScreen> createState() => SplashScreenState();
+  SplashScreenState createState() => SplashScreenState();
 }
 
-class SplashScreenState extends State<SplashScreen> with DeepLinkMixin{
+class SplashScreenState extends ConsumerState<SplashScreen> with DeepLinkMixin{
   
   // URL からアクセする場合の画面遷移
   @override
@@ -23,8 +28,7 @@ class SplashScreenState extends State<SplashScreen> with DeepLinkMixin{
     
     if(parameter != null){
       Navigator.push( context, MaterialPageRoute(builder: (context){
-        var signInProvider = Provider.of<SignInProvider>(context);
-        signInProvider.silentLogin();
+        ref.read(signInProvider).silentLogin();
         return AddShiftRequestWidget(tableId: parameter);
      }
      ));
@@ -34,6 +38,7 @@ class SplashScreenState extends State<SplashScreen> with DeepLinkMixin{
 
   splashScreenTimer(){
     Timer(const Duration(seconds: 2), () async{
+      ref.read(signInProvider).silentLogin();
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const AppWidget()));
     });
   }
@@ -41,8 +46,6 @@ class SplashScreenState extends State<SplashScreen> with DeepLinkMixin{
   @override
   void initState() {
     super.initState();
-    final user = Provider.of<SignInProvider>(context,listen: false);
-    user.silentLogin();
     splashScreenTimer();
   }
 

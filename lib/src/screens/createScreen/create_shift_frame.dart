@@ -6,24 +6,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// my package
+import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/shift/shift_provider.dart';
 import 'package:shift/src/mylibs/modal_window.dart';
-import 'package:shift/src/mylibs/setting_provider.dart';
 import 'package:shift/src/mylibs/undo_redo.dart';
 import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
 
-class CreateShiftTableWidget extends StatefulWidget {
+class CreateShiftTableWidget extends ConsumerStatefulWidget {
   const CreateShiftTableWidget({Key? key}) : super(key: key);
   @override
-  State<CreateShiftTableWidget> createState() => CreateShiftTableWidgetState();
+  CreateShiftTableWidgetState createState() => CreateShiftTableWidgetState();
 }
 
-class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
+class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> {
 
   static DateTime _startTime = DateTime(1, 1, 1,  9,  0);
   static DateTime _endTime   = DateTime(1, 1, 1, 21,  0);
@@ -47,12 +46,10 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
   @override
   Widget build(BuildContext context) {
     
-    var signInProvider = Provider.of<SignInProvider>(context);
-    var settingProvider = Provider.of<SettingProvider>(context, listen: false);
-    settingProvider.loadPreferences();
-    _isDark = settingProvider.enableDarkTheme;
+    ref.read(settingProvider).loadPreferences();
+    _isDark = ref.read(settingProvider).enableDarkTheme;
 
-    _shiftFrame = Provider.of<ShiftFrameProvider>(context, listen: false).shiftFrame;
+    _shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
     var appBarHeight = AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
     _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - appBarHeight);
 
@@ -83,7 +80,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
                 icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
                 tooltip: "使い方",
                 onPressed: () async {
-                  showInfoDialog(settingProvider.enableDarkTheme);
+                  showInfoDialog(ref.read(settingProvider).enableDarkTheme);
                 }
               ),
             ),
@@ -99,7 +96,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
                   _onCreateScheduleItemTapped(context, "「リクエスト期間」「シフト期間」には1日以上の間隔を空けてください。\n※ リクエストに対するシフトを作成する期間が必要なためです。");
                 }else{
                   _shiftFrame.initTable();
-                  Provider.of<ShiftFrameProvider>(context, listen: false).shiftFrame = _shiftFrame;
+                  ref.read(shiftFrameProvider).shiftFrame = _shiftFrame;
                   Navigator.push(context, MaterialPageRoute(builder: (c) => const CheckShiftTableWidget()));
                 }
               }
@@ -133,7 +130,7 @@ class CreateShiftTableWidgetState extends State<CreateShiftTableWidget> {
               /// シフト名の名前の入力
               ////////////////////////////////////////////////////////////////////////////
               SizedBox(height: _screenSize.height * 0.04 + appBarHeight),
-              if(signInProvider.user == null)
+              if(ref.read(signInProvider).user == null)
               Column(
                 children: [
                   Text("注意 : 未ログイン状態です。", style: MyStyle.defaultStyleRed15),

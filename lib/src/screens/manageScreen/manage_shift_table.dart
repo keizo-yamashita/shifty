@@ -2,10 +2,12 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 
 // my package
+import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
@@ -15,8 +17,6 @@ import 'package:shift/src/mylibs/shift_editor/shift_response_editor.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 import 'package:shift/src/mylibs/undo_redo.dart';
 import 'package:shift/src/mylibs/modal_window.dart';
-import 'package:shift/src/mylibs/setting_provider.dart';
-import 'package:shift/src/mylibs/shift/shift_provider.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数
@@ -40,15 +40,15 @@ List<bool> _displayInfoFlag = [false, false, false, false];
 /// シフト表の最終チェックに使用するページ (勤務人数も指定)
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-class ManageShiftTableWidget extends StatefulWidget {
+class ManageShiftTableWidget extends ConsumerStatefulWidget {
   
   const ManageShiftTableWidget({Key? key}) : super(key: key);
   
   @override
-  State<ManageShiftTableWidget> createState() => ManageShiftTableWidgetState();
+  ManageShiftTableWidgetState createState() => ManageShiftTableWidgetState();
 }
 
-class ManageShiftTableWidgetState extends State<ManageShiftTableWidget> {
+class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> {
 
   UndoRedo<List<List<List<Candidate>>>> undoredoCtrl = UndoRedo(_bufferMax);
 
@@ -64,10 +64,9 @@ class ManageShiftTableWidgetState extends State<ManageShiftTableWidget> {
   Widget build(BuildContext context) {
 
     _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom);
-    _shiftTable = Provider.of<ShiftTableProvider>(context, listen: false).shiftTable;
+    _shiftTable = ref.read(shiftTableProvider).shiftTable;
 
-    var settingProvider = Provider.of<SettingProvider>(context, listen: false);
-    settingProvider.loadPreferences();
+    ref.read(settingProvider).loadPreferences();
 
     if(undoredoCtrl.buffer.isEmpty){
       insertBuffer(_shiftTable.shiftTable);
@@ -87,7 +86,7 @@ class ManageShiftTableWidgetState extends State<ManageShiftTableWidget> {
               icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
               tooltip: "使い方",
               onPressed: () async {
-                showInfoDialog(settingProvider.enableDarkTheme);
+                showInfoDialog(ref.read(settingProvider).enableDarkTheme);
               }
             ),
           ),
@@ -106,14 +105,14 @@ class ManageShiftTableWidgetState extends State<ManageShiftTableWidget> {
                   //!(now.compareTo(_shiftTable.shiftFrame.shiftDateRange[0].start) >= 0 && now.compareTo(_shiftTable.shiftFrame.shiftDateRange[0].end) <= 0)
                 ){
                   showConfirmDialog(
-                    context, "確認", "このシフト表を登録しますか？", "シフト表を登録しました", (){
+                    context, ref, "確認", "このシフト表を登録しますか？", "シフト表を登録しました", (){
                       Navigator.pop(context);
                       _shiftTable.pushShiftTable();
                     }
                   );
                 }
                 else{
-                  showAlertDialog(context, "注意", "リクエスト期間内であるため、登録できません", true);
+                  showAlertDialog(context, ref, "注意", "リクエスト期間内であるため、登録できません", true);
                 }
               }
             ),
@@ -141,7 +140,7 @@ class ManageShiftTableWidgetState extends State<ManageShiftTableWidget> {
                   Icons.auto_fix_high_outlined, true,
                   (){
                     showConfirmDialog(
-                      context, "確認", "自動でシフト表の割り当てを入力しますか？\n\n基本勤務時間 : $_defaultAssignTime 時間 \n (長押しで設定可能) \n", "自動入力しました", () async {
+                      context, ref, "確認", "自動でシフト表の割り当てを入力しますか？\n\n基本勤務時間 : $_defaultAssignTime 時間 \n (長押しで設定可能) \n", "自動入力しました", () async {
                         _shiftTable.autoFill(_defaultAssignTime);
                         insertBuffer(_shiftTable.shiftTable);
                         setState(() {});
@@ -159,7 +158,7 @@ class ManageShiftTableWidgetState extends State<ManageShiftTableWidget> {
                       _enableEdit = !_enableEdit;
                     }
                     else{
-                      showAlertDialog(context, "エラー", "このツールボタンは、「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
+                      showAlertDialog(context, ref, "エラー", "このツールボタンは、「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
                     }
                   },
                   (){
@@ -168,7 +167,7 @@ class ManageShiftTableWidgetState extends State<ManageShiftTableWidget> {
                       _enableEdit = true;
                     }
                     else{
-                      showAlertDialog(context, "エラー", "このツールボタンは、「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
+                      showAlertDialog(context, ref, "エラー", "このツールボタンは、「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
                     }
                   }
                 ),
@@ -544,7 +543,7 @@ class ManageShiftTableWidgetState extends State<ManageShiftTableWidget> {
   ////////////////////////////////////////////////////////////////////////////////////////////
   
   void crearVariables(){
-    Provider.of<ShiftFrameProvider>(context, listen: false).shiftFrame = ShiftFrame();
+    ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
     coordinate     = Coordinate(column: 0, row: 0);
     undoredoCtrl   = UndoRedo(_bufferMax);
     _selectedIndex = 0;

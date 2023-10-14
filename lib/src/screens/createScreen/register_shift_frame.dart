@@ -3,19 +3,17 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
+import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/undo_redo.dart';
 import 'package:shift/src/mylibs/modal_window.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/mylibs/shift_editor/shift_frame_editor.dart';
-import 'package:shift/src/mylibs/setting_provider.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
-import 'package:shift/src/mylibs/shift/shift_provider.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数
@@ -42,15 +40,15 @@ List<bool> _displayInfoFlag = [false, false, false, false];
 /// シフト表の最終チェックに使用するページ (勤務人数も指定)
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-class CheckShiftTableWidget extends StatefulWidget {
+class CheckShiftTableWidget extends ConsumerStatefulWidget {
   
   const CheckShiftTableWidget({Key? key}) : super(key: key);
   
   @override
-  State<CheckShiftTableWidget> createState() => CheckShiftTableWidgetState();
+  CheckShiftTableWidgetState createState() => CheckShiftTableWidgetState();
 }
 
-class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
+class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
 
   UndoRedo<List<List<int>>> undoredoCtrl = UndoRedo(_bufferMax);
 
@@ -60,15 +58,12 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
 
   @override
   Widget build(BuildContext context) {
-    
+
+    _shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
+
     _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom);
     
-    _shiftFrame = Provider.of<ShiftFrameProvider>(context, listen: false).shiftFrame;
-
-    var signInProvider = Provider.of<SignInProvider>(context);
-
-    var settingProvider = Provider.of<SettingProvider>(context, listen: false);
-    settingProvider.loadPreferences();
+    ref.read(settingProvider).loadPreferences();
 
     if(undoredoCtrl.buffer.isEmpty){
       insertBuffer(_shiftFrame.assignTable);
@@ -85,7 +80,7 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
               icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
               tooltip: "使い方",
               onPressed: () async {
-                showInfoDialog(settingProvider.enableDarkTheme);
+                showInfoDialog(ref.read(settingProvider).enableDarkTheme);
               }
             ),
           ),
@@ -96,8 +91,8 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
               icon: const Icon(Icons.cloud_upload_outlined, size: 30, color: MyStyle.primaryColor),
               tooltip: "シフト表を作成する",
               onPressed: (){
-                if(signInProvider.user != null){
-                  showConfirmDialog(context, "確認", "このシフト表で作成しますか？", "シフト表を作成しました", (){
+                if(ref.read(signInProvider).user != null){
+                  showConfirmDialog(context, ref, "確認", "このシフト表で作成しますか？", "シフト表を作成しました", (){
                     _shiftFrame.pushShiftFrame();
                     crearVariables();
                     Navigator.pop(context);
@@ -105,7 +100,7 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
                   });
                 }
                 else{
-                  showAlertDialog(context, "ログインエラー", "未ログイン状態では\n登録できません。\n'ホーム画面'及び'アカウント画面'から\n'ログイン画面'に移動してください。", true);
+                  showAlertDialog(context, ref, "ログインエラー", "未ログイン状態では\n登録できません。\n'ホーム画面'及び'アカウント画面'から\n'ログイン画面'に移動してください。", true);
                 }
               }
             ),
@@ -169,7 +164,8 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
               onInputEnd: (){ insertBuffer(_shiftFrame.assignTable); },
               shiftFrame: _shiftFrame,
               enableEdit: _enableEdit,
-              selected: coordinate
+              selected: coordinate,
+              isDark: ref.read(settingProvider).enableDarkTheme,
             ),
           ],
         ),
@@ -313,7 +309,7 @@ class CheckShiftTableWidgetState extends State<CheckShiftTableWidget> {
   }
 
   void crearVariables(){
-    Provider.of<ShiftFrameProvider>(context, listen: false).shiftFrame = ShiftFrame();
+    ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
     coordinate  = Coordinate(column: 0, row: 0);
     undoredoCtrl = UndoRedo(_bufferMax);
     coordinate = null;

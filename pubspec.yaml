@@ -48,6 +48,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   sign_in_with_apple: ^4.3.0
+  flutter_riverpod: ^2.4.1
   # dart_openai: ^3.0.0
 
 dev_dependencies:

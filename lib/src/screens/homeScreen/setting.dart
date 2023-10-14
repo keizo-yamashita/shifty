@@ -4,17 +4,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
-import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/setting_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SettingScreen extends StatefulWidget {
+// my package
+import 'package:shift/main.dart';
+import 'package:shift/src/mylibs/style.dart';
+
+class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
   @override
-  State<SettingScreen> createState() => SettingScreenState();
+  SettingScreenState createState() => SettingScreenState();
 }
 
-class SettingScreenState extends State<SettingScreen> {
+class SettingScreenState extends ConsumerState<SettingScreen> {
 
   Size _screenSize      = const Size(0, 0);
 
@@ -24,10 +26,8 @@ class SettingScreenState extends State<SettingScreen> {
     var appBarHeight = AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
     _screenSize      = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - appBarHeight);
 
-    var settingProvider = Provider.of<SettingProvider>(context, listen: false);
-
-    bool enableDarkTheme = settingProvider.enableDarkTheme;
-    bool defaultShiftView = settingProvider.defaultShiftView;
+    bool enableDarkTheme = ref.read(settingProvider).enableDarkTheme;
+    bool defaultShiftView = ref.read(settingProvider).defaultShiftView;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -51,14 +51,15 @@ class SettingScreenState extends State<SettingScreen> {
                     value: enableDarkTheme,
                     onChanged: (result){
                       setState(() {
-                        settingProvider.enableDarkTheme = result;
-                        settingProvider.storePreferences();
+                        ref.read(settingProvider).enableDarkTheme = result;
+                        ref.read(settingProvider).storePreferences();
                       });
                     },
                   ),
                 ),
               ),
               Text("「ライトテーマ」/「ダークテーマ」どちらを使用するか設定します。", style: MyStyle.defaultStyleGrey15),
+              Text("反映にはアプリの再起動が必要です。", style: MyStyle.defaultStyleGrey15),
               
               SizedBox(height: _screenSize.height * 0.05),
 
@@ -75,8 +76,8 @@ class SettingScreenState extends State<SettingScreen> {
                     value: defaultShiftView,
                     onChanged: (result){
                       setState(() {
-                        settingProvider.defaultShiftView = result;
-                        settingProvider.storePreferences();
+                        ref.read(settingProvider).defaultShiftView = result;
+                        ref.read(settingProvider).storePreferences();
                       });
                     },
                   ),
