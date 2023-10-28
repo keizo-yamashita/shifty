@@ -17,18 +17,19 @@ import 'package:shift/src/mylibs/style.dart';
 /// onAccept : OK選択時に実行する関数 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void showConfirmDialog(BuildContext context, WidgetRef ref, String title, String message1, String message2, Function onAccept, [ bool confirm = true ] ){
+void showConfirmDialog(BuildContext context, WidgetRef ref, String title, String message1, String message2, Function onAccept, [ bool confirm = false ] ){
 
   ref.read(settingProvider).loadPreferences();
+  bool isDark = ref.read(settingProvider).enableDarkTheme;
 
   showDialog(
     context: context,
     builder: (_) {
       return Theme(
-        data: ref.read(settingProvider).enableDarkTheme ? ThemeData.dark() : ThemeData.light(),
+        data:  isDark ? ThemeData.dark() : ThemeData.light(),
         child: CupertinoAlertDialog(
           title: Text('$title\n', style: MyStyle.headlineStyleGreen15),
-          content: Text(message1, style:   ref.read(settingProvider).enableDarkTheme ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13),
+          content: Text(message1, style: isDark ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13),
           actions: <Widget>[
             // Apply Button
             CupertinoDialogAction(
@@ -41,10 +42,10 @@ void showConfirmDialog(BuildContext context, WidgetRef ref, String title, String
                     context: context,
                     builder: (BuildContext context) {
                       return Theme(
-                        data: ref.read(settingProvider).enableDarkTheme ? ThemeData.dark() : ThemeData.light(),
+                        data: isDark ? ThemeData.dark() : ThemeData.light(),
                         child: CupertinoAlertDialog(
                           title: Text('完了\n', style: MyStyle.headlineStyleGreen15),
-                          content: Text(message2, style: ref.read(settingProvider).enableDarkTheme ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13,),
+                          content: Text(message2, style: isDark ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13,),
                           actions: <Widget>[
                             CupertinoDialogAction(
                               child: Text('OK', style: MyStyle.headlineStyleGreen15),
@@ -82,15 +83,17 @@ void showConfirmDialog(BuildContext context, WidgetRef ref, String title, String
 void showAlertDialog(BuildContext context, WidgetRef ref, String title, String message, bool error){
   
   ref.read(settingProvider).loadPreferences();
+  
+  bool isDark = ref.read(settingProvider).enableDarkTheme;
 
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return Theme(
-        data: ref.read(settingProvider).enableDarkTheme ? ThemeData.dark() : ThemeData.light(),
+        data: isDark ? ThemeData.dark() : ThemeData.light(),
         child: CupertinoAlertDialog(
           title: Text('$title\n', style: (!error) ? MyStyle.headlineStyleGreen15 : MyStyle.defaultStyleRed15),
-          content: Text(message,  style: ref.read(settingProvider).enableDarkTheme ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13),
+          content: Text(message,  style: isDark ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13),
           actions: <Widget>[
             // Apply Button
             CupertinoDialogAction(
@@ -116,19 +119,20 @@ Future<int?> showSelectDialog(BuildContext context, WidgetRef ref, String title,
   int? selectedOption;
 
   ref.read(settingProvider).loadPreferences();
+  bool isDark = ref.read(settingProvider).enableDarkTheme;
 
   await showDialog(
     context: context,
     builder: (BuildContext context) {
       return Theme(
-        data: ref.read(settingProvider).enableDarkTheme ? ThemeData.dark() : ThemeData.light(),
+        data: isDark ? ThemeData.dark() : ThemeData.light(),
         child: CupertinoAlertDialog(
           title: Text('$title\n', style: MyStyle.headlineStyleGreen15),
           content: Column(
             children: [
               for(int i = 0; i < options.length; i++)
               CupertinoDialogAction(
-                child: Text(options[i], style: ref.read(settingProvider).enableDarkTheme ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13),
+                child: Text(options[i], style: isDark ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13),
                 onPressed: () {
                   selectedOption = i;
                   Navigator.pop(context);
@@ -154,6 +158,7 @@ Future<int?> showInfoDialog(BuildContext context, WidgetRef ref, String title, W
   int? selectedOption;
 
   ref.read(settingProvider).loadPreferences();
+  bool isDark = ref.read(settingProvider).enableDarkTheme;
 
   await showDialog(
     context: context,

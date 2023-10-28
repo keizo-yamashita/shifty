@@ -86,7 +86,7 @@ class MyAppState extends ConsumerState<MyApp>{
         
       ),
       
-      themeMode: (ref.read(settingProvider).enableDarkTheme) ? ThemeMode.dark : ThemeMode.light,
+      themeMode: (ref.watch(settingProvider).enableDarkTheme) ? ThemeMode.dark : ThemeMode.light,
 
       debugShowCheckedModeBanner: false,
       localizationsDelegates:const  [

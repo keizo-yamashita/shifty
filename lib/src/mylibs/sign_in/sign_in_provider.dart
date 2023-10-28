@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
+
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -74,7 +76,11 @@ class SignInProvider extends ChangeNotifier {
     /// ゲストアカウントでログイン
     ////////////////////////////////////////////////////////////////////////////////////////////
     else if(providerName == "guest"){
-      _user ??= (await FirebaseAuth.instance.signInAnonymously()).user;
+      await FirebaseAuth.instance.signInAnonymously().then(
+        (credential){
+          _user = credential.user;
+        }
+      );
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// メールでサインアップ
@@ -118,8 +124,8 @@ class SignInProvider extends ChangeNotifier {
   /// ログアウトメソッド
   ////////////////////////////////////////////////////////////////////////////////////////////
   Future logout() async {
+    await FirebaseAuth.instance.signOut();
     _user = null;
-    FirebaseAuth.instance.signOut();
     notifyListeners();
   }
 
@@ -128,10 +134,9 @@ class SignInProvider extends ChangeNotifier {
   ////////////////////////////////////////////////////////////////////////////////////////////
   
   Future deleteUserData() async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user      = FirebaseAuth.instance.currentUser;
     final firestore = FirebaseFirestore.instance;
-    final uid = user?.uid;
-    
+    final uid       = user?.uid;
     // このユーザーが登録したシフトリクエストを削除する
     firestore.collection('shift-follower').where('user-id', isEqualTo: uid).get().then(
       (querySnapshot) {
@@ -196,18 +201,21 @@ class SignInProvider extends ChangeNotifier {
     final user = FirebaseAuth.instance.currentUser;
     bool result = false;
     // ユーザーを削除
-    user?.delete();
-    await FirebaseAuth.instance.signOut().then(
-      (value) async {
-        _user = null;
-        result = false;
-      }
-    ).catchError(
-      (onError){
-        result = true;
+    user?.delete().then(
+      (value){
+        FirebaseAuth.instance.signOut().then(
+          (value) async {
+            _user = null;
+            result = false;
+          }
+        ).catchError(
+          (onError){
+            result = true;
+          }
+        );
+        notifyListeners();
       }
     );
-    notifyListeners();
     return result;
   }
 

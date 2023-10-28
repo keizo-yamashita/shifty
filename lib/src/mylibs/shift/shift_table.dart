@@ -62,14 +62,15 @@ class ShiftTable {
   ////////////////////////////////////////////////////////////////////////////
   /// その時間区分に何人割り当てられているか確認する関数 
   ////////////////////////////////////////////////////////////////////////////
-  int getAssignedNum(int timeIndex, int dateIndex){
+  bool getAssignedFin(int timeIndex, int dateIndex){
     int count = 0;
     for(int i = 0; i < shiftTable[timeIndex][dateIndex].length; i++){
       if(shiftTable[timeIndex][dateIndex][i].assign){
         count++;
       }
     }
-    return count;
+    // 目標人数に達していない && 全員を割り当て終わっていない
+    return !(count < shiftFrame.assignTable[timeIndex][dateIndex] && count != shiftTable[timeIndex][dateIndex].length);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -80,20 +81,31 @@ class ShiftTable {
     // init Happiness
     for(var requestIndex = 0; requestIndex < shiftRequests.length; requestIndex++){
       var request = shiftRequests[requestIndex];
-      Duration requestTotal = const Duration(days: 0, hours: 0, minutes: 0);
+      Duration requestTotal  = const Duration(days: 0, hours: 0, minutes: 0);
       Duration responseTotal = const Duration(days: 0, hours: 0, minutes: 0);
-      for(var row = 0; row < request.requestTable.length; row++){
-        var duration = shiftFrame.timeDivs[row].endTime.difference(shiftFrame.timeDivs[row].startTime);
-        for(var column = 0; column < request.requestTable[row].length; column++){
+      int edgeTotal     = 0;
+      for(var column = 0; column < request.shiftFrame.shiftDateRange[1].end.difference(request.shiftFrame.shiftDateRange[1].start).inDays; column++){
+        int prevEdgeTotal = edgeTotal;
+        int prevResponse  = 0;
+        for(var row = 0; row < request.requestTable.length; row++){
+          var duration = shiftFrame.timeDivs[row].endTime.difference(shiftFrame.timeDivs[row].startTime);
           if(shiftFrame.assignTable[row][column] != 0){
             if(request.requestTable[row][column] == 1){
               requestTotal += duration;
               if(request.responseTable[row][column] == 1){
                 responseTotal += duration;
+                if(prevResponse == 0){
+                  edgeTotal++;
+                }
               }
             }
           }
+          prevResponse = request.responseTable[row][column];
         }
+        if(prevEdgeTotal != edgeTotal){
+
+        }
+        prevEdgeTotal = edgeTotal;
       }
       happiness[requestIndex][0] = requestTotal;
       happiness[requestIndex][1] = responseTotal;
@@ -117,8 +129,8 @@ class ShiftTable {
       }
     }
 
-    // シフト表を三次元の立体([requesterIndex][DateIndex][timeIndex])として考える（リストないの値は，それ以降の空いているマスの数）
-    var cubeTable =  List<List<List<Piece>>>.generate(
+    //   各時間区分前後の連続勤務可能時間 table[requesterIndex][DateIndex][timeIndex]
+    var table = List<List<List<Piece>>>.generate(
       shiftRequests.length,
       (requestIndex) => List<List<Piece>>.generate(
         shiftFrame.assignTable[0].length,
@@ -216,18 +228,17 @@ class ShiftTable {
     //   }
     // }
 
+    //for(int dateIndex = shiftTable[0].length-1; dateIndex >= 0; dateIndex--){
+      //for(int timeIndex = shiftTable.length-1; timeIndex >= 0; timeIndex--){
     for(int dateIndex = 0; dateIndex < shiftTable[0].length; dateIndex++){
       for(int timeIndex = 0; timeIndex < shiftTable.length; timeIndex++){
         // すでに割り当て人数に達しているか確認する
-        while(
-          // 目標人数に達していない && 全員を割り当て終わっていない
-          (getAssignedNum(timeIndex, dateIndex) < shiftFrame.assignTable[timeIndex][dateIndex] && getAssignedNum(timeIndex, dateIndex) != shiftTable[timeIndex][dateIndex].length)
-        ){
+        while(!getAssignedFin(timeIndex, dateIndex)){
           List<SemiCandidate> semiCandidate = [];
           for(int candidateIndax = 0; candidateIndax < shiftTable[timeIndex][dateIndex].length; candidateIndax++){
             // 達していなければ，候補の候補者リストを作る
             if(!shiftTable[timeIndex][dateIndex][candidateIndax].assign){
-              semiCandidate.add(SemiCandidate(candidateIndax, cubeTable[shiftTable[timeIndex][dateIndex][candidateIndax].userIndex][dateIndex][timeIndex].forward.inMinutes.clamp(0, minMinutes)));
+              semiCandidate.add(SemiCandidate(candidateIndax, table[shiftTable[timeIndex][dateIndex][candidateIndax].userIndex][dateIndex][timeIndex].forward.inMinutes.clamp(0, minMinutes)));
             }
           }
           if(semiCandidate.isNotEmpty){
@@ -236,13 +247,13 @@ class ShiftTable {
             int minScoreIndex = 0;
             // スコア順に並び替える
             for(int semiCandidateIndex = 0; semiCandidateIndex < semiCandidate.length; semiCandidateIndex++){
+              // 円の関数に従って勤務者の適合率を求める
               double score = sqrt(1 - pow((happiness[semiCandidate[semiCandidateIndex].userIndex][1].inMinutes / happiness[semiCandidate[semiCandidateIndex].userIndex][0].inMinutes) - 1, 2));
               if(score < minScore){
                 minScore      = score;
                 minScoreIndex = semiCandidateIndex;
               }
             }
-            print(shiftRequests[shiftTable[timeIndex][dateIndex][semiCandidate[minScoreIndex].userIndex].userIndex].displayName);
             int changeDuration = semiCandidate[minScoreIndex].minutes;
             int count = 0; 
             while(changeDuration > 0){

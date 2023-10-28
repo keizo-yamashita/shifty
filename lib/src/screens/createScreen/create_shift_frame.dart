@@ -92,7 +92,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                   _onCreateScheduleItemTapped(context, "1つ以上の時間区分を入力してください");
                 }else if(_shiftFrame.shiftName == ''){
                   _onCreateScheduleItemTapped(context, "シフト表の名前を指定してください");
-                }else if( _shiftFrame.shiftDateRange[0].start.difference(_shiftFrame.shiftDateRange[1].end).inDays < 1){
+                }else if( _shiftFrame.shiftDateRange[0].start.difference(_shiftFrame.shiftDateRange[1].end).inDays <= 1){
                   _onCreateScheduleItemTapped(context, "「リクエスト期間」「シフト期間」には1日以上の間隔を空けてください。\n※ リクエストに対するシフトを作成する期間が必要なためです。");
                 }else{
                   _shiftFrame.initTable();
@@ -167,7 +167,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                   ),
                   maxLength: 10,
                   keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.go,
+                  // textInputAction: TextInputAction.go,
                   onChanged: (value){_shiftFrame.shiftName = value;},
                 ),
               ),

@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingProvider extends ChangeNotifier {
 
-  bool _enableDarkTheme = false;
+  bool _enableDarkTheme  = false;
   bool _defaultShiftView = false;
 
   bool get enableDarkTheme => _enableDarkTheme;

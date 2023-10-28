@@ -59,9 +59,10 @@ class AccountScreen extends ConsumerWidget {
                     child: Text('ログアウト', style: MyStyle.defaultStyleRed15),
                     onPressed: () {
                       showConfirmDialog(
-                        context, ref, "確認", "ログアウトしますか？\n登録したデータは失われません。", "ログアウトしました", (){
-                        ref.read(signInProvider).logout();
-                        }
+                        context, ref, "確認", "ログアウトしますか？\n登録したデータは失われません。", "ログアウトしました。", (){
+                          ref.read(signInProvider).logout();
+                        },
+                        true
                       );
                     },
                   ),
@@ -73,20 +74,20 @@ class AccountScreen extends ConsumerWidget {
                     child: Text('アカウント削除', style: MyStyle.defaultStyleRed15),
                     onPressed: () {
                       showConfirmDialog(
-                        context, ref, "確認", "アカウントを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "", (){
-                          ref.read(signInProvider).deleteUserData();
-                          ref.read(signInProvider).deleteUser().then(
-                            (error){
-                              if(error){
-                                showAlertDialog(context, ref, "エラー", "ユーザの削除に失敗しました。もう一度お試しく下さい。", error); 
-                              }
-                              else{
-                                showAlertDialog(context, ref, "確認", "ユーザを削除しました。", error); 
-                              }
+                        context, ref, "確認", "アカウントを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "ユーザを削除しました。", (){
+                          ref.read(signInProvider).deleteUserData().then(
+                            (value){
+                              ref.read(signInProvider).deleteUser().then(
+                                (error){
+                                  if(error){
+                                    showAlertDialog(context, ref, "エラー", "ユーザの削除に失敗しました。もう一度お試しく下さい。", error); 
+                                  }
+                                }
+                              );
                             }
                           );
                         },
-                        false
+                        true
                       );
                     },
                   ),
@@ -102,20 +103,20 @@ class AccountScreen extends ConsumerWidget {
                     child: Text('ゲストユーザの削除', style: MyStyle.defaultStyleRed15),
                     onPressed: () {
                       showConfirmDialog(
-                        context, ref, "確認", "ゲストデータを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "", (){
-                          ref.read(signInProvider).deleteUserData();
-                          ref.read(signInProvider).deleteUser().then(
-                            (error){
-                              if(error){
-                                showAlertDialog(context, ref, "エラー", "ゲストユーザの削除に失敗しました。もう一度お試しく下さい。", error); 
-                              }
-                              else{
-                                showAlertDialog(context, ref, "確認", "ゲストユーザを削除しました。", error); 
-                              }
+                        context, ref, "確認", "ゲストデータを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "ゲストユーザを削除しました。", (){
+                          ref.read(signInProvider).deleteUserData().then(
+                            (value){
+                              ref.read(signInProvider).deleteUser().then(
+                                (error){
+                                  if(error){
+                                    showAlertDialog(context, ref, "エラー", "ゲストユーザの削除に失敗しました。もう一度お試しく下さい。", error); 
+                                  }
+                                }
+                              );
                             }
                           );
                         },
-                        false
+                        true
                       );
                     },
                   ),

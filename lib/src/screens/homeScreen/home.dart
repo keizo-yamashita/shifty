@@ -101,7 +101,10 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
               SizedBox(
                 width: _screenSize.width  * 0.8,
                 child: ListTile(
-                  title: Text((isOwner == ref.read(settingProvider).defaultShiftView) ? "フォロー中のシフト表" : "管理中のシフト表", style: MyStyle.headlineStyleGreen18),
+                  title: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text((isOwner == ref.read(settingProvider).defaultShiftView) ? "フォロー中のシフト表" : "管理中のシフト表".padRight(10, '　'), style: MyStyle.headlineStyleGreen18)
+                  ),
                   leading: CupertinoSwitch(
                     thumbColor: MyStyle.primaryColor,
                     activeColor : MyStyle.primaryColor.withAlpha(100),
@@ -121,7 +124,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
                 stream: FirebaseFirestore.instance.collection('shift-leader').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
-                    return Text('SteremBuilder でエラーが発生しました: ${snapshot.error}');
+                    return const CircularProgressIndicator(color: MyStyle.defaultColor);
                   }
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator(color: MyStyle.primaryColor);
@@ -132,7 +135,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator(color: MyStyle.primaryColor);
                       } else if (snapshot.hasError) {
-                        return Text('FeatureBuilder でエラーが発生しました: ${snapshot.error}');
+                        return const CircularProgressIndicator(color: MyStyle.defaultColor);
                       } else {
                         return snapshot.data!;
                       }
@@ -156,7 +159,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator(color: MyStyle.primaryColor);
                       } else if (snapshot.hasError) {
-                        return Text('FeatureBuilder でエラーが発生しました: ${snapshot.error}');
+                        return const CircularProgressIndicator(color: MyStyle.defaultColor);
                       } else {
                         return snapshot.data!;
                       }
@@ -342,19 +345,23 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
     });
     
     // 削除したシフトと表を元にするシフトリクエストを削除する
-    firestore.collection('shift-follower').where('reference', isEqualTo: firestore.collection('shift-leader').doc(tableId)).get().then((querySnapshot) {
-      // 各ドキュメントに対して削除操作を行う
-      for(var doc in querySnapshot.docs){
-        doc.reference.delete().then((_) {
-          print("Document successfully deleted!");
-        }).catchError((error) {
-          print("Error removing document: $error");
-        });
-        setState(() {});
+    firestore.collection('shift-follower').where('reference', isEqualTo: firestore.collection('shift-leader').doc(tableId)).get().then(
+      (querySnapshot) {
+        // 各ドキュメントに対して削除操作を行う
+        for(var doc in querySnapshot.docs){
+          doc.reference.delete().then((_) {
+            print("Document successfully deleted!");
+          }).catchError((error) {
+            print("Error removing document: $error");
+          });
+          setState(() {});
+        }
       }
-    }).catchError((error) {
-      print("Error getting documents: $error");
-    });
+    ).catchError(
+      (error) {
+        print("Error getting documents: $error");
+      }
+    );
   }
 
   removeTableSoft(String id) async {

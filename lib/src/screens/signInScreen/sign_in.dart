@@ -262,7 +262,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                   isDisabled = false;
                 }
                 else{
-                  // showAlertDialog(context, ref, "確認", "ログインしました。", false);
+                  showAlertDialog(context, ref, "確認", "ログインしました。", false);
                   isDisabled = false;
                 }
               }

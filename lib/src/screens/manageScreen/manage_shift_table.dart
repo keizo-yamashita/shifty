@@ -101,7 +101,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                 if(
                   // リクエスト期間ではないことを確認
                   !(now.compareTo(_shiftTable.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftTable.shiftFrame.shiftDateRange[1].end) <= 0)
-                  // シフト期間ではないことを確認
+                  // シフト期間ではないことを確認 (変更したいこともあるしこれはチェックしなくていいかな)
                   //!(now.compareTo(_shiftTable.shiftFrame.shiftDateRange[0].start) >= 0 && now.compareTo(_shiftTable.shiftFrame.shiftDateRange[0].end) <= 0)
                 ){
                   showConfirmDialog(
@@ -141,7 +141,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                   (){
                     showConfirmDialog(
                       context, ref, "確認", "自動でシフト表の割り当てを入力しますか？\n\n基本勤務時間 : $_defaultAssignTime 時間 \n (長押しで設定可能) \n", "自動入力しました", () async {
-                        _shiftTable.autoFill(_defaultAssignTime);
+                        _shiftTable.autoFill(4);
                         insertBuffer(_shiftTable.shiftTable);
                         setState(() {});
                       }
