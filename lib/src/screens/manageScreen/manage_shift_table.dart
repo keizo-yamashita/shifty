@@ -141,7 +141,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                   (){
                     showConfirmDialog(
                       context, ref, "確認", "自動でシフト表の割り当てを入力しますか？\n\n基本勤務時間 : $_defaultAssignTime 時間 \n (長押しで設定可能) \n", "自動入力しました", () async {
-                        _shiftTable.autoFill(4);
+                        _shiftTable.autoFill(_defaultAssignTime);
                         insertBuffer(_shiftTable.shiftTable);
                         setState(() {});
                       }

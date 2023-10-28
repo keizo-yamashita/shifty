@@ -11,9 +11,9 @@ import 'package:shift/src/mylibs/shift/shift_request.dart';
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 class ShiftTable {
-  late ShiftFrame               shiftFrame;
-  late List<ShiftRequest>       shiftRequests;
-  late List<List<Duration>>     happiness;      
+  late ShiftFrame                  shiftFrame;
+  late List<ShiftRequest>          shiftRequests;
+  late List<List<int>>             happiness;      
   late List<List<List<Candidate>>> shiftTable;
 
   ShiftTable(this.shiftFrame, this.shiftRequests){
@@ -38,9 +38,9 @@ class ShiftTable {
     );
 
     // init Happiness
-    happiness = List<List<Duration>>.generate(
+    happiness = List<List<int>>.generate(
       shiftRequests.length,
-      (index) => <Duration>[const Duration(), const Duration()]
+      (index) => [0,0]
     );
     calcHappiness();
   }
@@ -78,22 +78,27 @@ class ShiftTable {
   /// ... 実行した瞬間の希望通過率を求める
   ////////////////////////////////////////////////////////////////////////////
   calcHappiness(){
+    // date range
+    int date = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1;
+    int time = shiftFrame.timeDivs.length;
+    List<int> duration = List.generate(time, (index) => shiftFrame.timeDivs[index].endTime.difference(shiftFrame.timeDivs[index].startTime).inMinutes);
+
     // init Happiness
     for(var requestIndex = 0; requestIndex < shiftRequests.length; requestIndex++){
       var request = shiftRequests[requestIndex];
-      Duration requestTotal  = const Duration(days: 0, hours: 0, minutes: 0);
-      Duration responseTotal = const Duration(days: 0, hours: 0, minutes: 0);
+      int requestTotal  = 0;
+      int responseTotal = 0;
       int edgeTotal     = 0;
-      for(var column = 0; column < request.shiftFrame.shiftDateRange[1].end.difference(request.shiftFrame.shiftDateRange[1].start).inDays; column++){
+      for(var column = 0; column < date; column++){
         int prevEdgeTotal = edgeTotal;
         int prevResponse  = 0;
-        for(var row = 0; row < request.requestTable.length; row++){
-          var duration = shiftFrame.timeDivs[row].endTime.difference(shiftFrame.timeDivs[row].startTime);
+        for(var row = 0; row < time; row++){
+          ;
           if(shiftFrame.assignTable[row][column] != 0){
             if(request.requestTable[row][column] == 1){
-              requestTotal += duration;
+              requestTotal += duration[row];
               if(request.responseTable[row][column] == 1){
-                responseTotal += duration;
+                responseTotal += duration[row];
                 if(prevResponse == 0){
                   edgeTotal++;
                 }
@@ -119,9 +124,12 @@ class ShiftTable {
     int minMinutes = defaultValue*60;
     int maxMinites = 16*60;
 
+    int date = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1;
+    int time = shiftFrame.timeDivs.length;
+
     // 全ての希望を初期化
-    for(var row = 0; row < shiftTable.length; row++){
-      for(var column = 0; column < shiftTable[row].length; column++){
+    for(var row = 0; row < time; row++){
+      for(var column = 0; column < date; column++){
         for(int i = 0; i < shiftTable[row][column].length; i++){
           shiftTable[row][column][i].assign = false;
           shiftRequests[shiftTable[row][column][i].userIndex].responseTable[row][column] = 0;
@@ -133,12 +141,12 @@ class ShiftTable {
     var table = List<List<List<Piece>>>.generate(
       shiftRequests.length,
       (requestIndex) => List<List<Piece>>.generate(
-        shiftFrame.assignTable[0].length,
+        date,
         (dateIndex){
           // backward を作成
           List<Piece> list = [];
           Duration count = const Duration(hours: 0);
-          for(int timeIndex = 0; timeIndex < shiftFrame.assignTable.length; timeIndex++){
+          for(int timeIndex = 0; timeIndex < time; timeIndex++){
             if(shiftRequests[requestIndex].requestTable[timeIndex][dateIndex] == 1){
               count += shiftFrame.timeDivs[timeIndex].endTime.difference(shiftFrame.timeDivs[timeIndex].startTime);
             }else{
@@ -149,7 +157,7 @@ class ShiftTable {
           // forward を作成
           int            currIndex = 0;
           List<Duration> buf       = [];
-          for(int timeIndex = 0; timeIndex < shiftFrame.assignTable.length; timeIndex++){
+          for(int timeIndex = 0; timeIndex < time; timeIndex++){
             if(list[timeIndex].backward.inSeconds == 0){
               if(buf.isNotEmpty){
                 for(Duration value in buf.reversed){
@@ -230,8 +238,8 @@ class ShiftTable {
 
     //for(int dateIndex = shiftTable[0].length-1; dateIndex >= 0; dateIndex--){
       //for(int timeIndex = shiftTable.length-1; timeIndex >= 0; timeIndex--){
-    for(int dateIndex = 0; dateIndex < shiftTable[0].length; dateIndex++){
-      for(int timeIndex = 0; timeIndex < shiftTable.length; timeIndex++){
+    for(int dateIndex = 0; dateIndex < date; dateIndex++){
+      for(int timeIndex = 0; timeIndex < time; timeIndex++){
         // すでに割り当て人数に達しているか確認する
         while(!getAssignedFin(timeIndex, dateIndex)){
           List<SemiCandidate> semiCandidate = [];
@@ -248,7 +256,7 @@ class ShiftTable {
             // スコア順に並び替える
             for(int semiCandidateIndex = 0; semiCandidateIndex < semiCandidate.length; semiCandidateIndex++){
               // 円の関数に従って勤務者の適合率を求める
-              double score = sqrt(1 - pow((happiness[semiCandidate[semiCandidateIndex].userIndex][1].inMinutes / happiness[semiCandidate[semiCandidateIndex].userIndex][0].inMinutes) - 1, 2));
+              double score = sqrt(1 - pow((happiness[semiCandidate[semiCandidateIndex].userIndex][1] / happiness[semiCandidate[semiCandidateIndex].userIndex][0]) - 1, 2));
               if(score < minScore){
                 minScore      = score;
                 minScoreIndex = semiCandidateIndex;
@@ -270,6 +278,14 @@ class ShiftTable {
           }
         }
       }
+    }
+    for(int i = 0; i < shiftRequests.length; i++){
+      double score = sqrt(1 - pow((happiness[i][1] / happiness[i][0]) - 1, 2));
+      print(shiftRequests[i].displayName + ":$score" + " ${happiness[i][1]}  ${happiness[i][0]} ${happiness[i][1] / happiness[i][0]}");
+    }
+    for(int i = 0 ; i <= 10; i++){
+      double score = sqrt(1 - pow(i/10-1, 2));
+      print("${i/10}:$score");
     }
   }
 
@@ -421,9 +437,9 @@ class ShiftTable {
     );
 
     // init Happiness
-    happiness = List<List<Duration>>.generate(
+    happiness = List<List<int>>.generate(
       shiftRequests.length,
-      (index) => <Duration>[const Duration(), const Duration()]
+      (index) => [0, 0]
     );
     calcHappiness();
 

@@ -59,7 +59,6 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                 ),
               ),
               Text("「ライトテーマ」/「ダークテーマ」どちらを使用するか設定します。", style: MyStyle.defaultStyleGrey15),
-              Text("反映にはアプリの再起動が必要です。", style: MyStyle.defaultStyleGrey15),
               
               SizedBox(height: _screenSize.height * 0.05),
 
