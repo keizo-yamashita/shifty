@@ -267,7 +267,7 @@ class ShiftFrame{
                       overflow: TextOverflow.ellipsis
                     ),
                     Text(
-                      "　フォロワー数 : $followersNum 人",
+                      "フォロワー数　 : $followersNum 人",
                       style: MyStyle.defaultStyleGrey15,
                       textHeightBehavior: MyStyle.defaultBehavior,
                       textAlign: TextAlign.center,

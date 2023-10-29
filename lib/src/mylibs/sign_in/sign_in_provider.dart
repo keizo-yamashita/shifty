@@ -26,7 +26,7 @@ class SignInProvider extends ChangeNotifier {
     /// Google でログイン
     ////////////////////////////////////////////////////////////////////////////////////////////
     if(providerName == "google"){
-      GoogleSignIn().signIn().then(
+      await GoogleSignIn().signIn().then(
         (googleSignIn) async {
           final GoogleSignInAuthentication? googleAuth = await googleSignIn?.authentication;
           final credential = GoogleAuthProvider.credential(

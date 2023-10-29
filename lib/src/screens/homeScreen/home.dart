@@ -67,7 +67,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
             showSelectDialog(
               context, 
               ref,
-              "追加方法", "シフト表の作成方法を選択してください",
+              "追加方法", "シフト表の作成方法を選択してください。",
               ["シフト表を作成する", "シフト表をフォローする"]
             ).then((value){
               if(value == 0){
@@ -148,7 +148,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
                 stream: FirebaseFirestore.instance.collection('shift-follower').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
-                    return Text('SteremBuilder でエラーが発生しました: ${snapshot.error}');
+                    return Text('SteremBuilder でエラーが発生しました。: ${snapshot.error}');
                   }
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator(color: MyStyle.primaryColor);
@@ -198,7 +198,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
   Future<Widget> buildMyShiftRequest(List<QueryDocumentSnapshot<Object?>> docs, bool isDark) async {
 
     if(docs.isEmpty){
-      return Text("フォロー中のシフト表はありません", style: MyStyle.defaultStyleGrey15);
+      return Text("フォロー中のシフト表はありません。", style: MyStyle.defaultStyleGrey15);
     }else{
       // とってきたシフトリクエストが参照しているシフト表を取ってくる
       List<Widget> shiftCard = [];
@@ -222,7 +222,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
             },
             isDark,
             (){
-              showConfirmDialog(context, ref, "確認", "シフト表'${frame.shiftName}'のフォローを解除しますか？", "シフト表'${frame.shiftName}'のフォローを解除しました", (){
+              showConfirmDialog(context, ref, "確認", "シフト表'${frame.shiftName}'のフォローを解除しますか？", "シフト表'${frame.shiftName}'のフォローを解除しました。", (){
                 removeTableSoft(request.requestId);
               });
             }
@@ -242,7 +242,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
 
     /// 自分のユーザIDが含まれるシフト表の表示
     if(docs.isEmpty){
-      return Text("管理中のシフト表はありません", style: MyStyle.defaultStyleGrey15);
+      return Text("管理中のシフト表はありません。", style: MyStyle.defaultStyleGrey15);
     }else{
       // とってきたシフトリクエストが参照しているシフト表を取ってくる
       List<Widget> shiftCard = [];
@@ -275,13 +275,18 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
               );
             },
             (){
-              var message = "[Shifty] シフト表入力依頼です。\n";
-              message += "下記のリンクより入力してください。\n";
-              message += "シフト名      : ${frame.shiftName} \n";
-              message += "　シフト期間　 : ${DateFormat('MM/dd').format(frame.shiftDateRange[0].start)} - ${DateFormat('MM/dd').format(frame.shiftDateRange[0].end)}\n";
+              var message = "[Shifty] シフト表の共有\n\n";
+              message += "シフト名　　　 : ${frame.shiftName} \n";
               message += "リクエスト期間 : ${DateFormat('MM/dd').format(frame.shiftDateRange[1].start)} - ${DateFormat('MM/dd').format(frame.shiftDateRange[1].end)}\n";
+              message += "シフト期間　　 : ${DateFormat('MM/dd').format(frame.shiftDateRange[0].start)} - ${DateFormat('MM/dd').format(frame.shiftDateRange[0].end)}\n\n";
+              message += "下記のリンクよりシフトリクエストを入力して下さい。\n";
               message += "shifty://user/?id=${frame.shiftId}";
+              message += "\n\n";
+              message += "インストールがまだの方は ↓ から \n\n";
+              message += "iOS : https://apps.apple.com/jp/app/shifty-%E3%82%B7%E3%83%95%E3%83%88%E8%A1%A8%E4%BD%9C%E6%88%90%E3%82%A2%E3%83%97%E3%83%AA/id6458593130 \n\n";
+              message += "android : https://play.google.com/store/apps/details?id=com.kakupan.shift&pcampaignid=web_share \n";
               Share.share(message);
+              
             },
             isDark,
             (){
@@ -308,8 +313,8 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
                 }
                 if(value == 2){
                   showConfirmDialog(context, ref, "確認",
-                    "シフト表'${frame.shiftName}'\nを削除しますか？\n管理者が削除を行うと，\n'${frame.shiftName}'への登録データはすべて削除されます",
-                    "シフト表'${frame.shiftName}'を削除しました",
+                    "シフト表'${frame.shiftName}'\nを削除しますか？\n管理者が削除を行うと、\n'${frame.shiftName}'への登録データはすべて削除されます。",
+                    "シフト表'${frame.shiftName}'を削除しました。",
                     (){
                       removeTableHard(frame.shiftId);
                     }

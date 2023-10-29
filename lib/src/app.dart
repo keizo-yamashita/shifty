@@ -3,7 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:shift/src/mylibs/dialog.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +21,7 @@ import 'package:shift/src/screens/homeSCreen/setting.dart';
 /// App Widget
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-List<bool> _displayInfoFlag = [false, false];
+List<bool> _displayInfoFlag = [true, true];
 
 class AppWidget extends ConsumerStatefulWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -202,95 +201,132 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
               insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
               title: Text("「ホーム画面」の使い方", style:  MyStyle.headlineStyleGreen20, textAlign: TextAlign.center),
               content: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.90,
+                width: MediaQuery.of(context).size.width * 0.95,
                 height: MediaQuery.of(context).size.height * 0.90,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // About Shift Table Buttons 
                       const SizedBox(height: 20),
                       TextButton(
-                            child: _displayInfoFlag[0]
-                            ? Text("- 「フォロー中のシフト表」について", style: MyStyle.headlineStyleGreen18)
-                            : Text("+「フォロー中のシフト表」について", style: MyStyle.headlineStyleGreen18),
+                        child : _displayInfoFlag[0]
+                          ? Text("- 「管理中のシフト表」について", style: MyStyle.headlineStyleGreen18)
+                          : Text("+「管理中のシフト表」について", style: MyStyle.headlineStyleGreen18),
                         onPressed: (){
                           _displayInfoFlag[0] = !_displayInfoFlag[0];
                           setState(() {});
                         },
-                      ),
-
+                      ),                     
                       if(_displayInfoFlag[0])
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // hou to use Followed Shift
-                            Text("「フォロー中のシフト表」の一覧が表示されます。", style: MyStyle.defaultStyleGrey13),
-                            Text("表示されるカードをタップすることで、「シフトリクエストの入力」/「シフト表の確認」を行うことができます。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 20),
-                            Text("追加方法 ①", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            Text("シフト管理者が共有するシフト表フォロー用のURLリンクをタップすることで、追加画面に遷移します。", style: MyStyle.defaultStyleGrey13),
-                            Text("「自身の表示名」を入力し、追加ボタンを押すことで追加できます。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 10),
-                            Text("追加方法 ②", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            Text("画面右下の「追加ボタン」をタップし、「シフト表をフォローする」を選択することで追加画面に遷移します。", style: MyStyle.defaultStyleGrey13),
-                            Text("画面遷移後に、「シフト表のID」及び「自身の表示名」を入力することで追加できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("注意 : 「シフト表のID」はシフト管理者に共有してもらう必要があります。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 10),
-                            Text("削除方法", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            Text("カードを長押しすることで、シフト表の「フォロー解除」確認ダイアログが表示されます。", style: MyStyle.defaultStyleGrey13),
-                            Text("一度解除すると、フォロー中に登録した内容は全て破棄されます。", style: MyStyle.defaultStyleGrey13),
-                            Text("よく確認してから、削除してください。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // how to use Managed Shift
+                          Text("「管理中のシフト表」の一覧が表示されます。", style: MyStyle.defaultStyleGrey13),
+                          Text("表示されるカードをタップすることで「シフトリクエスト状況の確認」「シフト表の管理」を行うことができます。", style: MyStyle.defaultStyleGrey13),
+                          const SizedBox(height: 20),
+                          Text("1. シフト表の作成", style: MyStyle.headlineStyle18),
+                          const SizedBox(height: 10),
+                          Text("管理者としてシフト表を作成します。", style: MyStyle.defaultStyleGrey13),
+                          Text("画面遷移後「シフト表作成画面」より参照して下さい。", style: MyStyle.defaultStyleGrey13),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              children: [
+                                Image.asset("assets/how_to_use/home_1.png"),
+                                Image.asset("assets/how_to_use/home_2.png"),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text("2. シフト表の共有", style: MyStyle.headlineStyle18),
+                          const SizedBox(height: 10),
+                          Text("フォロワーにシフト表を共有します。", style: MyStyle.defaultStyleGrey13),
+                          Text("共有リンクからアプリを開くには事前のアプリインストールが必要です。", style: MyStyle.defaultStyleGrey13),
+                          Text("共有リンクから管理者もフォロワーとして登録することができます。", style: MyStyle.defaultStyleGrey13),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              children: [
+                                Image.asset("assets/how_to_use/home_3.png"),
+                                Image.asset("assets/how_to_use/home_4.png"),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text("3. シフト表の管理", style: MyStyle.headlineStyle18),
+                          const SizedBox(height: 10),
+                          Text("管理者としてシフト表を管理します。", style: MyStyle.defaultStyleGrey13),
+                          Text("画面遷移後「シフト表作成画面」より参照して下さい。", style: MyStyle.defaultStyleGrey13),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Image.asset("assets/how_to_use/home_5.png"),
+                          ),
+                          Text("4. シフト表の削除", style: MyStyle.headlineStyle18),
+                          const SizedBox(height: 10),
+                          Text("誤ったシフト表やシフト期間が満了したシフト表は削除しましょう。", style: MyStyle.defaultStyleGrey13),
+                          Text("削除すると、フォロワーが登録した内容含む全ての登録データが削除されます。", style: MyStyle.defaultStyleGrey13),
+                          Text("よく確認してから、削除して下さい。", style: MyStyle.defaultStyleGrey13),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Image.asset("assets/how_to_use/home_6.png"),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
                       ),
-
-                      // About Shift Request View 
                       const SizedBox(height: 20),
                       TextButton(
-                        child : _displayInfoFlag[1]
-                          ? Text("- 「管理中のシフト表」について", style: MyStyle.headlineStyleGreen18)
-                          : Text("+「管理中のシフト表」について", style: MyStyle.headlineStyleGreen18),
+                            child: _displayInfoFlag[1]
+                            ? Text("- 「フォロー中のシフト表」について", style: MyStyle.headlineStyleGreen18)
+                            : Text("+「フォロー中のシフト表」について", style: MyStyle.headlineStyleGreen18),
                         onPressed: (){
                           _displayInfoFlag[1] = !_displayInfoFlag[1];
                           setState(() {});
                         },
                       ),
-                      
                       if(_displayInfoFlag[1])
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // how to use Managed Shift
-                            Text("「管理中のシフト表」の一覧が表示されます。", style: MyStyle.defaultStyleGrey13),
-                            Text("表示されるカードをタップすることで、「シフトリクエスト状況の確認」/「シフトの管理」を行うことができます。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 20),
-                            Text("追加方法", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            Text("画面右下の「追加ボタン」をタップし、「シフト表を作成する」を選択することでシフト表作成画面に遷移します。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 10),
-                            Text("共有方法", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            Text("カードを長押し、表示されるメニューから「シフト表をSNSで共有する」をタップすることでSNSで共有できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("また、「シフト表のIDをコピーする」から「シフト表のID」をコピーし共有することで、シフト表を共有することも可能です。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 10),
-                            Text("削除方法", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            Text("カードを長押し、表示されるメニューから「シフト表を削除する」をタップすることで確認ダイアログが表示されます。", style: MyStyle.defaultStyleGrey13),
-                            Text("削除すると、フォロー中のユーザが登録した内容含む全ての登録データが削除されます。", style: MyStyle.defaultStyleGrey13),
-                            Text("よく確認してから、削除してください。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
-                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // hou to use Followed Shift
+                          Text("「フォロー中のシフト表」の一覧が表示されます。", style: MyStyle.defaultStyleGrey13),
+                          Text("表示されるカードをタップすることで「シフトリクエストの入力」「シフト表の確認」を行うことができます。", style: MyStyle.defaultStyleGrey13),
+                          const SizedBox(height: 20),
+                          Text("1. シフト表のフォロー", style: MyStyle.headlineStyle18),
+                          const SizedBox(height: 10),
+                          Text("シフト表管理者が共有する共有リンクをタップすることで、フォロー画面に遷移します。", style: MyStyle.defaultStyleGrey13),
+                          Text("共有リンクからアプリを開くには事前のアプリインストールが必要です。", style: MyStyle.defaultStyleGrey13),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              children: [
+                                Image.asset("assets/how_to_use/home_7.png"),
+                                Image.asset("assets/how_to_use/home_8.png"),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text("2. 「シフト表リクエストの入力」/「シフト表の確認」", style: MyStyle.headlineStyle18),
+                          const SizedBox(height: 10),
+                          Text("カードをタップすることで画面遷移します  。", style: MyStyle.defaultStyleGrey13),
+                          Text("「シフト表リクエストの入力」は「リクエスト期間」でのみ行えます。", style: MyStyle.defaultStyleGrey13),
+                          Text("「シフト表の確認」は「リクエスト期間終了後」のみ行えます。", style: MyStyle.defaultStyleGrey13),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Image.asset("assets/how_to_use/home_9.png"),
+                          ),
+                          const SizedBox(height: 10),
+                          Text("3. フォローの解除", style: MyStyle.headlineStyle18),
+                          const SizedBox(height: 10),
+                          Text("一度フォローを解除すると、フォロー中に登録した内容は全て破棄されます。", style: MyStyle.defaultStyleGrey13),
+                          Text("よく確認してから、削除してください。", style: MyStyle.defaultStyleGrey13),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Image.asset("assets/how_to_use/home_10.png"),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      )
                     ],
                   )
                 ),
