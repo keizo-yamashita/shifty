@@ -123,6 +123,7 @@ Future<int?> showSelectDialog(BuildContext context, WidgetRef ref, String title,
 
   await showDialog(
     context: context,
+    barrierColor: isDark ? Colors.grey.withOpacity(0.1) : Colors.black.withOpacity(0.5),
     builder: (BuildContext context) {
       return Theme(
         data: isDark ? ThemeData.dark() : ThemeData.light(),

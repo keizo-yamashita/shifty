@@ -213,19 +213,21 @@ class ShiftFrameEditor extends StatelessWidget {
     String cellValue = value.toString();;
     Color  cellFontColor = colorTable[value][0];
     Color  cellColor =  (selected?.column == coordinate.column && selected?.row == coordinate.row) ? cellFontColor.withAlpha(100) : cellFontColor.withAlpha(50);
+    var cellBoaderWdth = 1.0;
 
     return HitTestDetector(
       onTouch: onSelected,
-      child:  Padding(
-        padding: EdgeInsets.all(cellWidth/40),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all( color: (isDark) ?Colors.white : Colors.grey),
-            color: cellColor,
-            borderRadius: BorderRadius.circular(cellWidth / 20 * 2.5)
+      child:  Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top:    row == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+            bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+            left:   column == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+            right:  BorderSide(width: cellBoaderWdth, color: Colors.grey),
           ),
-          child: Center(child: Text(cellValue, style: TextStyle(color: cellFontColor, fontSize: fontSize), textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center))
-        )
+          color: cellColor
+        ),
+        child: Center(child: Text(cellValue, style: TextStyle(color: cellFontColor, fontSize: fontSize), textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center))
       ),
     );
   }

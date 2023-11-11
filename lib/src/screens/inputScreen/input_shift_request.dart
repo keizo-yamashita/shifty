@@ -74,7 +74,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
 
     return Scaffold(
       appBar: AppBar(
-        title: FittedBox(fit:BoxFit.fill, child: Text(_shiftRequest.shiftFrame.shiftName + (isShiftRange ? " [リクエストの入力]" : " [シフトの確認]"), style: MyStyle.headlineStyleGreen20)),
+        title: FittedBox(fit:BoxFit.fill, child: Text((isShiftRange ? " [リクエスト入力画面] " : " [シフト確認画面] ") +  _shiftRequest.shiftFrame.shiftName, style: MyStyle.headlineStyleGreen20)),
         bottomOpacity: 2.0,
         elevation: 2.0,
         actions: [
@@ -192,7 +192,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
             shiftRequest: _shiftRequest,
             enableEdit: _enableEdit,
             selected: coordinate,
-            isDark: Theme.of(context).brightness == Brightness.dark,
+            isDark: ref.read(settingProvider).enableDarkTheme,
           )
           : ShiftResponseEditor(
             sheetHeight: _screenSize.height * (1.0 - 0.02 - 0.02) - 30,
@@ -206,11 +206,11 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                 coordinate = p0!;
               });
             },
-            onInputEnd: (){ insertBuffer(_shiftRequest.requestTable); },
+            onInputEnd: (){ insertBuffer(_shiftRequest.responseTable); },
             shiftRequest: _shiftRequest,
             enableEdit: false,
             selected: coordinate,
-            isDark: Theme.of(context).brightness == Brightness.dark,
+            isDark: ref.read(settingProvider).enableDarkTheme,
           )
         ],
       ),

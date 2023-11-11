@@ -13,7 +13,7 @@ import 'package:shift/src/mylibs/shift/shift_request.dart';
 class ShiftTable {
   late ShiftFrame                  shiftFrame;
   late List<ShiftRequest>          shiftRequests;
-  late List<List<int>>             happiness;      
+  late List<List<double>>          happiness;      
   late List<List<List<Candidate>>> shiftTable;
 
   ShiftTable(this.shiftFrame, this.shiftRequests){
@@ -38,9 +38,9 @@ class ShiftTable {
     );
 
     // init Happiness
-    happiness = List<List<int>>.generate(
+    happiness = List<List<double>>.generate(
       shiftRequests.length,
-      (index) => [0,0]
+      (index) => [0,0,0]
     );
     calcHappiness();
   }
@@ -86,9 +86,9 @@ class ShiftTable {
     // init Happiness
     for(var requestIndex = 0; requestIndex < shiftRequests.length; requestIndex++){
       var request = shiftRequests[requestIndex];
-      int requestTotal  = 0;
-      int responseTotal = 0;
-      int edgeTotal     = 0;
+      double requestTotal  = 0;
+      double responseTotal = 0;
+      int    edgeTotal     = 0;
       for(var column = 0; column < date; column++){
         int prevEdgeTotal = edgeTotal;
         int prevResponse  = 0;
@@ -114,6 +114,7 @@ class ShiftTable {
       }
       happiness[requestIndex][0] = requestTotal;
       happiness[requestIndex][1] = responseTotal;
+      happiness[requestIndex][2] = (happiness[requestIndex][0] != 0.0) ? happiness[requestIndex][1] / happiness[requestIndex][0] : 0.0;
     }
   }
 
@@ -137,7 +138,7 @@ class ShiftTable {
       }
     }
 
-    //   各時間区分前後の連続勤務可能時間 table[requesterIndex][DateIndex][timeIndex]
+    // 各時間区分前後の連続勤務可能時間 table[requesterIndex][DateIndex][timeIndex]
     var table = List<List<List<Piece>>>.generate(
       shiftRequests.length,
       (requestIndex) => List<List<Piece>>.generate(
@@ -173,21 +174,11 @@ class ShiftTable {
             else{
               buf.add(list[timeIndex].backward);
             }
-            if(dateIndex == 6 && requestIndex == 9){
-              print("$dateIndex $timeIndex ${list[timeIndex].backward.inHours} $currIndex");
-              print(buf);
-            }
           }
           if(buf.isNotEmpty){
             for(Duration value in buf.reversed){
               list[currIndex].forward = value;
               currIndex++;  
-            }
-          }
-
-          for(Piece piece in list){
-            if(dateIndex == 6 && requestIndex == 9){
-              print("${piece.backward.inMinutes} ${piece.forward.inMinutes}");
             }
           }
           return list;
@@ -196,48 +187,18 @@ class ShiftTable {
     );
     
     // 最初は必ず割り当てる必要がある人を割り当てる
-    // for(var row = 0; row < shiftTable.length; row++){
-    //   for(var column = 0; column < shiftTable[row].length; column++){
-    //     // 制限人数の限界まで割り当てる
-    //     if(shiftTable[row][column].length <= shiftFrame.assignTable[row][column]){
-    //       for(int i = 0; i < shiftTable[row][column].length; i++){            
-    //         shiftTable[row][column][i].assign = true;
-    //         shiftRequests[shiftTable[row][column][i].userIndex].responseTable[row][column] = 1;
-    //       }
-    //     }
-    //   }
-    // }
+    for(var row = 0; row < shiftTable.length; row++){
+      for(var column = 0; column < shiftTable[row].length; column++){
+        // 制限人数の限界まで割り当てる
+        if(shiftTable[row][column].length <= shiftFrame.assignTable[row][column]){
+          for(int i = 0; i < shiftTable[row][column].length; i++){            
+            shiftTable[row][column][i].assign = true;
+            shiftRequests[shiftTable[row][column][i].userIndex].responseTable[row][column] = 1;
+          }
+        }
+      }
+    }
 
-    // ここから試行錯誤して割り当てていく (１日ずつ決めていくのがいいのかな ...)
-    // for(int dateIndex = 0; dateIndex < shiftTable[0].length; dateIndex++){
-            
-    //   int timeIndex = 0;
-
-    //   for(int assignIndex = 0; assignIndex < shiftFrame.assignTable[dateIndex][timeIndex]; assignIndex++){
-      
-    //   timeIndex = 0;
-
-    //     // 一人ずつ入れていってみる
-    //     if(shiftTable[dateIndex][timeIndex].length > shiftFrame.assignTable[dateIndex][timeIndex]){
-    //       for(var timeIndex = 0; timeIndex < shiftTable.length; timeIndex++){
-    //         for(int requestIndex = 0; requestIndex < shiftTable[dateIndex][timeIndex].length; requestIndex++){
-    //           // この日付のこの時間区分の割り当て人数が，所望の人数に達していなかったら ... 
-    //           if(getAssignedNum(timeIndex, dateIndex) < shiftFrame.assignTable[timeIndex][dateIndex] && !shiftTable[dateIndex][timeIndex][requestIndex].assign){
-    //             // ここからがメインの割り当て処理
-    //             if(cubeTable[requestIndex][dateIndex][timeIndex].forward.inMinutes >= minMinutes){
-    //               while(){
-
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
-
-    //for(int dateIndex = shiftTable[0].length-1; dateIndex >= 0; dateIndex--){
-      //for(int timeIndex = shiftTable.length-1; timeIndex >= 0; timeIndex--){
     for(int dateIndex = 0; dateIndex < date; dateIndex++){
       for(int timeIndex = 0; timeIndex < time; timeIndex++){
         // すでに割り当て人数に達しているか確認する
@@ -256,7 +217,7 @@ class ShiftTable {
             // スコア順に並び替える
             for(int semiCandidateIndex = 0; semiCandidateIndex < semiCandidate.length; semiCandidateIndex++){
               // 円の関数に従って勤務者の適合率を求める
-              double score = sqrt(1 - pow((happiness[semiCandidate[semiCandidateIndex].userIndex][1] / happiness[semiCandidate[semiCandidateIndex].userIndex][0]) - 1, 2));
+              double score = sqrt(1 - pow((happiness[semiCandidate[semiCandidateIndex].userIndex][2]) - 1, 2));
               if(score < minScore){
                 minScore      = score;
                 minScoreIndex = semiCandidateIndex;
@@ -278,14 +239,6 @@ class ShiftTable {
           }
         }
       }
-    }
-    for(int i = 0; i < shiftRequests.length; i++){
-      double score = sqrt(1 - pow((happiness[i][1] / happiness[i][0]) - 1, 2));
-      print(shiftRequests[i].displayName + ":$score" + " ${happiness[i][1]}  ${happiness[i][0]} ${happiness[i][1] / happiness[i][0]}");
-    }
-    for(int i = 0 ; i <= 10; i++){
-      double score = sqrt(1 - pow(i/10-1, 2));
-      print("${i/10}:$score");
     }
   }
 
@@ -437,9 +390,9 @@ class ShiftTable {
     );
 
     // init Happiness
-    happiness = List<List<int>>.generate(
+    happiness = List<List<double>>.generate(
       shiftRequests.length,
-      (index) => [0, 0]
+      (index) => [0, 0, 0]
     );
     calcHappiness();
 

@@ -215,21 +215,22 @@ class ShiftResponseEditor extends StatelessWidget {
     }
 
     cellColor =  (selected?.column == coordinate.column && selected?.row == coordinate.row) ? cellColor.withAlpha(100) : Colors.transparent;
-
+    var cellBoaderWdth = 1.0;
     return HitTestDetector(
       onTouch: (editable) ? onSelected : null,
-      child:  Padding(
-        padding: EdgeInsets.all(cellWidth/40),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all( color: (isDark) ?Colors.white : Colors.grey),
-            color: cellColor,
-            borderRadius: BorderRadius.circular(cellWidth / 20 * 2.5)
+      child:  Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top:    row == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+            bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+            left:   column == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+            right:  BorderSide(width: cellBoaderWdth, color: Colors.grey),
           ),
-          child: editable
-            ? Center(child: cellValue)
-            : SizedBox(width: cellWidth, height: cellHeight, child: CustomPaint(painter: DiagonalLinePainter((isDark) ?Colors.white : Colors.grey)))
-        )
+          color: cellColor
+        ),
+        child: editable
+          ? Center(child: cellValue)
+          : SizedBox(width: cellWidth, height: cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
       ),
     );
   }
