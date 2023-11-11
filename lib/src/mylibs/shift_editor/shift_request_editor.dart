@@ -78,7 +78,6 @@ class ShiftRequestEditor extends StatelessWidget {
             },
             onTap: (){
               if(enableEdit){
-                print("onTap");
                 onInputEnd?.call();
               }
             }, 
@@ -170,7 +169,7 @@ class ShiftRequestEditor extends StatelessWidget {
     return Container(
       width: titleWidth,
       height: cellHeight,
-      padding: const EdgeInsets.symmetric(horizontal: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       alignment: Alignment.center,
       child: FittedBox(
         fit: BoxFit.scaleDown,
@@ -194,8 +193,6 @@ class ShiftRequestEditor extends StatelessWidget {
 
   // Matrix Cell Class Instance
   Widget _cell(int row, int column, bool editable) {
-
-    double fontSize = cellHeight / 20 * 10;
 
     final coordinate = Coordinate(column: column, row: row);
     

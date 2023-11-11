@@ -21,8 +21,6 @@ import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 
 double _cellHeight       = 20;
 double _cellWidth        = 20;
-double _titleHeight      = 30;
-double _titleWidth       = 60;
 double _cellSizeMax      = 30;
 double _cellSizeMin      = 10;
 double _zoomDiv          = 1;
@@ -34,7 +32,7 @@ bool _enableZoomOut      = true;
 int  _inkValue           = 1;
 Size _screenSize         = const Size(0, 0);
 
-List<bool> _displayInfoFlag = [false, false, false, false];
+List<bool> _displayInfoFlag = [true, true, true, true];
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// シフト表の最終チェックに使用するページ (勤務人数も指定)
@@ -326,17 +324,17 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+              insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               title: Text("「シフト作成画面②」の使い方", style:  MyStyle.headlineStyleGreen20, textAlign: TextAlign.center),
               content: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.90,
-                height: MediaQuery.of(context).size.height * 0.90,
+                width: MediaQuery.of(context).size.width * 0.95,
+                height: MediaQuery.of(context).size.height * 0.95,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 20),
-                      Text("この画面では、シフト表の割り当て人数を設定します。", style: MyStyle.headlineStyle18),
+                      Text("この画面では、シフト表の割り当て人数を設定します。", style: MyStyle.defaultStyleGrey13),
                       
                       // About Shift Table Buttons 
                       const SizedBox(height: 20),
@@ -364,32 +362,32 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // How to Edit
-                            Text("この画面では、シフト表の各日時に対する割り当て最大人数を設定します。", style: MyStyle.defaultStyleGrey13),
-                            Text("シフト表作成後に割り当て人数を変更することはできません。", style: MyStyle.defaultStyleGrey13),
+                            Text("この画面では、シフト表の各日時に対する割り当て人数を設定します。", style: MyStyle.defaultStyleGrey13),
+                            Text("シフト表作成後に割り当て人数を変更することはできません。", style: MyStyle.defaultStyleRed13),
                             const SizedBox(height: 20),
-                            Text("編集方法", style: MyStyle.headlineStyle18),
+                            Text("編集方法", style: MyStyle.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("シフト表の各マスに表示されている数字は、その日時の割り当て人数を示すものです。", style: MyStyle.defaultStyleGrey13),
+                            Text("シフト表の各マスの数字は、その日時の割り当て人数を示すものです。", style: MyStyle.defaultStyleGrey13),
                             Text("画面上部のツールボタンを使用することで、割り当て人数を編集できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("編集後は、画面右上の「登録」ボタンを押してシフト表を作成してください。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 10),
-                            // How to Update
-                            const SizedBox(height: 20),
-                            Text("登録方法", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                const Icon(Icons.cloud_upload_outlined, size: 24, color: MyStyle.primaryColor),
-                                const SizedBox(width: 10),
-                                Text("登録ボタン (画面右上)", style: MyStyle.defaultStyleGrey13),
-                              ],
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Image.asset("assets/how_to_use/create_2_1.png"),
                             ),
+                            Text("画面を横向きにすることもできます。", style: MyStyle.defaultStyleGrey13), 
+                            Text("見やすい画面で作業しましょう。", style: MyStyle.defaultStyleGrey13), 
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Image.asset("assets/how_to_use/create_2_2.png"),
+                            ),
+                            Text("登録方法", style: MyStyle.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("編集内容を「登録」しない場合、画面遷移時に破棄されます。", style: MyStyle.defaultStyleGrey13),
-                            Text("「登録」するには、画面右上の「登録ボタン」を押してください。", style: MyStyle.defaultStyleGrey13),
-                            Text("「登録」することでシフト表を作成できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("作成したシフト表の共有方法は、「ホーム画面」のインフォメーションボタンをタップしてご確認ください。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 10),
+                            Text("編集後は、画面右上の「登録」ボタンを押して登録して下さい。", style: MyStyle.defaultStyleGrey13),
+                            Text("編集内容を「登録」しない場合、画面遷移時に破棄されます。", style: MyStyle.defaultStyleRed13),
+                            Text("作成したシフト表の共有方法については、「ホーム画面」の i ボタンより参照して下さい。", style: MyStyle.defaultStyleGrey13),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Image.asset("assets/how_to_use/create_2_3.png"),
+                            ),
                           ],
                         ),
                       ),
@@ -419,59 +417,50 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Zoom Out / In Button
                             Text("画面上部のツールボタンを用いることで、効率的な編集を行うことができます。", style: MyStyle.defaultStyleGrey13),
                             const SizedBox(height: 20),
-                            Text("拡大・縮小ボタン", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                buildIconButton( Icons.zoom_in,  true, (){}, (){}),
-                                const SizedBox(width: 10),
-                                buildIconButton( Icons.zoom_out, true, (){}, (){}),
-                              ],
-                            ),
+                            // Zoom Out / In Button
+                            Text("拡大・縮小ボタン", style: MyStyle.headlineStyle15),
                             const SizedBox(height: 10),
                             Text("表の拡大・縮小ができます。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 10),
+                            Text("見やすいサイズで作業しましょう。", style: MyStyle.defaultStyleGrey13),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Image.asset("assets/how_to_use/create_2_4.png"),
+                            ),
                           
                             // Filterring Input Button
+                            Text("一括入力ボタン", style: MyStyle.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("フィルタ入力ボタン", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            buildIconButton( Icons.filter_alt_outlined, true, (){}, (){}),
-                            const SizedBox(height: 10),
-                            Text("「日時」「割当て人数」を指定して、一括で入力できます。", style: MyStyle.defaultStyleGrey13),
-                            const SizedBox(height: 10),
+                            Text("特定の「日時」に「割当て人数」一括入力できます。", style: MyStyle.defaultStyleGrey13),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Image.asset("assets/how_to_use/create_2_5.png"),
+                            ),
 
                             // Draw Button                             
+                            Text("タッチ入力ボタン", style: MyStyle.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("タッチ入力ボタン", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            buildIconButton(Icons.touch_app_outlined, true, (){}, (){}),
-                            const SizedBox(height: 10),
-                            Text("細かい1マス単位の編集ができます。", style: MyStyle.defaultStyleGrey13),
-                            Text("タップ後に表のマスをなぞることで割り当て人数を編集できます。", style: MyStyle.defaultStyleGrey13),
+                            Text("タップ後に表のマスをなぞることで細かい1マス単位の割り当て人数を編集できます。", style: MyStyle.defaultStyleGrey13),
                             Text("設定する割当て人数は、ボタンを長押しすることで選択できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("注意 : その間、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: MyStyle.defaultStyleGrey13),
+                            Text("注意 : 使用中、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: MyStyle.defaultStyleRed13),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                children: [
+                                  Image.asset("assets/how_to_use/create_2_6.png"),
+                                  Image.asset("assets/how_to_use/create_2_7.png"),
+                                ],
+                              ),
+                            ),
  
 
                             // Redo / Undo Button
                             const SizedBox(height: 10),
-                            Text("戻る・進む ボタン", style: MyStyle.headlineStyle18),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                buildIconButton( Icons.undo, true, (){}, (){}),
-                                const SizedBox(width: 10),
-                                buildIconButton( Icons.redo, true, (){}, (){})
-                              ],
-                            ),
+                            Text("戻る・進む ボタン", style: MyStyle.headlineStyle15),
                             const SizedBox(height: 10),
                             Text("編集した割り当て表を「前の状態」や「次の状態」に戻すことができます。", style: MyStyle.defaultStyleGrey13),
-                            Text("注意 : 遡れる状態は最大50であり、一度シフト表作成画面を閉じると過去の変更履歴は破棄されます。", style: MyStyle.defaultStyleGrey13),
+                            Text("注意 : 遡れる状態は最大50であり、一度シフト表作成画面を閉じると過去の変更履歴は破棄されます。", style: MyStyle.defaultStyleRed13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -482,7 +471,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
               ),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('閉じる'),
+                  child: Text('閉じる', style: MyStyle.headlineStyleGreen13),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

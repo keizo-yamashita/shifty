@@ -55,35 +55,29 @@ class ShiftResponseEditor extends StatelessWidget {
           GestureDetector(
             onPanDown: (detail) {
               if(enableEdit){
-                print("onPanDown");
                 _judgeHit(context, detail.globalPosition);
               }
             },
             onPanStart: (detail) {
               if(enableEdit){
-                print("onPanStart");
                 _judgeHit(context, detail.globalPosition);
               }
             },
             onPanUpdate: (detail) {
               if(enableEdit){
-                print("onPanUpdate");
                 _judgeHit(context, detail.globalPosition);
               }
             },
             onPanEnd: (details) {
               if(enableEdit){
-                print("onPanEnd");
                 onInputEnd?.call();
               }
             },
             onTapDown: (details){
-              print("onTapDown");
               _judgeHit(context, details.globalPosition);
             },
             onTap: (){
               if(enableEdit){
-                print("onTap");
                 onInputEnd?.call();
               }
             },
@@ -126,8 +120,6 @@ class ShiftResponseEditor extends StatelessWidget {
   ///////////////////////////////////////////////////////////////////////
 
   List<Widget> _getTitleWidget(){
-
-    double fontSize = titleHeight / 30 * 10;
 
     List<String> weekdayJP = ["月", "火", "水", "木", "金", "土", "日"];
     Text         day, weekday;
@@ -177,7 +169,7 @@ class ShiftResponseEditor extends StatelessWidget {
     return Container(
       width: titleWidth,
       height: cellHeight,
-      padding: const EdgeInsets.symmetric(horizontal: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       alignment: Alignment.center,
       child: FittedBox(
         fit: BoxFit.scaleDown,
@@ -201,8 +193,6 @@ class ShiftResponseEditor extends StatelessWidget {
 
   // Matrix Cell Class Instance
   Widget _cell(int row, int column, bool editable) {
-
-    double fontSize = cellHeight / 20 * 10;
 
     final coordinate = Coordinate(column: column, row: row);
     

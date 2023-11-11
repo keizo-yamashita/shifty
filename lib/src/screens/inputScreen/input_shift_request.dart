@@ -21,8 +21,6 @@ import 'package:shift/src/mylibs/modal_window.dart';
 
 double _cellHeight       = 20;
 double _cellWidth        = 20;
-double _titleHeight      = 30;
-double _titleWidth       = 60;
 double _cellSizeMax      = 25;
 double _cellSizeMin      = 15;
 double _zoomDiv          = 1;
@@ -56,6 +54,8 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
   
   ShiftRequest _shiftRequest = ShiftRequest(ShiftFrame());
 
+  bool isShiftRange = false;
+
   @override
   Widget build(BuildContext context) {
 
@@ -68,11 +68,13 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
     if(undoredoCtrl.buffer.isEmpty){
       insertBuffer(_shiftRequest.requestTable);
     }
+    
+    DateTime now = DateTime.now();
+    isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
 
     return Scaffold(
       appBar: AppBar(
-        title: 
-        Text((DateTime.now().compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && DateTime.now().compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0) ? "リクエストの入力" : "シフト表の確認", style: MyStyle.headlineStyleGreen20),
+        title: FittedBox(fit:BoxFit.fill, child: Text(_shiftRequest.shiftFrame.shiftName + (isShiftRange ? " [リクエストの入力]" : " [シフトの確認]"), style: MyStyle.headlineStyleGreen20)),
         bottomOpacity: 2.0,
         elevation: 2.0,
         actions: [
@@ -93,14 +95,15 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
               tooltip: "リクエストを登録",
               onPressed: (){
                 DateTime now = DateTime.now();
-                if(now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0){
+                isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
+                if(isShiftRange){
                   showConfirmDialog(
                     context, ref, "確認", "このリクエストを登録しますか？", "リクエストを登録しました", (){
                     Navigator.pop(context);
                     _shiftRequest.updateShiftRequest();
                   });
                 }else{
-                  showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，登録できません\n編集が必要な場合は管理者に連絡してください", true);
+                  showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、登録できません\n編集が必要な場合は管理者に連絡して下さい", true);
                 }
               }
             ),
@@ -124,33 +127,37 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
               children: [
                 buildIconButton( Icons.zoom_in, _enableZoomIn, (){ zoomIn(); }, (){}),
                 buildIconButton( Icons.zoom_out, _enableZoomOut, (){ zoomOut(); }, (){}),
-                buildIconButton( Icons.filter_alt_outlined, DateTime.now().compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && DateTime.now().compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0,
-                (){
-                  DateTime now = DateTime.now();
-                  if(now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0){
-                    buildAutoFillModalWindow(context);
-                  }else{
-                    showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
-                  }
-                }, (){}),
-                buildIconButton(
-                  Icons.touch_app_outlined, _enableEdit && DateTime.now().compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && DateTime.now().compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0
-                  ,
+                buildIconButton( Icons.filter_alt_outlined, isShiftRange,
                   (){
                     DateTime now = DateTime.now();
-                    if(now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0){
-                      _enableEdit = !_enableEdit;
+                    isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
+                    if(isShiftRange){
+                      buildAutoFillModalWindow(context);
                     }else{
                       showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
                     }
                   },
+                  (){}
+                ),
+                buildIconButton(
+                  Icons.touch_app_outlined, _enableEdit && isShiftRange,
                   (){
                     DateTime now = DateTime.now();
-                    if(now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0){
+                    isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
+                    if(isShiftRange){
+                      _enableEdit = !_enableEdit;
+                    }else{
+                      showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                    }
+                  },
+                  (){
+                    DateTime now = DateTime.now();
+                    isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
+                    if(isShiftRange){
                       buildInkChangeModaleWindow();
                       _enableEdit = true;
                     }else{
-                      showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                      showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません\n編集が必要な場合は管理者に連絡してください", true);
                     }
                   }
                 ),
@@ -165,7 +172,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
           ////////////////////////////////////////////////////////////////////////////////////////////
           /// メインテーブル
           ////////////////////////////////////////////////////////////////////////////////////////////
-          (DateTime.now().compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && DateTime.now().compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0)
+          (isShiftRange)
           ? ShiftRequestEditor(
             sheetHeight: _screenSize.height * (1.0 - 0.02 - 0.02) - 30,
             sheetWidth:  _screenSize.width,
@@ -292,9 +299,6 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
   void insertBuffer(List<List<int>> table){
     setState(() {
       undoredoCtrl.insertBuffer(table.map((e) => List.from(e).cast<int>()).toList());
-      for(int i =0; i < undoredoCtrl.buffer.length; i++){
-        print("${undoredoCtrl.buffer.length} ${undoredoCtrl.bufferIndex} ${undoredoCtrl.buffer[i][0][0]}");
-      }
     });
   }
 
@@ -305,7 +309,6 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
       }else{
         _shiftRequest.requestTable = undoredoCtrl.redo().map((e) => List.from(e).cast<int>()).toList();
       }
-      print("${undoredoCtrl.buffer.length} ${undoredoCtrl.bufferIndex} ${_shiftRequest.requestTable[0][0]}");
     });
   }
 
@@ -370,11 +373,11 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+              insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               title: Text("「リクエスト入力画面」の使い方", style:  MyStyle.headlineStyleGreen20, textAlign: TextAlign.center),
               content: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.90,
-                height: MediaQuery.of(context).size.height * 0.90,
+                width: MediaQuery.of(context).size.width * 0.95,
+                height: MediaQuery.of(context).size.height * 0.95,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,10 +486,10 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("シフトリクエスト表の編集内容は、「登録」しない場合、画面遷移時に破棄されます。", style: MyStyle.defaultStyleGrey13),
-                            Text("編集内容を「登録」するには、画面右上の「登録ボタン」を押してください。", style: MyStyle.defaultStyleGrey13),
+                            Text("シフトリクエスト表の編集内容は、画面遷移時に破棄されます。", style: MyStyle.defaultStyleGrey13),
+                            Text("編集内容を「登録」するには、画面右上の「登録ボタン」を押してください。", style: MyStyle.defaultStyleRed13),
                             Text("登録内容は常にシフト管理者に共有されますが、「シフトリクエスト期間」終了日までは何度でも変更できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("「シフトリクエスト期間」終了日までには、必ず登録してください。", style: MyStyle.defaultStyleGrey13),
+                            Text("「シフトリクエスト期間」終了日までには、必ず登録してください。", style: MyStyle.defaultStyleRed13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -552,7 +555,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                             Text("細かい1マス単位の編集ができます。", style: MyStyle.defaultStyleGrey13),
                             Text("タップ後に表のマスをなぞることで割り当て状態を編集できます。", style: MyStyle.defaultStyleGrey13),
                             Text("入力する「リクエスト」は、ボタンを長押しすることで選択できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("注意 : その間、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: MyStyle.defaultStyleGrey13),
+                            Text("注意 : 使用中、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: MyStyle.defaultStyleRed13),
 
                             // Redo / Undo Button
                             const SizedBox(height: 10),
@@ -568,7 +571,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                             ),
                             const SizedBox(height: 10),
                             Text("編集したシフトリクエスト表を「前の状態」や「次の状態」に戻すことができます。", style: MyStyle.defaultStyleGrey13),
-                            Text("注意 : 遡れる状態は最大50であり、一度管理者画面を閉じると過去の変更履歴は破棄されます。", style: MyStyle.defaultStyleGrey13),
+                            Text("注意 : 遡れる状態は最大50であり、一度管理者画面を閉じると過去の変更履歴は破棄されます。", style: MyStyle.defaultStyleRed13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -579,7 +582,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
               ),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('閉じる'),
+                  child: Text('閉じる', style: MyStyle.headlineStyleGreen13),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

@@ -174,7 +174,7 @@ class ShiftFrameEditor extends StatelessWidget {
     return Container(
       width: titleWidth,
       height: cellHeight,
-      padding: const EdgeInsets.symmetric(horizontal: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       alignment: Alignment.center,
       child: FittedBox(
         fit: BoxFit.scaleDown,

@@ -76,7 +76,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("'${_shiftTable.shiftFrame.shiftName}' 管理画面",style: MyStyle.headlineStyleGreen20),
+        title: FittedBox(fit: BoxFit.fill, child: Text("${_shiftTable.shiftFrame.shiftName} [シフトの管理]",style: MyStyle.headlineStyleGreen20),),
         bottomOpacity: 2.0,
         elevation: 2.0,
         actions: [
@@ -469,10 +469,10 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
 
     String message = "I would like to create a shift schedule based on the following information. \n\n";
 
-    DateTime start_day = _shiftTable.shiftFrame.shiftDateRange[0].start;
-    DateTime end_day   = _shiftTable.shiftFrame.shiftDateRange[0].end;
+    DateTime startDay = _shiftTable.shiftFrame.shiftDateRange[0].start;
+    DateTime endDay   = _shiftTable.shiftFrame.shiftDateRange[0].end;
 
-    message += "<Duration>\n${DateFormat('MM/dd(EEEE)').format(start_day)} ~  ${DateFormat('MM/dd(EEEE)').format(end_day)}\n\n";
+    message += "<Duration>\n${DateFormat('MM/dd(EEEE)').format(startDay)} ~  ${DateFormat('MM/dd(EEEE)').format(endDay)}\n\n";
 
     message += "<List of time categories>\n";
     for(int i = 0; i < _shiftTable.shiftFrame.timeDivs.length -1; i++){
@@ -560,11 +560,11 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+              insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               title: Text("「シフト管理画面」の使い方", style:  MyStyle.headlineStyleGreen20, textAlign: TextAlign.center),
               content: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.90,
-                height: MediaQuery.of(context).size.height * 0.90,
+                width: MediaQuery.of(context).size.width * 0.95,
+                height: MediaQuery.of(context).size.height * 0.95,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -946,7 +946,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
               ),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('閉じる'),
+                  child: Text('閉じる', style: MyStyle.headlineStyleGreen13),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
