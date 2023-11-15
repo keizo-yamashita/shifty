@@ -223,7 +223,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                 padding: EdgeInsets.only(left: _screenSize.width * 0.04),
                 child: Align(
                   alignment: Alignment.topLeft,
-                  child: FittedBox(fit: BoxFit.fill, child: Text("② 「リクエスト期間」/「シフト期間」を入力して下さい。", style: MyStyle.defaultStyleGrey15))
+                  child: FittedBox(fit: BoxFit.fill, child: Text("② 「リクエスト期間」/「シフト期間」を設定して下さい。", style: MyStyle.defaultStyleGrey15))
                 ),
               ),
               TabBar(
@@ -561,7 +561,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
   /// シフト期間テンプレートを使った時の処理
   ////////////////////////////////////////////////////////////////////////////////////////////
   void updateTemplateShiftRange(){
-    var now = DateTime.now().subtract(Duration(days: 1));
+    var now = DateTime.now().subtract(const Duration(days: 1));
     
     DateTime startDate  = now;
     DateTime endDate    = now;
@@ -582,9 +582,9 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
     }
     _templateDateRange = [
       DateTimeRange(start: startDate, end: endDate),  
-      (startDate.subtract(Duration(days: 7-_templateRequestLimitIndex)).difference(now).inDays >= 1)
-      ? DateTimeRange(start: now, end: startDate.subtract(Duration(days: 7-_templateRequestLimitIndex)))
-      : DateTimeRange(start: now, end: now)
+      (_templateDateRange[0].start.subtract(const Duration(days: 1)).difference(_templateDateRange[1].end.add(const Duration(days: 1))).inDays+1 <= 0)
+      ? DateTimeRange(start: now, end: now)
+      : DateTimeRange(start: now, end: startDate.subtract(Duration(days: 7-_templateRequestLimitIndex)))
     ]; 
     _shiftFrame.shiftDateRange = _templateDateRange;
   }

@@ -40,7 +40,7 @@ class ShiftTable {
     // init Happiness
     happiness = List<List<double>>.generate(
       shiftRequests.length,
-      (index) => [0,0,0]
+      (index) => [0,0,0,0]
     );
     calcHappiness();
   }
@@ -86,35 +86,34 @@ class ShiftTable {
     // init Happiness
     for(var requestIndex = 0; requestIndex < shiftRequests.length; requestIndex++){
       var request = shiftRequests[requestIndex];
-      double requestTotal  = 0;
-      double responseTotal = 0;
-      int    edgeTotal     = 0;
+      double requestTotal    = 0;
+      double responseTotal   = 0;
+      bool   assignDateFlag  = false; // その日 assign されたかを示すフラグ
+      int    assignDateCount = 0;     // assign された日をカウントするフラグ
       for(var column = 0; column < date; column++){
-        int prevEdgeTotal = edgeTotal;
-        int prevResponse  = 0;
         for(var row = 0; row < time; row++){
-          ;
           if(shiftFrame.assignTable[row][column] != 0){
             if(request.requestTable[row][column] == 1){
               requestTotal += duration[row];
               if(request.responseTable[row][column] == 1){
                 responseTotal += duration[row];
-                if(prevResponse == 0){
-                  edgeTotal++;
-                }
+                // その日1日でも割り当てられたら， True
+                assignDateFlag = true;
               }
             }
           }
-          prevResponse = request.responseTable[row][column];
         }
-        if(prevEdgeTotal != edgeTotal){
-
+        if(assignDateFlag){
+          assignDateCount++; // その日の連続勤務時間をカウント
         }
-        prevEdgeTotal = edgeTotal;
+        assignDateFlag = false;
       }
       happiness[requestIndex][0] = requestTotal;
       happiness[requestIndex][1] = responseTotal;
       happiness[requestIndex][2] = (happiness[requestIndex][0] != 0.0) ? happiness[requestIndex][1] / happiness[requestIndex][0] : 0.0;
+      happiness[requestIndex][3] = assignDateCount.toDouble();
+
+      print(happiness[requestIndex][3]);
     }
   }
 
@@ -156,8 +155,8 @@ class ShiftTable {
             list.add(Piece(count, const Duration(hours: 0)));
           }
           // forward を作成
-          int            currIndex = 0;
-          List<Duration> buf       = [];
+          int           currIndex = 0;
+          List<Duration> buf      = [];
           for(int timeIndex = 0; timeIndex < time; timeIndex++){
             if(list[timeIndex].backward.inSeconds == 0){
               if(buf.isNotEmpty){
@@ -198,7 +197,7 @@ class ShiftTable {
         }
       }
     }
-
+    // １日ずつ割り当てていく
     for(int dateIndex = 0; dateIndex < date; dateIndex++){
       for(int timeIndex = 0; timeIndex < time; timeIndex++){
         // すでに割り当て人数に達しているか確認する
