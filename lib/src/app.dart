@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shift/src/screens/homeScreen/request.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,9 +33,10 @@ class AppWidget extends ConsumerStatefulWidget {
 class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
 
   final List<MenuContent> _contents = [
-    MenuContent(contentTitle: "ホーム", contentIcon: Icons.home,                            content: const HomeWidget()),
-    MenuContent(contentTitle: "アカウント", contentIcon: Icons.person_2,                        content: const AccountScreen()),
-    MenuContent(contentTitle: "設定",      contentIcon: Icons.settings,                        content: const SettingScreen()), 
+    MenuContent(contentTitle: "ホーム",    contentIcon: Icons.home,              content: const HomeWidget()),
+    MenuContent(contentTitle: "アカウント", contentIcon: Icons.person_2,          content: const AccountScreen()),
+    MenuContent(contentTitle: "ご要望",     contentIcon: Icons.sms_failed,       content: const SuggestionBoxScreen()), 
+    MenuContent(contentTitle: "設定",      contentIcon: Icons.settings,          content: const SettingScreen()), 
     // MenuContent(contentTitle: "お知らせ",   contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
   ];
   

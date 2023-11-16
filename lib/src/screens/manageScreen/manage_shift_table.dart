@@ -31,7 +31,9 @@ const int _bufferMax     = 50;
 
 bool _enableZoomIn       = true;
 bool _enableZoomOut      = true;
-int  _defaultAssignTime  = 8;
+int  baseTime            = 8;
+int  minTime             = 1;
+int  baseConDay          = 2;
 Size _screenSize         = const Size(0, 0);
 
 List<bool> _displayInfoFlag = [false, false, false, false];
@@ -145,17 +147,18 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                     Icons.auto_fix_high_outlined, true,
                     (){
                       showConfirmDialog(
-                        context, ref, "確認", "自動でシフトを組みますか？\n\n基本勤務時間 : $_defaultAssignTime 時間 \n (長押しで設定可能) \n", "自動入力しました", () async {
-                          _shiftTable.autoFill(_defaultAssignTime);
+                        context, ref, "確認", "自動でシフトを組みますか？\n\n基本勤務時間 : $baseTime 時間 \n (長押しで設定可能) \n", "自動入力しました", () async {
+                          _shiftTable.autoFill(baseTime, minTime, baseConDay);
                           insertBuffer(_shiftTable.shiftTable);
-                          _shiftTable.calcHappiness();
+                          _shiftTable.calcHappiness(0, 0, 0);
                           setState(() {});
                         }
                       );
+                        // buildAutoFillModalWindow(context);
                     },
                     (){ buildSetDefaultValueModaleWindow();}
                   ),
-                  buildIconButton( Icons.filter_alt_outlined, true, (){ buildAutoFillModalWindow(context);}, (){}),
+                  buildIconButton( Icons.filter_alt_outlined, true, (){ buildRangeFillModalWindow(context);}, (){}),
                   buildIconButton(
                     Icons.touch_app_outlined,
                     _enableEdit,
@@ -225,7 +228,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                     break;
                   }
                 }
-                _shiftTable.calcHappiness();
+                _shiftTable.calcHappiness(0, 0, 0);
               }
               setState(() {});
             },
@@ -477,7 +480,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         _shiftTable.shiftTable = undoredoCtrl.redo().map((e) => List.from(e.map((f) => List.from(f.map((g) => g.copy())).cast<Candidate>()).toList()).cast<List<Candidate>>()).toList();
       }
       _shiftTable.copyshiftTable2ResponseTable();
-      _shiftTable.calcHappiness();
+      _shiftTable.calcHappiness(0, 0, 0);
     });
   }
 
@@ -501,7 +504,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         0.5,
         (BuildContext context, int index){
           setState(() {});
-          _defaultAssignTime = index+1; 
+          baseTime = index+1; 
         },
         title: Text("基本勤務時間の設定", style: MyStyle.headlineStyle15, textAlign: TextAlign.center)
       )
@@ -622,7 +625,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   ///  シフト表自動入力のためのモーダルウィンドウ
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  void buildAutoFillModalWindow(BuildContext context){
+  void buildRangeFillModalWindow(BuildContext context){
     showModalWindow(
       context,
       0.5,
@@ -1171,6 +1174,209 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
           ),
         ],
       ),
+    );
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+/// 人，日時を選択して自動で埋めるためのモーダルウィンドウクラス
+////////////////////////////////////////////////////////////////////////////////////////////
+
+class AutoFillModalWindowWidget extends StatefulWidget {
+  
+  final ShiftTable _shiftTable;
+
+  const AutoFillModalWindowWidget({Key? key, required ShiftTable shiftTable}) : _shiftTable = shiftTable, super(key: key);
+
+  @override
+  AutoFillModalWindowWidgetState createState() => AutoFillModalWindowWidgetState();
+}
+
+class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
+
+  var selectorsIndex = [0, 0, 0];
+  
+  @override
+  Widget build(BuildContext context) {
+    
+    var shiftTable       = widget._shiftTable;
+    var timeDivs1List = List.generate(shiftTable.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '全て' : shiftTable.shiftFrame.timeDivs[index-1].name);
+    var timeDivs2List = List.generate(shiftTable.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '-' : shiftTable.shiftFrame.timeDivs[index-1].name);
+    var requesterList = List.generate(shiftTable.shiftRequests.length + 1, (index) => (index == 0) ? '全員' : shiftTable.shiftRequests[index-1].displayName);
+   
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    /// Auto-Fillの引数の入力UI (viewHistoryがTrueであれば，履歴表示画面を表示)
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        
+        var modalHeight  = _screenSize.height * 0.5;
+        var modalWidth   = _screenSize.width - 20 - _screenSize.width * 0.1;
+        var paddingHeght = modalHeight * 0.04;
+        var buttonHeight = modalHeight * 0.16;
+        var widgetHeight = buttonHeight + paddingHeght * 2;
+
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: _screenSize.width * 0.04),
+          child: SizedBox(
+            height: modalHeight,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: SizedBox(child: buildTextButton( requesterList[selectorsIndex[5]], false, modalWidth, buttonHeight, (){ buildSelectorModaleWindow(requesterList, 5); } )),
+                    ),
+                  ]
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: SizedBox(child: buildTextButton( weekSelect[selectorsIndex[0]], false, modalWidth * (100 / 330), buttonHeight, (){ buildSelectorModaleWindow(weekSelect, 0); } )),
+                    ),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: MyStyle.defaultStyleGrey13))),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: buildTextButton( weekdaySelect[selectorsIndex[1]], false, modalWidth * (100 / 330), buttonHeight, (){ buildSelectorModaleWindow(weekdaySelect, 1); }),
+                    ),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: MyStyle.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (100 / 330))
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: buildTextButton( timeDivs1List[selectorsIndex[2]], false, modalWidth * (100 / 330), buttonHeight, (){ buildSelectorModaleWindow(timeDivs1List, 2); }),
+                    ),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: MyStyle.defaultStyleGrey13))),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: buildTextButton( timeDivs2List[selectorsIndex[3]], false, modalWidth * (100 / 330), buttonHeight, (){ buildSelectorModaleWindow(timeDivs2List, 3); }),
+                    ),
+                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: MyStyle.defaultStyleGrey13))),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: buildIconButton(
+                        (selectorsIndex[4] == 1) ? const Icon(Icons.circle_outlined, size: 20, color: MyStyle.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red),
+                        false,
+                        modalWidth * (65 / 330), buttonHeight,
+                        (){
+                          buildSelectorModaleWindow(List<Icon>.generate(2, (index) => (index == 1) ? const Icon(Icons.circle_outlined, size: 20, color: MyStyle.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red)), 4);
+                        }
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: buildTextButton(
+                        "一括入力", true, modalWidth, buttonHeight,
+                        (){
+                          var rule = ShiftTableRule(
+                            week:      selectorsIndex[0],
+                            weekday:   selectorsIndex[1],
+                            timeDivs1: selectorsIndex[2],
+                            timeDivs2: selectorsIndex[3],
+                            response:  selectorsIndex[4],
+                            requester: selectorsIndex[5]
+                          );
+                          widget._shiftTable.applyRuleToShift(rule);
+                          Navigator.pop(context, rule); // これだけでModalWindowのFuture<dynamic>から返せる
+                          setState(() {});
+                        }
+                      ),
+                    ),
+                  ]
+                )
+              ],
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  Auto-Fill UI作成に使用するテキストボタンを構築
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+  Widget buildTextButton(String text, bool flag, double width, double height, Function action){
+    return SizedBox(
+      width: width,
+      height: height,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          shadowColor: MyStyle.hiddenColor, 
+          minimumSize: Size.zero,
+          padding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          alignment: Alignment.center,
+          side: BorderSide(color: (flag) ? MyStyle.primaryColor : MyStyle.hiddenColor),
+        ),
+        onPressed: (){ 
+          setState(() {
+            action();
+          });
+        },
+        child: Text(text, style: MyStyle.headlineStyleGreen13)
+      ),
+    );
+  }
+
+  Widget buildIconButton(Icon icon, bool flag, double width, double height, Function action){
+    return SizedBox(
+      width: width,
+      height: height,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          minimumSize: Size.zero,
+          padding: EdgeInsets.zero,
+          shadowColor: MyStyle.hiddenColor, 
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          side: BorderSide(color: (flag) ? MyStyle.primaryColor : MyStyle.hiddenColor),
+        ),
+        onPressed: (){ 
+          setState(() {
+            action();
+          });
+        },
+        child: icon
+      ),
+    );
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  buildTextButtonさらに選択モーダルウィンドウを表示するための実装
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+  void buildSelectorModaleWindow(List list, int resultIndex) {
+    showModalWindow(
+      context,
+      0.50,
+      buildModalWindowContainer(
+        context,
+        list,
+        0.50,
+        (BuildContext context, int index){
+          selectorsIndex[resultIndex] = index;
+          setState(() {});
+        }
+      )
     );
   }
 }
