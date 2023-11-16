@@ -40,9 +40,9 @@ class ShiftTable {
     // init Happiness
     happiness = List<List<double>>.generate(
       shiftRequests.length,
-      (index) => [0,0,0,0]
+      (index) => [0,0,0,0,0,0,0]
     );
-    calcHappiness();
+    calcHappiness(0, 0, 0);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -76,8 +76,16 @@ class ShiftTable {
   ////////////////////////////////////////////////////////////////////////////
   /// 希望通過率を求める関数 
   /// ... 実行した瞬間の希望通過率を求める
+  /// [0] ... 希望時間の合計
+  /// [1] ... 勤務予定時間の合計
+  /// [2] ... 希望通過率
+  /// [3] ... 勤務日の数
+  /// [4] ... １日の基本時間を超えた時間の合計
+  /// [5] ... １日の最小勤務時間に満たない勤務時間の合計
+  /// [6] ... 連日勤務の回数
   ////////////////////////////////////////////////////////////////////////////
-  calcHappiness(){
+  
+  calcHappiness(int baseTime, int minTime, int baseConDay){
     // date range
     int date = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1;
     int time = shiftFrame.timeDivs.length;
@@ -86,43 +94,66 @@ class ShiftTable {
     // init Happiness
     for(var requestIndex = 0; requestIndex < shiftRequests.length; requestIndex++){
       var request = shiftRequests[requestIndex];
-      double requestTotal    = 0;
-      double responseTotal   = 0;
-      bool   assignDateFlag  = false; // その日 assign されたかを示すフラグ
-      int    assignDateCount = 0;     // assign された日をカウントするフラグ
+      
+      double requestTotal   = 0;
+      double responseTotal  = 0;
+      bool   assignDateFlag = false; // その日 assign されたかを示すフラグ
+      int    assignDateCnt  = 0;     // assign された日をカウントするフラグ
+      int    dailyTotal     = 0;     // １日の勤務時間
+      int    baseTimeOver   = 0;     // １日の勤務時間の基本勤務時間を超過した時間の累積値
+      int    minTimeUnder   = 0;     // １日の勤務時間が最短勤務時間に満たない時間の累積
+      int    conDayCnt      = 0;     // 連続勤務回数 
+      int    baseConDayOver = 0;     // 連続勤務回数 
+                                               
       for(var column = 0; column < date; column++){
-        for(var row = 0; row < time; row++){
+        dailyTotal = 0;                        
+        for(var row = 0; row < time; row++){   
           if(shiftFrame.assignTable[row][column] != 0){
             if(request.requestTable[row][column] == 1){
-              requestTotal += duration[row];
+              requestTotal += duration[row];   
               if(request.responseTable[row][column] == 1){
-                responseTotal += duration[row];
+                dailyTotal += duration[row];
                 // その日1日でも割り当てられたら， True
                 assignDateFlag = true;
               }
             }
           }
         }
+        responseTotal += dailyTotal;
+        if(baseTime != 0 && baseTime < dailyTotal){
+          baseTimeOver += dailyTotal - baseTime;
+        }
+        if(minTime != 0 && minTime > dailyTotal){
+          minTimeUnder += minTime - dailyTotal;
+        }
+        dailyTotal = 0;
         if(assignDateFlag){
-          assignDateCount++; // その日の連続勤務時間をカウント
+          conDayCnt++;
+          assignDateCnt++;
+        }else{
+          if(baseConDay != 0 && baseConDay < conDayCnt){
+            baseConDayOver += conDayCnt - baseConDay;
+          }
+          conDayCnt = 0;
         }
         assignDateFlag = false;
       }
+
       happiness[requestIndex][0] = requestTotal;
       happiness[requestIndex][1] = responseTotal;
       happiness[requestIndex][2] = (happiness[requestIndex][0] != 0.0) ? happiness[requestIndex][1] / happiness[requestIndex][0] : 0.0;
-      happiness[requestIndex][3] = assignDateCount.toDouble();
-
-      print(happiness[requestIndex][3]);
+      happiness[requestIndex][3] = assignDateCnt.toDouble();
+      happiness[requestIndex][4] = baseTimeOver.toDouble();
+      happiness[requestIndex][5] = minTimeUnder.toDouble();
+      happiness[requestIndex][6] = baseConDayOver.toDouble();
     }
   }
 
   ////////////////////////////////////////////////////////////////////////////
   /// 自動でシフト表を入力する関数
   ////////////////////////////////////////////////////////////////////////////
-  autoFill(int defaultValue){
-    int minMinutes = defaultValue*60;
-    int maxMinites = 16*60;
+  autoFill(int baseTime, int minTime, int baseConDay){
+    int minMinutes = baseTime*60;
 
     int date = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1;
     int time = shiftFrame.timeDivs.length;
@@ -210,7 +241,7 @@ class ShiftTable {
             }
           }
           if(semiCandidate.isNotEmpty){
-            calcHappiness();
+            calcHappiness(0, 0, 0);
             double minScore   = 1.0;
             int minScoreIndex = 0;
             // スコア順に並び替える
@@ -391,9 +422,9 @@ class ShiftTable {
     // init Happiness
     happiness = List<List<double>>.generate(
       shiftRequests.length,
-      (index) => [0, 0, 0]
+      (index) => [0,0,0,0,0,0,0]
     );
-    calcHappiness();
+    calcHappiness(0, 0, 0);
 
     return this;
   }
