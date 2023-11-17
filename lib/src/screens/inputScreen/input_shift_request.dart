@@ -111,108 +111,109 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
         ],
       ),
     
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(height: _screenSize.height * 0.02),
-          
-          ////////////////////////////////////////////////////////////////////////////////////////////
-          /// ツールボタン
-          ////////////////////////////////////////////////////////////////////////////////////////////
-          
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                buildIconButton( Icons.zoom_in, _enableZoomIn, (){ zoomIn(); }, (){}),
-                buildIconButton( Icons.zoom_out, _enableZoomOut, (){ zoomOut(); }, (){}),
-                buildIconButton( Icons.filter_alt_outlined, isShiftRange,
-                  (){
-                    DateTime now = DateTime.now();
-                    isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
-                    if(isShiftRange){
-                      buildAutoFillModalWindow(context);
-                    }else{
-                      showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
-                    }
-                  },
-                  (){}
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// ツールボタン
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    buildIconButton( Icons.zoom_in, _enableZoomIn, (){ zoomIn(); }, (){}),
+                    buildIconButton( Icons.zoom_out, _enableZoomOut, (){ zoomOut(); }, (){}),
+                    buildIconButton( Icons.filter_alt_outlined, isShiftRange,
+                      (){
+                        DateTime now = DateTime.now();
+                        isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
+                        if(isShiftRange){
+                          buildAutoFillModalWindow(context);
+                        }else{
+                          showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                        }
+                      },
+                      (){}
+                    ),
+                    buildIconButton(
+                      Icons.touch_app_outlined, _enableEdit && isShiftRange,
+                      (){
+                        DateTime now = DateTime.now();
+                        isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
+                        if(isShiftRange){
+                          _enableEdit = !_enableEdit;
+                        }else{
+                          showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                        }
+                      },
+                      (){
+                        DateTime now = DateTime.now();
+                        isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
+                        if(isShiftRange){
+                          buildInkChangeModaleWindow();
+                          _enableEdit = true;
+                        }else{
+                          showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                        }
+                      }
+                    ),
+                    buildIconButton( Icons.undo,  undoredoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
+                    buildIconButton( Icons.redo,  undoredoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){})
+                  ],
                 ),
-                buildIconButton(
-                  Icons.touch_app_outlined, _enableEdit && isShiftRange,
-                  (){
-                    DateTime now = DateTime.now();
-                    isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
-                    if(isShiftRange){
-                      _enableEdit = !_enableEdit;
-                    }else{
-                      showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません\n編集が必要な場合は管理者に連絡してください", true);
-                    }
-                  },
-                  (){
-                    DateTime now = DateTime.now();
-                    isShiftRange = now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0;
-                    if(isShiftRange){
-                      buildInkChangeModaleWindow();
-                      _enableEdit = true;
-                    }else{
-                      showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません\n編集が必要な場合は管理者に連絡してください", true);
-                    }
-                  }
-                ),
-                buildIconButton( Icons.undo,  undoredoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
-                buildIconButton( Icons.redo,  undoredoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){})
-              ],
+              ),
             ),
-          ),
-          
-          SizedBox(height: _screenSize.height * 0.02),
-          
-          ////////////////////////////////////////////////////////////////////////////////////////////
-          /// メインテーブル
-          ////////////////////////////////////////////////////////////////////////////////////////////
-          (isShiftRange)
-          ? ShiftRequestEditor(
-            sheetHeight: _screenSize.height * (1.0 - 0.02 - 0.02) - 30,
-            sheetWidth:  _screenSize.width,
-            cellHeight:  _cellHeight*1,
-            cellWidth:   _cellWidth*1,
-            titleHeight: _cellHeight*1.5,
-            titleWidth:  _cellWidth*3.5,
-            onChangeSelect:   (p0){
-              setState(() {
-                coordinate = p0!;
-                if(_enableEdit){
-                  _shiftRequest.requestTable[coordinate!.row][coordinate!.column] = _inkValue;
-                }
-              });
-            },
-            onInputEnd: (){ insertBuffer(_shiftRequest.requestTable); },
-            shiftRequest: _shiftRequest,
-            enableEdit: _enableEdit,
-            selected: coordinate,
-            isDark: ref.read(settingProvider).enableDarkTheme,
-          )
-          : ShiftResponseEditor(
-            sheetHeight: _screenSize.height * (1.0 - 0.02 - 0.02) - 30,
-            sheetWidth:  _screenSize.width,
-            cellHeight:  _cellHeight*1,
-            cellWidth:   _cellWidth*1,
-            titleHeight: _cellHeight*1.5,
-            titleWidth:  _cellWidth*3.5,
-            onChangeSelect:   (p0){
-              setState(() {
-                coordinate = p0!;
-              });
-            },
-            onInputEnd: (){ insertBuffer(_shiftRequest.responseTable); },
-            shiftRequest: _shiftRequest,
-            enableEdit: false,
-            selected: coordinate,
-            isDark: ref.read(settingProvider).enableDarkTheme,
-          )
-        ],
+            
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// メインテーブル
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            (isShiftRange)
+            ? ShiftRequestEditor(
+              sheetHeight: _screenSize.height * 1.0 - 30 - 16,
+              sheetWidth:  _screenSize.width,
+              cellHeight:  _cellHeight*1,
+              cellWidth:   _cellWidth*1,
+              titleHeight: _cellHeight*1.5,
+              titleWidth:  _cellWidth*3.5,
+              onChangeSelect:   (p0){
+                setState(() {
+                  coordinate = p0!;
+                  if(_enableEdit){
+                    _shiftRequest.requestTable[coordinate!.row][coordinate!.column] = _inkValue;
+                  }
+                });
+              },
+              onInputEnd: (){ insertBuffer(_shiftRequest.requestTable); },
+              shiftRequest: _shiftRequest,
+              enableEdit: _enableEdit,
+              selected: coordinate,
+              isDark: ref.read(settingProvider).enableDarkTheme,
+            )
+            : ShiftResponseEditor(
+              sheetHeight: _screenSize.height * 1.0 - 30 - 16,
+              sheetWidth:  _screenSize.width,
+              cellHeight:  _cellHeight*1,
+              cellWidth:   _cellWidth*1,
+              titleHeight: _cellHeight*1.5,
+              titleWidth:  _cellWidth*3.5,
+              onChangeSelect:   (p0){
+                setState(() {
+                  coordinate = p0!;
+                });
+              },
+              onInputEnd: (){ insertBuffer(_shiftRequest.responseTable); },
+              shiftRequest: _shiftRequest,
+              enableEdit: false,
+              selected: coordinate,
+              isDark: ref.read(settingProvider).enableDarkTheme,
+            )
+          ],
+        ),
       ),
     );
   }

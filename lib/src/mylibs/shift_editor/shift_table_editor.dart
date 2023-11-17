@@ -58,33 +58,29 @@ class ShiftTableEditor extends StatelessWidget {
                 _judgeHit(context, details.globalPosition);
               }
             },
-              
-            child: Container(
-              color: Colors.transparent,
-              child: Padding(
+            child: Padding(
               padding: const EdgeInsets.only(right: 3, left: 3),
-                child: HorizontalDataTable(
-                  leftHandSideColBackgroundColor: Colors.transparent,
-                  rightHandSideColBackgroundColor: Colors.transparent,
-                  elevationColor: Colors.transparent,
-                  leftHandSideColumnWidth: titleWidth,
-                  rightHandSideColumnWidth: (shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1) * cellWidth,
-                  isFixedHeader: true,
-                  headerWidgets: _getTitleWidget(),
-                  leftSideItemBuilder: _generateFirstColumnsRow,
-                  rightSideItemBuilder: _generateRightHandSideColumnRow,
-                  itemCount: shiftTable.shiftFrame.timeDivs.length,
-                  verticalScrollbarStyle: const ScrollbarStyle(
-                    isAlwaysShown: false,
-                    thickness: 0.0,
-                  ),
-                  horizontalScrollbarStyle: const ScrollbarStyle(
-                    isAlwaysShown: false,
-                    thickness: 0.0,
-                  ),
-                  scrollPhysics : null,
-                  horizontalScrollPhysics: null
+              child: HorizontalDataTable(
+                leftHandSideColBackgroundColor: Colors.transparent,
+                rightHandSideColBackgroundColor: Colors.transparent,
+                elevationColor: Colors.transparent,
+                leftHandSideColumnWidth: titleWidth,
+                rightHandSideColumnWidth: (shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1) * cellWidth,
+                isFixedHeader: true,
+                headerWidgets: _getTitleWidget(),
+                leftSideItemBuilder: _generateFirstColumnsRow,
+                rightSideItemBuilder: _generateRightHandSideColumnRow,
+                itemCount: shiftTable.shiftFrame.timeDivs.length,
+                verticalScrollbarStyle: const ScrollbarStyle(
+                  isAlwaysShown: false,
+                  thickness: 0.0,
                 ),
+                horizontalScrollbarStyle: const ScrollbarStyle(
+                  isAlwaysShown: false,
+                  thickness: 0.0,
+                ),
+                scrollPhysics : null,
+                horizontalScrollPhysics: null,
               ),
             ),
           ),
