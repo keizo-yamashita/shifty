@@ -80,7 +80,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
 
     // AppBar の高さの取得 & スクリーンサイズの取得
     _appBarHeight = AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
-    _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - _appBarHeight);
+    _screenSize   = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - _appBarHeight);
     
     // プロバイダーからのデータ取得
     ref.read(settingProvider).loadPreferences();

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:share/share.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +18,6 @@ import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift/shift_request.dart';
 import 'package:shift/src/mylibs/shift/shift_table.dart';
 import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
-import 'package:shift/src/screens/signInScreen/sign_in.dart';
 import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
 import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
@@ -28,22 +26,39 @@ import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
 /// Home 画面
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-class HomeWidget extends ConsumerStatefulWidget{
+class HomeWidget extends ConsumerStatefulWidget {
   const HomeWidget({Key? key}) : super(key: key);
   @override
   HomeWidgetState createState() => HomeWidgetState();
 }
 
-class HomeWidgetState extends ConsumerState<HomeWidget> {
+class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProviderStateMixin {
   
-  bool isOwner     = false;
-  Size _screenSize = const Size(0, 0);
+  bool   isOwner       = false;
+  double _appBarHeight = 0;     
+  Size   _screenSize   = const Size(0, 0);
+
+    // タブコントローラー
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    var appBarHeight = AppBar().preferredSize.height;
-    _screenSize      = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - appBarHeight);
+    // AppBar の高さの取得 & スクリーンサイズの取得 (AppBarはこのbuildでは作ってないので appbar の高さはいらない)
+    _appBarHeight = MediaQuery.of(context).padding.top;
+    _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - _appBarHeight);
 
     String id = ref.read(deepLinkProvider).shiftFrameId;
 
@@ -51,7 +66,71 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
       Navigator.push(context, MaterialPageRoute(builder: (c) => AddShiftRequestWidget(tableId: id)));
       ref.read(deepLinkProvider).shiftFrameId = "";
     }
-    ref.read(settingProvider).loadPreferences();    
+    ref.read(settingProvider).loadPreferences();
+
+    List<Widget> tabList = const [
+      Tab(text: 'フォロー中のシフト表'),
+      Tab(text: '管理中のシフト表'),
+    ];
+
+    List<Widget> itemList = [
+      // フォローしているシフト表
+      SingleChildScrollView(
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('shift-follower').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return const Center(child: CircularProgressIndicator(color: MyStyle.defaultColor));
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator(color: MyStyle.primaryColor));
+            }
+            return FutureBuilder<Widget>(
+              future: buildMyShiftRequest(snapshot.data!.docs, ref.read(settingProvider).enableDarkTheme ),
+              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator(color: MyStyle.primaryColor));
+                } else if (snapshot.hasError) {
+                  return const Center(child: CircularProgressIndicator(color: MyStyle.defaultColor));
+                } else {
+                  return snapshot.data!;
+                }
+              },
+            );
+          },
+        ),
+      ),// 管理中のシフト表
+      SingleChildScrollView(
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('shift-leader').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return const Center(child: CircularProgressIndicator(color: MyStyle.defaultColor));
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator(color: MyStyle.primaryColor));
+            }
+            return FutureBuilder<Widget>(
+              future: buildMyShiftFrame(snapshot.data!.docs, ref.read(settingProvider).enableDarkTheme),
+              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator(color: MyStyle.primaryColor));
+                } else if (snapshot.hasError) {
+                  return const Center(child: CircularProgressIndicator(color: MyStyle.defaultColor));
+                } else {
+                  return snapshot.data!;
+                }
+              },
+            );
+          },
+        ),
+      )
+    ];
+
+    if((ref.read(settingProvider).defaultShiftView)){
+      tabList = tabList.reversed.toList();
+      itemList = itemList.reversed.toList();
+    }
 
     return Scaffold(
       floatingActionButton: Padding(
@@ -81,6 +160,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
           }
         ),
       ),
+
       extendBody: true,
       extendBodyBehindAppBar: true,
     
@@ -89,107 +169,36 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
       /// StreamBuilder 使用
       ////////////////////////////////////////////////////////////////////////////////////////////
     
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: _screenSize.height/20 + appBarHeight),
-              SizedBox(height: _screenSize.height/40),
-              
-              // 切り替えスイッチ (従業員としてのシフト表 or 管理者としてのシフト表 の表示)
-              SizedBox(
-                width: _screenSize.width  * 0.8,
-                child: ListTile(
-                  title: Row(
-                    children: [
-                      Flexible(
-                        child: Text((isOwner == ref.read(settingProvider).defaultShiftView) ? "フォロー中のシフト表" : "管理中のシフト表".padRight(10, '　'), style: MyStyle.headlineStyleGreen20)
-                      ),
-                    ],
-                  ),
-                  leading: CupertinoSwitch(
-                    thumbColor: MyStyle.primaryColor,
-                    activeColor : MyStyle.primaryColor.withAlpha(100),
-                    value: isOwner,
-                    onChanged: (result){
-                      setState(() {
-                        isOwner = result;    
-                      });
-                    },
-                  ),
-                ),
-              ),
-
-              SizedBox(height: _screenSize.height * 0.03),
-
-              (ref.read(signInProvider).user != null && isOwner != ref.read(settingProvider).defaultShiftView) ? StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('shift-leader').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return const CircularProgressIndicator(color: MyStyle.defaultColor);
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator(color: MyStyle.primaryColor);
-                  }
-                  return FutureBuilder<Widget>(
-                    future: buildMyShiftFrame(snapshot.data!.docs, ref.read(settingProvider).enableDarkTheme),
-                    builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator(color: MyStyle.primaryColor);
-                      } else if (snapshot.hasError) {
-                        return const CircularProgressIndicator(color: MyStyle.defaultColor);
-                      } else {
-                        return snapshot.data!;
-                      }
-                    },
-                  );
-                },
-              )
-              : (ref.read(signInProvider).user != null)
-              ? StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('shift-follower').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('SteremBuilder でエラーが発生しました。: ${snapshot.error}');
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator(color: MyStyle.primaryColor);
-                  }
-                  return FutureBuilder<Widget>(
-                    future: buildMyShiftRequest(snapshot.data!.docs, ref.read(settingProvider).enableDarkTheme ),
-                    builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator(color: MyStyle.primaryColor);
-                      } else if (snapshot.hasError) {
-                        return const CircularProgressIndicator(color: MyStyle.defaultColor);
-                      } else {
-                        return snapshot.data!;
-                      }
-                    },
-                  );
-                },
-              )
-              : Column(
-                children: [
-                  Text("シフト表を表示するには", style: MyStyle.defaultStyleGrey15),
-                  Text("ログインする必要があります。", style: MyStyle.defaultStyleGrey15),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: 150,
-                    child: OutlinedButton(
-                      child: Text('ログイン画面へ', style: MyStyle.headlineStyleGreen15),
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (c) => const SignInScreen()));
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: _screenSize.height/10 + appBarHeight),
-            ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: _appBarHeight),
+          SizedBox(
+            height: 60,
+            child: TabBar(
+              controller: _tabController,
+              indicatorColor: MyStyle.primaryColor,
+              labelStyle: MyStyle.headlineStyle15,
+              labelColor: MyStyle.primaryColor,  
+              unselectedLabelColor: Colors.grey, 
+              tabs: tabList,
+              onTap: (int index){
+                if(index == 0){
+                }else{
+                }
+              },
+            ),
           ),
-        ),
+          SizedBox(height: _screenSize.height * 0.02), 
+          SizedBox(
+            height: _screenSize.height * (1 - 0.06) - 60,
+            child: TabBarView(
+              controller: _tabController,
+              children: itemList,
+            ),
+          ),
+          SizedBox(height: _screenSize.height * 0.04), 
+        ],
       )
     );
   }

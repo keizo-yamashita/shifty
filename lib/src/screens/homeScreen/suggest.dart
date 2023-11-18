@@ -57,14 +57,12 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
                 child: TextField(
                   controller: textConroller,
                   cursorColor: MyStyle.primaryColor,
-                  style: MyStyle.headlineStyleGreen15,
+                  style: MyStyle.headlineStyle15,
                   focusNode: focusNode,
                   maxLines: 5,
                   maxLength: 500,
                   autofocus: false,
                   decoration: InputDecoration(
-                    // contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
-                    prefixIconColor: MyStyle.primaryColor,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(
