@@ -39,8 +39,7 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: <Widget>[
-              SizedBox(height: _screenSize.height/20 + appBarHeight),
-              SizedBox(height: _screenSize.height/40),
+              SizedBox(height: _screenSize.height * 0.1 + appBarHeight / 2),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 child: Column(
@@ -135,11 +134,14 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
     final User? user = auth.currentUser;
     final uid = user?.uid;
 
-    final data = {
-      'user-id'    : uid,
-      'suggestion' : suggestion,
-    };
-    print(suggestion);
-    await firestore.collection('suggestion').add(data);
+    Map<String, String> data;
+    
+    if(uid != null){
+      data = {
+        'user-id'    : uid,
+        'suggestion' : suggestion,
+      };
+      await firestore.collection('suggestion').add(data);
+    }
   }
 }

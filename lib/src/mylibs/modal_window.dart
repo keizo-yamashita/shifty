@@ -37,18 +37,18 @@ Future<dynamic> showModalWindow(BuildContext context, double height, Widget chil
             width: MediaQuery.of(context).size.width,
             child: Column(
               children: [
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
                 Container(
                   width: 100,
-                  height: 3,
+                  height: 4,
                   decoration: BoxDecoration(
                     color: Colors.grey,
                     borderRadius: BorderRadius.circular(10)
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * height - MediaQuery.of(context).padding.bottom - 23,
+                  height: MediaQuery.of(context).size.height * height - 20,
                   width: MediaQuery.of(context).size.width,
                   child: child
                 )
@@ -66,47 +66,51 @@ Future<dynamic> showModalWindow(BuildContext context, double height, Widget chil
 //////////////////////////////////////////////////////////////////////
 
 Widget buildModalWindowContainer(BuildContext context,  list, double height, Function(BuildContext, int) onTapped, {Text? title, bool? fadeout}){
-  return Column(
-    children: [
-      if(title != null)
-      SizedBox(
-        height: 50,
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: 1,
-          itemBuilder: (BuildContext context, int index){
-            return ListTile(
-              title: title,
-              onTap: (){
-                Navigator.of(context).pop();
-              },
-            );
-          }
-        ),
-      ),
-      SizedBox(
-        height: MediaQuery.of(context).size.height * height - MediaQuery.of(context).padding.bottom - 23 - 50,
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: list.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Column(
-              children: [            
-                ListTile(
-                  title: (list.runtimeType == List<String>) ? Text(list[index], style: MyStyle.headlineStyle15,textAlign: TextAlign.center) : list[index],
-                  onTap: () {
-                    onTapped(context, index);
-                    if(fadeout == null || fadeout == true){
-                      Navigator.of(context).pop();
-                    }
+  return LayoutBuilder(
+    builder: (context, constraint){
+      return Column(
+        children: [
+          if(title != null)
+          SizedBox(
+            height:40,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: 1,
+              itemBuilder: (BuildContext context, int index){
+                return ListTile(
+                  title: title,
+                  onTap: (){
+                    Navigator.of(context).pop();
                   },
-                ),
-                const Divider(thickness: 2)
-              ],
-            );
-          },
-        ),
-      ),
-    ],
+                );
+              }
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * height - 20,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: list.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
+                  children: [            
+                    ListTile(
+                      title: (list.runtimeType == List<String>) ? Text(list[index], style: MyStyle.headlineStyle15,textAlign: TextAlign.center) : list[index],
+                      onTap: () {
+                        onTapped(context, index);
+                        if(fadeout == null || fadeout == true){
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                    const Divider(thickness: 2)
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    }
   );
 }

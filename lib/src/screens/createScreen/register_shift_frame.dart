@@ -111,8 +111,6 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             
-            SizedBox(height: _screenSize.height * 0.02),
-            
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// ツールボタン
             /// height : screenSize.height * 0.075
@@ -120,24 +118,25 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
             
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  buildIconButton( Icons.zoom_in, _enableZoomIn, (){ zoomIn(); }, (){}),
-                  buildIconButton( Icons.zoom_out, _enableZoomOut, (){ zoomOut(); }, (){}),
-                  buildIconButton( Icons.filter_alt_outlined, true, (){ buildAutoFillModalWindow(context); }, (){}),
-                  buildIconButton(
-                    Icons.touch_app_outlined, _enableEdit,
-                    (){_enableEdit = !_enableEdit;},
-                    (){ buildInkChangeModaleWindow();}
-                  ),
-                  buildIconButton( Icons.undo,  undoredoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
-                  buildIconButton( Icons.redo,  undoredoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){}),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    buildIconButton( Icons.zoom_in, _enableZoomIn, (){ zoomIn(); }, (){}),
+                    buildIconButton( Icons.zoom_out, _enableZoomOut, (){ zoomOut(); }, (){}),
+                    buildIconButton( Icons.filter_alt_outlined, true, (){ buildAutoFillModalWindow(context); }, (){}),
+                    buildIconButton(
+                      Icons.touch_app_outlined, _enableEdit,
+                      (){_enableEdit = !_enableEdit;},
+                      (){ buildInkChangeModaleWindow();}
+                    ),
+                    buildIconButton( Icons.undo,  undoredoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
+                    buildIconButton( Icons.redo,  undoredoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){}),
+                  ],
+                ),
               ),
             ),
-            
-            SizedBox(height: _screenSize.height * 0.02),
             
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// メインテーブル
@@ -145,7 +144,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
             ////////////////////////////////////////////////////////////////////////////////////////////
             
             ShiftFrameEditor(
-              sheetHeight: _screenSize.height * (1.0 - 0.02 - 0.02) - 30,
+              sheetHeight: _screenSize.height * 1.0 - 46 - 8,
               sheetWidth:  _screenSize.width,
               cellHeight:  _cellHeight*1,
               cellWidth:   _cellWidth*1,
@@ -165,6 +164,9 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
               selected: coordinate,
               isDark: ref.read(settingProvider).enableDarkTheme,
             ),
+
+            // space
+            const SizedBox(height: 8)
           ],
         ),
       ),

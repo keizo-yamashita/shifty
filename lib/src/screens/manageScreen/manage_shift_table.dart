@@ -66,7 +66,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   @override
   Widget build(BuildContext context) {
 
-    _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top  - MediaQuery.of(context).padding.bottom);
+    _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top  - MediaQuery.of(context).padding.bottom/2);
     _shiftTable = ref.read(shiftTableProvider).shiftTable;
     _isDark     = ref.read(settingProvider).enableDarkTheme;
 
@@ -129,189 +129,187 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         ],
       ),
     
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            /// ツールボタン
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            // height 30 + 16
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    buildIconButton( Icons.zoom_in, _enableZoomIn, (){ zoomIn(); }, (){}),
-                    buildIconButton( Icons.zoom_out, _enableZoomOut, (){ zoomOut(); }, (){}),
-                    buildIconButton(
-                      Icons.auto_fix_high_outlined, true,
-                      (){
-                        //showConfirmDialog(
-                        //  context, ref, "確認", "自動でシフトを組みますか？\n\n基本勤務時間 : $baseTime 時間 \n (長押しで設定可能) \n", "自動入力しました", () async {
-                        //    _shiftTable.autoFill(baseTime, minTime, baseConDay);
-                        //    insertBuffer(_shiftTable.shiftTable);
-                        //    _shiftTable.calcHappiness(0, 0, 0);
-                        //    setState(() {});
-                        //  }
-                        //);
-                        buildAutoFillModalWindow(context);  // buildAutoFillModalWindow(context);
-                      },
-                      (){ buildSetDefaultValueModaleWindow();}
-                    ),
-                    buildIconButton( Icons.filter_alt_outlined, true, (){ buildRangeFillModalWindow(context);}, (){}),
-                    buildIconButton(
-                      Icons.touch_app_outlined,
-                      _enableEdit,
-                      (){
-                        if(_selectedIndex != 0){
-                          _enableEdit = !_enableEdit;
-                        }
-                        else{
-                          showAlertDialog(context, ref, "エラー", "このツールボタンは、「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
-                        }
-                      },
-                      (){
-                        if(_selectedIndex != 0){
-                          buildInkChangeModaleWindow(); 
-                          _enableEdit = true;
-                        }
-                        else{
-                          showAlertDialog(context, ref, "エラー", "このツールボタンは、「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
-                        }
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          ////////////////////////////////////////////////////////////////////////////////////////////
+          /// ツールボタン
+          ////////////////////////////////////////////////////////////////////////////////////////////
+          // height 30 + 16
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  buildIconButton( Icons.zoom_in, _enableZoomIn, (){ zoomIn(); }, (){}),
+                  buildIconButton( Icons.zoom_out, _enableZoomOut, (){ zoomOut(); }, (){}),
+                  buildIconButton(
+                    Icons.auto_fix_high_outlined, true,
+                    (){
+                      //showConfirmDialog(
+                      //  context, ref, "確認", "自動でシフトを組みますか？\n\n基本勤務時間 : $baseTime 時間 \n (長押しで設定可能) \n", "自動入力しました", () async {
+                      //    _shiftTable.autoFill(baseTime, minTime, baseConDay);
+                      //    insertBuffer(_shiftTable.shiftTable);
+                      //    _shiftTable.calcHappiness(0, 0, 0);
+                      //    setState(() {});
+                      //  }
+                      //);
+                      buildAutoFillModalWindow(context);  // buildAutoFillModalWindow(context);
+                    },
+                    (){ buildSetDefaultValueModaleWindow();}
+                  ),
+                  buildIconButton( Icons.filter_alt_outlined, true, (){ buildRangeFillModalWindow(context);}, (){}),
+                  buildIconButton(
+                    Icons.touch_app_outlined,
+                    _enableEdit,
+                    (){
+                      if(_selectedIndex != 0){
+                        _enableEdit = !_enableEdit;
                       }
-                    ),
-                    buildIconButton( Icons.undo,  undoredoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
-                    buildIconButton( Icons.redo,  undoredoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){})
-                  ],
-                ),
-              ),
-            ),
-            
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            /// メインテーブル
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            
-            (_selectedIndex == 0)
-            ? ShiftTableEditor(
-              sheetHeight: _screenSize.height * 1.0 - 60 - 30 - 16 - 16,
-              sheetWidth:  _screenSize.width,
-              cellHeight:  _cellHeight*1,
-              cellWidth:   _cellWidth*1,
-              titleHeight: _cellHeight*1.5,
-              titleWidth:  _cellWidth*3.5,
-              onChangeSelect: (p0) async {
-                coordinate = p0!;
-                setState(() {});
-                await buildAssignSelectModaleWindow(p0.column, p0.row);
-                setState(() {});
-              },
-              onInputEnd: (){ insertBuffer(_shiftTable.shiftTable); },
-              shiftTable: _shiftTable,
-              enableEdit: true,
-              selected: coordinate,
-                isDark: ref.read(settingProvider).enableDarkTheme,
-            )
-            : ShiftResponseEditor(
-              sheetHeight: _screenSize.height * 1.0 - 60 - 30 - 16 - 16,
-              sheetWidth:  _screenSize.width,
-              cellHeight:  _cellHeight*1,
-              cellWidth:   _cellWidth*1,
-              titleHeight: _cellHeight*1.5,
-              titleWidth:  _cellWidth*3.5,
-              onChangeSelect: (p0) async {
-                coordinate = p0!;
-                if(_enableEdit && _shiftTable.shiftRequests[_selectedIndex-1].requestTable[p0.row][p0.column] == 1){
-                  _shiftTable.shiftRequests[_selectedIndex-1].responseTable[p0.row][p0.column] = _inkValue;
-                  for(int i = 0; i < _shiftTable.shiftTable[p0.row][p0.column].length; i++){
-                    if(_shiftTable.shiftTable[p0.row][p0.column][i].userIndex == _selectedIndex -1){
-                      _shiftTable.shiftTable[p0.row][p0.column][i].assign = (_inkValue == 1) ? true : false;
-                      break;
+                      else{
+                        showAlertDialog(context, ref, "エラー", "このツールボタンは、「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
+                      }
+                    },
+                    (){
+                      if(_selectedIndex != 0){
+                        buildInkChangeModaleWindow(); 
+                        _enableEdit = true;
+                      }
+                      else{
+                        showAlertDialog(context, ref, "エラー", "このツールボタンは、「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
+                      }
                     }
-                  }
-                  _shiftTable.calcHappiness(0, 0, 0);
-                }
-                setState(() {});
-              },
-              onInputEnd: (){ insertBuffer(_shiftTable.shiftTable); },
-              shiftRequest: _shiftTable.shiftRequests[_selectedIndex-1],
-              enableEdit: _enableEdit,
-              selected: coordinate,
-              isDark: ref.read(settingProvider).enableDarkTheme,
-            ),
-            
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            /// 切り替えボタン
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            
-            // height : 60 + 16
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    buildBottomButton(
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("", style: (_selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("      全体      ", style: (_selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("", style: (_selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                          ],
-                        ),
-                      ),
-                      _selectedIndex == 0,
-                      (){ _selectedIndex = 0; },
-                      (){}
-                    ),
-                    for(int requesterIndex = 0; requesterIndex < _shiftTable.shiftRequests.length; requesterIndex++)
-                    buildBottomButton(
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(_shiftTable.shiftRequests[requesterIndex].displayName, style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("${(_shiftTable.happiness[requesterIndex][1]/60).toStringAsFixed(1)} h (${(_shiftTable.happiness[requesterIndex][0]/60).toStringAsFixed(1)} h)", style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("${(_shiftTable.happiness[requesterIndex][2]*100).toStringAsFixed(2)} %", style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                          ],
-                        ),
-                      ),
-                      _selectedIndex == requesterIndex+1,
-                      (){
-                        _selectedIndex = requesterIndex + 1; _enableEdit = false;
-                      },
-                      (){}
-                    ),
-                    if(_shiftTable.shiftRequests.isEmpty)
-                    buildBottomButton(
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("フォロワーがいません", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                          ],
-                        ),
-                      ),
-                      false,
-                      (){},
-                      (){}
-                    )
-                  ],
-                ),
+                  ),
+                  buildIconButton( Icons.undo,  undoredoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
+                  buildIconButton( Icons.redo,  undoredoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){})
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+          
+          ////////////////////////////////////////////////////////////////////////////////////////////
+          /// メインテーブル
+          ////////////////////////////////////////////////////////////////////////////////////////////
+          
+          (_selectedIndex == 0)
+          ? ShiftTableEditor(
+            sheetHeight: _screenSize.height * 1.0 - 60 - 30 - 16 - 16,
+            sheetWidth:  _screenSize.width,
+            cellHeight:  _cellHeight*1,
+            cellWidth:   _cellWidth*1,
+            titleHeight: _cellHeight*1.5,
+            titleWidth:  _cellWidth*3.5,
+            onChangeSelect: (p0) async {
+              coordinate = p0!;
+              setState(() {});
+              await buildAssignSelectModaleWindow(p0.column, p0.row);
+              setState(() {});
+            },
+            onInputEnd: (){ insertBuffer(_shiftTable.shiftTable); },
+            shiftTable: _shiftTable,
+            enableEdit: true,
+            selected: coordinate,
+              isDark: ref.read(settingProvider).enableDarkTheme,
+          )
+          : ShiftResponseEditor(
+            sheetHeight: _screenSize.height * 1.0 - 60 - 30 - 16 - 16,
+            sheetWidth:  _screenSize.width,
+            cellHeight:  _cellHeight*1,
+            cellWidth:   _cellWidth*1,
+            titleHeight: _cellHeight*1.5,
+            titleWidth:  _cellWidth*3.5,
+            onChangeSelect: (p0) async {
+              coordinate = p0!;
+              if(_enableEdit && _shiftTable.shiftRequests[_selectedIndex-1].requestTable[p0.row][p0.column] == 1){
+                _shiftTable.shiftRequests[_selectedIndex-1].responseTable[p0.row][p0.column] = _inkValue;
+                for(int i = 0; i < _shiftTable.shiftTable[p0.row][p0.column].length; i++){
+                  if(_shiftTable.shiftTable[p0.row][p0.column][i].userIndex == _selectedIndex -1){
+                    _shiftTable.shiftTable[p0.row][p0.column][i].assign = (_inkValue == 1) ? true : false;
+                    break;
+                  }
+                }
+                _shiftTable.calcHappiness(0, 0, 0);
+              }
+              setState(() {});
+            },
+            onInputEnd: (){ insertBuffer(_shiftTable.shiftTable); },
+            shiftRequest: _shiftTable.shiftRequests[_selectedIndex-1],
+            enableEdit: _enableEdit,
+            selected: coordinate,
+            isDark: ref.read(settingProvider).enableDarkTheme,
+          ),
+          
+          ////////////////////////////////////////////////////////////////////////////////////////////
+          /// 切り替えボタン
+          ////////////////////////////////////////////////////////////////////////////////////////////
+          
+          // height : 60 + 16
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  buildBottomButton(
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("", style: (_selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                          Text("      全体      ", style: (_selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                          Text("", style: (_selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
+                    ),
+                    _selectedIndex == 0,
+                    (){ _selectedIndex = 0; },
+                    (){}
+                  ),
+                  for(int requesterIndex = 0; requesterIndex < _shiftTable.shiftRequests.length; requesterIndex++)
+                  buildBottomButton(
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(_shiftTable.shiftRequests[requesterIndex].displayName, style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                          Text("${(_shiftTable.happiness[requesterIndex][1]/60).toStringAsFixed(1)} h (${(_shiftTable.happiness[requesterIndex][0]/60).toStringAsFixed(1)} h)", style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                          Text("${(_shiftTable.happiness[requesterIndex][2]*100).toStringAsFixed(2)} %", style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
+                    ),
+                    _selectedIndex == requesterIndex+1,
+                    (){
+                      _selectedIndex = requesterIndex + 1; _enableEdit = false;
+                    },
+                    (){}
+                  ),
+                  if(_shiftTable.shiftRequests.isEmpty)
+                  buildBottomButton(
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                          Text("フォロワーがいません", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                          Text("", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
+                    ),
+                    false,
+                    (){},
+                    (){}
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

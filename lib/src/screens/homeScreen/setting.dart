@@ -37,7 +37,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: _screenSize.height * 0.05 + appBarHeight / 2),
+              SizedBox(height: _screenSize.height * 0.1 + appBarHeight / 2),
               SizedBox(
                 width: _screenSize.width * 0.8,
                 child: Text("カラーテーマの設定", style: MyStyle.headlineStyle20)

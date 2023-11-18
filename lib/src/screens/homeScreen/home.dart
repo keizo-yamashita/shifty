@@ -101,9 +101,12 @@ class HomeWidgetState extends ConsumerState<HomeWidget> {
               SizedBox(
                 width: _screenSize.width  * 0.8,
                 child: ListTile(
-                  title: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text((isOwner == ref.read(settingProvider).defaultShiftView) ? "フォロー中のシフト表" : "管理中のシフト表".padRight(10, '　'), style: MyStyle.headlineStyleGreen15)
+                  title: Row(
+                    children: [
+                      Flexible(
+                        child: Text((isOwner == ref.read(settingProvider).defaultShiftView) ? "フォロー中のシフト表" : "管理中のシフト表".padRight(10, '　'), style: MyStyle.headlineStyleGreen20)
+                      ),
+                    ],
                   ),
                   leading: CupertinoSwitch(
                     thumbColor: MyStyle.primaryColor,

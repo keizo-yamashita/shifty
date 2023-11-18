@@ -174,7 +174,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
             ////////////////////////////////////////////////////////////////////////////////////////////
             (isShiftRange)
             ? ShiftRequestEditor(
-              sheetHeight: _screenSize.height * 1.0 - 30 - 16,
+              sheetHeight: _screenSize.height * 1.0 - 30 - 16 - 8,
               sheetWidth:  _screenSize.width,
               cellHeight:  _cellHeight*1,
               cellWidth:   _cellWidth*1,
@@ -195,7 +195,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
               isDark: ref.read(settingProvider).enableDarkTheme,
             )
             : ShiftResponseEditor(
-              sheetHeight: _screenSize.height * 1.0 - 30 - 16,
+              sheetHeight: _screenSize.height * 1.0 - 30 - 16 - 8,
               sheetWidth:  _screenSize.width,
               cellHeight:  _cellHeight*1,
               cellWidth:   _cellWidth*1,
@@ -211,7 +211,10 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
               enableEdit: false,
               selected: coordinate,
               isDark: ref.read(settingProvider).enableDarkTheme,
-            )
+            ),
+
+            // space
+            const SizedBox(height: 8)
           ],
         ),
       ),
