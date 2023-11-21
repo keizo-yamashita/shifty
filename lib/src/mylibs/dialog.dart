@@ -13,22 +13,26 @@ import 'package:shift/src/mylibs/style.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 登録の確認ダイアログ (確認機能付き)
-/// title : タイトルの文章 message1 : 確認メッセージ message2 : OK選択時に表示するメッセージ
+/// title : タイトルの文章
+/// message1 : 確認メッセージ
+/// message2 : OK選択時に表示するメッセージ
 /// onAccept : OK選択時に実行する関数 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void showConfirmDialog(BuildContext context, WidgetRef ref, String title, String message1, String message2, Function onAccept, [ bool confirm = false ] ){
+Future<bool> showConfirmDialog(BuildContext context, WidgetRef ref, String title, String message1, String message2, Function onAccept, [ bool confirm = false, bool error = false] ) async {
 
   ref.read(settingProvider).loadPreferences();
   bool isDark = ref.read(settingProvider).enableDarkTheme;
 
-  showDialog(
+  bool accepted = false;
+
+  await showDialog(
     context: context,
     builder: (_) {
       return Theme(
         data:  isDark ? ThemeData.dark() : ThemeData.light(),
         child: CupertinoAlertDialog(
-          title: Text('$title\n', style: MyStyle.headlineStyleGreen15),
+          title: Text('$title\n', style: error ? MyStyle.defaultStyleRed15 : MyStyle.headlineStyleGreen15),
           content: Text(message1, style: isDark ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13),
           actions: <Widget>[
             // Apply Button
@@ -37,6 +41,7 @@ void showConfirmDialog(BuildContext context, WidgetRef ref, String title, String
               onPressed: () {
                 onAccept();
                 Navigator.pop(context);     
+                accepted = true;
                 if(confirm){
                   showDialog(
                     context: context,
@@ -73,6 +78,8 @@ void showConfirmDialog(BuildContext context, WidgetRef ref, String title, String
       );
     },
   );
+
+  return accepted;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -109,8 +116,9 @@ void showAlertDialog(BuildContext context, WidgetRef ref, String title, String m
   );
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// 選択ダイアログ (Futureで値押された値を返す)
+/// 選択ダイアログ (Futureで押された値を返す)
 /// title : タイトルの文章 message : 選択のためのヒント
 ////////////////////////////////////////////////////////////////////////////////////////////
 

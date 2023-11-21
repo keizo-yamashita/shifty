@@ -13,7 +13,7 @@ import 'package:shift/src/mylibs/shift/shift_request.dart';
 class ShiftTable {
   late ShiftFrame                  shiftFrame;
   late List<ShiftRequest>          shiftRequests;
-  late List<List<double>>          happiness;      
+  late List<List<double>>          fitness;      
   late List<List<List<Candidate>>> shiftTable;
 
   ShiftTable(this.shiftFrame, this.shiftRequests){
@@ -38,11 +38,11 @@ class ShiftTable {
     );
 
     // init Happiness
-    happiness = List<List<double>>.generate(
+    fitness = List<List<double>>.generate(
       shiftRequests.length,
       (index) => [0,0,0,0,0,0,0]
     );
-    calcHappiness(0, 0, 0);
+    calcFitness(0, 0, 0);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ class ShiftTable {
   /// [6] ... 連日勤務の回数
   ////////////////////////////////////////////////////////////////////////////
   
-  calcHappiness(int baseTime, int minTime, int baseConDay){
+  calcFitness(int baseTime, int minTime, int baseConDay){
     // date range
     int date = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1;
     int time = shiftFrame.timeDivs.length;
@@ -119,17 +119,17 @@ class ShiftTable {
             }
           }
         }
-        responseTotal += dailyTotal;
-        if(baseTime != 0 && baseTime < dailyTotal){
-          baseTimeOver += dailyTotal - baseTime;
-        }
-        if(minTime != 0 && minTime > dailyTotal){
-          minTimeUnder += minTime - dailyTotal;
-        }
-        dailyTotal = 0;
         if(assignDateFlag){
           conDayCnt++;
           assignDateCnt++;
+          responseTotal += dailyTotal;
+          if(baseTime != 0 && baseTime < dailyTotal){
+            baseTimeOver += dailyTotal - baseTime;
+          }
+          if(minTime != 0 && minTime > dailyTotal){
+            minTimeUnder += minTime - dailyTotal;
+          }
+          dailyTotal = 0;
         }else{
           if(baseConDay != 0 && baseConDay < conDayCnt){
             baseConDayOver += conDayCnt - baseConDay;
@@ -138,14 +138,18 @@ class ShiftTable {
         }
         assignDateFlag = false;
       }
+      if(conDayCnt != 0){
+        baseConDayOver += conDayCnt - baseConDay;
+        conDayCnt = 0;
+      }
 
-      happiness[requestIndex][0] = requestTotal;
-      happiness[requestIndex][1] = responseTotal;
-      happiness[requestIndex][2] = (happiness[requestIndex][0] != 0.0) ? happiness[requestIndex][1] / happiness[requestIndex][0] : 0.0;
-      happiness[requestIndex][3] = assignDateCnt.toDouble();
-      happiness[requestIndex][4] = baseTimeOver.toDouble();
-      happiness[requestIndex][5] = minTimeUnder.toDouble();
-      happiness[requestIndex][6] = baseConDayOver.toDouble();
+      fitness[requestIndex][0] = requestTotal;
+      fitness[requestIndex][1] = responseTotal;
+      fitness[requestIndex][2] = (requestTotal != 0.0) ? responseTotal / requestTotal : 0.0;
+      fitness[requestIndex][3] = assignDateCnt.toDouble();
+      fitness[requestIndex][4] = baseTimeOver.toDouble();
+      fitness[requestIndex][5] = minTimeUnder.toDouble();
+      fitness[requestIndex][6] = baseConDayOver.toDouble();
     }
   }
 
@@ -153,16 +157,20 @@ class ShiftTable {
   /// 自動でシフト表を入力する関数
   ////////////////////////////////////////////////////////////////////////////
   autoFill(int baseTime, int minTime, int baseConDay){
-    int minMinutes = baseTime*60;
+    int minMinutes = minTime;
 
-    int date = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1;
-    int time = shiftFrame.timeDivs.length;
+    int date         = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1;
+    int time         = shiftFrame.timeDivs.length;
+    int totalMinutes = 0;
 
     // 全ての希望を初期化
     for(var row = 0; row < time; row++){
       for(var column = 0; column < date; column++){
         for(int i = 0; i < shiftTable[row][column].length; i++){
           shiftTable[row][column][i].assign = false;
+          if(shiftFrame.assignTable[row][column] > 0){
+            totalMinutes += shiftFrame.timeDivs[row].endTime.difference(shiftFrame.timeDivs[row].startTime).inMinutes;
+          }
           shiftRequests[shiftTable[row][column][i].userIndex].responseTable[row][column] = 0;
         }
       }
@@ -234,35 +242,59 @@ class ShiftTable {
         // すでに割り当て人数に達しているか確認する
         while(!getAssignedFin(timeIndex, dateIndex)){
           List<SemiCandidate> semiCandidate = [];
+          // 達していなければ，候補の候補者リストを作る
           for(int candidateIndax = 0; candidateIndax < shiftTable[timeIndex][dateIndex].length; candidateIndax++){
-            // 達していなければ，候補の候補者リストを作る
             if(!shiftTable[timeIndex][dateIndex][candidateIndax].assign){
               semiCandidate.add(SemiCandidate(candidateIndax, table[shiftTable[timeIndex][dateIndex][candidateIndax].userIndex][dateIndex][timeIndex].forward.inMinutes.clamp(0, minMinutes)));
             }
           }
           if(semiCandidate.isNotEmpty){
-            calcHappiness(0, 0, 0);
-            double minScore   = 1.0;
-            int minScoreIndex = 0;
-            // スコア順に並び替える
+            double maxScore   = -10000000000000000000000.0;
+            int maxScoreIndex = 0;
+            
             for(int semiCandidateIndex = 0; semiCandidateIndex < semiCandidate.length; semiCandidateIndex++){
-              // 円の関数に従って勤務者の適合率を求める
-              double score = sqrt(1 - pow((happiness[semiCandidate[semiCandidateIndex].userIndex][2]) - 1, 2));
-              if(score < minScore){
-                minScore      = score;
-                minScoreIndex = semiCandidateIndex;
+
+              // shiftRequest(Response) のバックアップ
+              var shiftResponseBackup =  shiftRequests[shiftTable[timeIndex][dateIndex][semiCandidate[semiCandidateIndex].userIndex].userIndex].responseTable.map((e) => List.from(e).cast<int>()).toList();
+              
+              // 実際にシフトに当てはめる部分
+              int changeDuration = semiCandidate[semiCandidateIndex].minutes;
+              int count = 0; 
+              while(changeDuration > 0){
+                shiftRequests[shiftTable[timeIndex][dateIndex][semiCandidate[semiCandidateIndex].userIndex].userIndex].responseTable[timeIndex + count][dateIndex] = 1;
+                changeDuration -= shiftFrame.timeDivs[timeIndex + count].endTime.difference(shiftFrame.timeDivs[timeIndex + count].startTime).inMinutes;
+                count++;
               }
+
+              double score = 0;
+              for(int i = 0; i < shiftRequests.length; i++){
+                calcFitness(baseTime, minTime, baseConDay+1);
+                // 円の関数に従って勤務者の適合率を求める
+                score += sqrt(1 - pow((fitness[i][2]) - 1, 2))*1000;
+                score -= fitness[i][4];
+                score -= fitness[i][5];
+                score -= fitness[i][6]/date*100;
+              }
+              if(score > maxScore){
+                maxScore      = score;
+                maxScoreIndex = semiCandidateIndex;
+              }
+              // shiftRequest(Response) の復元
+              shiftRequests[shiftTable[timeIndex][dateIndex][semiCandidate[semiCandidateIndex].userIndex].userIndex].responseTable = shiftResponseBackup.map((e) => List.from(e).cast<int>()).toList();
+              
             }
-            int changeDuration = semiCandidate[minScoreIndex].minutes;
+
+            // 決定版のシフトを入力する部分
+            int changeDuration = semiCandidate[maxScoreIndex].minutes;
             int count = 0; 
             while(changeDuration > 0){
               for(int i =0; i < shiftTable[timeIndex + count][dateIndex].length; i++){
-                if(shiftRequests[shiftTable[timeIndex + count][dateIndex][i].userIndex].displayName == shiftRequests[shiftTable[timeIndex][dateIndex][semiCandidate[minScoreIndex].userIndex].userIndex].displayName){
+                if(shiftRequests[shiftTable[timeIndex + count][dateIndex][i].userIndex].displayName == shiftRequests[shiftTable[timeIndex][dateIndex][semiCandidate[maxScoreIndex].userIndex].userIndex].displayName){
                   shiftTable[timeIndex + count][dateIndex][i].assign = true;
                   break;
                 }
               }
-              shiftRequests[shiftTable[timeIndex][dateIndex][semiCandidate[minScoreIndex].userIndex].userIndex].responseTable[timeIndex + count][dateIndex] = 1;
+              shiftRequests[shiftTable[timeIndex][dateIndex][semiCandidate[maxScoreIndex].userIndex].userIndex].responseTable[timeIndex + count][dateIndex] = 1;
               changeDuration -= shiftFrame.timeDivs[timeIndex + count].endTime.difference(shiftFrame.timeDivs[timeIndex + count].startTime).inMinutes;
               count++;
             }
@@ -420,11 +452,11 @@ class ShiftTable {
     );
 
     // init Happiness
-    happiness = List<List<double>>.generate(
+    fitness = List<List<double>>.generate(
       shiftRequests.length,
       (index) => [0,0,0,0,0,0,0]
     );
-    calcHappiness(0, 0, 0);
+    calcFitness(0, 0, 0);
 
     return this;
   }

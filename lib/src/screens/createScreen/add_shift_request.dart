@@ -224,7 +224,7 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
                                         "'${shiftFrame.shiftName}'をフォローしました",
                                         (){
                                           var shiftRequest = ShiftRequest(shiftFrame);
-                                          shiftRequest.pushShiftRequest(value.reference, displayName);
+                                          shiftRequest.pushShiftRequestResponse(value.reference, displayName);
                                           Navigator.pop(context);
                                         }
                                       );

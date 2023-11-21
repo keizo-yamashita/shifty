@@ -132,7 +132,7 @@ class ShiftRequest {
   ///  作成したシフト表を Firebase へ登録　(レスポンスの初期化もここで行う)
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  pushShiftRequest(DocumentReference<Map<String, dynamic>> reference, displayName) async{
+  pushShiftRequestResponse(DocumentReference<Map<String, dynamic>> reference, displayName) async{
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     FirebaseAuth      auth      = FirebaseAuth.instance;
@@ -148,7 +148,7 @@ class ShiftRequest {
       (index) => assignMap[index.toString()].cast<int>()
     );
 
-    final request = {
+    final data = {
       'user-id'      : uid,
       'display-name' : displayName,
       'created-at'   : FieldValue.serverTimestamp(),
@@ -157,11 +157,11 @@ class ShiftRequest {
       'reference'    : reference,
     };
 
-    await firestore.collection('shift-follower').add(request);
+    await firestore.collection('shift-follower').add(data);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  作成したシフトリクエストを Firebase へ登録 
+  ///  入力したシフトリクエストを Firebase へ登録 
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   void updateShiftRequest() async{
@@ -185,7 +185,7 @@ class ShiftRequest {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  作成したシフトレスポンスを Firebase へ登録 
+  ///  入力したシフトレスポンスを Firebase へ登録 
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   void updateShiftResponse() async{
