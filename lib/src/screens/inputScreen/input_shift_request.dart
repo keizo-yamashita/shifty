@@ -21,18 +21,19 @@ import 'package:shift/src/mylibs/button.dart';
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 // editor のセルサイズ設定
-double _cellHeight       = 20;
-double _cellWidth        = 20;
-double _cellSizeMax      = 25;
-double _cellSizeMin      = 15;
-double _zoomDiv          = 1;
-const int _bufferMax     = 50;
+double _cellHeight   = 20;
+double _cellWidth    = 20;
+double _cellSizeMax  = 25;
+double _cellSizeMin  = 15;
+double _zoomDiv      = 1;
+int    _bufferMax    = 50;
 
-// efitor の設定変数
+// editor の設定変数
 bool _enableRequestEdit  = false;
 bool _enableZoomIn       = true;
 bool _enableZoomOut      = true;
 int  _inkValue           = 1;
+bool _isDark             = false;
 
 // 画面サイズ
 Size _screenSize         = const Size(0, 0);
@@ -75,6 +76,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
     // Provider 処理
     _shiftRequest = ref.read(shiftRequestProvider).shiftRequest;
     ref.read(settingProvider).loadPreferences();
+    _isDark     = ref.read(settingProvider).enableDarkTheme;
 
     //  Undo Redo Buffer が空だったら最初の状態を保存
     if(undoredoCtrl.buffer.isEmpty){
@@ -110,7 +112,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                 icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
                 tooltip: "使い方",
                 onPressed: () async {
-                  showInfoDialog(ref.read(settingProvider).enableDarkTheme);
+                  showInfoDialog(_isDark);
                 }
               ),
             ),
@@ -267,7 +269,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                 shiftRequest: _shiftRequest,
                 enableEdit: _enableRequestEdit,
                 selected: coordinate,
-                isDark: ref.read(settingProvider).enableDarkTheme,
+                isDark: _isDark,
               )
               : ShiftResponseEditor(
                 sheetHeight: _screenSize.height * 1.0 - 30 - 16 - 8,
@@ -285,7 +287,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                 shiftRequest: _shiftRequest,
                 enableEdit: false,
                 selected: coordinate,
-                isDark: ref.read(settingProvider).enableDarkTheme,
+                isDark: _isDark,
               ),
       
               // brank

@@ -24,18 +24,19 @@ import 'package:shift/src/mylibs/button.dart';
 /// 全体で使用する変数
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-double _cellHeight       = 20;
-double _cellWidth        = 20;
-double _cellSizeMax      = 25;
-double _cellSizeMin      = 15;
-double _zoomDiv          = 1;
-const int _bufferMax     = 50;
+// editor のセルサイズ設定
+double _cellHeight  = 20;
+double _cellWidth   = 20;
+double _cellSizeMax = 25;
+double _cellSizeMin = 15;
+double _zoomDiv     = 1;
+int _bufferMax      = 50;
 
+// editor の設定変数
 bool _enableZoomIn       = true;
 bool _enableZoomOut      = true;
-int  baseTime            = 8;
-int  minTime             = 1;
-int  baseConDay          = 2;
+
+
 Size _screenSize         = const Size(0, 0);
 bool _isDark             = false;
 List<bool> _displayInfoFlag = [false, false, false, false];
@@ -44,8 +45,7 @@ List<bool> _displayInfoFlag = [false, false, false, false];
 Duration _baseDuration = const Duration(hours: 7);
 Duration _minDuration  = const Duration(hours: 4);
 int      _baseConDay   = 0;
-
-var inputConDayList = List<String>.generate(31, (index) => "${index+1} 日");
+var inputConDayList    = List<String>.generate(31, (index) => "${index+1} 日");
 
 // 最後のデータを保存したかどうか
 bool _registered = true;
@@ -77,11 +77,13 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   @override
   Widget build(BuildContext context) {
 
+    // 画面サイズの取得
     _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top  - MediaQuery.of(context).padding.bottom/2);
-    _shiftTable = ref.read(shiftTableProvider).shiftTable;
-    _isDark     = ref.read(settingProvider).enableDarkTheme;
 
+    // Provider 処理
+    _shiftTable = ref.read(shiftTableProvider).shiftTable;
     ref.read(settingProvider).loadPreferences();
+    _isDark     = ref.read(settingProvider).enableDarkTheme;
 
     if(undoredoCtrl.buffer.isEmpty){
       _registered = true;
@@ -118,7 +120,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                 icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
                 tooltip: "使い方",
                 onPressed: () async {
-                  showInfoDialog(ref.read(settingProvider).enableDarkTheme);
+                  showInfoDialog(_isDark);
                 }
               ),
             ),
@@ -295,7 +297,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
               shiftTable: _shiftTable,
               enableEdit: true,
               selected: coordinate,
-                isDark: ref.read(settingProvider).enableDarkTheme,
+                isDark: _isDark,
             )
             : ShiftResponseEditor(
               sheetHeight: _screenSize.height * 1.0 - 60 - 30 - 16 - 16,
@@ -325,7 +327,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
               shiftRequest: _shiftTable.shiftRequests[_selectedIndex-1],
               enableEdit: _enableResponseEdit,
               selected: coordinate,
-              isDark: ref.read(settingProvider).enableDarkTheme,
+              isDark: _isDark,
             ),
             
             ////////////////////////////////////////////////////////////////////////////////////////////
@@ -466,33 +468,6 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
       _shiftTable.copyshiftTable2ResponseTable();
       _shiftTable.calcFitness(_baseDuration.inMinutes, _minDuration.inMinutes, _baseConDay);
     });
-  }
-
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  シフト表に一括入力するときの基本時間を設定する関数
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  
-  void buildSetDefaultValueModaleWindow() {
-    showModalWindow(
-      context,
-      0.5,
-      buildModalWindowContainer(
-        context,
-        List<Widget>.generate(24, (index) => Row(
-            mainAxisAlignment:  MainAxisAlignment.center,
-            children: [
-              Text("${index+1} 時間", style: MyStyle.headlineStyle13,textAlign: TextAlign.center),
-            ],
-          )
-        ),
-        0.5,
-        (BuildContext context, int index){
-          setState(() {});
-          baseTime = index+1; 
-        },
-        title: Text("基本勤務時間の設定", style: MyStyle.headlineStyle15, textAlign: TextAlign.center)
-      )
-    );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
