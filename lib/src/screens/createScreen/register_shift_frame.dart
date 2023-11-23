@@ -1,7 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ///////////////////////////////////////////////////////////////////////////////////////////
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,6 +13,7 @@ import 'package:shift/src/mylibs/modal_window.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift_editor/shift_frame_editor.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
+import 'package:shift/src/mylibs/button.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数
@@ -123,16 +123,76 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    buildIconButton( Icons.zoom_in, _enableZoomIn, (){ zoomIn(); }, (){}),
-                    buildIconButton( Icons.zoom_out, _enableZoomOut, (){ zoomOut(); }, (){}),
-                    buildIconButton( Icons.filter_alt_outlined, true, (){ buildAutoFillModalWindow(context); }, (){}),
-                    buildIconButton(
-                      Icons.touch_app_outlined, _enableEdit,
-                      (){_enableEdit = !_enableEdit;},
-                      (){ buildInkChangeModaleWindow();}
+                    buildToolButton(
+                      Icons.zoom_in,
+                      _enableZoomIn,
+                      _screenSize.width / 7,
+                      (){
+                        setState(() {
+                          zoomIn();
+                        });
+                      },
+                      (){}
                     ),
-                    buildIconButton( Icons.undo,  undoredoCtrl.enableUndo(), (){paintUndoRedo(true);}, (){}),
-                    buildIconButton( Icons.redo,  undoredoCtrl.enableRedo(), (){paintUndoRedo(false);}, (){}),
+                    buildToolButton(
+                      Icons.zoom_out,
+                      _enableZoomOut,
+                      _screenSize.width / 7,
+                      (){
+                        setState(() {
+                          zoomOut();
+                        });
+                      },
+                      (){}
+                    ),
+                    buildToolButton(
+                      Icons.filter_alt_outlined,
+                      true,
+                      _screenSize.width / 7,
+                      (){
+                        setState(() {
+                          buildAutoFillModalWindow(context);
+                        });
+                      },
+                      (){}
+                    ),
+                    buildToolButton(
+                      Icons.touch_app_outlined,
+                      _enableEdit,
+                      _screenSize.width / 7,
+                      (){
+                        setState(() {
+                          _enableEdit = !_enableEdit;
+                        });
+                      },
+                      (){
+                        setState(() {
+                          buildInkChangeModaleWindow();
+                        });
+                      }
+                    ),
+                    buildToolButton(
+                      Icons.undo,
+                      undoredoCtrl.enableUndo(),
+                      _screenSize.width / 7,
+                      (){
+                        setState(() {
+                          paintUndoRedo(true);
+                        });
+                      },
+                      (){}
+                    ),
+                    buildToolButton(
+                      Icons.redo,
+                      undoredoCtrl.enableRedo(),
+                      _screenSize.width / 7,
+                      (){
+                        setState(() {
+                          paintUndoRedo(false);
+                        });
+                      },
+                      (){}
+                    ),
                   ],
                 ),
               ),
@@ -168,44 +228,6 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
             // space
             const SizedBox(height: 8)
           ],
-        ),
-      ),
-    );
-  }
-
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  ページ上部のツールボタン作成に使用 (onPress OnLongPress 2つの関数を使用)
-  ///  OnLongPress に 0.5 秒の検出時間がかかるので，GestureDetector で検出したほうがいいかも
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  
-  Widget buildIconButton(IconData icon, bool flag, Function onPressed, Function onLongPressed){
-    
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 3),
-      child: SizedBox(
-        width: _screenSize.width / 7,
-        height: 30,
-        child: OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            minimumSize: Size.zero,
-            padding: EdgeInsets.zero,
-            shadowColor: MyStyle.hiddenColor, 
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            side: BorderSide(color: (flag) ? MyStyle.primaryColor : MyStyle.hiddenColor),
-          ),
-          onPressed: (){ 
-            setState(() {
-              onPressed();
-            });
-          },
-          onLongPress: (){
-            setState(() {
-              onLongPressed();
-            });
-          },
-          child: Align(alignment: Alignment.center, child: Icon(icon, color: (flag) ? MyStyle.primaryColor : MyStyle.hiddenColor, size: 20))
         ),
       ),
     );
@@ -535,12 +557,33 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: SizedBox(child: buildTextButton( weekSelect[selectorsIndex[0]], false, modalWidth * (100 / 330), buttonHeight, (){ buildSelectorModaleWindow(weekSelect, 0); } )),
+                      child: SizedBox(
+                        child: buildTextButton(
+                          weekSelect[selectorsIndex[0]],
+                          false,
+                          modalWidth * (100 / 330),
+                          buttonHeight,
+                          (){
+                            setState(() {
+                              buildSelectorModaleWindow(weekSelect, 0);
+                            });
+                          }
+                        )
+                      ),
                     ),
                     SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: MyStyle.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton( weekdaySelect[selectorsIndex[1]], false, modalWidth * (100 / 330), buttonHeight, (){ buildSelectorModaleWindow(weekdaySelect, 1); }),
+                      child: buildTextButton(
+                        weekdaySelect[selectorsIndex[1]],
+                        false, modalWidth * (100 / 330),
+                        buttonHeight,
+                        (){
+                          setState(() {
+                            buildSelectorModaleWindow(weekdaySelect, 1);
+                          });
+                        }
+                      ),
                     ),
                     SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: MyStyle.defaultStyleGrey13))),
                     SizedBox(height: widgetHeight, width: modalWidth * (100 / 330))
@@ -551,28 +594,54 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton( timeDivs1List[selectorsIndex[2]], false, modalWidth * (100 / 330), buttonHeight, (){ buildSelectorModaleWindow(timeDivs1List, 2); }),
+                      child: buildTextButton(
+                        timeDivs1List[selectorsIndex[2]],
+                        false,
+                        modalWidth * (100 / 330),
+                        buttonHeight,
+                        (){
+                          setState(() {
+                            buildSelectorModaleWindow(timeDivs1List, 2);
+                          });
+                        }
+                      ),
                     ),
                     SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: MyStyle.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton( timeDivs2List[selectorsIndex[3]], false, modalWidth * (100 / 330), buttonHeight, (){ buildSelectorModaleWindow(timeDivs2List, 3); }),
+                      child: buildTextButton(
+                        timeDivs2List[selectorsIndex[3]],
+                        false,
+                        modalWidth * (100 / 330), buttonHeight,
+                        (){
+                          setState(() {
+                            buildSelectorModaleWindow(timeDivs2List, 3);
+                          });
+                        }
+                      ),
                     ),
                     SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: MyStyle.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: buildTextButton(
-                        "${selectorsIndex[4]} 人", false, modalWidth * (65 / 330), buttonHeight, (){
-                          buildSelectorModaleWindow(
-                            List<Widget>.generate(assignNumSelect.length, (index) => Row(
-                              mainAxisAlignment:  MainAxisAlignment.center,
-                              children: [
-                                Text(assignNumSelect[index], style: MyStyle.headlineStyle13,textAlign: TextAlign.center),
-                              ],
-                            )
-                          ),4);
-                      }
-                    ),
+                        "${selectorsIndex[4]} 人",
+                        false,
+                        modalWidth * (65 / 330),
+                        buttonHeight,
+                        (){
+                          setState(() {
+                            buildSelectorModaleWindow(
+                              List<Widget>.generate(assignNumSelect.length, (index) => Row(
+                                mainAxisAlignment:  MainAxisAlignment.center,
+                                children: [
+                                  Text(assignNumSelect[index], style: MyStyle.headlineStyle13,textAlign: TextAlign.center),
+                                ],
+                              )),
+                              4
+                            );
+                          });
+                        }
+                      ),
                     ),
                   ],
                 ),
@@ -584,16 +653,18 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                       child: buildTextButton(
                         "一括入力", true, modalWidth, buttonHeight,
                         (){
-                          var rule = AssignRule(
-                            week:      selectorsIndex[0],
-                            weekday:   selectorsIndex[1],
-                            timeDivs1: selectorsIndex[2],
-                            timeDivs2: selectorsIndex[3],
-                            assignNum: selectorsIndex[4]
-                          );
-                          widget._shiftFrame.applyRuleToShiftFrame(rule);
-                          Navigator.pop(context, rule); // これだけでModalWindowのFuture<dynamic>から返せる
-                          setState(() {});
+                          setState(() {
+                            var rule = AssignRule(
+                              week:      selectorsIndex[0],
+                              weekday:   selectorsIndex[1],
+                              timeDivs1: selectorsIndex[2],
+                              timeDivs2: selectorsIndex[3],
+                              assignNum: selectorsIndex[4]
+                            );
+                            widget._shiftFrame.applyRuleToShiftFrame(rule);
+                            Navigator.pop(context, rule); // これだけでModalWindowのFuture<dynamic>から返せる
+                            setState(() {});
+                          });
                         }
                       ),
                     ),
@@ -641,34 +712,6 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
     //     ),
     //   ),
     // );
-  }
-
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  Auto-Fill UI作成に使用するテキストボタンを構築
-  ////////////////////////////////////////////////////////////////////////////////////////////
-
-  Widget buildTextButton(String text, bool flag, double width, double height, Function action){
-    return SizedBox(
-      width: width,
-      height: height,
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          shadowColor: MyStyle.hiddenColor, 
-          minimumSize: Size.zero,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          side: BorderSide(color: (flag) ? MyStyle.primaryColor : MyStyle.hiddenColor),
-        ),
-        onPressed: (){ 
-          setState(() {
-            action();
-          });
-        },
-        child: Text(text, style: MyStyle.headlineStyleGreen13)
-      ),
-    );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////

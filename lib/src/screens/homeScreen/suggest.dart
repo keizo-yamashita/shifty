@@ -34,91 +34,92 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
       onTap: () {
         focusNode.unfocus();
       },
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: _screenSize.height * 0.1 + appBarHeight / 2),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("本アプリがご期待に添えず、ご不便をお掛けしている場合は、どのようなご要望でもお申し付け下さい。", style: MyStyle.defaultStyleGrey15),
-                    SizedBox(height: _screenSize.height/40),
-                    Text("例) 〇〇な機能が欲しい。〇〇が使いづらい。", style: MyStyle.defaultStyleGrey15)
-                  ],
-                )
-              ),
-              // 要望入力欄
-              SizedBox(
-                width: _screenSize.width * 0.90,
-                child: TextField(
-                  controller: textConroller,
-                  cursorColor: MyStyle.primaryColor,
-                  style: MyStyle.headlineStyle15,
-                  focusNode: focusNode,
-                  maxLines: 5,
-                  maxLength: 500,
-                  autofocus: false,
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: MyStyle.hiddenColor,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: MyStyle.primaryColor,
-                      ),
-                    ),
-                    hintText: 'ご要望はこちらに入力して下さい。',
-                    hintStyle: MyStyle.defaultStyleGrey15
-                  ),
-
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.go,
-                  onTap: (){FocusScope.of(context).requestFocus(focusNode);},
-                  onChanged: (value){
-                    suggestion = textConroller.text;
-                  },
+      child: SafeArea(
+        child: Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("本アプリがご期待に添えず、ご不便をお掛けしている場合は、どのようなご要望でもお申し付け下さい。", style: MyStyle.defaultStyleGrey15),
+                      SizedBox(height: _screenSize.height/40),
+                      Text("例) 〇〇な機能が欲しい。〇〇が使いづらい。", style: MyStyle.defaultStyleGrey15)
+                    ],
+                  )
                 ),
-              ),
-              const SizedBox(height: 20),
-              
-              // 提出ボタン
-              SizedBox(
-                width: _screenSize.width * 0.9,
-                height: 40,
-                child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                    minimumSize: Size.zero,
-                    padding: EdgeInsets.zero,
-                    shadowColor: MyStyle.primaryColor, 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                // 要望入力欄
+                SizedBox(
+                  width: _screenSize.width * 0.90,
+                  child: TextField(
+                    controller: textConroller,
+                    cursorColor: MyStyle.primaryColor,
+                    style: MyStyle.headlineStyle15,
+                    focusNode: focusNode,
+                    maxLines: 5,
+                    maxLength: 500,
+                    autofocus: false,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(
+                          color: MyStyle.hiddenColor,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(
+                          color: MyStyle.primaryColor,
+                        ),
+                      ),
+                      hintText: 'ご要望はこちらに入力して下さい。',
+                      hintStyle: MyStyle.defaultStyleGrey15
                     ),
-                    side: const BorderSide(color: MyStyle.primaryColor),
+        
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.go,
+                    onTap: (){FocusScope.of(context).requestFocus(focusNode);},
+                    onChanged: (value){
+                      suggestion = textConroller.text;
+                    },
                   ),
-                  onPressed: () {
-                    setState(() {
-                      if(suggestion != ""){
-                        postSuggestion(suggestion);
-                        showAlertDialog(context, ref, "確認", "送信しました。貴重なご意見ありがとうございます。", false);
-                        focusNode.unfocus();
-                        textConroller.clear();
-                      }else{
-                        showAlertDialog(context, ref, "エラー", "ご要望が入力されていません。", true);
-                      }
-                    });
-                  },
-                  child: Text("送信", style: MyStyle.headlineStyleGreen15),
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+                
+                // 提出ボタン
+                SizedBox(
+                  width: _screenSize.width * 0.9,
+                  height: 40,
+                  child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.zero,
+                      shadowColor: MyStyle.primaryColor, 
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: const BorderSide(color: MyStyle.primaryColor),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        if(suggestion != ""){
+                          postSuggestion(suggestion);
+                          showAlertDialog(context, ref, "確認", "送信しました。貴重なご意見ありがとうございます。", false);
+                          focusNode.unfocus();
+                          textConroller.clear();
+                        }else{
+                          showAlertDialog(context, ref, "エラー", "ご要望が入力されていません。", true);
+                        }
+                      });
+                    },
+                    child: Text("送信", style: MyStyle.headlineStyleGreen15),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

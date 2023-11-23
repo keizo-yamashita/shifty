@@ -94,7 +94,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
         if(_registered){
           navigator.pop();
         }else{
-          final bool shouldPop = await showConfirmDialog( context, ref, "注意", "データが保存されていません\n未登録のデータは破棄されます", "", (){}, false, true);// ダイアログで戻るか確認
+          final bool shouldPop = await showConfirmDialog( context, ref, "注意", "データが保存されていません。\n未登録のデータは破棄されます。", "", (){}, false, true);// ダイアログで戻るか確認
           if (shouldPop) {
             navigator.pop(); // 戻るを選択した場合のみpopを明示的に呼ぶ
           }
@@ -123,13 +123,20 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                 tooltip: "リクエストを登録",
                 onPressed: (){
                   if(isRequestRange()){
-                    showConfirmDialog(
-                      context, ref, "確認", "このリクエストを登録しますか？", "リクエストを登録しました", (){
-                      _registered = true;
-                      _shiftRequest.updateShiftRequest();
-                    });
+                    if(_registered){
+                      showAlertDialog(context, ref, "注意", "リクエストは変更されていないため、登録できません。", true);
+                    }else{
+                      showConfirmDialog(
+                        context, ref, "確認", "このリクエストを登録しますか？", "リクエストを登録しました。",
+                        (){
+                          _registered = true;
+                          _shiftRequest.updateShiftRequest();
+                        },
+                        true
+                      );
+                    }
                   }else{
-                    showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、登録できません\n編集が必要な場合は管理者に連絡して下さい", true);
+                    showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、登録できません。\n編集が必要な場合は管理者に連絡して下さい。", true);
                   }
                 }
               ),
@@ -184,7 +191,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                           if(isRequestRange()){
                             buildAutoFillModalWindow(context);
                           }else{
-                            showAlertDialog(context, ref, "注意", "リクエスト期間内でないため，編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                            showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません。\n編集が必要な場合は管理者に連絡してください。", true);
                           }
                           setState((){});
                         },
@@ -199,7 +206,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                           if(isRequestRange()){
                             _enableRequestEdit = !_enableRequestEdit;
                           }else{
-                            showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                            showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません。\n編集が必要な場合は管理者に連絡してください。", true);
                           }
                           setState((){});
                         },
@@ -208,7 +215,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                             buildInkChangeModaleWindow();
                             _enableRequestEdit = true;
                           }else{
-                            showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません\n編集が必要な場合は管理者に連絡してください", true);
+                            showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません。\n編集が必要な場合は管理者に連絡してください。", true);
                           }
                           setState((){});
                         }

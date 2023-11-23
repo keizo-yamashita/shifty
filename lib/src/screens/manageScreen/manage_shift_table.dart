@@ -33,12 +33,11 @@ double _zoomDiv     = 1;
 int _bufferMax      = 50;
 
 // editor の設定変数
-bool _enableZoomIn       = true;
-bool _enableZoomOut      = true;
+bool _enableZoomIn          = true;
+bool _enableZoomOut         = true;
 
-
-Size _screenSize         = const Size(0, 0);
-bool _isDark             = false;
+Size _screenSize            = const Size(0, 0);
+bool _isDark                = false;
 List<bool> _displayInfoFlag = [false, false, false, false];
 
 // 自動入力パラメータ
@@ -70,9 +69,9 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
 
   List<List<List<Candidate>>> shiftTableBuffer = [];  
   late ShiftTable _shiftTable;
-  int  _selectedIndex = 0;
-  bool _enableResponseEdit    = false;
-  int  _inkValue      = 1;
+  int  _selectedIndex      = 0;
+  bool _enableResponseEdit = false;
+  int  _inkValue           = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +101,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         if(_registered){
           navigator.pop();
         }else{
-          final bool shouldPop = await showConfirmDialog( context, ref, "注意", "データが保存されていません\n未登録のデータは破棄されます", "", (){}, false, true);// ダイアログで戻るか確認
+          final bool shouldPop = await showConfirmDialog( context, ref, "注意", "データが保存されていません。\n未登録のデータは破棄されます。", "", (){}, false, true);// ダイアログで戻るか確認
           if (shouldPop) {
             navigator.pop(); // 戻るを選択した場合のみpopを明示的に呼ぶ
           }
@@ -134,24 +133,32 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                   var now = DateTime.now();
                     // リクエスト期間ではないことを確認
                   if(!(now.compareTo(_shiftTable.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftTable.shiftFrame.shiftDateRange[1].end) <= 0)){
-                    // シフト期間ではないことを確認
-                    if(!(now.compareTo(_shiftTable.shiftFrame.shiftDateRange[0].start) >= 0 && now.compareTo(_shiftTable.shiftFrame.shiftDateRange[0].end) <= 0)){
-                      showConfirmDialog(
-                        context, ref, "確認", "このシフトを登録しますか？", "シフトを登録しました", (){
-                          _registered = true;
-                          _shiftTable.pushShiftTable();
-                        }
-                      );
+                    if(_registered){
+                      showAlertDialog(context, ref, "注意", "シフトは変更されていないため、登録できません。", true);
                     }else{
-                      showConfirmDialog(
-                        context, ref, "確認", "現在はシフト期間中です\nこのシフトを登録しますか？", "シフトを登録しました", (){
-                          Navigator.pop(context);
-                          _shiftTable.pushShiftTable();
-                        }
-                      );
+                      // シフト期間ではないことを確認
+                      if(!(now.compareTo(_shiftTable.shiftFrame.shiftDateRange[0].start) >= 0 && now.compareTo(_shiftTable.shiftFrame.shiftDateRange[0].end) <= 0)){
+                        showConfirmDialog(
+                          context, ref, "確認", "このシフトを登録しますか？", "シフトを登録しました。", (){
+                            _registered = true;
+                            _shiftTable.pushShiftTable();
+                          },
+                          true,
+                          false
+                        );
+                      }else{
+                        showConfirmDialog(
+                          context, ref, "確認", "現在はシフト期間中です\nこのシフトを登録しますか？", "シフトを登録しました。", (){
+                            _registered = true;
+                            _shiftTable.pushShiftTable();
+                          },
+                          true,
+                          false
+                        );
+                      }
                     }
                   }else{
-                    showAlertDialog(context, ref, "注意", "リクエスト期間内であるため、登録できません", true);
+                    showAlertDialog(context, ref, "注意", "リクエスト期間内であるため、登録できません。", true);
                   }
                 }
               ),
@@ -227,7 +234,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             _enableResponseEdit = !_enableResponseEdit;
                           }
                           else{
-                            showAlertDialog(context, ref, "エラー", "このツールボタンは「シフトリクエスト表示画面」でのみ有効です \n 画面下部の「切り替えボタン」より切り替えからタップして下さい", true);
+                            showAlertDialog(context, ref, "エラー", "このツールボタンは「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
                           }
                         });
                       },
@@ -238,7 +245,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             _enableResponseEdit = true;
                           }
                           else{
-                            showAlertDialog(context, ref, "エラー", "このツールボタンは「シフトリクエスト表示画面」でのみ有効です \n 画面下部の「切り替えボタン」より切り替えからタップして下さい`", true);
+                            showAlertDialog(context, ref, "エラー", "このツールボタンは「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
                           }
                         });
                       }
@@ -391,7 +398,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text("", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("フォロワーがいません", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                            Text("フォロワーがいません。", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                             Text("", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                           ],
                         ),

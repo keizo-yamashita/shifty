@@ -189,15 +189,16 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
               },
             ),
           ),
-          SizedBox(height: _screenSize.height * 0.02), 
-          SizedBox(
-            height: _screenSize.height * (1 - 0.06) - 60,
-            child: TabBarView(
-              controller: _tabController,
-              children: itemList,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: SizedBox(
+              height: _screenSize.height * 1 - 76,
+              child: TabBarView(
+                controller: _tabController,
+                children: itemList,
+              ),
             ),
           ),
-          SizedBox(height: _screenSize.height * 0.04), 
         ],
       )
     );

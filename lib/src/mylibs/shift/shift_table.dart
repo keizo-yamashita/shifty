@@ -161,16 +161,12 @@ class ShiftTable {
 
     int date         = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1;
     int time         = shiftFrame.timeDivs.length;
-    int totalMinutes = 0;
 
     // 全ての希望を初期化
     for(var row = 0; row < time; row++){
       for(var column = 0; column < date; column++){
         for(int i = 0; i < shiftTable[row][column].length; i++){
           shiftTable[row][column][i].assign = false;
-          if(shiftFrame.assignTable[row][column] > 0){
-            totalMinutes += shiftFrame.timeDivs[row].endTime.difference(shiftFrame.timeDivs[row].startTime).inMinutes;
-          }
           shiftRequests[shiftTable[row][column][i].userIndex].responseTable[row][column] = 0;
         }
       }
