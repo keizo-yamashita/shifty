@@ -1,7 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -99,7 +98,8 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
             );
           },
         ),
-      ),// 管理中のシフト表
+      ),
+      // 管理中のシフト表
       SingleChildScrollView(
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('shift-leader').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
@@ -192,7 +192,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: SizedBox(
-              height: _screenSize.height * 1 - 76,
+              height: _screenSize.height * 1 - 92,
               child: TabBarView(
                 controller: _tabController,
                 children: itemList,
@@ -255,7 +255,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
 
     /// 自分のユーザIDが含まれるシフト表の表示
     if(docs.isEmpty){
-      return Text("管理中のシフト表はありません。", style: MyStyle.defaultStyleGrey15);
+      return Text("管理中のシフト表はありません。", style: MyStyle.defaultStyleGrey15, textAlign: TextAlign.center);
     }else{
       // とってきたシフトリクエストが参照しているシフト表を取ってくる
       List<Widget> shiftCard = [];

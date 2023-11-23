@@ -5,7 +5,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
 
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:shift/src/mylibs/style.dart';
