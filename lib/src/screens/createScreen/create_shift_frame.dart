@@ -25,36 +25,36 @@ class CreateShiftTableWidget extends ConsumerStatefulWidget {
 
 class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> with SingleTickerProviderStateMixin {
 
-    // シフト作成期間の日数を表す変数
+  // シフト作成期間の日数を表す変数
   int _shiftManageRangeDuration   = 0;
   int _templateShiftDurationIndex = 0;
   int _templateRequestLimitIndex  = 5;
-  
-  List<DateTimeRange> _templateDateRange = [
-    DateTimeRange(start: DateTime(DateTime.now().year, DateTime.now().month + 1, 1), end: DateTime(DateTime.now().year, DateTime.now().month + 2, 0)),
-    DateTimeRange(start: DateTime.now(), end: DateTime(DateTime.now().year, DateTime.now().month + 1, 1).subtract(const Duration(days: 7)))
+
+  final List<DateTimeRange> _templateDateRange = [
+    DateTimeRange(start: DateTime(DateTime.now().add(const Duration(days: 1)).year, DateTime.now().add(const Duration(days: 1)).month + 1, 1), end: DateTime(DateTime.now().add(const Duration(days: 1)).year, DateTime.now().add(const Duration(days: 2)).month + 2, 0)),
+    DateTimeRange(start: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day), end: DateTime(DateTime.now().add(const Duration(days: 1)).year, DateTime.now().add(const Duration(days: 1)).month + 1, -1))
   ]; 
   
-  List<DateTimeRange> _customDateRange = [
+  final List<DateTimeRange> _customDateRange = [
     DateTimeRange(start: DateTime.now().add(const Duration(days: 11)), end: DateTime.now().add(const Duration(days: 30))),
     DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(days: 9)))
   ]; 
 
   // シフト時間区部設定のための parameters
-  static DateTime _startTime = DateTime(1, 1, 1,  9,  0);
-  static DateTime _endTime   = DateTime(1, 1, 1, 21,  0);
-  static DateTime _duration  = DateTime(1, 1, 1,  0, 30);
+  DateTime _startTime = DateTime(1, 1, 1,  9,  0);
+  DateTime _endTime   = DateTime(1, 1, 1, 21,  0);
+  DateTime _duration  = DateTime(1, 1, 1,  0, 30);
  
   // 時間区分のカスタムのための変数
-  static List<TimeDivision>  _timeDivsTemp = [];
-  static int                 _durationTemp = 30;
+  List<TimeDivision>  _timeDivsTemp = [];
+  int                 _durationTemp = 30;
   
   bool       _isDark       = false;
   ShiftFrame _shiftFrame   = ShiftFrame();
   double     _appBarHeight = 0;     
   Size       _screenSize   = const Size(0, 0);
 
-  static UndoRedo<List<TimeDivision>> undoredoCtrl = UndoRedo<List<TimeDivision>>(50);
+  UndoRedo<List<TimeDivision>> undoredoCtrl = UndoRedo<List<TimeDivision>>(50);
   
   // TextField の動作をスムーズにするための変数
   final FocusNode focusNode = FocusNode();
@@ -68,6 +68,12 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
     super.initState();
     initializeDateFormatting('ja_JP', null).then((_) => setState(() {}));
     _tabController = TabController(length: 2, vsync: this);
+    ref.read(settingProvider).loadPreferences();
+    _isDark     = ref.read(settingProvider).enableDarkTheme;
+    _shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
+    _shiftFrame.shiftDateRange[0] = _templateDateRange[0];
+    _shiftFrame.shiftDateRange[1] = _templateDateRange[1];
+    insertBuffer(_shiftFrame.timeDivs);
   }
 
   @override
@@ -83,20 +89,11 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
     _appBarHeight = AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
     _screenSize   = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - _appBarHeight);
     
-    // プロバイダーからのデータ取得
-    ref.read(settingProvider).loadPreferences();
-    _isDark     = ref.read(settingProvider).enableDarkTheme;
-    _shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
-
     // シフト表名の更新
     textConroller.text = _shiftFrame.shiftName;
 
     // シフト作成期間の日数を表す変数
     _shiftManageRangeDuration = _shiftFrame.shiftDateRange[0].start.subtract(const Duration(days: 1)).difference(_shiftFrame.shiftDateRange[1].end.add(const Duration(days: 1))).inDays+1;
-
-    if(undoredoCtrl.buffer.isEmpty){
-      insertBuffer(_shiftFrame.timeDivs);
-    }
 
     return GestureDetector(
       onTap: () {
@@ -243,6 +240,26 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                     child: FittedBox(fit: BoxFit.fill, child: Text("② 「リクエスト期間」/「シフト期間」を設定して下さい。", style: MyStyle.defaultStyleGrey15))
                   ),
                 ),
+                SizedBox(height: _screenSize.height * 0.02),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: _screenSize.width * 0.08),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text("※ ", style: MyStyle.defaultStyleRed13),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("リクエスト期間中は勤務者のリクエストが確定しない為、シフトを組むことができません。", style: MyStyle.defaultStyleRed13, maxLines: 4),
+                            Text("リクエスト期間終了日からシフト開始日までの期間がシフト作成期間となります。(最低1日)", style: MyStyle.defaultStyleRed13, maxLines: 4),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 TabBar(
                   controller: _tabController,
                   indicatorColor: MyStyle.primaryColor,
@@ -263,7 +280,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                 ),
                 SizedBox(height: _screenSize.height * 0.02), 
                 SizedBox(
-                  height: 200,
+                  height: 198,
                   child: TabBarView(
                     controller: _tabController,
                     children: <Widget>[
@@ -359,6 +376,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                                 ),
                               ],
                             ),
+                            SizedBox(height: _screenSize.height * 0.04),
                             Table(
                               columnWidths: const <int, TableColumnWidth>{
                                 0: IntrinsicColumnWidth(flex: 0.4),
@@ -371,8 +389,8 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                                   children: [
                                     Text('シフトリクエスト期間', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.right),
                                     Text('  ⇨', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
-                                    SizedBox(
-                                      height: 40,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
@@ -389,8 +407,8 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                                   children: [
                                     Text('シフト期間', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.right),
                                     Text('  ⇨', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
-                                    SizedBox(
-                                      height: 40,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
@@ -407,8 +425,8 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                                   children: [
                                     Text('シフト作成期間',  style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.right),
                                     Text('  ⇨', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
-                                    SizedBox(
-                                      height: 40,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
                                       child: Center(
                                         child: (_templateDateRange[0].start.subtract(const Duration(days: 1)).difference(_templateDateRange[1].end.add(const Duration(days: 1))).inDays+1 <= 0)
                                         ? Text("確保できません", style: MyStyle.defaultStyleRed15)
@@ -482,7 +500,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                     ],
                   ),
                 ),
-        
+              
                 SizedBox(height: _screenSize.height * 0.04),
                 Divider(height: _screenSize.height * 0.04, thickness: 1),
           
@@ -579,31 +597,31 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
   /// シフト期間テンプレートを使った時の処理
   ////////////////////////////////////////////////////////////////////////////////////////////
   void updateTemplateShiftRange(){
-    var now = DateTime.now().subtract(const Duration(days: 1));
     
-    DateTime startDate  = now;
-    DateTime endDate    = now;
+    var date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).add(Duration(days: 7-_templateRequestLimitIndex-1));
+    var now  = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    
+    DateTime startDate  = date;
+    DateTime endDate    = date;
     
     if(_templateShiftDurationIndex == 0){ // 月ごとの場合
-      startDate = DateTime(now.year, now.month + 1, 1);
-      endDate   = DateTime(now.year, now.month + 2, 0);
+      startDate = DateTime(date.year, date.month + 1, 1);
+      endDate   = DateTime(date.year, date.month + 2, 0);
     }else if(_templateShiftDurationIndex == 1){ // 二週毎の場合
-      DateTime startOfThisWeek = now.subtract(Duration(days: now.add(const Duration(days: 1)).weekday - 2));
+      DateTime startOfThisWeek = date.subtract(Duration(days: date.add(const Duration(days: 1)).weekday - 2));
       startDate = startOfThisWeek.add(const Duration(days: 7));
       endDate   = startDate.add(const Duration(days: 13));
     }else if(_templateShiftDurationIndex == 2){ // 一週毎の場合
-      DateTime startOfThisWeek = now.subtract(Duration(days: now.add(const Duration(days: 1)).weekday - 2));
+      DateTime startOfThisWeek = date.subtract(Duration(days: date.add(const Duration(days: 1)).weekday - 2));
       startDate = startOfThisWeek.add(const Duration(days: 7));
       endDate   = startDate.add(const Duration(days: 6));
     }else{
       print("index error");
     }
-    _templateDateRange = [
-      DateTimeRange(start: startDate, end: endDate),  
-      (_templateDateRange[0].start.subtract(const Duration(days: 1)).difference(_templateDateRange[1].end.add(const Duration(days: 1))).inDays+1 <= 0)
-      ? DateTimeRange(start: now, end: now)
-      : DateTimeRange(start: now, end: startDate.subtract(Duration(days: 7-_templateRequestLimitIndex)))
-    ]; 
+
+    _templateDateRange[0] = DateTimeRange(start: startDate, end: endDate);
+    _templateDateRange[1] = DateTimeRange(start: now, end: startDate.subtract(Duration(days: 7-_templateRequestLimitIndex)));
+
     _shiftFrame.shiftDateRange = _templateDateRange;
   }
 
@@ -618,7 +636,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: const Text('入力エラー\n', style: TextStyle(color: Colors.red)),
-          content: Text(message),
+          content: Text(message, style: MyStyle.defaultStyleBlack13),
           actions: <Widget>[
             CupertinoDialogAction(
               child: const Text('OK', style: TextStyle(color: Colors.red)),

@@ -157,7 +157,7 @@ class ShiftTable {
   /// 自動でシフト表を入力する関数
   ////////////////////////////////////////////////////////////////////////////
   autoFill(int baseTime, int minTime, int baseConDay){
-    int minMinutes = minTime;
+    int minMinutes = baseTime;
 
     int date         = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1;
     int time         = shiftFrame.timeDivs.length;
@@ -266,9 +266,9 @@ class ShiftTable {
               for(int i = 0; i < shiftRequests.length; i++){
                 calcFitness(baseTime, minTime, baseConDay+1);
                 // 円の関数に従って勤務者の適合率を求める
-                score += sqrt(1 - pow((fitness[i][2]) - 1, 2))*1000;
-                score -= fitness[i][4];
-                score -= fitness[i][5];
+                score += sqrt(1 - pow((fitness[i][2]) - 1, 2))*100;
+                score -= fitness[i][4]*2;
+                score -= fitness[i][5]*3;
                 score -= fitness[i][6]/date*100;
               }
               if(score > maxScore){

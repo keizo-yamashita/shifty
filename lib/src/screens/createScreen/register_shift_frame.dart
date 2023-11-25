@@ -208,7 +208,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
               sheetWidth:  _screenSize.width,
               cellHeight:  _cellHeight*1,
               cellWidth:   _cellWidth*1,
-              titleHeight: _cellHeight*1.5,
+              titleHeight: _cellHeight*2,
               titleWidth:  _cellWidth*3.5,
               onChangeSelect: (p0){
                 setState(() {

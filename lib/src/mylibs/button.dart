@@ -64,7 +64,6 @@ Widget buildTextButton(String text, bool flag, double width, double height, Func
   );
 }
 
-
 Widget buildIconButton(Icon icon, bool flag, double width, double height, Function action){
   return SizedBox(
     width: width,

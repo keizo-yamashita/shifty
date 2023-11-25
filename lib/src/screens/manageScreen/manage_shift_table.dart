@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
 
-
 // my package
 import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/style.dart';
@@ -289,7 +288,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
               sheetWidth:  _screenSize.width,
               cellHeight:  _cellHeight*1,
               cellWidth:   _cellWidth*1,
-              titleHeight: _cellHeight*1.5,
+              titleHeight: _cellHeight*2,
               titleWidth:  _cellWidth*3.5,
               onChangeSelect: (p0) async {
                 coordinate = p0!;
@@ -311,7 +310,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
               sheetWidth:  _screenSize.width,
               cellHeight:  _cellHeight*1,
               cellWidth:   _cellWidth*1,
-              titleHeight: _cellHeight*1.5,
+              titleHeight: _cellHeight*2,
               titleWidth:  _cellWidth*3.5,
               onChangeSelect: (p0) async {
                 coordinate = p0!;
@@ -1198,11 +1197,18 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
           child: SizedBox(
             height: modalHeight,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: SizedBox(
+                        height: 20,
+                        child: Text("シフトの自動割り当て", style: MyStyle.headlineStyle20, textAlign: TextAlign.center,)
+                      ),
+                    ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: Row(
@@ -1412,8 +1418,15 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
           child: SizedBox(
             height: modalHeight,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: SizedBox(
+                    height: 20,
+                    child: Text("シフトの範囲入力", style: MyStyle.headlineStyleBlack20, textAlign: TextAlign.center),
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -1527,7 +1540,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: buildTextButton(
-                        "一括入力", true, modalWidth, buttonHeight,
+                        "範囲入力する", true, modalWidth, buttonHeight,
                         (){
                           setState(() {
                             var rule = ShiftTableRule(

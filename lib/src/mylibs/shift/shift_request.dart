@@ -198,7 +198,6 @@ class ShiftRequest {
 
     if(requestId.isNotEmpty){
       await firestore.collection('shift-follower').doc(requestId).update(request).then((_){
-        print("update shift request");
       }).catchError((error) {
         print("Failed to update shift request: $error");
       });

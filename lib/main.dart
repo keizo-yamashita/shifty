@@ -17,7 +17,6 @@ import 'package:shift/src/screens/splashScreen/splash_screen.dart';
 import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
 import 'package:shift/src/mylibs/shift/shift_provider.dart';
 import 'package:shift/src/mylibs/setting_provider.dart';
-// import 'package:dart_openai/dart_openai.dart';
 
 final signInProvider       = ChangeNotifierProvider((ref) => SignInProvider());
 final settingProvider      = ChangeNotifierProvider((ref) => SettingProvider());

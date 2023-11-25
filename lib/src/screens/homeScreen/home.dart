@@ -79,19 +79,31 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
           stream: FirebaseFirestore.instance.collection('shift-follower').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
-              return const Center(child: CircularProgressIndicator(color: MyStyle.defaultColor));
+              return const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Center(child: CircularProgressIndicator(color: MyStyle.defaultColor)),
+              );
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator(color: MyStyle.primaryColor));
+              return const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Center(child: CircularProgressIndicator(color: MyStyle.primaryColor)),
+              );
             }
             return FutureBuilder<Widget>(
               future: buildMyShiftRequest(snapshot.data!.docs, ref.read(settingProvider).enableDarkTheme ),
-              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator(color: MyStyle.primaryColor));
-                } else if (snapshot.hasError) {
-                  return const Center(child: CircularProgressIndicator(color: MyStyle.defaultColor));
-                } else {
+              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot){
+                if(snapshot.connectionState == ConnectionState.waiting){
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(child: CircularProgressIndicator(color: MyStyle.primaryColor)),
+                  );
+                }else if(snapshot.hasError) {
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(child: CircularProgressIndicator(color: MyStyle.defaultColor)),
+                  );
+                }else{
                   return snapshot.data!;
                 }
               },
@@ -105,18 +117,30 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
           stream: FirebaseFirestore.instance.collection('shift-leader').where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('created-at', descending: true).snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
-              return const Center(child: CircularProgressIndicator(color: MyStyle.defaultColor));
+              return const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Center(child: CircularProgressIndicator(color: MyStyle.defaultColor)),
+              );
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator(color: MyStyle.primaryColor));
+              return const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Center(child: CircularProgressIndicator(color: MyStyle.primaryColor)),
+              );
             }
             return FutureBuilder<Widget>(
               future: buildMyShiftFrame(snapshot.data!.docs, ref.read(settingProvider).enableDarkTheme),
               builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator(color: MyStyle.primaryColor));
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(child: CircularProgressIndicator(color: MyStyle.primaryColor)),
+                  );
                 } else if (snapshot.hasError) {
-                  return const Center(child: CircularProgressIndicator(color: MyStyle.defaultColor));
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(child: CircularProgressIndicator(color: MyStyle.defaultColor)),
+                  );
                 } else {
                   return snapshot.data!;
                 }
@@ -182,17 +206,12 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
               labelColor: MyStyle.primaryColor,  
               unselectedLabelColor: Colors.grey, 
               tabs: tabList,
-              onTap: (int index){
-                if(index == 0){
-                }else{
-                }
-              },
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: SizedBox(
-              height: _screenSize.height * 1 - 92,
+              height: _screenSize.height - 60 - 32,
               child: TabBarView(
                 controller: _tabController,
                 children: itemList,
