@@ -106,7 +106,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
             return;
           }
           final NavigatorState navigator = Navigator.of(context);
-          if(_shiftFrame.shiftName == '' || _shiftFrame.timeDivs.isEmpty){
+          if(textConroller.text == '' && _shiftFrame.timeDivs.isEmpty){
             navigator.pop();
           }else{
             final bool shouldPop = await showConfirmDialog(context, ref, "注意", "入力が保存されていません。\n未登録の入力は破棄されます。", "", (){}, false, true);// ダイアログで戻るか確認
@@ -167,6 +167,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
         
           extendBody: true,
           extendBodyBehindAppBar: true,
+          resizeToAvoidBottomInset: false,
             
           body: SingleChildScrollView(
             child: Column(

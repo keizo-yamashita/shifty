@@ -9,6 +9,8 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/shift/shift_request.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
+import 'package:shift/src/mylibs/shift_editor/date_title.dart';
+
 
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix Class
@@ -92,7 +94,7 @@ class ShiftResponseEditor extends StatelessWidget {
                   leftHandSideColumnWidth: titleWidth,
                   rightHandSideColumnWidth: (shiftRequest.shiftFrame.shiftDateRange[0].end.difference(shiftRequest.shiftFrame.shiftDateRange[0].start).inDays+1) * cellWidth,
                   isFixedHeader: true,
-                  headerWidgets: _getTitleWidget(),
+                  headerWidgets: getDateTitle(titleHeight, cellWidth, shiftRequest.shiftFrame.shiftDateRange[0].start, shiftRequest.shiftFrame.shiftDateRange[0].end, isDark),
                   leftSideItemBuilder: _generateFirstColumnsRow,
                   rightSideItemBuilder: _generateRightHandSideColumnRow,
                   itemCount: shiftRequest.shiftFrame.timeDivs.length,

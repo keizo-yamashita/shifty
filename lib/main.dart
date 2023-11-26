@@ -29,6 +29,7 @@ final deepLinkProvider     = ChangeNotifierProvider((ref) => DeepLinkProvider())
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // FirebaseDatabase.instance.setPersistenceEnabled(true);
 
   runApp(
     const ProviderScope(

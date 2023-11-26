@@ -167,7 +167,6 @@ Future<int?> showInfoDialog(BuildContext context, WidgetRef ref, String title, W
   int? selectedOption;
 
   ref.read(settingProvider).loadPreferences();
-  bool isDark = ref.read(settingProvider).enableDarkTheme;
 
   await showDialog(
     context: context,

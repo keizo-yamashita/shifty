@@ -73,6 +73,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
     // 画面サイズの取得
     _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom);
 
+
     // Provider 処理
     _shiftRequest = ref.read(shiftRequestProvider).shiftRequest;
     ref.read(settingProvider).loadPreferences();
@@ -143,164 +144,163 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
             ),
           ],
         ),
+        resizeToAvoidBottomInset: false,
       
-        body: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-      
-              ////////////////////////////////////////////////////////////////////////////////////////////
-              /// ツールボタン
-              ////////////////////////////////////////////////////////////////////////////////////////////
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      //　拡大縮小ボタン
-                      buildToolButton(
-                        Icons.zoom_in,
-                        _enableZoomIn,
-                        _screenSize.width/7,
-                        (){
-                          setState((){
-                            zoomIn();
-                          });
-                        },
-                        (){}
-                      ),
-                      buildToolButton(
-                        Icons.zoom_out,
-                        _enableZoomOut,
-                        _screenSize.width/7,
-                        (){
-                          setState((){
-                            zoomOut();
-                          });
-                        },
-                        (){}
-                      ),
-                      // フィルタ入力ボタン
-                      buildToolButton(
-                        Icons.filter_alt_outlined,
-                        isRequestRange(),
-                        _screenSize.width/7,
-                        (){
-                          if(isRequestRange()){
-                            buildAutoFillModalWindow(context);
-                          }else{
-                            showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません。\n編集が必要な場合は管理者に連絡してください。", true);
-                          }
-                          setState((){});
-                        },
-                        (){}
-                      ),
-                      // タッチ入力ボタン
-                      buildToolButton(
-                        Icons.touch_app_outlined,
-                        _enableRequestEdit && isRequestRange(),
-                        _screenSize.width/7,
-                        (){
-                          if(isRequestRange()){
-                            _enableRequestEdit = !_enableRequestEdit;
-                          }else{
-                            showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません。\n編集が必要な場合は管理者に連絡してください。", true);
-                          }
-                          setState((){});
-                        },
-                        (){
-                          if(isRequestRange()){
-                            buildInkChangeModaleWindow();
-                            _enableRequestEdit = true;
-                          }else{
-                            showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません。\n編集が必要な場合は管理者に連絡してください。", true);
-                          }
-                          setState((){});
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+              
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// ツールボタン
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    //　拡大縮小ボタン
+                    buildToolButton(
+                      Icons.zoom_in,
+                      _enableZoomIn,
+                      _screenSize.width/7,
+                      (){
+                        setState((){
+                          zoomIn();
+                        });
+                      },
+                      (){}
+                    ),
+                    buildToolButton(
+                      Icons.zoom_out,
+                      _enableZoomOut,
+                      _screenSize.width/7,
+                      (){
+                        setState((){
+                          zoomOut();
+                        });
+                      },
+                      (){}
+                    ),
+                    // フィルタ入力ボタン
+                    buildToolButton(
+                      Icons.filter_alt_outlined,
+                      isRequestRange(),
+                      _screenSize.width/7,
+                      (){
+                        if(isRequestRange()){
+                          buildAutoFillModalWindow(context);
+                        }else{
+                          showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません。\n編集が必要な場合は管理者に連絡してください。", true);
                         }
-                      ),
-                      // Redo Undo ボタン
-                      buildToolButton(
-                        Icons.undo,
-                        undoredoCtrl.enableUndo(),
-                        _screenSize.width/7,
-                        (){
-                          setState(() {
-                            _registered = false;
-                            runUndoRedo(true);
-                          });
-                        },
-                        (){}
-                      ),
-                      buildToolButton(
-                        Icons.redo,
-                        undoredoCtrl.enableRedo(),
-                        _screenSize.width/7,
-                        (){
-                          setState(() {
-                            _registered = false;
-                            runUndoRedo(false);
-                          });
-                        },
-                        (){}
-                      )
-                    ],
-                  ),
+                        setState((){});
+                      },
+                      (){}
+                    ),
+                    // タッチ入力ボタン
+                    buildToolButton(
+                      Icons.touch_app_outlined,
+                      _enableRequestEdit && isRequestRange(),
+                      _screenSize.width/7,
+                      (){
+                        if(isRequestRange()){
+                          _enableRequestEdit = !_enableRequestEdit;
+                        }else{
+                          showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません。\n編集が必要な場合は管理者に連絡してください。", true);
+                        }
+                        setState((){});
+                      },
+                      (){
+                        if(isRequestRange()){
+                          buildInkChangeModaleWindow();
+                          _enableRequestEdit = true;
+                        }else{
+                          showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、編集できません。\n編集が必要な場合は管理者に連絡してください。", true);
+                        }
+                        setState((){});
+                      }
+                    ),
+                    // Redo Undo ボタン
+                    buildToolButton(
+                      Icons.undo,
+                      undoredoCtrl.enableUndo(),
+                      _screenSize.width/7,
+                      (){
+                        setState(() {
+                          _registered = false;
+                          runUndoRedo(true);
+                        });
+                      },
+                      (){}
+                    ),
+                    buildToolButton(
+                      Icons.redo,
+                      undoredoCtrl.enableRedo(),
+                      _screenSize.width/7,
+                      (){
+                        setState(() {
+                          _registered = false;
+                          runUndoRedo(false);
+                        });
+                      },
+                      (){}
+                    )
+                  ],
                 ),
               ),
+            ),
+            
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// メインテーブル
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            (isRequestRange())
+            ? ShiftRequestEditor(
+              sheetHeight: _screenSize.height * 1.0 - 30 - 16 - 8,
+              sheetWidth:  _screenSize.width,
+              cellHeight:  _cellHeight*1,
+              cellWidth:   _cellWidth*1,
+              titleHeight: _cellHeight*2,
+              titleWidth:  _cellWidth*3.5,
+              onChangeSelect:   (p0){
+                setState(() {
+                  coordinate = p0!;
+                  if(_enableRequestEdit){
+                    _shiftRequest.requestTable[coordinate!.row][coordinate!.column] = _inkValue;
+                  }
+                });
+              },
+              onInputEnd: (){
+                _registered = false;
+                insertBuffer(_shiftRequest.requestTable);
+              },
+              shiftRequest: _shiftRequest,
+              enableEdit: _enableRequestEdit,
+              selected: coordinate,
+              isDark: _isDark,
+            )
+            : ShiftResponseEditor(
+              sheetHeight: _screenSize.height * 1.0 - 30 - 16 - 8,
+              sheetWidth:  _screenSize.width,
+              cellHeight:  _cellHeight*1,
+              cellWidth:   _cellWidth*1,
+              titleHeight: _cellHeight*2,
+              titleWidth:  _cellWidth*3.5,
+              onChangeSelect:   (p0){
+                setState(() {
+                  coordinate = p0!;
+                });
+              },
+              onInputEnd: (){},
+              shiftRequest: _shiftRequest,
+              enableEdit: false,
+              selected: coordinate,
+              isDark: _isDark,
+            ),
               
-              ////////////////////////////////////////////////////////////////////////////////////////////
-              /// メインテーブル
-              ////////////////////////////////////////////////////////////////////////////////////////////
-              (isRequestRange())
-              ? ShiftRequestEditor(
-                sheetHeight: _screenSize.height * 1.0 - 30 - 16 - 8,
-                sheetWidth:  _screenSize.width,
-                cellHeight:  _cellHeight*1,
-                cellWidth:   _cellWidth*1,
-                titleHeight: _cellHeight*2,
-                titleWidth:  _cellWidth*3.5,
-                onChangeSelect:   (p0){
-                  setState(() {
-                    coordinate = p0!;
-                    if(_enableRequestEdit){
-                      _shiftRequest.requestTable[coordinate!.row][coordinate!.column] = _inkValue;
-                    }
-                  });
-                },
-                onInputEnd: (){
-                  _registered = false;
-                  insertBuffer(_shiftRequest.requestTable);
-                },
-                shiftRequest: _shiftRequest,
-                enableEdit: _enableRequestEdit,
-                selected: coordinate,
-                isDark: _isDark,
-              )
-              : ShiftResponseEditor(
-                sheetHeight: _screenSize.height * 1.0 - 30 - 16 - 8,
-                sheetWidth:  _screenSize.width,
-                cellHeight:  _cellHeight*1,
-                cellWidth:   _cellWidth*1,
-                titleHeight: _cellHeight*2,
-                titleWidth:  _cellWidth*3.5,
-                onChangeSelect:   (p0){
-                  setState(() {
-                    coordinate = p0!;
-                  });
-                },
-                onInputEnd: (){},
-                shiftRequest: _shiftRequest,
-                enableEdit: false,
-                selected: coordinate,
-                isDark: _isDark,
-              ),
-      
-              // brank
-              const SizedBox(height: 8)
-            ],
-          ),
+            // brank
+            const SizedBox(height: 8)
+          ],
         ),
       ),
     );

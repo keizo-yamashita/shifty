@@ -10,6 +10,7 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/shift/shift_table.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
+import 'package:shift/src/mylibs/shift_editor/date_title.dart';
 
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix Class
@@ -68,7 +69,7 @@ class ShiftTableEditor extends StatelessWidget {
                 leftHandSideColumnWidth: titleWidth,
                 rightHandSideColumnWidth: (shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1) * cellWidth,
                 isFixedHeader: true,
-                headerWidgets: _getTitleWidget(),
+                headerWidgets: getDateTitle(titleHeight, cellWidth, shiftTable.shiftFrame.shiftDateRange[0].start, shiftTable.shiftFrame.shiftDateRange[0].end, isDark),
                 leftSideItemBuilder: _generateFirstColumnsRow,
                 rightSideItemBuilder: _generateRightHandSideColumnRow,
                 itemCount: shiftTable.shiftFrame.timeDivs.length,
@@ -94,52 +95,6 @@ class ShiftTableEditor extends StatelessWidget {
   /// テーブルの要素を作るための関数
   ///////////////////////////////////////////////////////////////////////
 
-  List<Widget> _getTitleWidget(){
-
-    List<String> weekdayJP = ["月", "火", "水", "木", "金", "土", "日"];
-    Text         day, weekday;
-
-    var columnNum = shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1;
-
-    var titleList = [Container(
-        width: titleWidth,
-        height: titleHeight,
-        alignment: Alignment.center,
-        child: Text("", style: MyStyle.defaultStyleBlack10),
-      )];
-
-    for(int i = 0; i < columnNum; i++){
-      DateTime     date = shiftTable.shiftFrame.shiftDateRange[0].start.add(Duration(days: i));
-
-      if(date.weekday == 6){
-        day     = Text('${date.day}', style: MyStyle.tableTitleStyle(Colors.blue)); 
-        weekday = Text(weekdayJP[date.weekday - 1], style: MyStyle.tableTitleStyle(Colors.blue));
-      }else if(date.weekday == 7){
-        day     = Text('${date.day}', style: MyStyle.tableTitleStyle(Colors.red)); 
-        weekday = Text(weekdayJP[date.weekday - 1], style: MyStyle.tableTitleStyle(Colors.red));
-      }else{
-        day     = Text('${date.day}', style: MyStyle.tableTitleStyle((isDark) ?Colors.white : Colors.black54)); 
-        weekday = Text(weekdayJP[date.weekday - 1], style: MyStyle.tableTitleStyle((isDark) ?Colors.white : Colors.black54));
-      }
-      titleList.add(
-        Container(
-          width: cellWidth,
-          height: titleHeight,
-          padding: const EdgeInsets.symmetric(vertical: 2),
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: (titleHeight-4)/2, child: FittedBox(fit: BoxFit.fitWidth, child: day)),
-              SizedBox(height: (titleHeight-4)/2, child: FittedBox(fit: BoxFit.fitWidth ,child: weekday))
-            ]
-          )
-        )
-      );
-    }
-    return titleList;
-  }
   Widget _generateFirstColumnsRow(BuildContext context, int index){
     return Container(
       width: titleWidth,
@@ -186,9 +141,9 @@ class ShiftTableEditor extends StatelessWidget {
 
     var value = (assignNum / shiftTable.shiftFrame.assignTable[row][column]);
 
-    var cellValue = Icon(CupertinoIcons.hand_thumbsup, size: 14 * cellWidth / 20, color: MyStyle.primaryColor);
+    var cellValue = Icon(CupertinoIcons.check_mark, size: 14 * cellWidth / 20, color: isDark ? Colors.white : Colors.black);
     if(value == 0){
-      cellValue = Icon(CupertinoIcons.clear_thick, size: 14 * cellWidth / 20, color: Colors.red); 
+      cellValue = Icon(Icons.clear, size: 14 * cellWidth / 20, color: Colors.red); 
     }
     else if(value < 0.3){
       cellValue = Icon(CupertinoIcons.clear_thick, size: 14 * cellWidth / 20, color: Colors.yellow[800]); 
@@ -299,7 +254,7 @@ class DiagonalLinePainter extends CustomPainter {
 
     // 左下から右上に斜線を描く
     canvas.drawLine(const Offset(0, 0), Offset(size.width, size.height), paint);
-    canvas.drawLine(Offset(0, size.height), Offset(size.width, 0), paint);
+    // canvas.drawLine(Offset(0, size.height), Offset(size.width, 0), paint);
   }
 
   @override

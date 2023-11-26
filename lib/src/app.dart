@@ -86,6 +86,7 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
         ),
         extendBody: true,
         extendBodyBehindAppBar: true,
+        resizeToAvoidBottomInset: false,
       
         // Main Contents
         body: _contents[_selectedIndex].content,

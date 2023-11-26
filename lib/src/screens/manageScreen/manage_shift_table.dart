@@ -37,7 +37,7 @@ bool _enableZoomOut         = true;
 
 Size _screenSize            = const Size(0, 0);
 bool _isDark                = false;
-List<bool> _displayInfoFlag = [false, false, false, false];
+List<bool> _displayInfoFlag = [true, true, true];
 
 // 自動入力パラメータ
 Duration _baseDuration = const Duration(hours: 7);
@@ -164,7 +164,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             ),
           ],
         ),
-      
+        resizeToAvoidBottomInset: false,
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -1206,7 +1206,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: SizedBox(
                         height: 20,
-                        child: Text("シフトの自動割り当て", style: MyStyle.headlineStyle20, textAlign: TextAlign.center,)
+                        child: Text("シフトの自動割り当て", style: MyStyle.defaultStyleGrey18, textAlign: TextAlign.center,)
                       ),
                     ),
                     Padding(
@@ -1424,7 +1424,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: SizedBox(
                     height: 20,
-                    child: Text("シフトの範囲入力", style: MyStyle.headlineStyleBlack20, textAlign: TextAlign.center),
+                    child: Text("シフトの範囲入力", style: MyStyle.defaultStyleGrey18, textAlign: TextAlign.center),
                   ),
                 ),
                 Row(
