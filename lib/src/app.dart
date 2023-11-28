@@ -16,6 +16,7 @@ import 'package:shift/src/mylibs/deep_link_mixin.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
 import 'package:shift/src/screens/homeScreen/account.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
+import 'package:shift/src/mylibs/shift_editor/table.dart';
 // import 'package:shift/src/screens/homeSCreen/notification.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,10 +34,11 @@ class AppWidget extends ConsumerStatefulWidget {
 class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
 
   final List<MenuContent> _contents = [
-    MenuContent(contentTitle: "ホーム",    contentIcon: Icons.home,              content: const HomeWidget()),
-    MenuContent(contentTitle: "アカウント", contentIcon: Icons.person_2,          content: const AccountScreen()),
+    MenuContent(contentTitle: "ホーム",     contentIcon: Icons.home,              content: const HomeWidget()),
+    MenuContent(contentTitle: "アカウント",  contentIcon: Icons.person_2,          content: const AccountScreen()),
     MenuContent(contentTitle: "ご要望",     contentIcon: Icons.sms_failed,       content: const SuggestionBoxScreen()), 
-    MenuContent(contentTitle: "設定",      contentIcon: Icons.settings,          content: const SettingScreen()), 
+    MenuContent(contentTitle: "設定",       contentIcon: Icons.settings,          content: const SettingScreen()), 
+    MenuContent(contentTitle: "テスト",     contentIcon: Icons.abc,              content: TestScreen()), 
     // MenuContent(contentTitle: "お知らせ",   contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
   ];
   

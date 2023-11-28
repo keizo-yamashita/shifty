@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
+import 'package:shift/src/mylibs/pop_icons.dart';
 
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/shift/shift_request.dart';
@@ -158,10 +159,10 @@ class ShiftRequestEditor extends StatelessWidget {
     Color cellColor;
 
     if(value == 1){ 
-      cellValue = Icon(Icons.circle_outlined, size: 12 * cellWidth / 20, color: MyStyle.primaryColor);
+      cellValue = Icon(PopIcons.circle_empty, size: 12 * cellWidth / 20, color: MyStyle.primaryColor);
       cellColor = MyStyle.primaryColor;
     }else{
-      cellValue = Icon(Icons.clear, size: 12 * cellWidth / 20, color: Colors.red);
+      cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
       cellColor = Colors.red;
     }
 

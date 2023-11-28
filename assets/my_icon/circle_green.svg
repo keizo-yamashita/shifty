@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Created with Vectornator (http://vectornator.io/) -->
+<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="260.058 405.436 56.7 56.7" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs/>
+<clipPath id="ArtboardFrame">
+<rect height="56.7" width="56.7" x="260.058" y="405.436"/>
+</clipPath>
+<g clip-path="url(#ArtboardFrame)" id="Layer" vectornator:layerName="Layer">
+<g opacity="1" vectornator:layerName="グループ 9">
+<path d="M269.804 433.786C269.804 423.511 278.133 415.182 288.408 415.182C298.683 415.182 307.012 423.511 307.012 433.786C307.012 444.061 298.683 452.39 288.408 452.39C278.133 452.39 269.804 444.061 269.804 433.786Z" fill="none" opacity="1" stroke="#14c38e" stroke-linecap="butt" stroke-linejoin="round" stroke-width="7" vectornator:layerName="楕円形 2"/>
+</g>
+</g>
+</svg>

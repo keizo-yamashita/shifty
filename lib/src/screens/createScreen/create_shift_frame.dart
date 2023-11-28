@@ -59,6 +59,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
   // TextField の動作をスムーズにするための変数
   final FocusNode focusNode = FocusNode();
   final TextEditingController textConroller = TextEditingController();
+  int dateRangePickerIndex = 0;
   
   // タブコントローラー
   late TabController _tabController;
@@ -132,7 +133,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                 ),
               ),
               TextButton(
-                child:  const Icon(Icons.navigate_next_outlined, color: MyStyle.primaryColor, size: 45),
+                child:  const Icon(Icons.navigate_next_outlined, color: Color.fromRGBO(20, 195, 142, 1), size: 45),
                 onPressed: () {
                   if(_shiftFrame.timeDivs.isEmpty){
                     _onCreateScheduleItemTapped(context, "1つ以上の時間区分を入力して下さい。");
@@ -272,6 +273,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                     Tab(text: 'カスタム'),
                   ],
                   onTap: (int index){
+                    dateRangePickerIndex = index;
                     if(index == 0){
                       _shiftFrame.shiftDateRange = _templateDateRange;
                     }else{
@@ -281,7 +283,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                 ),
                 SizedBox(height: _screenSize.height * 0.02), 
                 SizedBox(
-                  height: 198,
+                  height: (dateRangePickerIndex == 0) ? 68 + 20 + 36*3 : 48 * 3,
                   child: TabBarView(
                     controller: _tabController,
                     children: <Widget>[
@@ -293,7 +295,10 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 buildInputBox(
-                                  "シフト表の周期",
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text("シフト表の周期", style: MyStyle.defaultStyleGrey15)
+                                  ),
                                   SizedBox(
                                     width: _screenSize.width * 0.445,
                                     height: 40,
@@ -335,7 +340,10 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                                 ),
                                 SizedBox(width: _screenSize.width * 0.01),
                                 buildInputBox(
-                                  "リクエスト入力期限",
+                                  SizedBox(
+                                    height: 20,
+                                    child: Text("リクエスト入力期限", style: MyStyle.defaultStyleGrey15)
+                                  ),
                                   SizedBox(
                                     width: _screenSize.width * 0.445,
                                     height: 40,
@@ -377,7 +385,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                                 ),
                               ],
                             ),
-                            SizedBox(height: _screenSize.height * 0.04),
+                            const SizedBox(height: 20),
                             Table(
                               columnWidths: const <int, TableColumnWidth>{
                                 0: IntrinsicColumnWidth(flex: 0.4),
@@ -392,14 +400,17 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                                     Text('  ⇨', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[1].start), style: MyStyle.headlineStyleGreen15),
-                                          Text(" - ", style: MyStyle.headlineStyleGreen15),
-                                          Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[1].end), style: MyStyle.headlineStyleGreen15),
-                                          Text(" [ ${(_templateDateRange[1].end.difference(_templateDateRange[1].start).inDays+1).toString().padLeft(2, ' ')}日 ]", style: MyStyle.headlineStyleGreen15),
-                                        ],
+                                      child: SizedBox(
+                                        height: 20,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[1].start), style: MyStyle.headlineStyleGreen15),
+                                            Text(" - ", style: MyStyle.headlineStyleGreen15),
+                                            Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[1].end), style: MyStyle.headlineStyleGreen15),
+                                            Text(" [ ${(_templateDateRange[1].end.difference(_templateDateRange[1].start).inDays+1).toString().padLeft(2, ' ')}日 ]", style: MyStyle.headlineStyleGreen15),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ]
@@ -410,14 +421,17 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                                     Text('  ⇨', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[0].start), style: MyStyle.headlineStyleGreen15),
-                                          Text(" - ", style: MyStyle.headlineStyleGreen15),
-                                          Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[0].end), style: MyStyle.headlineStyleGreen15),
-                                          Text(" [ ${(_templateDateRange[0].end.difference(_templateDateRange[0].start).inDays+1).toString().padLeft(2, ' ')}日 ]", style: MyStyle.headlineStyleGreen15),
-                                        ],
+                                      child: SizedBox(
+                                        height: 20,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[0].start), style: MyStyle.headlineStyleGreen15),
+                                            Text(" - ", style: MyStyle.headlineStyleGreen15),
+                                            Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[0].end), style: MyStyle.headlineStyleGreen15),
+                                            Text(" [ ${(_templateDateRange[0].end.difference(_templateDateRange[0].start).inDays+1).toString().padLeft(2, ' ')}日 ]", style: MyStyle.headlineStyleGreen15),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ]
@@ -431,14 +445,17 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                                       child: Center(
                                         child: (_templateDateRange[0].start.subtract(const Duration(days: 1)).difference(_templateDateRange[1].end.add(const Duration(days: 1))).inDays+1 <= 0)
                                         ? Text("確保できません", style: MyStyle.defaultStyleRed15)
-                                        : Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[1].end.add(const Duration(days: 1))), style: MyStyle.headlineStyleGreen15),
-                                            Text(" - ", style: MyStyle.headlineStyleGreen15),
-                                            Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[0].start.subtract(const Duration(days: 1))), style: MyStyle.headlineStyleGreen15),
-                                            Text(" [ ${(_templateDateRange[0].start.subtract(const Duration(days: 1)).difference(_templateDateRange[1].end.add(const Duration(days: 1))).inDays+1).toString().padLeft(2, ' ')}日 ]", style: MyStyle.headlineStyleGreen15),
-                                          ],
+                                        : SizedBox(
+                                          height: 20,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[1].end.add(const Duration(days: 1))), style: MyStyle.headlineStyleGreen15),
+                                              Text(" - ", style: MyStyle.headlineStyleGreen15),
+                                              Text(DateFormat('MM/dd', 'ja_JP').format(_templateDateRange[0].start.subtract(const Duration(days: 1))), style: MyStyle.headlineStyleGreen15),
+                                              Text(" [ ${(_templateDateRange[0].start.subtract(const Duration(days: 1)).difference(_templateDateRange[1].end.add(const Duration(days: 1))).inDays+1).toString().padLeft(2, ' ')}日 ]", style: MyStyle.headlineStyleGreen15),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -463,14 +480,14 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                               children: [
                                 Text('シフトリクエスト期間', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.right),
                                 Text('  ⇨', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
-                                SizedBox(width: _screenSize.width*0.45, child: buildInputBox("", buildDateRangePicker(1)))
+                                SizedBox(height: 48, width: _screenSize.width*0.45, child: buildInputBox(null, buildDateRangePicker(1)))
                               ]
                             ),
                             TableRow(
                               children: [
                                 Text('シフト期間', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.right),
                                 Text('  ⇨', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
-                                SizedBox(width: _screenSize.width*0.45, child: buildInputBox("", buildDateRangePicker(0)))
+                                SizedBox(height: 48, width: _screenSize.width*0.45, child: buildInputBox(null, buildDateRangePicker(0)))
                               ]
                             ),
                             TableRow(
@@ -478,7 +495,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                                 Text('シフト作成期間',  style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.right),
                                 Text('  ⇨', style:  MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
                                 SizedBox(
-                                  height: 40,
+                                  height: 48,
                                   child: Center(
                                     child: (_customDateRange[0].start.subtract(const Duration(days: 1)).difference(_customDateRange[1].end.add(const Duration(days: 1))).inDays+1 <= 0)
                                     ? Text("確保できません", style: MyStyle.defaultStyleRed15)
@@ -521,17 +538,35 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      buildInputBox("始業時間", buildTimePicker(_startTime, DateTime(1,1,1,0,0), DateTime(1,1,1,23,59), 5, setStartTime)),
+                      buildInputBox(
+                        SizedBox(
+                          height: 20,
+                          child: FittedBox(fit: BoxFit.fill, child: Text("始業時間", style: MyStyle.defaultStyleGrey15))
+                        ),
+                        buildTimePicker(_startTime, DateTime(1,1,1,0,0), DateTime(1,1,1,23,59), 5, setStartTime)
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 30),
                         child: Text("〜", style: MyStyle.headlineStyleGreen15),
                       ),
-                      buildInputBox("終業時間", buildTimePicker(_endTime, _startTime.add(const Duration(hours: 1)), DateTime(1,1,1,23,59), 5, setEndTime)),
+                      buildInputBox(
+                        SizedBox(
+                          height: 20,
+                          child: FittedBox(fit: BoxFit.fill, child: Text("終業時間", style: MyStyle.defaultStyleGrey15))
+                        ),
+                        buildTimePicker(_endTime, _startTime.add(const Duration(hours: 1)), DateTime(1,1,1,23,59), 5, setEndTime)
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 30),
                         child: Text("...", style: MyStyle.headlineStyleGreen15),
                       ),
-                      buildInputBox("管理間隔", buildTimePicker(_duration, DateTime(1,1,1,0,10), DateTime(1,1,1,6,0), 5, setDuration)),
+                      buildInputBox(
+                        SizedBox(
+                          height: 20,
+                          child: FittedBox(fit: BoxFit.fill, child: Text("管理間隔", style: MyStyle.defaultStyleGrey15))
+                        ),
+                        buildTimePicker(_duration, DateTime(1,1,1,0,10), DateTime(1,1,1,6,0), 5, setDuration)
+                      ),
                     ],
                   ),
                 ),
@@ -776,13 +811,13 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget> 
     });
   }
 
-  Widget buildInputBox(String title, Widget child){
+  Widget buildInputBox(Widget? title, Widget child){
     return Column(
       children: [
-       if(title != "")
+        if(title != null)
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),
-          child: Text(title, style: MyStyle.defaultStyleGrey15),
+          child: title
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),

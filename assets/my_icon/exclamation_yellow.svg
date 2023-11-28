@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Created with Vectornator (http://vectornator.io/) -->
+<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="197.992 337.6 56.7 56.7" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs/>
+<clipPath id="ArtboardFrame">
+<rect height="56.7" width="56.7" x="197.992" y="337.6"/>
+</clipPath>
+<g clip-path="url(#ArtboardFrame)" id="Layer" vectornator:layerName="Layer">
+<g opacity="1" vectornator:layerName="グループ 6">
+<g opacity="1" vectornator:layerName="グループ 1">
+<path d="M219.676 383.844C219.676 380.227 222.661 377.294 226.342 377.294C230.023 377.294 233.008 380.227 233.008 383.844C233.008 387.462 230.023 390.395 226.342 390.395C222.661 390.395 219.676 387.462 219.676 383.844Z" fill="#ef9f46" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="楕円形 1"/>
+<path d="M220.069 343.465C219.922 344.89 221.211 370.734 221.411 373.332C221.494 374.402 230.837 374.432 230.88 373.358C230.99 370.581 232.55 344.854 232.481 343.534C232.343 340.865 220.341 340.818 220.069 343.465Z" fill="#ef9f46" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="曲線 2"/>
+</g>
+</g>
+</g>
+</svg>

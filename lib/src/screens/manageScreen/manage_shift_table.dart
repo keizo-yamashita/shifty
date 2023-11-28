@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 
 // my package
 import 'package:shift/main.dart';
+import 'package:shift/src/mylibs/pop_icons.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
@@ -284,7 +285,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             
             (_selectedIndex == 0)
             ? ShiftTableEditor(
-              sheetHeight: _screenSize.height * 1.0 - 60 - 30 - 16 - 16,
+              sheetHeight: _screenSize.height * 1.0 - 46 - 60,
               sheetWidth:  _screenSize.width,
               cellHeight:  _cellHeight*1,
               cellWidth:   _cellWidth*1,
@@ -306,7 +307,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                 isDark: _isDark,
             )
             : ShiftResponseEditor(
-              sheetHeight: _screenSize.height * 1.0 - 60 - 30 - 16 - 16,
+              sheetHeight: _screenSize.height * 1.0 - 46 - 60,
               sheetWidth:  _screenSize.width,
               cellHeight:  _cellHeight*1,
               cellWidth:   _cellWidth*1,
@@ -340,11 +341,11 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             /// 切り替えボタン
             ////////////////////////////////////////////////////////////////////////////////////////////
             
-            // height : 60 + 16
+            // height : 50 + 10
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -354,9 +355,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("", style: (_selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                             Text("      全体      ", style: (_selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("", style: (_selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                           ],
                         ),
                       ),
@@ -371,13 +370,12 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                     for(int requesterIndex = 0; requesterIndex < _shiftTable.shiftRequests.length; requesterIndex++)
                     buildBottomButton(
                       Padding(
-                        padding: const EdgeInsets.all(4.0),
+                        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(_shiftTable.shiftRequests[requesterIndex].displayName, style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("${(_shiftTable.fitness[requesterIndex][1]/60).toStringAsFixed(1)} h (${(_shiftTable.fitness[requesterIndex][0]/60).toStringAsFixed(1)} h)", style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("${(_shiftTable.fitness[requesterIndex][2]*100).toStringAsFixed(2)} %", style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                            Text("${(_shiftTable.fitness[requesterIndex][1]/60).toStringAsFixed(1)} h / ${(_shiftTable.fitness[requesterIndex][0]/60).toStringAsFixed(1)} h ( ${(_shiftTable.fitness[requesterIndex][2]*100).toStringAsFixed(1)} % )", style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                           ],
                         ),
                       ),
@@ -396,9 +394,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                             Text("フォロワーがいません。", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                           ],
                         ),
                       ),
@@ -1119,6 +1115,7 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                     ListTile(
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(
                             width: 100,
@@ -1127,15 +1124,15 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                           Stack(
                             alignment: Alignment.center,
                             children: [
-                              const Icon(Icons.check_box_outline_blank_rounded, color: MyStyle.hiddenColor, size: 20),
+                              const Icon(Icons.check_box_outline_blank_rounded, color: MyStyle.hiddenColor, size: 30),
                               (widget.shiftTable.shiftTable[widget.row][widget.column][index].assign)
                               ? const Padding(
-                                  padding: EdgeInsets.only(bottom: 10, left: 5),
-                                  child: Icon(Icons.check, color: MyStyle.primaryColor, size: 30),
+                                  padding: EdgeInsets.only(bottom: 5, left: 5),
+                                  child: Icon(PopIcons.ok, color: MyStyle.primaryColor, size: 25),
                                 )
                               : const Padding(
-                                  padding: EdgeInsets.only(bottom: 10, left: 5),
-                                  child: Icon(Icons.check, color: Colors.transparent, size: 30),
+                                  padding: EdgeInsets.only(bottom: 5, left: 5),
+                                  child: Icon(PopIcons.ok, color: Colors.transparent, size: 25),
                                 ),
                             ],
                           )
@@ -1204,17 +1201,14 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: SizedBox(
-                        height: 20,
-                        child: Text("シフトの自動割り当て", style: MyStyle.defaultStyleGrey18, textAlign: TextAlign.center,)
-                      ),
+                      child: Text("シフトの自動割り当て", style: MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text("基本勤務時間", style: MyStyle.headlineStyleGreen18),
+                          Text("基本勤務時間", style: MyStyle.headlineStyleGreen15),
                           buildTimePicker(DateTime(1,1,1,0,0).add(_baseDuration), DateTime(1,1,1,0,15), DateTime(1,1,1,23,45), 15, (DateTime val){ _baseDuration = val.difference(DateTime(1,1,1,0,0));}),
                         ],
                       )
@@ -1224,7 +1218,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text("最短勤務時間", style: MyStyle.headlineStyleGreen18),
+                          Text("最短勤務時間", style: MyStyle.headlineStyleGreen15),
                           buildTimePicker(DateTime(1,1,1,0,0).add(_minDuration), DateTime(1,1,1,0,15), DateTime(1,1,1,23,45), 15, (DateTime val){ _minDuration = val.difference(DateTime(1,1,1,0,0));}),
                         ],
                       )
@@ -1234,7 +1228,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text("連続勤務日数", style: MyStyle.headlineStyleGreen18),
+                          Text("連続勤務日数", style: MyStyle.headlineStyleGreen15),
                           SizedBox(
                             height: 40,
                             width: _screenSize.width / 4,
@@ -1424,7 +1418,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: SizedBox(
                     height: 20,
-                    child: Text("シフトの範囲入力", style: MyStyle.defaultStyleGrey18, textAlign: TextAlign.center),
+                    child: Text("シフトの範囲入力", style: MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
                   ),
                 ),
                 Row(

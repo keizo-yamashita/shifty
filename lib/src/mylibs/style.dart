@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shift/src/mylibs/pop_icons.dart';
+
 
 class MyStyle{
   static TextStyle headlineStyle20 = GoogleFonts.mPlus1(fontSize: 20, fontWeight: FontWeight.bold);
@@ -67,6 +69,4 @@ class MyStyle{
       tileMode: TileMode.clamp
     )
   );
-
-
 }

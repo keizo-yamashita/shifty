@@ -59,7 +59,7 @@ Widget buildTextButton(String text, bool flag, double width, double height, Func
       onPressed: (){ 
           action();
       },
-      child: Text(text, style: MyStyle.headlineStyleGreen13)
+      child: FittedBox(fit: BoxFit.fill, child: Text(text, style: MyStyle.headlineStyleGreen15))
     ),
   );
 }
@@ -96,7 +96,7 @@ Widget buildBottomButton(Widget content, bool flag, Function onPressed, Function
     padding: const EdgeInsets.symmetric(horizontal: 3),
     child: SizedBox(
       // width: _screenSize.width / 3,
-      height: 60,
+      height: 50,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           minimumSize: Size.zero,

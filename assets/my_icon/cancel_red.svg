@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Created with Vectornator (http://vectornator.io/) -->
+<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="260.058 461.927 56.7 56.7" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs/>
+<clipPath id="ArtboardFrame">
+<rect height="56.7" width="56.7" x="260.058" y="461.927"/>
+</clipPath>
+<g clip-path="url(#ArtboardFrame)" id="Layer" vectornator:layerName="Layer">
+<g opacity="1" vectornator:layerName="グループ 12">
+<path d="M301.764 477.006L275.052 503.706L301.764 477.006Z" fill="#14c38e" fill-rule="nonzero" opacity="1" stroke="#e94420" stroke-linecap="butt" stroke-linejoin="round" stroke-width="7" vectornator:layerName="曲線 9"/>
+<path d="M275.135 477.027L301.733 503.657L275.135 477.027Z" fill="#14c38e" fill-rule="nonzero" opacity="1" stroke="#e94420" stroke-linecap="butt" stroke-linejoin="round" stroke-width="7" vectornator:layerName="曲線 10"/>
+</g>
+</g>
+</svg>

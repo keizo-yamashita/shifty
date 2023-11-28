@@ -71,4 +71,8 @@ flutter:
   assets:
     - assets/
     - assets/how_to_use/
+  fonts:
+    - family: MyFlutterApp #アイコンセットのタイトル
+      fonts:
+        - asset: assets/MyFlutterApp.ttf #設置したファイル
 

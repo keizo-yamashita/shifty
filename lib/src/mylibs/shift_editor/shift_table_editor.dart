@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:horizontal_data_table/horizontal_data_table.dart';
+import 'package:shift/src/mylibs/pop_icons.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/shift/shift_table.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
@@ -141,21 +142,21 @@ class ShiftTableEditor extends StatelessWidget {
 
     var value = (assignNum / shiftTable.shiftFrame.assignTable[row][column]);
 
-    var cellValue = Icon(CupertinoIcons.check_mark, size: 14 * cellWidth / 20, color: isDark ? Colors.white : Colors.black);
+    var cellValue = Icon(PopIcons.ok, size: 14 * cellWidth / 20, color: MyStyle.primaryColor);
     if(value == 0){
-      cellValue = Icon(Icons.clear, size: 14 * cellWidth / 20, color: Colors.red); 
+      cellValue = Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.red); 
     }
     else if(value < 0.3){
-      cellValue = Icon(CupertinoIcons.clear_thick, size: 14 * cellWidth / 20, color: Colors.yellow[800]); 
+      cellValue = Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.yellow[800]); 
     }
     else if(value < 0.7){
-      cellValue = Icon(CupertinoIcons.exclamationmark, size: 14 * cellWidth / 20, color: Colors.red);
+      cellValue = Icon(PopIcons.attention_alt, size: 14 * cellWidth / 20, color: Colors.red);
     }
     else if(value < 1.0){
-      cellValue = Icon(CupertinoIcons.exclamationmark, size: 14 * cellWidth / 20, color: Colors.yellow[800]);
+      cellValue = Icon(PopIcons.attention_alt, size: 14 * cellWidth / 20, color: Colors.yellow[800]);
     }
     else if(value > 1.0){
-      cellValue = Icon(CupertinoIcons.hand_thumbsup, size: 14 * cellWidth / 20, color: Colors.yellow[800]);
+      cellValue = Icon(PopIcons.ok, size: 14 * cellWidth / 20, color: Colors.yellow[800]);
     }
 
     Color  cellColor = (selected?.column == coordinate.column && selected?.row == coordinate.row) ? MyStyle.primaryColor.withAlpha(100) : Colors.transparent;

@@ -273,10 +273,10 @@ class ShiftRequest {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: Text(title, style: MyStyle.headlineStyleGreen20, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                      child: Text(title, style: MyStyle.headlineStyleGreen15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
                     ),
                     Text(
-                      "　シフト期間　 : ${DateFormat('MM/dd').format(shiftFrame.shiftDateRange[0].start)} - ${DateFormat('MM/dd').format(shiftFrame.shiftDateRange[0].end)}", 
+                      "　　シフト期間 : ${DateFormat('MM/dd').format(shiftFrame.shiftDateRange[0].start)} - ${DateFormat('MM/dd').format(shiftFrame.shiftDateRange[0].end)}", 
                       style: (DateTime.now().compareTo(shiftFrame.shiftDateRange[0].start) >= 0 && DateTime.now().compareTo(shiftFrame.shiftDateRange[0].end) <= 0) ? MyStyle.headlineStyleGreen15 : MyStyle.defaultStyleGrey15,
                       textHeightBehavior: MyStyle.defaultBehavior, 
                       textAlign: TextAlign.center, 
