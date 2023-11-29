@@ -9,7 +9,7 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
-import 'package:shift/src/mylibs/shift_editor/date_title.dart';
+import 'package:shift/src/mylibs/shift_editor/table_title.dart';
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ class ShiftFrameEditor extends StatelessWidget {
                   leftHandSideColumnWidth: titleWidth,
                   rightHandSideColumnWidth: (shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays+1) * cellWidth,
                   isFixedHeader: true,
-                  headerWidgets: getDateTitle(titleHeight, cellWidth, shiftFrame.shiftDateRange[0].start, shiftFrame.shiftDateRange[0].end, isDark),
+                  headerWidgets: getColumnTitles(titleHeight, cellWidth, shiftFrame.shiftDateRange[0].start, shiftFrame.shiftDateRange[0].end, isDark),
                   leftSideItemBuilder: _generateFirstColumnsRow,
                   rightSideItemBuilder: _generateRightHandSideColumnRow,
                   itemCount: shiftFrame.timeDivs.length,

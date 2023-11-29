@@ -11,7 +11,7 @@ import 'package:shift/src/mylibs/pop_icons.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/shift/shift_table.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
-import 'package:shift/src/mylibs/shift_editor/date_title.dart';
+import 'package:shift/src/mylibs/shift_editor/table_title.dart';
 
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix Class
@@ -70,7 +70,7 @@ class ShiftTableEditor extends StatelessWidget {
                 leftHandSideColumnWidth: titleWidth,
                 rightHandSideColumnWidth: (shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1) * cellWidth,
                 isFixedHeader: true,
-                headerWidgets: getDateTitle(titleHeight, cellWidth, shiftTable.shiftFrame.shiftDateRange[0].start, shiftTable.shiftFrame.shiftDateRange[0].end, isDark),
+                headerWidgets: getColumnTitles(titleHeight, cellWidth, shiftTable.shiftFrame.shiftDateRange[0].start, shiftTable.shiftFrame.shiftDateRange[0].end, isDark),
                 leftSideItemBuilder: _generateFirstColumnsRow,
                 rightSideItemBuilder: _generateRightHandSideColumnRow,
                 itemCount: shiftTable.shiftFrame.timeDivs.length,

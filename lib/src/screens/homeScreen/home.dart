@@ -146,6 +146,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
                         child: Center(child: CircularProgressIndicator(color: MyStyle.primaryColor)),
                       );
                     } else if (snapshot.hasError) {
+                      print(snapshot.error);
                       return const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Center(child: CircularProgressIndicator(color: MyStyle.defaultColor)),

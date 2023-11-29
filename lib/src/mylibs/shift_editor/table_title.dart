@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/mylibs/shift/shift_frame.dart';
 
 ///////////////////////////////////////////////////////////////////////
 /// テーブルの要素を作るための関数
 ///////////////////////////////////////////////////////////////////////
 
-List<Widget> getDateTitle(double height, double width, DateTime start, DateTime end, isDark){
+List<Widget> getColumnTitles(double height, double width, DateTime start, DateTime end, isDark){
 
   List<String> weekdayJP = ["月", "火", "水", "木", "金", "土", "日"];
   Text         month, day, weekday;
 
   var columnNum = end.difference(start).inDays+1;
 
-  var titleList = [Container(
-    width: width,
-    height: height,
-    alignment: Alignment.center,
-    child: Text("", style: MyStyle.defaultStyleBlack10),
-  )];
+  var titleList = [
+    Container(
+      width: width,
+      height: height,
+      alignment: Alignment.center,
+      child: Text("", style: MyStyle.defaultStyleBlack10),
+    )
+  ];
   
   for(int i = 0; i < columnNum; i++){
     DateTime date = start.add(Duration(days: i));
@@ -58,5 +61,22 @@ List<Widget> getDateTitle(double height, double width, DateTime start, DateTime 
       )
     );
   }
+  titleList.removeAt(0);
   return titleList;
 }
+
+List<Widget> getRowTitles(double height, double width, List<TimeDivision> timeDivs, isDark){
+  return [
+      for(int i = 0; i < timeDivs.length; i++)
+      Container(
+        width:  width,
+        height: height,
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        alignment: Alignment.center,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(timeDivs[i].name, style:  MyStyle.tableTitleStyle((isDark) ?Colors.white : Colors.black54)),
+        )
+      ),
+    ];
+  }
