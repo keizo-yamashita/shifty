@@ -2,9 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/style.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shift/src/mylibs/shift/shift_request.dart';
+import 'package:shift/src/mylibs/shift_editor/linkled_scroll.dart';
+import 'package:shift/src/mylibs/shift_editor/two_dimention_grid_view.dart';
 import 'package:shift/src/mylibs/shift_editor/table_title.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 
@@ -18,12 +17,14 @@ class TestScreen extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: TopPage(),
+      home: const TopPage(),
     );
   }
 }
 
 class TopPage extends StatefulWidget {
+  const TopPage({super.key});
+
   @override
   _TopPageState createState() => _TopPageState();
 }
@@ -32,8 +33,8 @@ class _TopPageState extends State<TopPage> {
 
   final double _titleHeight = 50;
   final double _titleWidth  = 80;
-  final double _cellHeight  = 20;
-  final double _cellWidth   = 20;
+  final double _cellHeight  = 30;
+  final double _cellWidth   = 30;
 
   final bool isDark = false;
 
@@ -60,7 +61,7 @@ class _TopPageState extends State<TopPage> {
           onInputEnd:  (){},
           enableEdit: false,
           isDark: false,
-          columnTitles: getColumnTitles(_titleHeight, _cellWidth, DateTime.now(), DateTime.now().add(const Duration(days: 30)), isDark),
+          columnTitles: getColumnTitles(_titleHeight, _cellWidth, DateTime.now(), DateTime.now().add(const Duration(days: 29)), isDark),
           rowTitles: getRowTitles(_cellHeight, _titleWidth, timeDivs, isDark),
         )
       ),
@@ -106,15 +107,40 @@ class TableEditor extends StatefulWidget {
 
 class _TableEditorState extends State<TableEditor> {
 
-  final controllerHorizontal_0 = ScrollController();
-  final controllerHorizontal_1 = ScrollController();
-  final controllerVertical_0   = ScrollController();
-  final controllerVertical_1   = ScrollController();
+  late LinkedScrollControllerGroup horizontalScrollGroup;
+  late LinkedScrollControllerGroup verticalScrollGroup;
+  late ScrollController controllerHorizontal_0;
+  late ScrollController controllerHorizontal_1;
+  late ScrollController controllerVertical_0;
+  late ScrollController controllerVertical_1;
+
+  @override
+  void initState() {
+    super.initState();
+    horizontalScrollGroup = LinkedScrollControllerGroup();
+    verticalScrollGroup = LinkedScrollControllerGroup();
+    controllerHorizontal_0 = horizontalScrollGroup.addAndGet();
+    controllerHorizontal_1 = horizontalScrollGroup.addAndGet();
+    controllerVertical_0 = verticalScrollGroup.addAndGet();
+    controllerVertical_1 = verticalScrollGroup.addAndGet();
+  }
+
+  @override
+  void dispose() {
+    controllerHorizontal_0.dispose();
+    controllerHorizontal_1.dispose();
+    controllerVertical_0.dispose();
+    controllerVertical_1.dispose();
+    super.dispose();
+  }
+
+  var scrollEnableMain  = true;
+  var scrollEnableTitle = false;
 
   @override
   Widget build(BuildContext context){
     
-    final contents = List<List<Widget>>.generate(60, (i) => List<Widget>.generate(30, (j) => _cell(i, j)));
+    final contents = getContents(List<int>.generate(60, (j) => j), List<int>.generate(30, (j) => j));
     
     return SizedBox(
       width: widget.tableWidth,
@@ -126,10 +152,12 @@ class _TableEditorState extends State<TableEditor> {
             children: [
               Row(
                 children: [
+                  // 左上の余白
                   Container(color: Colors.white, width: widget.titleWidth, height: widget.titleHeight),
+                  // カラムタイトル (日付)
                   Container(
                     decoration: const BoxDecoration(
-                      color: Colors.white, // コンテナの背景色
+                      color: Colors.white,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey, // 影の色
@@ -140,147 +168,99 @@ class _TableEditorState extends State<TableEditor> {
                     ),
                     height: widget.titleHeight,
                     width: widget.tableWidth - widget.titleWidth,
-                    child: Stack(
-                      children: [
-                        SingleChildScrollView(
-                          controller: controllerHorizontal_1,
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              const SizedBox(width:5),
-                              for(int i =0; i < widget.columnTitles.length; i++)
-                              widget.columnTitles[i],
-                              const SizedBox(width:10),
-                            ],
-                          )
-                        ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          child: const SizedBox(
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
-                          onPanUpdate: (DragUpdateDetails data) {
-                            controllerHorizontal_0.jumpTo(controllerHorizontal_0.offset + (data.delta.dx * -1));
-                            controllerHorizontal_1.jumpTo(controllerHorizontal_1.offset + (data.delta.dx * -1));
-                          },
-                        ),
-                      ],
+                    child: SingleChildScrollView(
+                      controller: controllerHorizontal_1,
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          const SizedBox(width:10),
+                          for(int i =0; i < widget.columnTitles.length; i++)
+                          widget.columnTitles[i],
+                          const SizedBox(width:10),
+                        ],
+                      )
                     ),
                   )
                 ],
               ),
               Row(
                 children: [
+                  // ロウタイトル (時間区分)
                   Container(
                     decoration: const BoxDecoration(
                       color: Colors.white, // コンテナの背景色
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey, // 影の色
-                          spreadRadius: 0, // 影の広がり度合い
-                          blurRadius: 5, // 影のぼかし度合い
-                          offset: Offset(0, 0), // 水平方向に5ピクセルずらす
+                          color: Colors.grey,  // 影の色
+                          spreadRadius: 0,       // 影の広がり度合い
+                          blurRadius: 5,         // 影のぼかし度合い
+                          offset: Offset(0, 0),  // 水平方向に5ピクセルずらす
                         ),
                       ],
                     ),   
                     height: widget.tableHeight - widget.titleHeight,
                     width: widget.titleWidth,
-                    child: Stack(
-                      children: [
-                        SingleChildScrollView(
-                            controller: controllerVertical_1,
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 5),
-                                for(int i = 0; i < widget.rowTitles.length; i++)
-                                widget.rowTitles[i],
-                                const SizedBox(height: 10),
-                              ]
-                            ),
+                    child: SingleChildScrollView(
+                        controller: controllerVertical_1,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            for(int i = 0; i < widget.rowTitles.length; i++)
+                            widget.rowTitles[i],
+                            const SizedBox(height: 10),
+                          ]
                         ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          child: const SizedBox(
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
-                          onPanUpdate: (DragUpdateDetails data) {
-                            controllerVertical_0.jumpTo(controllerVertical_0.offset + (data.delta.dy * -1));
-                            controllerVertical_1.jumpTo(controllerVertical_1.offset + (data.delta.dy * -1));
-                          },
-                        ),
-                      ],
                     ),
                   ),
+                  // メインコンテンツ
                   SizedBox(
                     width: widget.tableWidth - widget.titleWidth,
                     height: widget.tableHeight - widget.titleHeight,
-                    child: Stack(
-                      children: [
-                        SingleChildScrollView(
-                          controller: controllerVertical_0,
-                          child: SingleChildScrollView(
-                            controller: controllerHorizontal_0,
-                            scrollDirection: Axis.horizontal,
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 5),
-                                for(int i = 0; i < contents.length; i++)
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 5),
-                                    for(int j = 0; j < contents[i].length; j++)
-                                    contents[i][j],
-                                    const SizedBox(width: 10),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                              ],
-                            ),
-                          ),
+                    child: GestureDetector(
+                      onPanDown: (detail) {
+                        if(widget.enableEdit){
+                          _judgeHit(context, detail.globalPosition);
+                        }
+                      },
+                      onPanStart: (detail) {
+                        if(widget.enableEdit){
+                          _judgeHit(context, detail.globalPosition);
+                        }
+                      },
+                      onPanUpdate: (detail) {
+                        if(widget.enableEdit){
+                          _judgeHit(context, detail.globalPosition);
+                        }
+                      },
+                      onPanEnd: (details) {
+                        if(widget.enableEdit){
+                          widget.onInputEnd?.call();
+                        }
+                      },
+                      onTapDown: (details){
+                        _judgeHit(context, details.globalPosition);
+                      },
+                      onTap: (){
+                        if(widget.enableEdit){
+                          widget.onInputEnd?.call();
+                        }
+                      }, 
+                      child: TwoDimensionalGridView(
+                        firstColumnWidth: widget.cellWidth + 10,
+                        otherColumnWidth: widget.cellWidth,
+                        firstRowHeight:   widget.cellHeight + 10,
+                        otherRowHeight:   widget.cellHeight,
+                        diagonalDragBehavior: DiagonalDragBehavior.free,
+                        horizontalDetails: ScrollableDetails.horizontal(controller: controllerHorizontal_0),
+                        verticalDetails: ScrollableDetails.vertical(controller: controllerVertical_0),
+                        delegate: TwoDimensionalChildBuilderDelegate(
+                          maxXIndex: contents[0].length - 1,
+                          maxYIndex: contents.length - 1,
+                          builder: (BuildContext context, ChildVicinity vicinity) {
+                            return contents[vicinity.yIndex][vicinity.xIndex];
+                          }
                         ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          child: const SizedBox(
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
-                          onPanDown: (detail) {
-                            if(widget.enableEdit){
-                              _judgeHit(context, detail.globalPosition);
-                            }
-                          },
-                          onPanStart: (detail) {
-                            if(widget.enableEdit){
-                              _judgeHit(context, detail.globalPosition);
-                            }
-                          },
-                          onPanUpdate: (detail) {
-                            if(widget.enableEdit){
-                              _judgeHit(context, detail.globalPosition);
-                            }else{
-                              controllerHorizontal_0.jumpTo(controllerHorizontal_0.offset + (detail.delta.dx * -2));
-                              controllerHorizontal_1.jumpTo(controllerHorizontal_1.offset + (detail.delta.dx * -2));
-                              controllerVertical_0.jumpTo(controllerVertical_0.offset + (detail.delta.dy * -2));
-                              controllerVertical_1.jumpTo(controllerVertical_1.offset + (detail.delta.dy * -2));
-                            }
-                          },
-                          onPanEnd: (details) {
-                            if(widget.enableEdit){
-                              widget.onInputEnd?.call();
-                            }
-                          },
-                          onTapDown: (details){
-                            _judgeHit(context, details.globalPosition);
-                          },
-                          onTap: (){
-                            if(widget.enableEdit){
-                              widget.onInputEnd?.call();
-                            }
-                          }, 
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ],
@@ -293,30 +273,36 @@ class _TableEditorState extends State<TableEditor> {
     );
   }
 
-  Widget getContents(List<int> list_1, List<int> list_2) {
-    return Column(
-      children: [
-        for(int i = 0; i < list_1.length; i++)
-        Row(
-          children: [
-            for(int j = 0; j < list_2.length; j++)
-            _cell(i, j)
-          ],
-        )
-      ],
-    );
+  List<List<Widget>> getContents(List<int> list_1, List<int> list_2) {
+
+    List<List<Widget>> list = [];
+
+    for(int i = 0; i < list_1.length; i++){
+      list.add([]);
+      for(int j = 0; j < list_2.length; j++){
+        list[i].add(Padding(
+          padding: EdgeInsets.only(top: (i == 0) ? 10 : 0, right: (j == list_2.length-1) ? 10 : 0, left: (j == 0) ? 10 : 0, bottom: (i == list_1.length-1) ? 10 : 0),
+          child: _cell(i, j)
+        ));
+      }
+    }
+
+    return list;
   }
 
   Widget _cell(int row, int column) {
-    return Container(width: widget.cellWidth, height: widget.cellHeight,
-    decoration: BoxDecoration(
-          border: Border(
-            top:    row == 0 ? const BorderSide(width: 2, color: Colors.grey) : BorderSide.none,
-            bottom: const BorderSide(width: 2, color: Colors.grey),
-            left:   column == 0 ? const BorderSide(width: 2, color: Colors.grey) : BorderSide.none,
-            right:  const BorderSide(width: 2, color: Colors.grey),
-          ),
-        )
+
+    return Container(
+      width: widget.cellWidth,
+      height: widget.cellHeight,
+      decoration: BoxDecoration(
+        border: Border(
+          top:    row == 0 ? const BorderSide(width: 1, color: Colors.grey) : BorderSide.none,
+          bottom: const BorderSide(width: 1, color: Colors.grey),
+          left:   column == 0 ? const BorderSide(width: 1, color: Colors.grey) : BorderSide.none,
+          right:  const BorderSide(width: 1, color: Colors.grey),
+        ),
+      ),
     );
   }
     // judge this cell is onTaped
