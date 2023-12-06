@@ -38,7 +38,6 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
     MenuContent(contentTitle: "アカウント",  contentIcon: Icons.person_2,          content: const AccountScreen()),
     MenuContent(contentTitle: "ご要望",     contentIcon: Icons.sms_failed,       content: const SuggestionBoxScreen()), 
     MenuContent(contentTitle: "設定",       contentIcon: Icons.settings,          content: const SettingScreen()), 
-    MenuContent(contentTitle: "テスト",     contentIcon: Icons.abc,              content: TestScreen()), 
     // MenuContent(contentTitle: "お知らせ",   contentIcon: Icons.notification_important_outlined, content: const NotificationScreen()),
   ];
   

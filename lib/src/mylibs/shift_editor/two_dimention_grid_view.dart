@@ -143,12 +143,13 @@ class RenderTwoDimensionalGridViewport extends RenderTwoDimensionalViewport {
     final int maxRowIndex    = builderDelegate.maxYIndex!;
     final int maxColumnIndex = builderDelegate.maxXIndex!;
 
-    final int leadingColumn  = math.max((horizontalPixels / otherColumnWidth).floor(), 0);
-    final int leadingRow     = math.max((verticalPixels / otherColumnWidth).floor(), 0);
+    final int leadingColumn  = math.max(((horizontalPixels+otherColumnWidth-firstColumnWidth) / otherColumnWidth).floor(), 0);
+    final int leadingRow     = math.max(((verticalPixels+otherRowHeight-firstRowHeight) / otherColumnWidth).floor(), 0);
     final int trailingColumn = math.min(((horizontalPixels + viewportWidth) / otherColumnWidth).ceil(), maxColumnIndex);
     final int trailingRow    = math.min(((verticalPixels + viewportHeight) / otherColumnWidth).ceil(), maxRowIndex);
 
     double xLayoutOffset = (leadingColumn == 0 ? 0 : (firstColumnWidth + (leadingColumn - 1) * otherColumnWidth)) - horizontalOffset.pixels;
+    
     for (int column = leadingColumn; column <= trailingColumn; column++) {
       double yLayoutOffset = (leadingRow == 0 ? 0 : (firstRowHeight + (leadingRow - 1) * otherRowHeight)) - verticalOffset.pixels;
 

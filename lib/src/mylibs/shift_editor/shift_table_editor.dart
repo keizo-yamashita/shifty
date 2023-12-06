@@ -1,17 +1,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:shift/src/mylibs/pop_icons.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/shift/shift_table.dart';
+import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 import 'package:shift/src/mylibs/shift_editor/table_title.dart';
+import 'package:shift/src/mylibs/shift_editor/table.dart';
 
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix Class
@@ -30,6 +29,10 @@ class ShiftTableEditor extends StatelessWidget {
   final Function?              onInputEnd;     // notifiy input end for create input buffer
   final bool                   enableEdit;     // true = edit enable
   final bool                   isDark;
+  final ScrollController       controllerHorizontal_0;
+  final ScrollController       controllerHorizontal_1;
+  final ScrollController       controllerVertical_0;
+  final ScrollController       controllerVertical_1;
 
   const ShiftTableEditor({
     Key? key,
@@ -40,6 +43,10 @@ class ShiftTableEditor extends StatelessWidget {
     required this.titleWidth,
     required this.titleHeight,
     required this.shiftTable,
+    required this.controllerHorizontal_0,
+    required this.controllerHorizontal_1,
+    required this.controllerVertical_0,
+    required this.controllerVertical_1,
     this.selected,
     this.onChangeSelect,
     this.onInputEnd,
@@ -49,6 +56,8 @@ class ShiftTableEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    var timeDivs = List<TimeDivision>.generate(60, (index) => TimeDivision(name: "${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}-${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}", startTime: DateTime.now(), endTime: DateTime.now().add(const Duration(hours: 10))));
 
     return AspectRatio(
       aspectRatio: sheetWidth/sheetHeight,
@@ -61,31 +70,52 @@ class ShiftTableEditor extends StatelessWidget {
                 _judgeHit(context, details.globalPosition);
               }
             },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 3, left: 3),
-              child: HorizontalDataTable(
-                leftHandSideColBackgroundColor: Colors.transparent,
-                rightHandSideColBackgroundColor: Colors.transparent,
-                elevationColor: Colors.transparent,
-                leftHandSideColumnWidth: titleWidth,
-                rightHandSideColumnWidth: (shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1) * cellWidth,
-                isFixedHeader: true,
-                headerWidgets: getColumnTitles(titleHeight, cellWidth, shiftTable.shiftFrame.shiftDateRange[0].start, shiftTable.shiftFrame.shiftDateRange[0].end, isDark),
-                leftSideItemBuilder: _generateFirstColumnsRow,
-                rightSideItemBuilder: _generateRightHandSideColumnRow,
-                itemCount: shiftTable.shiftFrame.timeDivs.length,
-                verticalScrollbarStyle: const ScrollbarStyle(
-                  isAlwaysShown: false,
-                  thickness: 0.0,
-                ),
-                horizontalScrollbarStyle: const ScrollbarStyle(
-                  isAlwaysShown: false,
-                  thickness: 0.0,
-                ),
-                scrollPhysics : null,
-                horizontalScrollPhysics: null,
-              ),
-            ),
+          //   child: Padding(
+          //     padding: const EdgeInsets.only(right: 3, left: 3),
+          //     child: HorizontalDataTable(
+          //       leftHandSideColBackgroundColor: Colors.transparent,
+          //       rightHandSideColBackgroundColor: Colors.transparent,
+          //       elevationColor: Colors.transparent,
+          //       leftHandSideColumnWidth: titleWidth,
+          //       rightHandSideColumnWidth: (shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1) * cellWidth,
+          //       isFixedHeader: true,
+          //       headerWidgets: getColumnTitles(titleHeight, cellWidth, shiftTable.shiftFrame.shiftDateRange[0].start, shiftTable.shiftFrame.shiftDateRange[0].end, isDark),
+          //       leftSideItemBuilder: _generateFirstColumnsRow,
+          //       rightSideItemBuilder: _generateRightHandSideColumnRow,
+          //       itemCount: shiftTable.shiftFrame.timeDivs.length,
+          //       verticalScrollbarStyle: const ScrollbarStyle(
+          //         isAlwaysShown: false,
+          //         thickness: 0.0,
+          //       ),
+          //       horizontalScrollbarStyle: const ScrollbarStyle(
+          //         isAlwaysShown: false,
+          //         thickness: 0.0,
+          //       ),
+          //       scrollPhysics : null,
+          //       horizontalScrollPhysics: null,
+          //     ),
+          //   ),
+          // ),
+          child: TableEditor(
+            key: UniqueKey(),
+            tableWidth:  sheetWidth,
+            tableHeight: sheetHeight,
+            titleWidth:  titleWidth,
+            titleHeight: titleHeight,
+            cellWidth:   cellWidth,
+            cellHeight:  cellHeight,
+            controllerHorizontal_0: controllerHorizontal_0,
+            controllerHorizontal_1: controllerHorizontal_1,
+            controllerVertical_0: controllerVertical_0,
+            controllerVertical_1: controllerVertical_1,
+            selected: Coordinate(column: 0, row: 0),
+            onChangeSelect:  (Coordinate? test){},
+            onInputEnd:  (){},
+            enableEdit: false,
+            isDark: isDark,
+            columnTitles: getColumnTitles(titleHeight, cellWidth, DateTime.now(), DateTime.now().add(const Duration(days: 29)), isDark),
+            rowTitles: getRowTitles(cellHeight, titleWidth, timeDivs, isDark),
+          ),
           ),
         ],
       )
@@ -94,33 +124,7 @@ class ShiftTableEditor extends StatelessWidget {
 
   ///////////////////////////////////////////////////////////////////////
   /// テーブルの要素を作るための関数
-  ///////////////////////////////////////////////////////////////////////
-
-  Widget _generateFirstColumnsRow(BuildContext context, int index){
-    return Container(
-      width: titleWidth,
-      height: cellHeight,
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      alignment: Alignment.center,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text(shiftTable.shiftFrame.timeDivs[index].name, style:  MyStyle.tableTitleStyle((isDark) ?Colors.white : Colors.black54)),
-      )
-    );
-  }
-
-  Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
-    return Row(
-      children: shiftTable.shiftFrame.assignTable[index].asMap().entries.map<Widget>(
-        (list) => Container(
-          width: cellWidth,
-          height: cellHeight,
-          alignment: Alignment.center,
-          child: _cell(index, list.key, (shiftTable.shiftFrame.assignTable[index][list.key] != 0))
-        )
-      ).toList()
-    );
-  }
+  //////////////////////////////////////////////////////////////////////
 
   // Matrix Cell Class Instance
   Widget _cell(int row, int column, bool editable) {

@@ -1,88 +1,26 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/shift_editor/linkled_scroll.dart';
 import 'package:shift/src/mylibs/shift_editor/two_dimention_grid_view.dart';
-import 'package:shift/src/mylibs/shift_editor/table_title.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 
-class TestScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Hatchout Scroll',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const TopPage(),
-    );
-  }
-}
-
-class TopPage extends StatefulWidget {
-  const TopPage({super.key});
-
-  @override
-  _TopPageState createState() => _TopPageState();
-}
-
-class _TopPageState extends State<TopPage> {
-
-  final double _titleHeight = 50;
-  final double _titleWidth  = 80;
-  final double _cellHeight  = 30;
-  final double _cellWidth   = 30;
-
-  final bool isDark = false;
-
-  var _screenSize = const Size(0, 0);
-
-  @override
-  Widget build(BuildContext context) {
-
-    _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom);
-
-    var timeDivs = List<TimeDivision>.generate(60, (index) => TimeDivision(name: "${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}-${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}", startTime: DateTime.now(), endTime: DateTime.now().add(const Duration(hours: 10))));
-
-    return SafeArea(
-      child: Scaffold(
-        body: TableEditor(
-          tableWidth:  _screenSize.width,
-          tableHeight: _screenSize.height,
-          titleWidth:  _titleWidth,
-          titleHeight: _titleHeight,
-          cellWidth:   _cellWidth,
-          cellHeight:  _cellHeight,
-          selected: Coordinate(column: 0, row: 0),
-          onChangeSelect:  (Coordinate? test){},
-          onInputEnd:  (){},
-          enableEdit: false,
-          isDark: false,
-          columnTitles: getColumnTitles(_titleHeight, _cellWidth, DateTime.now(), DateTime.now().add(const Duration(days: 29)), isDark),
-          rowTitles: getRowTitles(_cellHeight, _titleWidth, timeDivs, isDark),
-        )
-      ),
-    );
-  }
-}
-
 class TableEditor extends StatefulWidget {
-  final double                 tableWidth;
-  final double                 tableHeight;
-  final double                 cellWidth;
-  final double                 cellHeight;
-  final double                 titleWidth;
-  final double                 titleHeight;
-  final Coordinate?            selected;       // selected point cordinate
-  final Function(Coordinate?)? onChangeSelect; // chage select callback
-  final Function?              onInputEnd;     // notifiy input end for create input buffer
-  final bool                   enableEdit;     // true = edit enable
-  final bool                   isDark;
-  final List<Widget>           columnTitles;
-  final List<Widget>           rowTitles;
+  final double                      tableWidth;
+  final double                      tableHeight;
+  final double                      cellWidth;
+  final double                      cellHeight;
+  final double                      titleWidth;
+  final double                      titleHeight;
+  final Coordinate?                 selected;       // selected point cordinate
+  final Function(Coordinate?)?      onChangeSelect; // chage select callback
+  final Function?                   onInputEnd;     // notifiy input end for create input buffer
+  final bool                        enableEdit;     // true = edit enable
+  final bool                        isDark;
+  final List<Widget>                columnTitles;
+  final List<Widget>                rowTitles;
+  final ScrollController            controllerHorizontal_0;
+  final ScrollController            controllerHorizontal_1;
+  final ScrollController            controllerVertical_0;
+  final ScrollController            controllerVertical_1;
   
   const TableEditor({
     Key? key,
@@ -99,6 +37,10 @@ class TableEditor extends StatefulWidget {
     required this.isDark,
     required this.columnTitles,
     required this.rowTitles,
+    required this.controllerHorizontal_0,
+    required this.controllerHorizontal_1,
+    required this.controllerVertical_0,
+    required this.controllerVertical_1
   }) : super(key: key);
 
   @override
@@ -106,33 +48,6 @@ class TableEditor extends StatefulWidget {
 }
 
 class _TableEditorState extends State<TableEditor> {
-
-  late LinkedScrollControllerGroup horizontalScrollGroup;
-  late LinkedScrollControllerGroup verticalScrollGroup;
-  late ScrollController controllerHorizontal_0;
-  late ScrollController controllerHorizontal_1;
-  late ScrollController controllerVertical_0;
-  late ScrollController controllerVertical_1;
-
-  @override
-  void initState() {
-    super.initState();
-    horizontalScrollGroup = LinkedScrollControllerGroup();
-    verticalScrollGroup = LinkedScrollControllerGroup();
-    controllerHorizontal_0 = horizontalScrollGroup.addAndGet();
-    controllerHorizontal_1 = horizontalScrollGroup.addAndGet();
-    controllerVertical_0 = verticalScrollGroup.addAndGet();
-    controllerVertical_1 = verticalScrollGroup.addAndGet();
-  }
-
-  @override
-  void dispose() {
-    controllerHorizontal_0.dispose();
-    controllerHorizontal_1.dispose();
-    controllerVertical_0.dispose();
-    controllerVertical_1.dispose();
-    super.dispose();
-  }
 
   var scrollEnableMain  = true;
   var scrollEnableTitle = false;
@@ -153,23 +68,23 @@ class _TableEditorState extends State<TableEditor> {
               Row(
                 children: [
                   // 左上の余白
-                  Container(color: Colors.white, width: widget.titleWidth, height: widget.titleHeight),
+                  Container(width: widget.titleWidth, height: widget.titleHeight),
                   // カラムタイトル (日付)
                   Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
+                    decoration: BoxDecoration(
+                      color: widget.isDark ? Colors.black : Colors.white,
+                      boxShadow: const [
                         BoxShadow(
-                          color: Colors.grey, // 影の色
-                          spreadRadius: 0,      // 影の広がり度合い
-                          blurRadius: 5,        // 影のぼかし度合い
+                          // color: Colors.grey, // 影の色
+                          // spreadRadius: 0,      // 影の広がり度合い
+                          // blurRadius: 5,        // 影のぼかし度合い
                         ),
                       ],
                     ),
                     height: widget.titleHeight,
                     width: widget.tableWidth - widget.titleWidth,
                     child: SingleChildScrollView(
-                      controller: controllerHorizontal_1,
+                      controller: widget.controllerHorizontal_1,
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
@@ -187,21 +102,20 @@ class _TableEditorState extends State<TableEditor> {
                 children: [
                   // ロウタイトル (時間区分)
                   Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white, // コンテナの背景色
-                      boxShadow: [
+                    decoration: BoxDecoration(
+                      color: widget.isDark ? Colors.black : Colors.white, // コンテナの背景色
+                      boxShadow: const [
                         BoxShadow(
-                          color: Colors.grey,  // 影の色
-                          spreadRadius: 0,       // 影の広がり度合い
-                          blurRadius: 5,         // 影のぼかし度合い
-                          offset: Offset(0, 0),  // 水平方向に5ピクセルずらす
+                          // color: Colors.grey,  // 影の色
+                          // spreadRadius: 0,       // 影の広がり度合い
+                          // blurRadius: 5,         // 影のぼかし度合い
                         ),
                       ],
                     ),   
                     height: widget.tableHeight - widget.titleHeight,
                     width: widget.titleWidth,
                     child: SingleChildScrollView(
-                        controller: controllerVertical_1,
+                        controller: widget.controllerVertical_1,
                         child: Column(
                           children: [
                             const SizedBox(height: 10),
@@ -251,8 +165,8 @@ class _TableEditorState extends State<TableEditor> {
                         firstRowHeight:   widget.cellHeight + 10,
                         otherRowHeight:   widget.cellHeight,
                         diagonalDragBehavior: DiagonalDragBehavior.free,
-                        horizontalDetails: ScrollableDetails.horizontal(controller: controllerHorizontal_0),
-                        verticalDetails: ScrollableDetails.vertical(controller: controllerVertical_0),
+                        horizontalDetails: ScrollableDetails.horizontal(controller: widget.controllerHorizontal_0),
+                        verticalDetails: ScrollableDetails.vertical(controller: widget.controllerVertical_0),
                         delegate: TwoDimensionalChildBuilderDelegate(
                           maxXIndex: contents[0].length - 1,
                           maxYIndex: contents.length - 1,
@@ -267,7 +181,7 @@ class _TableEditorState extends State<TableEditor> {
               ),
             ],
           ),
-          Container(height: widget.titleHeight, width: widget.titleWidth+2, color: Colors.white)
+          Container(height: widget.titleHeight, width: widget.titleWidth+2, color: widget.isDark ? Colors.black : Colors.white)
         ],
       ),
     );

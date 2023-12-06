@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 // my package
 import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/pop_icons.dart';
+import 'package:shift/src/mylibs/shift_editor/linkled_scroll.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
@@ -72,6 +73,33 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   int  _selectedIndex      = 0;
   bool _enableResponseEdit = false;
   int  _inkValue           = 1;
+
+  late LinkedScrollControllerGroup horizontalScrollGroup;
+  late LinkedScrollControllerGroup verticalScrollGroup;
+  late ScrollController controllerHorizontal_0;
+  late ScrollController controllerHorizontal_1;
+  late ScrollController controllerVertical_0;
+  late ScrollController controllerVertical_1;
+
+  @override
+  void initState() {
+    super.initState();
+    horizontalScrollGroup = LinkedScrollControllerGroup();
+    verticalScrollGroup = LinkedScrollControllerGroup();
+    controllerHorizontal_0 = horizontalScrollGroup.addAndGet();
+    controllerHorizontal_1 = horizontalScrollGroup.addAndGet();
+    controllerVertical_0 = verticalScrollGroup.addAndGet();
+    controllerVertical_1 = verticalScrollGroup.addAndGet();
+  }
+
+  @override
+  void dispose() {
+    controllerHorizontal_0.dispose();
+    controllerHorizontal_1.dispose();
+    controllerVertical_0.dispose();
+    controllerVertical_1.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -291,6 +319,10 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
               cellWidth:   _cellWidth*1,
               titleHeight: _cellHeight*2,
               titleWidth:  _cellWidth*3.5,
+              controllerHorizontal_0: controllerHorizontal_0,
+              controllerHorizontal_1: controllerHorizontal_1,
+              controllerVertical_0: controllerVertical_0,
+              controllerVertical_1: controllerVertical_1,
               onChangeSelect: (p0) async {
                 coordinate = p0!;
                 setState(() {});

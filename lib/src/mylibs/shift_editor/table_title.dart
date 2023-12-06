@@ -6,7 +6,7 @@ import 'package:shift/src/mylibs/shift/shift_frame.dart';
 /// テーブルの要素を作るための関数
 ///////////////////////////////////////////////////////////////////////
 
-List<Widget> getColumnTitles(double height, double width, DateTime start, DateTime end, isDark){
+List<Widget> getColumnTitles(double height, double width, DateTime start, DateTime end, bool isDark){
 
   List<String> weekdayJP = ["月", "火", "水", "木", "金", "土", "日"];
   Text         month, day, weekday;
@@ -65,7 +65,7 @@ List<Widget> getColumnTitles(double height, double width, DateTime start, DateTi
   return titleList;
 }
 
-List<Widget> getRowTitles(double height, double width, List<TimeDivision> timeDivs, isDark){
+List<Widget> getRowTitles(double height, double width, List<TimeDivision> timeDivs, bool isDark){
   return [
       for(int i = 0; i < timeDivs.length; i++)
       Container(
