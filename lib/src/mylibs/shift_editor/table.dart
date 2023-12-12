@@ -71,16 +71,16 @@ class _TableEditorState extends State<TableEditor> {
                   Container(width: widget.titleWidth, height: widget.titleHeight),
                   // カラムタイトル (日付)
                   Container(
-                    decoration: BoxDecoration(
-                      color: widget.isDark ? Colors.black : Colors.white,
-                      boxShadow: const [
-                        BoxShadow(
-                          // color: Colors.grey, // 影の色
-                          // spreadRadius: 0,      // 影の広がり度合い
-                          // blurRadius: 5,        // 影のぼかし度合い
-                        ),
-                      ],
-                    ),
+                    // decoration: BoxDecoration(
+                    //   color: widget.isDark ? Colors.black : Colors.white,
+                    //   boxShadow: const [
+                    //     BoxShadow(
+                    //       // color: Colors.grey, // 影の色
+                    //       // spreadRadius: 0,      // 影の広がり度合い
+                    //       // blurRadius: 5,        // 影のぼかし度合い
+                    //     ),
+                    //   ],
+                    // ),
                     height: widget.titleHeight,
                     width: widget.tableWidth - widget.titleWidth,
                     child: SingleChildScrollView(
@@ -102,16 +102,16 @@ class _TableEditorState extends State<TableEditor> {
                 children: [
                   // ロウタイトル (時間区分)
                   Container(
-                    decoration: BoxDecoration(
-                      color: widget.isDark ? Colors.black : Colors.white, // コンテナの背景色
-                      boxShadow: const [
-                        BoxShadow(
-                          // color: Colors.grey,  // 影の色
-                          // spreadRadius: 0,       // 影の広がり度合い
-                          // blurRadius: 5,         // 影のぼかし度合い
-                        ),
-                      ],
-                    ),   
+                    // decoration: BoxDecoration(
+                    //   color: widget.isDark ? Colors.black : Colors.white, // コンテナの背景色
+                    //   boxShadow: const [
+                    //     BoxShadow(
+                    //       // color: Colors.grey,  // 影の色
+                    //       // spreadRadius: 0,       // 影の広がり度合い
+                    //       // blurRadius: 5,         // 影のぼかし度合い
+                    //     ),
+                    //   ],
+                    // ),   
                     height: widget.tableHeight - widget.titleHeight,
                     width: widget.titleWidth,
                     child: SingleChildScrollView(
@@ -181,7 +181,7 @@ class _TableEditorState extends State<TableEditor> {
               ),
             ],
           ),
-          Container(height: widget.titleHeight, width: widget.titleWidth+2, color: widget.isDark ? Colors.black : Colors.white)
+          Container(height: widget.titleHeight, width: widget.titleWidth+2)
         ],
       ),
     );
