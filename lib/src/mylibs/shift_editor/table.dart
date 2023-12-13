@@ -17,6 +17,7 @@ class TableEditor extends StatefulWidget {
   final bool                        isDark;
   final List<Widget>                columnTitles;
   final List<Widget>                rowTitles;
+  final List<List<Widget>>          cells;
   final ScrollController            controllerHorizontal_0;
   final ScrollController            controllerHorizontal_1;
   final ScrollController            controllerVertical_0;
@@ -37,6 +38,7 @@ class TableEditor extends StatefulWidget {
     required this.isDark,
     required this.columnTitles,
     required this.rowTitles,
+    required this.cells,
     required this.controllerHorizontal_0,
     required this.controllerHorizontal_1,
     required this.controllerVertical_0,
@@ -55,8 +57,6 @@ class _TableEditorState extends State<TableEditor> {
   @override
   Widget build(BuildContext context){
     
-    final contents = getContents(List<int>.generate(60, (j) => j), List<int>.generate(30, (j) => j));
-    
     return SizedBox(
       width: widget.tableWidth,
       height: widget.tableHeight,
@@ -68,19 +68,9 @@ class _TableEditorState extends State<TableEditor> {
               Row(
                 children: [
                   // 左上の余白
-                  Container(width: widget.titleWidth, height: widget.titleHeight),
+                  SizedBox(width: widget.titleWidth, height: widget.titleHeight),
                   // カラムタイトル (日付)
-                  Container(
-                    // decoration: BoxDecoration(
-                    //   color: widget.isDark ? Colors.black : Colors.white,
-                    //   boxShadow: const [
-                    //     BoxShadow(
-                    //       // color: Colors.grey, // 影の色
-                    //       // spreadRadius: 0,      // 影の広がり度合い
-                    //       // blurRadius: 5,        // 影のぼかし度合い
-                    //     ),
-                    //   ],
-                    // ),
+                  SizedBox(
                     height: widget.titleHeight,
                     width: widget.tableWidth - widget.titleWidth,
                     child: SingleChildScrollView(
@@ -101,17 +91,7 @@ class _TableEditorState extends State<TableEditor> {
               Row(
                 children: [
                   // ロウタイトル (時間区分)
-                  Container(
-                    // decoration: BoxDecoration(
-                    //   color: widget.isDark ? Colors.black : Colors.white, // コンテナの背景色
-                    //   boxShadow: const [
-                    //     BoxShadow(
-                    //       // color: Colors.grey,  // 影の色
-                    //       // spreadRadius: 0,       // 影の広がり度合い
-                    //       // blurRadius: 5,         // 影のぼかし度合い
-                    //     ),
-                    //   ],
-                    // ),   
+                  SizedBox(
                     height: widget.tableHeight - widget.titleHeight,
                     width: widget.titleWidth,
                     child: SingleChildScrollView(
@@ -168,10 +148,10 @@ class _TableEditorState extends State<TableEditor> {
                         horizontalDetails: ScrollableDetails.horizontal(controller: widget.controllerHorizontal_0),
                         verticalDetails: ScrollableDetails.vertical(controller: widget.controllerVertical_0),
                         delegate: TwoDimensionalChildBuilderDelegate(
-                          maxXIndex: contents[0].length - 1,
-                          maxYIndex: contents.length - 1,
+                          maxXIndex: widget.cells[0].length - 1,
+                          maxYIndex: widget.cells.length - 1,
                           builder: (BuildContext context, ChildVicinity vicinity) {
-                            return contents[vicinity.yIndex][vicinity.xIndex];
+                            return widget.cells[vicinity.yIndex][vicinity.xIndex];
                           }
                         ),
                       ),
@@ -181,7 +161,7 @@ class _TableEditorState extends State<TableEditor> {
               ),
             ],
           ),
-          Container(height: widget.titleHeight, width: widget.titleWidth+2)
+          SizedBox(height: widget.titleHeight, width: widget.titleWidth+2)
         ],
       ),
     );

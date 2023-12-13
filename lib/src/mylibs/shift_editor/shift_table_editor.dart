@@ -7,7 +7,6 @@ import 'package:flutter/rendering.dart';
 import 'package:shift/src/mylibs/pop_icons.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/shift/shift_table.dart';
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 import 'package:shift/src/mylibs/shift_editor/table_title.dart';
 import 'package:shift/src/mylibs/shift_editor/table.dart';
@@ -57,8 +56,6 @@ class ShiftTableEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var timeDivs = List<TimeDivision>.generate(60, (index) => TimeDivision(name: "${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}-${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}", startTime: DateTime.now(), endTime: DateTime.now().add(const Duration(hours: 10))));
-
     return AspectRatio(
       aspectRatio: sheetWidth/sheetHeight,
       child: Stack(
@@ -70,53 +67,41 @@ class ShiftTableEditor extends StatelessWidget {
                 _judgeHit(context, details.globalPosition);
               }
             },
-          //   child: Padding(
-          //     padding: const EdgeInsets.only(right: 3, left: 3),
-          //     child: HorizontalDataTable(
-          //       leftHandSideColBackgroundColor: Colors.transparent,
-          //       rightHandSideColBackgroundColor: Colors.transparent,
-          //       elevationColor: Colors.transparent,
-          //       leftHandSideColumnWidth: titleWidth,
-          //       rightHandSideColumnWidth: (shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1) * cellWidth,
-          //       isFixedHeader: true,
-          //       headerWidgets: getColumnTitles(titleHeight, cellWidth, shiftTable.shiftFrame.shiftDateRange[0].start, shiftTable.shiftFrame.shiftDateRange[0].end, isDark),
-          //       leftSideItemBuilder: _generateFirstColumnsRow,
-          //       rightSideItemBuilder: _generateRightHandSideColumnRow,
-          //       itemCount: shiftTable.shiftFrame.timeDivs.length,
-          //       verticalScrollbarStyle: const ScrollbarStyle(
-          //         isAlwaysShown: false,
-          //         thickness: 0.0,
-          //       ),
-          //       horizontalScrollbarStyle: const ScrollbarStyle(
-          //         isAlwaysShown: false,
-          //         thickness: 0.0,
-          //       ),
-          //       scrollPhysics : null,
-          //       horizontalScrollPhysics: null,
-          //     ),
-          //   ),
-          // ),
-          child: TableEditor(
-            key: UniqueKey(),
-            tableWidth:  sheetWidth,
-            tableHeight: sheetHeight,
-            titleWidth:  titleWidth,
-            titleHeight: titleHeight,
-            cellWidth:   cellWidth,
-            cellHeight:  cellHeight,
-            controllerHorizontal_0: controllerHorizontal_0,
-            controllerHorizontal_1: controllerHorizontal_1,
-            controllerVertical_0: controllerVertical_0,
-            controllerVertical_1: controllerVertical_1,
-            selected: Coordinate(column: 0, row: 0),
-            onChangeSelect:  (Coordinate? test){},
-            onInputEnd:  (){},
-            enableEdit: false,
-            isDark: isDark,
-            columnTitles: getColumnTitles(titleHeight, cellWidth, DateTime.now(), DateTime.now().add(const Duration(days: 29)), isDark),
-            rowTitles: getRowTitles(cellHeight, titleWidth, timeDivs, isDark),
-          ),
-          ),
+            child: TableEditor(
+              key: UniqueKey(),
+              tableWidth:  sheetWidth,
+              tableHeight: sheetHeight,
+              titleWidth:  titleWidth,
+              titleHeight: titleHeight,
+              cellWidth:   cellWidth,
+              cellHeight:  cellHeight,
+              controllerHorizontal_0: controllerHorizontal_0,
+              controllerHorizontal_1: controllerHorizontal_1,
+              controllerVertical_0: controllerVertical_0,
+              controllerVertical_1: controllerVertical_1,
+              selected: Coordinate(column: 0, row: 0),
+              onChangeSelect:  (Coordinate? test){},
+              onInputEnd:  (){},
+              enableEdit: false,
+              isDark: isDark,
+              columnTitles: getColumnTitles(titleHeight, cellWidth, shiftTable.shiftFrame.shiftDateRange[0].start, shiftTable.shiftFrame.shiftDateRange[0].end, isDark),
+              rowTitles: getRowTitles(cellHeight, titleWidth, shiftTable.shiftFrame.timeDivs, isDark),
+              cells: List<List<Widget>>.generate(
+                shiftTable.shiftFrame.timeDivs.length, 
+                (i){
+                  return List.generate(
+                    shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1,
+                    (j){
+                      return Padding(
+                        padding: EdgeInsets.only(top: (i == 0) ? 10 : 0, right: (j == shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1) ? 10 : 0, left: (j == 0) ? 10 : 0, bottom: (i == shiftTable.shiftFrame.timeDivs.length) ? 10 : 0),
+                        child: _cell(i, j, false)
+                      );
+                    }
+                  );
+                },
+              ),
+            ),
+          )
         ],
       )
     );

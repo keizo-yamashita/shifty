@@ -9,7 +9,7 @@ class TwoDimensionalGridView extends TwoDimensionalScrollView {
   const TwoDimensionalGridView({
     super.key,
     super.primary,
-    super.mainAxis = Axis.vertical,
+    super.mainAxis = Axis.horizontal,
     super.verticalDetails = const ScrollableDetails.vertical(),
     super.horizontalDetails = const ScrollableDetails.horizontal(),
     required TwoDimensionalChildBuilderDelegate delegate,
@@ -144,9 +144,9 @@ class RenderTwoDimensionalGridViewport extends RenderTwoDimensionalViewport {
     final int maxColumnIndex = builderDelegate.maxXIndex!;
 
     final int leadingColumn  = math.max(((horizontalPixels+otherColumnWidth-firstColumnWidth) / otherColumnWidth).floor(), 0);
-    final int leadingRow     = math.max(((verticalPixels+otherRowHeight-firstRowHeight) / otherColumnWidth).floor(), 0);
+    final int leadingRow     = math.max(((verticalPixels+otherRowHeight-firstRowHeight) / otherRowHeight).floor(), 0);
     final int trailingColumn = math.min(((horizontalPixels + viewportWidth) / otherColumnWidth).ceil(), maxColumnIndex);
-    final int trailingRow    = math.min(((verticalPixels + viewportHeight) / otherColumnWidth).ceil(), maxRowIndex);
+    final int trailingRow    = math.min(((verticalPixels + viewportHeight) / otherRowHeight).ceil(), maxRowIndex);
 
     double xLayoutOffset = (leadingColumn == 0 ? 0 : (firstColumnWidth + (leadingColumn - 1) * otherColumnWidth)) - horizontalOffset.pixels;
     
@@ -175,11 +175,11 @@ class RenderTwoDimensionalGridViewport extends RenderTwoDimensionalViewport {
     }
 
     // Set the min and max scroll extents for each axis.
-    final double verticalExtent = otherColumnWidth * (maxRowIndex + 1) + (firstColumnWidth-otherColumnWidth)*2;
+    final double verticalExtent = otherRowHeight * (maxRowIndex + 1) + (firstRowHeight-otherRowHeight)*2;
     verticalOffset.applyContentDimensions(
       0.0,
       clampDouble(
-          verticalExtent - viewportDimension.height, 0.0, double.infinity),
+        verticalExtent - viewportDimension.height, 1.0, double.infinity),
     );
     final double horizontalExtent = otherColumnWidth * (maxColumnIndex + 1) + (firstColumnWidth-otherColumnWidth)*2;
     horizontalOffset.applyContentDimensions(
