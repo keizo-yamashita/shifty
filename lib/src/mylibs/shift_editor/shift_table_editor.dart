@@ -94,7 +94,7 @@ class ShiftTableEditor extends StatelessWidget {
                     (j){
                       return Padding(
                         padding: EdgeInsets.only(top: (i == 0) ? 10 : 0, right: (j == shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays+1) ? 10 : 0, left: (j == 0) ? 10 : 0, bottom: (i == shiftTable.shiftFrame.timeDivs.length) ? 10 : 0),
-                        child: _cell(i, j, false)
+                        child: _cell(i, j, shiftTable.shiftFrame.assignTable[i][j] != 0)
                       );
                     }
                   );
@@ -154,6 +154,8 @@ class ShiftTableEditor extends StatelessWidget {
     return HitTestDetector(
       onTouch: onSelected,
       child:  Container(
+        width: cellWidth,
+        height: cellHeight,
         decoration: BoxDecoration(
           border: Border(
             top:    row == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
@@ -164,7 +166,7 @@ class ShiftTableEditor extends StatelessWidget {
           color: cellColor
         ),
         child: editable
-          ? Center(child: cellValue)
+          ? Center(child: SizedBox(width: cellWidth, height: cellHeight, child: cellValue))
           : SizedBox(width: cellWidth, height: cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
       ),
     );
