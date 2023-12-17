@@ -9,6 +9,7 @@ import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift/shift_request.dart';
+import 'package:shift/src/mylibs/shift_editor/linkled_scroll.dart';
 import 'package:shift/src/mylibs/shift_editor/shift_request_editor.dart';
 import 'package:shift/src/mylibs/shift_editor/shift_response_editor.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
@@ -66,6 +67,33 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
   
   // シフトリクエストのインスタンス取得
   ShiftRequest _shiftRequest = ShiftRequest(ShiftFrame());
+
+  late LinkedScrollControllerGroup horizontalScrollGroup;
+  late LinkedScrollControllerGroup verticalScrollGroup;
+  late ScrollController controllerHorizontal_0;
+  late ScrollController controllerHorizontal_1;
+  late ScrollController controllerVertical_0;
+  late ScrollController controllerVertical_1;
+
+  @override
+  void initState() {
+    super.initState();
+    horizontalScrollGroup = LinkedScrollControllerGroup();
+    verticalScrollGroup = LinkedScrollControllerGroup();
+    controllerHorizontal_0 = horizontalScrollGroup.addAndGet();
+    controllerHorizontal_1 = horizontalScrollGroup.addAndGet();
+    controllerVertical_0 = verticalScrollGroup.addAndGet();
+    controllerVertical_1 = verticalScrollGroup.addAndGet();
+  }
+
+  @override
+  void dispose() {
+    controllerHorizontal_0.dispose();
+    controllerHorizontal_1.dispose();
+    controllerVertical_0.dispose();
+    controllerVertical_1.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -286,6 +314,11 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
               cellWidth:   _cellWidth*1,
               titleHeight: _cellHeight*2,
               titleWidth:  _cellWidth*3.5,
+              titleMargin: 10,
+              controllerHorizontal_0: controllerHorizontal_0,
+              controllerHorizontal_1: controllerHorizontal_1,
+              controllerVertical_0: controllerVertical_0,
+              controllerVertical_1: controllerVertical_1,
               onChangeSelect:   (p0){
                 setState(() {
                   coordinate = p0!;

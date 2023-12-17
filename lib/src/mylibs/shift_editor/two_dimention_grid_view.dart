@@ -13,15 +13,15 @@ class TwoDimensionalGridView extends TwoDimensionalScrollView {
     super.verticalDetails = const ScrollableDetails.vertical(),
     super.horizontalDetails = const ScrollableDetails.horizontal(),
     required TwoDimensionalChildBuilderDelegate delegate,
-    required this.firstColumnWidth,
-    required this.otherColumnWidth,
-    required this.firstRowHeight,
-    required this.otherRowHeight,
     super.cacheExtent,
     super.diagonalDragBehavior = DiagonalDragBehavior.none,
     super.dragStartBehavior = DragStartBehavior.start,
     super.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     super.clipBehavior = Clip.hardEdge,
+    required this.firstColumnWidth,
+    required this.otherColumnWidth,
+    required this.firstRowHeight,
+    required this.otherRowHeight,
   }) : super(delegate: delegate);
 
   final double firstColumnWidth;
@@ -99,14 +99,14 @@ class TwoDimensionalGridViewport extends TwoDimensionalViewport {
     RenderTwoDimensionalGridViewport renderObject,
   ) {
     renderObject
-      ..horizontalOffset = horizontalOffset
+      ..horizontalOffset        = horizontalOffset
       ..horizontalAxisDirection = horizontalAxisDirection
-      ..verticalOffset = verticalOffset
-      ..verticalAxisDirection = verticalAxisDirection
-      ..mainAxis = mainAxis
-      ..delegate = delegate
-      ..cacheExtent = cacheExtent
-      ..clipBehavior = clipBehavior;
+      ..verticalOffset          = verticalOffset
+      ..verticalAxisDirection   = verticalAxisDirection
+      ..mainAxis                = mainAxis
+      ..delegate                = delegate
+      ..cacheExtent             = cacheExtent
+      ..clipBehavior            = clipBehavior;
   }
 }
 
@@ -178,15 +178,12 @@ class RenderTwoDimensionalGridViewport extends RenderTwoDimensionalViewport {
     final double verticalExtent = otherRowHeight * (maxRowIndex + 1) + (firstRowHeight-otherRowHeight)*2;
     verticalOffset.applyContentDimensions(
       0.0,
-      clampDouble(
-        verticalExtent - viewportDimension.height, 1.0, double.infinity),
+      clampDouble(verticalExtent - viewportDimension.height, 1.0, double.infinity),
     );
     final double horizontalExtent = otherColumnWidth * (maxColumnIndex + 1) + (firstColumnWidth-otherColumnWidth)*2;
     horizontalOffset.applyContentDimensions(
       0.0,
-      clampDouble(
-        horizontalExtent - viewportDimension.width, 1.0, double.infinity),
+      clampDouble(horizontalExtent - viewportDimension.width, 1.0, double.infinity),
     );
-    // Super class handles garbage collection too!
   }
 }

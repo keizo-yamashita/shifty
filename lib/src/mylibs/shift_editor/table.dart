@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shift/src/mylibs/shift_editor/two_dimention_grid_view.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
+import 'package:shift/src/mylibs/shift/shift_table.dart';
 
 class TableEditor extends StatefulWidget {
+  final GlobalKey                   editorKey;
   final double                      tableWidth;
   final double                      tableHeight;
   final double                      cellWidth;
   final double                      cellHeight;
   final double                      titleWidth;
   final double                      titleHeight;
+  final double                      titleMargin;
   final Coordinate?                 selected;       // selected point cordinate
   final Function(Coordinate?)?      onChangeSelect; // chage select callback
   final Function?                   onInputEnd;     // notifiy input end for create input buffer
+  final ShiftTable                  shiftTable;
   final bool                        enableEdit;     // true = edit enable
   final bool                        isDark;
   final List<Widget>                columnTitles;
@@ -24,16 +28,19 @@ class TableEditor extends StatefulWidget {
   final ScrollController            controllerVertical_1;
   
   const TableEditor({
-    Key? key,
+    super.key, 
+    required this.editorKey,
     required this.tableWidth,
     required this.tableHeight,
     required this.cellWidth,
     required this.cellHeight,
     required this.titleWidth,
     required this.titleHeight,
+    required this.titleMargin,
     required this.selected,       // selected point cordinate
     required this.onChangeSelect, // chage select callback
     required this.onInputEnd,     // notifiy input end for create input buffer
+    required this.shiftTable,
     required this.enableEdit,     // true = edit enable
     required this.isDark,
     required this.columnTitles,
@@ -43,20 +50,38 @@ class TableEditor extends StatefulWidget {
     required this.controllerHorizontal_1,
     required this.controllerVertical_0,
     required this.controllerVertical_1
-  }) : super(key: key);
+  });
 
   @override
-  State<TableEditor> createState() => _TableEditorState(); 
+  State<TableEditor> createState() => TableEditorState(); 
 }
 
-class _TableEditorState extends State<TableEditor> {
+class TableEditorState extends State<TableEditor> {
 
   var scrollEnableMain  = true;
   var scrollEnableTitle = false;
 
   @override
   Widget build(BuildContext context){
-    
+
+    int rowLength    = widget.shiftTable.shiftFrame.shiftDateRange[0].end.difference(widget.shiftTable.shiftFrame.shiftDateRange[0].start).inDays + 1;
+    int columnLength = widget.shiftTable.shiftFrame.timeDivs.length;
+
+    var cells = List<List<Widget>>.generate(
+      columnLength, 
+      (i){
+        return List.generate(
+          rowLength,
+          (j){
+            return Padding(
+              padding: EdgeInsets.only(top: (i == 0) ? widget.titleMargin : 0, right: (j == rowLength) ? widget.titleMargin : 0, left: (j == 0) ? widget.titleMargin : 0, bottom: (i == columnLength) ? widget.titleMargin : 0),
+              child: _cell(i, j, widget.shiftTable.shiftFrame.assignTable[i][j] != 0)
+            );
+          }
+        );
+      },
+    );
+
     return SizedBox(
       width: widget.tableWidth,
       height: widget.tableHeight,
@@ -78,10 +103,10 @@ class _TableEditorState extends State<TableEditor> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          const SizedBox(width:10),
+                          SizedBox(width: widget.titleMargin),
                           for(int i =0; i < widget.columnTitles.length; i++)
                           widget.columnTitles[i],
-                          const SizedBox(width:10),
+                          SizedBox(width: widget.titleMargin),
                         ],
                       )
                     ),
@@ -98,10 +123,10 @@ class _TableEditorState extends State<TableEditor> {
                         controller: widget.controllerVertical_1,
                         child: Column(
                           children: [
-                            const SizedBox(height: 10),
+                            SizedBox(height: widget.titleMargin),
                             for(int i = 0; i < widget.rowTitles.length; i++)
                             widget.rowTitles[i],
-                            const SizedBox(height: 10),
+                            SizedBox(height: widget.titleMargin),
                           ]
                         ),
                     ),
@@ -140,18 +165,19 @@ class _TableEditorState extends State<TableEditor> {
                         }
                       }, 
                       child: TwoDimensionalGridView(
-                        firstColumnWidth: widget.cellWidth + 10,
+                        key:              widget.editorKey,
+                        firstColumnWidth: widget.cellWidth + widget.titleMargin,
                         otherColumnWidth: widget.cellWidth,
-                        firstRowHeight:   widget.cellHeight + 10,
+                        firstRowHeight:   widget.cellHeight + widget.titleMargin,
                         otherRowHeight:   widget.cellHeight,
                         diagonalDragBehavior: DiagonalDragBehavior.free,
                         horizontalDetails: ScrollableDetails.horizontal(controller: widget.controllerHorizontal_0),
                         verticalDetails: ScrollableDetails.vertical(controller: widget.controllerVertical_0),
                         delegate: TwoDimensionalChildBuilderDelegate(
-                          maxXIndex: widget.cells[0].length - 1,
-                          maxYIndex: widget.cells.length - 1,
+                          maxXIndex: cells[0].length - 1,
+                          maxYIndex: cells.length - 1,
                           builder: (BuildContext context, ChildVicinity vicinity) {
-                            return widget.cells[vicinity.yIndex][vicinity.xIndex];
+                            return cells[vicinity.yIndex][vicinity.xIndex];
                           }
                         ),
                       ),
@@ -166,55 +192,42 @@ class _TableEditorState extends State<TableEditor> {
       ),
     );
   }
-
-  List<List<Widget>> getContents(List<int> list_1, List<int> list_2) {
-
-    List<List<Widget>> list = [];
-
-    for(int i = 0; i < list_1.length; i++){
-      list.add([]);
-      for(int j = 0; j < list_2.length; j++){
-        list[i].add(Padding(
-          padding: EdgeInsets.only(top: (i == 0) ? 10 : 0, right: (j == list_2.length-1) ? 10 : 0, left: (j == 0) ? 10 : 0, bottom: (i == list_1.length-1) ? 10 : 0),
-          child: _cell(i, j)
-        ));
-      }
-    }
-
-    return list;
-  }
-
-  Widget _cell(int row, int column) {
-
-    return Container(
-      width: widget.cellWidth,
-      height: widget.cellHeight,
-      decoration: BoxDecoration(
-        border: Border(
-          top:    row == 0 ? const BorderSide(width: 1, color: Colors.grey) : BorderSide.none,
-          bottom: const BorderSide(width: 1, color: Colors.grey),
-          left:   column == 0 ? const BorderSide(width: 1, color: Colors.grey) : BorderSide.none,
-          right:  const BorderSide(width: 1, color: Colors.grey),
-        ),
-      ),
-    );
-  }
-    // judge this cell is onTaped
+  // judge this cell is onTaped
   void _judgeHit(BuildContext context, Offset globalPosition) {
-    final RenderBox? box = context.findRenderObject() as RenderBox?;
+    final RenderBox box = context.findRenderObject()! as RenderBox;
     final result = BoxHitTestResult();
-    var local = box?.globalToLocal(globalPosition);
-    if (box == null || local == null) {
-      return;
-    }
+    var local = box.globalToLocal(globalPosition);
     if (box.hitTest(result, position: local)) {
       for (final hit in result.path) {
         final target = hit.target;
         if (target is HitTestDetectorRenderBox) {
-          target.onHit?.call();
+          target.onHit!.call();
         }
       }
     }
+  }
+
+  ///////////////////////////////////////////////////////////////////////
+  /// テーブルの要素を作るための関数
+  //////////////////////////////////////////////////////////////////////
+
+  // Matrix Cell Class Instance
+  Widget _cell(int row, int column, bool editable) {
+
+    final coordinate = Coordinate(column: column, row: row);
+    
+    void onSelected() {
+      if(editable){
+        widget.onChangeSelect?.call(coordinate);
+      }
+    }
+
+    widget.cells[row][column];
+
+    return HitDetector(
+      onTouch: onSelected,
+      child: widget.cells[row][column]
+    );
   }
 }
 
@@ -222,11 +235,11 @@ class _TableEditorState extends State<TableEditor> {
 // HitTest Detector Class
 /////////////////////////////////////////////////////////////////////////////////
 
-class HitTestDetector extends SingleChildRenderObjectWidget {
+class HitDetector extends SingleChildRenderObjectWidget {
 
   final VoidCallback? onTouch;
 
-  const HitTestDetector({Key? key, Widget? child, this.onTouch }) : super( key: key, child: child);
+  const HitDetector({Key? key, Widget? child, this.onTouch }) : super( key: key, child: child);
 
   @override
   RenderObject createRenderObject(BuildContext context) {

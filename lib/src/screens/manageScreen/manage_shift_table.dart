@@ -2,6 +2,7 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +16,9 @@ import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift/shift_table.dart';
 import 'package:shift/src/mylibs/shift_editor/shift_table_editor.dart';
+import 'package:shift/src/mylibs/shift_editor/table.dart';
 import 'package:shift/src/mylibs/shift_editor/shift_response_editor.dart';
+import 'package:shift/src/mylibs/shift_editor/table_title.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 import 'package:shift/src/mylibs/undo_redo.dart';
 import 'package:shift/src/mylibs/modal_window.dart';
@@ -28,6 +31,7 @@ import 'package:shift/src/mylibs/button.dart';
 // editor のセルサイズ設定
 double _cellHeight  = 20;
 double _cellWidth   = 20;
+double _titleMargin = 5;
 double _cellSizeMax = 25;
 double _cellSizeMin = 15;
 double _zoomDiv     = 1;
@@ -73,6 +77,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   int  _selectedIndex      = 0;
   bool _enableResponseEdit = false;
   int  _inkValue           = 1;
+  GlobalKey _editorKey     = GlobalKey<TableEditorState>();
 
   late LinkedScrollControllerGroup horizontalScrollGroup;
   late LinkedScrollControllerGroup verticalScrollGroup;
@@ -84,12 +89,12 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   @override
   void initState() {
     super.initState();
-    horizontalScrollGroup = LinkedScrollControllerGroup();
-    verticalScrollGroup = LinkedScrollControllerGroup();
+    horizontalScrollGroup  = LinkedScrollControllerGroup();
+    verticalScrollGroup    = LinkedScrollControllerGroup();
     controllerHorizontal_0 = horizontalScrollGroup.addAndGet();
     controllerHorizontal_1 = horizontalScrollGroup.addAndGet();
-    controllerVertical_0 = verticalScrollGroup.addAndGet();
-    controllerVertical_1 = verticalScrollGroup.addAndGet();
+    controllerVertical_0   = verticalScrollGroup.addAndGet();
+    controllerVertical_1   = verticalScrollGroup.addAndGet();
   }
 
   @override
@@ -109,14 +114,17 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
 
     // Provider 処理
     _shiftTable = ref.read(shiftTableProvider).shiftTable;
-    ref.read(settingProvider).loadPreferences();
     _isDark     = ref.read(settingProvider).enableDarkTheme;
+    ref.read(settingProvider).loadPreferences();
 
     if(undoredoCtrl.buffer.isEmpty){
       _registered = true;
       insertBuffer(_shiftTable.shiftTable);
     }
     
+    int rowLength    = _shiftTable.shiftFrame.shiftDateRange[0].end.difference(_shiftTable.shiftFrame.shiftDateRange[0].start).inDays + 1;
+    int columnLength = _shiftTable.shiftFrame.timeDivs.length;
+
     // Firestoreからシフト表に対するシフト希望表を取ってくる           
 
     return PopScope(
@@ -215,6 +223,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                       (){
                         setState(() {
                           zoomIn();
+                          _editorKey = GlobalKey<TableEditorState>();
                         });
                       },
                       (){}
@@ -226,6 +235,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                       (){
                         setState(() {
                           zoomOut();
+                          _editorKey = GlobalKey<TableEditorState>();
                         });
                       },
                       (){}
@@ -311,14 +321,17 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             /// メインテーブル
             ////////////////////////////////////////////////////////////////////////////////////////////
             
-            (_selectedIndex == 0)
-            ? ShiftTableEditor(
-              sheetHeight: _screenSize.height * 1.0 - 46 - 60,
-              sheetWidth:  _screenSize.width,
-              cellHeight:  _cellHeight*1,
-              cellWidth:   _cellWidth*1,
+            // (_selectedIndex == 0)
+            // ?
+            TableEditor(
+              editorKey:   _editorKey,
+              tableHeight: _screenSize.height * 1.0 - 46 - 60,
+              tableWidth:  _screenSize.width,
+              cellHeight:  _cellHeight,
+              cellWidth:   _cellWidth,
               titleHeight: _cellHeight*2,
               titleWidth:  _cellWidth*3.5,
+              titleMargin: _titleMargin,
               controllerHorizontal_0: controllerHorizontal_0,
               controllerHorizontal_1: controllerHorizontal_1,
               controllerVertical_0: controllerVertical_0,
@@ -326,48 +339,63 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
               onChangeSelect: (p0) async {
                 coordinate = p0!;
                 setState(() {});
-                await buildAssignSelectModaleWindow(p0.column, p0.row);
+                buildAssignSelectModaleWindow(p0.column, p0.row);
                 setState(() {});
               },
-              onInputEnd: (){
-                _registered = false;
-                insertBuffer(_shiftTable.shiftTable);
-              },
+              onInputEnd: null,
               shiftTable: _shiftTable,
-              enableEdit: true,
-              selected: coordinate,
-                isDark: _isDark,
-            )
-            : ShiftResponseEditor(
-              sheetHeight: _screenSize.height * 1.0 - 46 - 60,
-              sheetWidth:  _screenSize.width,
-              cellHeight:  _cellHeight*1,
-              cellWidth:   _cellWidth*1,
-              titleHeight: _cellHeight*2,
-              titleWidth:  _cellWidth*3.5,
-              onChangeSelect: (p0) async {
-                coordinate = p0!;
-                if(_enableResponseEdit && _shiftTable.shiftRequests[_selectedIndex-1].requestTable[p0.row][p0.column] == 1){
-                  _shiftTable.shiftRequests[_selectedIndex-1].responseTable[p0.row][p0.column] = _inkValue;
-                  for(int i = 0; i < _shiftTable.shiftTable[p0.row][p0.column].length; i++){
-                    if(_shiftTable.shiftTable[p0.row][p0.column][i].userIndex == _selectedIndex -1){
-                      _shiftTable.shiftTable[p0.row][p0.column][i].assign = (_inkValue == 1) ? true : false;
-                      break;
-                    }
-                  }
-                  _shiftTable.calcFitness(_baseDuration.inMinutes, _minDuration.inMinutes, _baseConDay);
-                }
-                setState(() {});
-              },
-              onInputEnd: (){
-                _registered = false;
-                insertBuffer(_shiftTable.shiftTable);
-              },
-              shiftRequest: _shiftTable.shiftRequests[_selectedIndex-1],
-              enableEdit: _enableResponseEdit,
+              enableEdit: false,
               selected: coordinate,
               isDark: _isDark,
+              columnTitles: getColumnTitles(_cellHeight*2, _cellWidth, _shiftTable.shiftFrame.shiftDateRange[0].start, _shiftTable.shiftFrame.shiftDateRange[0].end, _isDark),
+              rowTitles: getRowTitles(_cellHeight, _cellWidth*3.5, _shiftTable.shiftFrame.timeDivs, _isDark),
+              cells: List<List<Widget>>.generate(
+                columnLength, 
+                (i){
+                  return List.generate(
+                    rowLength,
+                    (j){
+                      return cell( i, j, _shiftTable.shiftFrame.assignTable[i][j] != 0, j == coordinate?.column && i == coordinate?.row);
+                    }
+                  );
+                },
+              ),
             ),
+            // : ShiftResponseEditor(
+            //   sheetHeight: _screenSize.height * 1.0 - 46 - 60,
+            //   sheetWidth:  _screenSize.width,
+            //   cellHeight:  _cellHeight*1,
+            //   cellWidth:   _cellWidth*1,
+            //   titleHeight: _cellHeight*2,
+            //   titleWidth:  _cellWidth*3.5,
+            //   titleMargin: 10,
+            //   controllerHorizontal_0: controllerHorizontal_0,
+            //   controllerHorizontal_1: controllerHorizontal_1,
+            //   controllerVertical_0: controllerVertical_0,
+            //   controllerVertical_1: controllerVertical_1,
+            //   onChangeSelect: (p0) async {
+            //     coordinate = p0!;
+            //     if(_enableResponseEdit && _shiftTable.shiftRequests[_selectedIndex-1].requestTable[p0.row][p0.column] == 1){
+            //       _shiftTable.shiftRequests[_selectedIndex-1].responseTable[p0.row][p0.column] = _inkValue;
+            //       for(int i = 0; i < _shiftTable.shiftTable[p0.row][p0.column].length; i++){
+            //         if(_shiftTable.shiftTable[p0.row][p0.column][i].userIndex == _selectedIndex -1){
+            //           _shiftTable.shiftTable[p0.row][p0.column][i].assign = (_inkValue == 1) ? true : false;
+            //           break;
+            //         }
+            //       }
+            //       _shiftTable.calcFitness(_baseDuration.inMinutes, _minDuration.inMinutes, _baseConDay);
+            //     }
+            //     setState(() {});
+            //   },
+            //   onInputEnd: (){
+            //     _registered = false;
+            //     insertBuffer(_shiftTable.shiftTable);
+            //   },
+            //   shiftRequest: _shiftTable.shiftRequests[_selectedIndex-1],
+            //   enableEdit: _enableResponseEdit,
+            //   selected: coordinate,
+            //   isDark: _isDark,
+            // ),
             
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// 切り替えボタン
@@ -443,6 +471,60 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
       ),
     );
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  Cell
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  
+  // Matrix Cell Class Instance
+  Widget cell(int row, int column, bool editable, bool selected) {
+
+    int assignNum = 0;
+    for(int i = 0; i < _shiftTable.shiftTable[row][column].length; i++){
+      if(_shiftTable.shiftTable[row][column][i].assign){
+        assignNum++;
+      }
+    }
+
+    var value = (assignNum / _shiftTable.shiftFrame.assignTable[row][column]);
+
+    var cellValue = Icon(PopIcons.ok, size: 14 * _cellWidth / 20, color: MyStyle.primaryColor);
+    if(value == 0){
+      cellValue = Icon(PopIcons.cancel, size: 14 * _cellWidth / 20, color: Colors.red); 
+    }
+    else if(value < 0.3){
+      cellValue = Icon(PopIcons.cancel, size: 14 * _cellWidth / 20, color: Colors.yellow[800]); 
+    }
+    else if(value < 0.7){
+      cellValue = Icon(PopIcons.attention_alt, size: 14 * _cellWidth / 20, color: Colors.red);
+    }
+    else if(value < 1.0){
+      cellValue = Icon(PopIcons.attention_alt, size: 14 * _cellWidth / 20, color: Colors.yellow[800]);
+    }
+    else if(value > 1.0){
+      cellValue = Icon(PopIcons.ok, size: 14 * _cellWidth / 20, color: Colors.yellow[800]);
+    }
+
+    Color  cellColor = (selected) ? MyStyle.primaryColor.withAlpha(100) : Colors.transparent;
+    var cellBoaderWdth = 1.0;
+
+    return Container(
+      width: _cellWidth,
+      height: _cellHeight,
+      decoration: BoxDecoration(
+        border: Border(
+          top:    row == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+          bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+          left:   column == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+          right:  BorderSide(width: cellBoaderWdth, color: Colors.grey),
+        ),
+        color: cellColor
+      ),
+      child: editable
+      ? Center(child: SizedBox(width: _cellWidth, height: _cellHeight, child: cellValue))
+      : SizedBox(width: _cellWidth, height: _cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
+    );
+  }
   
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  Zoom In / Zoom Out 機能の実装
@@ -487,9 +569,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   ////////////////////////////////////////////////////////////////////////////////////////////
   
   void insertBuffer(List<List<List<Candidate>>> table){
-    setState(() {
-      undoredoCtrl.insertBuffer(table.map((e) => List.from(e.map((f) => List.from(f.map((g) => g.copy())).cast<Candidate>()).toList()).cast<List<Candidate>>()).toList());
-    });
+    undoredoCtrl.insertBuffer(table.map((e) => List.from(e.map((f) => List.from(f.map((g) => g.copy())).cast<Candidate>()).toList()).cast<List<Candidate>>()).toList());
   }
 
   void paintUndoRedo(bool undo){
@@ -545,12 +625,18 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   ///  シフト表のセルをクリックした時に表示するモーダルウィンドウ
   ////////////////////////////////////////////////////////////////////////////////////////////
   
-  Future<dynamic> buildAssignSelectModaleWindow(int column, int row) async {
-    return await showModalWindow(
+  void buildAssignSelectModaleWindow(int column, int row) async {
+    showModalWindow(
       context,
       0.5,
       InputModalWindowWidget(_shiftTable, column, row)
-    );
+    ).then((value){
+      if(value == true){
+        setState(() {});
+        _registered = false;
+        insertBuffer(_shiftTable.shiftTable);
+      }
+    });
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -591,9 +677,6 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         message += "\n";
       }
     }
-
-    print(message);
-
     return;
 
     // Member:";
@@ -643,6 +726,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
     ).then((value) {
       if(value != null){
         setState(() {});
+        _registered = false;
         insertBuffer(_shiftTable.shiftTable);
       }
     });
@@ -1078,16 +1162,25 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
 class InputModalWindowWidget extends StatefulWidget {
   
   final ShiftTable shiftTable;
-  final int column;
-  final int row;
+  final int        column;
+  final int        row;
+  final List<bool> backup = [];
 
-  const InputModalWindowWidget(this.shiftTable, this.column, this.row, {Key? key}) : super(key: key);
+  InputModalWindowWidget(this.shiftTable, this.column, this.row, {Key? key}) : super(key: key);
 
   @override
   InputModalWindowWidgetState createState() => InputModalWindowWidgetState();
 }
 
 class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
+
+  @override
+  void initState(){
+    super.initState();
+    for(int i = 0; i < widget.shiftTable.shiftTable[widget.row][widget.column].length; i++){
+      widget.backup.add(widget.shiftTable.shiftTable[widget.row][widget.column][i].assign);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1111,79 +1204,95 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
       }
     }
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.5,
-      child: Column(
-        children: [
-          SizedBox(
-            height: 50,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  dateText,
-                  const SizedBox(width: 10),
-                  Text(widget.shiftTable.shiftFrame.timeDivs[widget.row].name, style: MyStyle.tableTitleStyle(null, 15)),
-                  const SizedBox(width: 20),
-                  Text("$assignNum / ${widget.shiftTable.shiftFrame.assignTable[widget.row][widget.column]} 人", style: MyStyle.tableTitleStyle(null, 15)),
-                ],
+    return PopScope(
+      canPop: false, // 戻るキーの動作で戻ることを一旦防ぐ
+      onPopInvoked: (didPop) async {
+        if (didPop) {
+          return;
+        }
+        bool changed = false;
+        for(int i = 0; i < widget.shiftTable.shiftTable[widget.row][widget.column].length; i++){
+          if(widget.shiftTable.shiftTable[widget.row][widget.column][i].assign != widget.backup[i]){
+            changed = true;
+            break; // 変更が見つかったらループを終了
+          }
+        }
+        Navigator.pop(context, changed);
+      },
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 50,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    dateText,
+                    const SizedBox(width: 10),
+                    Text(widget.shiftTable.shiftFrame.timeDivs[widget.row].name, style: MyStyle.tableTitleStyle(null, 15)),
+                    const SizedBox(width: 20),
+                    Text("$assignNum / ${widget.shiftTable.shiftFrame.assignTable[widget.row][widget.column]} 人", style: MyStyle.tableTitleStyle(null, 15)),
+                  ],
+                ),
               ),
             ),
-          ),
-          (widget.shiftTable.shiftTable[widget.row][widget.column].isEmpty)
-          ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15.0),
-            child: Text("リクエストしているユーザがいません", style: MyStyle.defaultStyleRed15, textAlign: TextAlign.center),
-          )
-          : SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5 - 50 - MediaQuery.of(context).padding.bottom - 23,  
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: widget.shiftTable.shiftTable[widget.row][widget.column].length,
-              itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  children: [            
-                    ListTile(
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            child: Text(widget.shiftTable.shiftRequests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].displayName, style: MyStyle.headlineStyle15, textAlign: TextAlign.center)),
-                          const SizedBox(width: 30),
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              const Icon(Icons.check_box_outline_blank_rounded, color: MyStyle.hiddenColor, size: 30),
-                              (widget.shiftTable.shiftTable[widget.row][widget.column][index].assign)
-                              ? const Padding(
-                                  padding: EdgeInsets.only(bottom: 5, left: 5),
-                                  child: Icon(PopIcons.ok, color: MyStyle.primaryColor, size: 25),
-                                )
-                              : const Padding(
-                                  padding: EdgeInsets.only(bottom: 5, left: 5),
-                                  child: Icon(PopIcons.ok, color: Colors.transparent, size: 25),
-                                ),
-                            ],
-                          )
-                        ]
+            (widget.shiftTable.shiftTable[widget.row][widget.column].isEmpty)
+            ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15.0),
+              child: Text("リクエストしているユーザがいません", style: MyStyle.defaultStyleRed15, textAlign: TextAlign.center),
+            )
+            : SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5 - 70 - MediaQuery.of(context).padding.bottom,  
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.shiftTable.shiftTable[widget.row][widget.column].length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: [            
+                      ListTile(
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 100,
+                              child: Text(widget.shiftTable.shiftRequests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].displayName, style: MyStyle.headlineStyle15, textAlign: TextAlign.center)),
+                            const SizedBox(width: 30),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                const Icon(Icons.check_box_outline_blank_rounded, color: MyStyle.hiddenColor, size: 30),
+                                (widget.shiftTable.shiftTable[widget.row][widget.column][index].assign)
+                                ? const Padding(
+                                    padding: EdgeInsets.only(bottom: 5, left: 5),
+                                    child: Icon(PopIcons.ok, color: MyStyle.primaryColor, size: 25),
+                                  )
+                                : const Padding(
+                                    padding: EdgeInsets.only(bottom: 5, left: 5),
+                                    child: Icon(PopIcons.ok, color: Colors.transparent, size: 25),
+                                  ),
+                              ],
+                            )
+                          ]
+                        ),
+                        onTap: () {
+                          setState(() {
+                            widget.shiftTable.shiftTable[widget.row][widget.column][index].assign = !widget.shiftTable.shiftTable[widget.row][widget.column][index].assign;
+                            widget.shiftTable.shiftRequests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].responseTable[widget.row][widget.column] = (widget.shiftTable.shiftTable[widget.row][widget.column][index].assign) ? 1 : 0;
+                          });
+                        },
                       ),
-                      onTap: () {
-                        setState(() {
-                          widget.shiftTable.shiftTable[widget.row][widget.column][index].assign = !widget.shiftTable.shiftTable[widget.row][widget.column][index].assign;
-                          widget.shiftTable.shiftRequests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].responseTable[widget.row][widget.column] = (widget.shiftTable.shiftTable[widget.row][widget.column][index].assign) ? 1 : 0;
-                        });
-                      },
-                    ),
-                    const Divider(thickness: 2)
-                  ],
-                );
-              },
+                      const Divider(thickness: 2)
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1435,7 +1544,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
         
         var modalHeight  = _screenSize.height * 0.5;
         var modalWidth   = _screenSize.width - 20 - _screenSize.width * 0.1;
-        var paddingHeght = modalHeight * 0.04;
+        var paddingHeght = modalHeight * 0.03;
         var buttonHeight = modalHeight * 0.16;
         var widgetHeight = buttonHeight + paddingHeght * 2;
 
