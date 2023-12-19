@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shift/src/mylibs/shift_editor/two_dimention_grid_view.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
-import 'package:shift/src/mylibs/shift/shift_table.dart';
 
 class TableEditor extends StatefulWidget {
   final GlobalKey                   editorKey;
@@ -16,7 +15,6 @@ class TableEditor extends StatefulWidget {
   final Coordinate?                 selected;       // selected point cordinate
   final Function(Coordinate?)?      onChangeSelect; // chage select callback
   final Function?                   onInputEnd;     // notifiy input end for create input buffer
-  final ShiftTable                  shiftTable;
   final bool                        enableEdit;     // true = edit enable
   final bool                        isDark;
   final List<Widget>                columnTitles;
@@ -40,7 +38,6 @@ class TableEditor extends StatefulWidget {
     required this.selected,       // selected point cordinate
     required this.onChangeSelect, // chage select callback
     required this.onInputEnd,     // notifiy input end for create input buffer
-    required this.shiftTable,
     required this.enableEdit,     // true = edit enable
     required this.isDark,
     required this.columnTitles,
@@ -64,18 +61,18 @@ class TableEditorState extends State<TableEditor> {
   @override
   Widget build(BuildContext context){
 
-    int rowLength    = widget.shiftTable.shiftFrame.shiftDateRange[0].end.difference(widget.shiftTable.shiftFrame.shiftDateRange[0].start).inDays + 1;
-    int columnLength = widget.shiftTable.shiftFrame.timeDivs.length;
+    int rowLength    = widget.rowTitles.length;
+    int columnLength = widget.columnTitles.length;
 
     var cells = List<List<Widget>>.generate(
-      columnLength, 
+      rowLength, 
       (i){
         return List.generate(
-          rowLength,
+          columnLength,
           (j){
             return Padding(
               padding: EdgeInsets.only(top: (i == 0) ? widget.titleMargin : 0, right: (j == rowLength) ? widget.titleMargin : 0, left: (j == 0) ? widget.titleMargin : 0, bottom: (i == columnLength) ? widget.titleMargin : 0),
-              child: _cell(i, j, widget.shiftTable.shiftFrame.assignTable[i][j] != 0)
+              child: _cell(i, j, true)
             );
           }
         );
@@ -171,8 +168,8 @@ class TableEditorState extends State<TableEditor> {
                         firstRowHeight:   widget.cellHeight + widget.titleMargin,
                         otherRowHeight:   widget.cellHeight,
                         diagonalDragBehavior: DiagonalDragBehavior.free,
-                        horizontalDetails: ScrollableDetails.horizontal(controller: widget.controllerHorizontal_0),
-                        verticalDetails: ScrollableDetails.vertical(controller: widget.controllerVertical_0),
+                        horizontalDetails: ScrollableDetails.horizontal(controller: widget.controllerHorizontal_0, physics: !widget.enableEdit ? null : const NeverScrollableScrollPhysics(),),
+                        verticalDetails: ScrollableDetails.vertical(controller: widget.controllerVertical_0,  physics: !widget.enableEdit ? null : const NeverScrollableScrollPhysics(),),
                         delegate: TwoDimensionalChildBuilderDelegate(
                           maxXIndex: cells[0].length - 1,
                           maxYIndex: cells.length - 1,

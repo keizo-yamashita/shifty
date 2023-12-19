@@ -2,7 +2,6 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,14 +9,13 @@ import 'package:flutter/cupertino.dart';
 // my package
 import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/pop_icons.dart';
+import 'package:shift/src/mylibs/shift/shift_request.dart';
 import 'package:shift/src/mylibs/shift_editor/linkled_scroll.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
 import 'package:shift/src/mylibs/shift/shift_table.dart';
-import 'package:shift/src/mylibs/shift_editor/shift_table_editor.dart';
 import 'package:shift/src/mylibs/shift_editor/table.dart';
-import 'package:shift/src/mylibs/shift_editor/shift_response_editor.dart';
 import 'package:shift/src/mylibs/shift_editor/table_title.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 import 'package:shift/src/mylibs/undo_redo.dart';
@@ -31,7 +29,7 @@ import 'package:shift/src/mylibs/button.dart';
 // editor のセルサイズ設定
 double _cellHeight  = 20;
 double _cellWidth   = 20;
-double _titleMargin = 5;
+double _titleMargin = 10;
 double _cellSizeMax = 25;
 double _cellSizeMin = 15;
 double _zoomDiv     = 1;
@@ -269,6 +267,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                       (){
                         setState(() {
                           if(_selectedIndex != 0){
+                            _editorKey = GlobalKey<TableEditorState>();
                             _enableResponseEdit = !_enableResponseEdit;
                           }
                           else{
@@ -321,8 +320,8 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             /// メインテーブル
             ////////////////////////////////////////////////////////////////////////////////////////////
             
-            // (_selectedIndex == 0)
-            // ?
+            (_selectedIndex == 0)
+            ?
             TableEditor(
               editorKey:   _editorKey,
               tableHeight: _screenSize.height * 1.0 - 46 - 60,
@@ -343,7 +342,6 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                 setState(() {});
               },
               onInputEnd: null,
-              shiftTable: _shiftTable,
               enableEdit: false,
               selected: coordinate,
               isDark: _isDark,
@@ -355,47 +353,61 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                   return List.generate(
                     rowLength,
                     (j){
-                      return cell( i, j, _shiftTable.shiftFrame.assignTable[i][j] != 0, j == coordinate?.column && i == coordinate?.row);
+                      return shiftCell( i, j, _shiftTable.shiftFrame.assignTable[i][j] != 0, j == coordinate?.column && i == coordinate?.row);
                     }
                   );
                 },
               ),
+            )
+            : TableEditor(
+              editorKey:   _editorKey,
+              tableHeight: _screenSize.height * 1.0 - 46 - 60,
+              tableWidth:  _screenSize.width,
+              cellHeight:  _cellHeight,
+              cellWidth:   _cellWidth,
+              titleHeight: _cellHeight*2,
+              titleWidth:  _cellWidth*3.5,
+              titleMargin: _titleMargin,
+              controllerHorizontal_0: controllerHorizontal_0,
+              controllerHorizontal_1: controllerHorizontal_1,
+              controllerVertical_0: controllerVertical_0,
+              controllerVertical_1: controllerVertical_1,
+              onChangeSelect: (p0) async {
+                coordinate = p0!;
+                if(_enableResponseEdit && _shiftTable.shiftRequests[_selectedIndex-1].requestTable[p0.row][p0.column] == 1){
+                  _shiftTable.shiftRequests[_selectedIndex-1].responseTable[p0.row][p0.column] = _inkValue;
+                  for(int i = 0; i < _shiftTable.shiftTable[p0.row][p0.column].length; i++){
+                    if(_shiftTable.shiftTable[p0.row][p0.column][i].userIndex == _selectedIndex -1){
+                      _shiftTable.shiftTable[p0.row][p0.column][i].assign = (_inkValue == 1) ? true : false;
+                      break;
+                    }
+                  }
+                  _shiftTable.calcFitness(_baseDuration.inMinutes, _minDuration.inMinutes, _baseConDay);
+                }
+                setState(() {});
+              },
+              onInputEnd: (){
+                _registered = false;
+                insertBuffer(_shiftTable.shiftTable);
+              },
+              // shiftRequest: _shiftTable.shiftRequests[_selectedIndex-1],
+              columnTitles: getColumnTitles(_cellHeight*2, _cellWidth, _shiftTable.shiftFrame.shiftDateRange[0].start, _shiftTable.shiftFrame.shiftDateRange[0].end, _isDark),
+              rowTitles: getRowTitles(_cellHeight, _cellWidth*3.5, _shiftTable.shiftFrame.timeDivs, _isDark),
+              cells: List<List<Widget>>.generate(
+                columnLength, 
+                (i){
+                  return List.generate(
+                    rowLength,
+                    (j){
+                      return requestCell( i, j, _selectedIndex-1, _shiftTable.shiftFrame.assignTable[i][j] != 0, j == coordinate?.column && i == coordinate?.row);
+                    }
+                  );
+                },
+              ),
+              enableEdit: _enableResponseEdit,
+              selected: coordinate,
+              isDark: _isDark,
             ),
-            // : ShiftResponseEditor(
-            //   sheetHeight: _screenSize.height * 1.0 - 46 - 60,
-            //   sheetWidth:  _screenSize.width,
-            //   cellHeight:  _cellHeight*1,
-            //   cellWidth:   _cellWidth*1,
-            //   titleHeight: _cellHeight*2,
-            //   titleWidth:  _cellWidth*3.5,
-            //   titleMargin: 10,
-            //   controllerHorizontal_0: controllerHorizontal_0,
-            //   controllerHorizontal_1: controllerHorizontal_1,
-            //   controllerVertical_0: controllerVertical_0,
-            //   controllerVertical_1: controllerVertical_1,
-            //   onChangeSelect: (p0) async {
-            //     coordinate = p0!;
-            //     if(_enableResponseEdit && _shiftTable.shiftRequests[_selectedIndex-1].requestTable[p0.row][p0.column] == 1){
-            //       _shiftTable.shiftRequests[_selectedIndex-1].responseTable[p0.row][p0.column] = _inkValue;
-            //       for(int i = 0; i < _shiftTable.shiftTable[p0.row][p0.column].length; i++){
-            //         if(_shiftTable.shiftTable[p0.row][p0.column][i].userIndex == _selectedIndex -1){
-            //           _shiftTable.shiftTable[p0.row][p0.column][i].assign = (_inkValue == 1) ? true : false;
-            //           break;
-            //         }
-            //       }
-            //       _shiftTable.calcFitness(_baseDuration.inMinutes, _minDuration.inMinutes, _baseConDay);
-            //     }
-            //     setState(() {});
-            //   },
-            //   onInputEnd: (){
-            //     _registered = false;
-            //     insertBuffer(_shiftTable.shiftTable);
-            //   },
-            //   shiftRequest: _shiftTable.shiftRequests[_selectedIndex-1],
-            //   enableEdit: _enableResponseEdit,
-            //   selected: coordinate,
-            //   isDark: _isDark,
-            // ),
             
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// 切り替えボタン
@@ -477,7 +489,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   ////////////////////////////////////////////////////////////////////////////////////////////
   
   // Matrix Cell Class Instance
-  Widget cell(int row, int column, bool editable, bool selected) {
+  Widget shiftCell(int row, int column, bool editable, bool selected) {
 
     int assignNum = 0;
     for(int i = 0; i < _shiftTable.shiftTable[row][column].length; i++){
@@ -523,6 +535,43 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
       child: editable
       ? Center(child: SizedBox(width: _cellWidth, height: _cellHeight, child: cellValue))
       : SizedBox(width: _cellWidth, height: _cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
+    );
+  }
+
+    
+  // Matrix Cell Class Instance
+  Widget requestCell(int row, int column, int responseIndex,  bool editable, bool selected) {
+
+    ShiftRequest shiftRequest = _shiftTable.shiftRequests[responseIndex];
+    var value = editable ? shiftRequest.requestTable[row][column] : 0;
+    Icon cellValue;
+    Color cellColor;
+
+    if(value == 1){ 
+      cellValue = Icon((shiftRequest.responseTable[row][column] == 1) ? PopIcons.circle : PopIcons.circle_empty, size: 12 * _cellWidth / 20, color: MyStyle.primaryColor);
+      cellColor = MyStyle.primaryColor;
+    }else{
+      cellValue = Icon(PopIcons.cancel, size: 12 * _cellWidth / 20, color: Colors.red);
+      cellColor = Colors.red;
+    }
+
+    cellColor =  (selected) ? cellColor.withAlpha(100) : Colors.transparent;
+    var cellBoaderWdth = 1.0;
+    return Container(
+      width: _cellWidth,
+      height: _cellHeight,
+      decoration: BoxDecoration(
+        border: Border(
+          top:    row == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+          bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+          left:   column == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+          right:  BorderSide(width: cellBoaderWdth, color: Colors.grey),
+        ),
+        color: cellColor
+      ),
+      child: editable
+        ? Center(child: SizedBox(width: _cellWidth, height: _cellHeight,child: cellValue))
+        : SizedBox(width: _cellWidth, height: _cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
     );
   }
   

@@ -16,7 +16,6 @@ import 'package:shift/src/mylibs/deep_link_mixin.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
 import 'package:shift/src/screens/homeScreen/account.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
-import 'package:shift/src/mylibs/shift_editor/table.dart';
 // import 'package:shift/src/screens/homeSCreen/notification.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
