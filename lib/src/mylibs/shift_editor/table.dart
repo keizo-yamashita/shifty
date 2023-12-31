@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shift/src/mylibs/shift_editor/two_dimention_grid_view.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
+import 'package:shift/src/mylibs/shift_editor/linkled_scroll.dart';
 
 class TableEditor extends StatefulWidget {
+  // key : テーブルを拡大縮小させたタイミングで更新する必要あり
   final GlobalKey                   editorKey;
+  // タイトルセル, セル, テーブル のサイズ
   final double                      tableWidth;
   final double                      tableHeight;
   final double                      cellWidth;
@@ -12,18 +15,19 @@ class TableEditor extends StatefulWidget {
   final double                      titleWidth;
   final double                      titleHeight;
   final double                      titleMargin;
-  final Coordinate?                 selected;       // selected point cordinate
-  final Function(Coordinate?)?      onChangeSelect; // chage select callback
-  final Function?                   onInputEnd;     // notifiy input end for create input buffer
-  final bool                        enableEdit;     // true = edit enable
+  // 選択中のセルの座標
+  final Coordinate?                 selected;
+  // 選択中のセルが変わった時のコールバック
+  final Function(Coordinate?)?      onChangeSelect;
+  // 手書き入力
+  final bool                        enableEdit; // true = edit enable
+  final Function?                   onInputEnd; // notifiy input end for create input buffer
+  // ダークモード
   final bool                        isDark;
+  // テーブルの構成要素 (縦横の要素数を一致させることに注意)
   final List<Widget>                columnTitles;
   final List<Widget>                rowTitles;
-  final List<List<Widget>>          cells;
-  final ScrollController            controllerHorizontal_0;
-  final ScrollController            controllerHorizontal_1;
-  final ScrollController            controllerVertical_0;
-  final ScrollController            controllerVertical_1;
+  final List<List<Widget?>>         cells;
   
   const TableEditor({
     super.key, 
@@ -42,11 +46,7 @@ class TableEditor extends StatefulWidget {
     required this.isDark,
     required this.columnTitles,
     required this.rowTitles,
-    required this.cells,
-    required this.controllerHorizontal_0,
-    required this.controllerHorizontal_1,
-    required this.controllerVertical_0,
-    required this.controllerVertical_1
+    required this.cells
   });
 
   @override
@@ -55,8 +55,35 @@ class TableEditor extends StatefulWidget {
 
 class TableEditorState extends State<TableEditor> {
 
+  late LinkedScrollControllerGroup horizontalScrollGroup;
+  late LinkedScrollControllerGroup verticalScrollGroup;
+  late ScrollController controllerHorizontal_0;
+  late ScrollController controllerHorizontal_1;
+  late ScrollController controllerVertical_0;
+  late ScrollController controllerVertical_1;
+
   var scrollEnableMain  = true;
   var scrollEnableTitle = false;
+
+  @override
+  void initState() {
+    horizontalScrollGroup  = LinkedScrollControllerGroup();
+    verticalScrollGroup    = LinkedScrollControllerGroup();
+    controllerHorizontal_0 = horizontalScrollGroup.addAndGet();
+    controllerHorizontal_1 = horizontalScrollGroup.addAndGet();
+    controllerVertical_0   = verticalScrollGroup.addAndGet();
+    controllerVertical_1   = verticalScrollGroup.addAndGet();
+    super.initState();
+  }
+  
+  @override
+  void dispose() {
+    controllerHorizontal_0.dispose();
+    controllerHorizontal_1.dispose();
+    controllerVertical_0.dispose();
+    controllerVertical_1.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context){
@@ -72,7 +99,7 @@ class TableEditorState extends State<TableEditor> {
           (j){
             return Padding(
               padding: EdgeInsets.only(top: (i == 0) ? widget.titleMargin : 0, right: (j == rowLength) ? widget.titleMargin : 0, left: (j == 0) ? widget.titleMargin : 0, bottom: (i == columnLength) ? widget.titleMargin : 0),
-              child: _cell(i, j, true)
+              child: cellWithHitDetector(i, j, true)
             );
           }
         );
@@ -96,7 +123,7 @@ class TableEditorState extends State<TableEditor> {
                     height: widget.titleHeight,
                     width: widget.tableWidth - widget.titleWidth,
                     child: SingleChildScrollView(
-                      controller: widget.controllerHorizontal_1,
+                      controller: controllerHorizontal_1,
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
@@ -117,7 +144,7 @@ class TableEditorState extends State<TableEditor> {
                     height: widget.tableHeight - widget.titleHeight,
                     width: widget.titleWidth,
                     child: SingleChildScrollView(
-                        controller: widget.controllerVertical_1,
+                        controller: controllerVertical_1,
                         child: Column(
                           children: [
                             SizedBox(height: widget.titleMargin),
@@ -168,8 +195,8 @@ class TableEditorState extends State<TableEditor> {
                         firstRowHeight:   widget.cellHeight + widget.titleMargin,
                         otherRowHeight:   widget.cellHeight,
                         diagonalDragBehavior: DiagonalDragBehavior.free,
-                        horizontalDetails: ScrollableDetails.horizontal(controller: widget.controllerHorizontal_0, physics: !widget.enableEdit ? null : const NeverScrollableScrollPhysics(),),
-                        verticalDetails: ScrollableDetails.vertical(controller: widget.controllerVertical_0,  physics: !widget.enableEdit ? null : const NeverScrollableScrollPhysics(),),
+                        horizontalDetails: ScrollableDetails.horizontal(controller: controllerHorizontal_0, physics: !widget.enableEdit ? null : const NeverScrollableScrollPhysics(),),
+                        verticalDetails: ScrollableDetails.vertical(controller: controllerVertical_0,  physics: !widget.enableEdit ? null : const NeverScrollableScrollPhysics(),),
                         delegate: TwoDimensionalChildBuilderDelegate(
                           maxXIndex: cells[0].length - 1,
                           maxYIndex: cells.length - 1,
@@ -209,7 +236,7 @@ class TableEditorState extends State<TableEditor> {
   //////////////////////////////////////////////////////////////////////
 
   // Matrix Cell Class Instance
-  Widget _cell(int row, int column, bool editable) {
+  Widget cellWithHitDetector(int row, int column, bool editable) {
 
     final coordinate = Coordinate(column: column, row: row);
     

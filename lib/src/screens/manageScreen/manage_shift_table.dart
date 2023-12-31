@@ -2,7 +2,6 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -10,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:shift/main.dart';
 import 'package:shift/src/mylibs/pop_icons.dart';
 import 'package:shift/src/mylibs/shift/shift_request.dart';
-import 'package:shift/src/mylibs/shift_editor/linkled_scroll.dart';
+import 'package:shift/src/mylibs/shift_editor/editor_appbar.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
@@ -27,33 +26,32 @@ import 'package:shift/src/mylibs/button.dart';
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 // editor のセルサイズ設定
-double _cellHeight  = 20;
-double _cellWidth   = 20;
-double _titleMargin = 10;
-double _cellSizeMax = 25;
-double _cellSizeMin = 15;
-double _zoomDiv     = 1;
-int _bufferMax      = 50;
+double cellHeight  = 20;
+double cellWidth   = 20;
+double titleMargin = 10;
+double cellSizeMax = 30;
+double cellSizeMin = 10;
+double zoomDiv     = 1;
+int    bufferMax   = 50;
 
 // editor の設定変数
-bool _enableZoomIn          = true;
-bool _enableZoomOut         = true;
-
-Size _screenSize            = const Size(0, 0);
-bool _isDark                = false;
-List<bool> _displayInfoFlag = [true, true, true];
+bool enableZoomIn          = true;
+bool enableZoomOut         = true;
+Size screenSize            = const Size(0, 0);
+bool isDark                = false;
+List<bool> displayInfoFlag = [true, true, true];
 
 // 自動入力パラメータ
-Duration _baseDuration = const Duration(hours: 7);
-Duration _minDuration  = const Duration(hours: 4);
-int      _baseConDay   = 0;
-var inputConDayList    = List<String>.generate(31, (index) => "${index+1} 日");
+Duration baseDuration       = const Duration(hours: 7);
+Duration minDuration        = const Duration(hours: 4);
+int      baseConDay         = 0;
+var inputConDayList         = List<String>.generate(31, (index) => "${index+1} 日");
 
-// 最後のデータを保存したかどうか
-bool _registered = true;
+int  requestInputValue  = 1;
+bool registered         = true;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// シフト表の最終チェックに使用するページ (勤務人数も指定)
+/// シフトの作成・最終チェックに使用するページ (勤務人数も指定)
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 class ManageShiftTableWidget extends ConsumerStatefulWidget {
@@ -66,141 +64,78 @@ class ManageShiftTableWidget extends ConsumerStatefulWidget {
 
 class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> {
 
-  UndoRedo<List<List<List<Candidate>>>> undoredoCtrl = UndoRedo(_bufferMax);
-
-  Coordinate? coordinate;
-
-  List<List<List<Candidate>>> shiftTableBuffer = [];  
-  late ShiftTable _shiftTable;
-  int  _selectedIndex      = 0;
-  bool _enableResponseEdit = false;
-  int  _inkValue           = 1;
-  GlobalKey _editorKey     = GlobalKey<TableEditorState>();
-
-  late LinkedScrollControllerGroup horizontalScrollGroup;
-  late LinkedScrollControllerGroup verticalScrollGroup;
-  late ScrollController controllerHorizontal_0;
-  late ScrollController controllerHorizontal_1;
-  late ScrollController controllerVertical_0;
-  late ScrollController controllerVertical_1;
-
-  @override
-  void initState() {
-    super.initState();
-    horizontalScrollGroup  = LinkedScrollControllerGroup();
-    verticalScrollGroup    = LinkedScrollControllerGroup();
-    controllerHorizontal_0 = horizontalScrollGroup.addAndGet();
-    controllerHorizontal_1 = horizontalScrollGroup.addAndGet();
-    controllerVertical_0   = verticalScrollGroup.addAndGet();
-    controllerVertical_1   = verticalScrollGroup.addAndGet();
-  }
-
-  @override
-  void dispose() {
-    controllerHorizontal_0.dispose();
-    controllerHorizontal_1.dispose();
-    controllerVertical_0.dispose();
-    controllerVertical_1.dispose();
-    super.dispose();
-  }
+  // undo / redo
+  UndoRedo<List<List<List<Candidate>>>> undoredoCtrl = UndoRedo(bufferMax);
+  List<List<List<Candidate>>>           shiftTableBuffer = [];  
+  
+  // selected corrdinate
+  Coordinate?     selectedCoodinate;
+  late ShiftTable shiftTable;
+  int             selectedIndex      = 0;
+  bool            enableResponseEdit = false;
+  GlobalKey       editorKey          = GlobalKey<TableEditorState>();
 
   @override
   Widget build(BuildContext context) {
 
     // 画面サイズの取得
-    _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top  - MediaQuery.of(context).padding.bottom/2);
+    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top  - MediaQuery.of(context).padding.bottom/2);
 
     // Provider 処理
-    _shiftTable = ref.read(shiftTableProvider).shiftTable;
-    _isDark     = ref.read(settingProvider).enableDarkTheme;
+    shiftTable = ref.read(shiftTableProvider).shiftTable;
+    isDark     = ref.read(settingProvider).enableDarkTheme;
     ref.read(settingProvider).loadPreferences();
 
     if(undoredoCtrl.buffer.isEmpty){
-      _registered = true;
-      insertBuffer(_shiftTable.shiftTable);
+      registered = true;
+      insertBuffer(shiftTable.shiftTable);
     }
     
-    int rowLength    = _shiftTable.shiftFrame.shiftDateRange[0].end.difference(_shiftTable.shiftFrame.shiftDateRange[0].start).inDays + 1;
-    int columnLength = _shiftTable.shiftFrame.timeDivs.length;
+    int columnLength = shiftTable.shiftFrame.shiftDateRange[0].end.difference(shiftTable.shiftFrame.shiftDateRange[0].start).inDays + 1;
+    int rowLength    = shiftTable.shiftFrame.timeDivs.length;
 
     // Firestoreからシフト表に対するシフト希望表を取ってくる           
-
-    return PopScope(
-      canPop: false, // 戻るキーの動作で戻ることを一旦防ぐ
-      onPopInvoked: (didPop) async {
-        if (didPop) {
-          return;
-        }
-        final NavigatorState navigator = Navigator.of(context);
-        if(_registered){
-          navigator.pop();
-        }else{
-          final bool shouldPop = await showConfirmDialog( context, ref, "注意", "データが保存されていません。\n未登録のデータは破棄されます。", "", (){}, false, true);// ダイアログで戻るか確認
-          if (shouldPop) {
-            navigator.pop(); // 戻るを選択した場合のみpopを明示的に呼ぶ
+    return EditorAppBar(
+      context: context,
+      ref: ref, 
+      registered: registered,
+      title: "[シフト管理画面]  ${shiftTable.shiftFrame.shiftName}",
+      handleInfo: (){
+        showInfoDialog(isDark);
+      },
+      handleRegister: (){
+        var now = DateTime.now();
+        // リクエスト期間ではないことを確認
+        if(!(now.compareTo(shiftTable.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(shiftTable.shiftFrame.shiftDateRange[1].end) <= 0)){
+          if(registered){
+            showAlertDialog(context, ref, "注意", "シフトは変更されていないため、登録できません。", true);
+          }else{
+            // シフト期間ではないことを確認
+            if(!(now.compareTo(shiftTable.shiftFrame.shiftDateRange[0].start) >= 0 && now.compareTo(shiftTable.shiftFrame.shiftDateRange[0].end) <= 0)){
+              showConfirmDialog(
+                context, ref, "確認", "このシフトを登録しますか？", "シフトを登録しました。", (){
+                  registered = true;
+                  shiftTable.pushShiftTable();
+                },
+                true,
+                false
+              );
+            }else{
+              showConfirmDialog(
+                context, ref, "確認", "現在はシフト期間中です\nこのシフトを登録しますか？", "シフトを登録しました。", (){
+                  registered = true;
+                  shiftTable.pushShiftTable();
+                },
+                true,
+                false
+              );
+            }
           }
+        }else{
+          showAlertDialog(context, ref, "注意", "リクエスト期間内であるため、登録できません。", true);
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: FittedBox(fit: BoxFit.fill, child: Text("[シフト管理画面]  ${_shiftTable.shiftFrame.shiftName}",style: MyStyle.headlineStyleGreen20),),
-          bottomOpacity: 2.0,
-          elevation: 2.0,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 5.0),
-              child: IconButton( 
-                icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
-                tooltip: "使い方",
-                onPressed: () async {
-                  showInfoDialog(_isDark);
-                }
-              ),
-            ),
-            // 登録ボタン
-            Padding(
-              padding: const EdgeInsets.only(right: 5.0),
-              child: IconButton(
-                icon: const Icon(Icons.cloud_upload_outlined, size: 30, color: MyStyle.primaryColor),
-                tooltip: "シフトを登録する",
-                onPressed: (){
-                  var now = DateTime.now();
-                    // リクエスト期間ではないことを確認
-                  if(!(now.compareTo(_shiftTable.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(_shiftTable.shiftFrame.shiftDateRange[1].end) <= 0)){
-                    if(_registered){
-                      showAlertDialog(context, ref, "注意", "シフトは変更されていないため、登録できません。", true);
-                    }else{
-                      // シフト期間ではないことを確認
-                      if(!(now.compareTo(_shiftTable.shiftFrame.shiftDateRange[0].start) >= 0 && now.compareTo(_shiftTable.shiftFrame.shiftDateRange[0].end) <= 0)){
-                        showConfirmDialog(
-                          context, ref, "確認", "このシフトを登録しますか？", "シフトを登録しました。", (){
-                            _registered = true;
-                            _shiftTable.pushShiftTable();
-                          },
-                          true,
-                          false
-                        );
-                      }else{
-                        showConfirmDialog(
-                          context, ref, "確認", "現在はシフト期間中です\nこのシフトを登録しますか？", "シフトを登録しました。", (){
-                            _registered = true;
-                            _shiftTable.pushShiftTable();
-                          },
-                          true,
-                          false
-                        );
-                      }
-                    }
-                  }else{
-                    showAlertDialog(context, ref, "注意", "リクエスト期間内であるため、登録できません。", true);
-                  }
-                }
-              ),
-            ),
-          ],
-        ),
-        resizeToAvoidBottomInset: false,
-        body: Column(
+      content: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,103 +149,13 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    buildToolButton(
-                      Icons.zoom_in,
-                      _enableZoomIn,
-                      _screenSize.width/8,
-                      (){
-                        setState(() {
-                          zoomIn();
-                          _editorKey = GlobalKey<TableEditorState>();
-                        });
-                      },
-                      (){}
-                    ),
-                    buildToolButton(
-                      Icons.zoom_out,
-                      _enableZoomOut,
-                      _screenSize.width/8,
-                      (){
-                        setState(() {
-                          zoomOut();
-                          _editorKey = GlobalKey<TableEditorState>();
-                        });
-                      },
-                      (){}
-                    ),
-                    buildToolButton(
-                      Icons.auto_fix_high_outlined,
-                      true,
-                      _screenSize.width/8,
-                      (){
-                        setState(() {
-                          buildAutoFillModalWindow(context);
-                        });
-                      },
-                      (){}
-                    ),
-                    buildToolButton(
-                      Icons.filter_alt_outlined,
-                      true,
-                      _screenSize.width/8,
-                      (){
-                        setState(() {
-                          buildRangeFillModalWindow(context);
-                        });
-                      },
-                      (){}
-                    ),
-                    buildToolButton(
-                      Icons.touch_app_outlined,
-                      _enableResponseEdit,
-                      _screenSize.width/8,
-                      (){
-                        setState(() {
-                          if(_selectedIndex != 0){
-                            _editorKey = GlobalKey<TableEditorState>();
-                            _enableResponseEdit = !_enableResponseEdit;
-                          }
-                          else{
-                            showAlertDialog(context, ref, "エラー", "このツールボタンは「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
-                          }
-                        });
-                      },
-                      (){
-                        setState(() {
-                          if(_selectedIndex != 0){
-                            buildInkChangeModaleWindow(); 
-                            _enableResponseEdit = true;
-                          }
-                          else{
-                            showAlertDialog(context, ref, "エラー", "このツールボタンは「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
-                          }
-                        });
-                      }
-                    ),
-                    buildToolButton(
-                      Icons.undo,
-                      undoredoCtrl.enableUndo(),
-                      _screenSize.width/8,
-                      (){
-                        setState(() {
-                          _registered = false;
-                          paintUndoRedo(true);
-                        });
-                      },
-                      (){}
-                    ),
-                    buildToolButton(
-                      Icons.redo,
-                      undoredoCtrl.enableRedo(),
-                      _screenSize.width/8,
-                      (){
-                        setState(() {
-                          _registered = false;
-                          paintUndoRedo(false);
-                        });
-                      },
-                      (){}
-                    )
+                    ToolButton(icon: Icons.zoom_in,                flag: enableZoomIn,              width: screenSize.width/8, onPressed: handleZoomIn),
+                    ToolButton(icon: Icons.zoom_out,               flag: enableZoomOut,             width: screenSize.width/8, onPressed: handleZoomOut),
+                    ToolButton(icon: Icons.auto_fix_high_outlined, flag: true,                      width: screenSize.width/8, onPressed: handleAutoFill),
+                    ToolButton(icon: Icons.filter_alt_outlined,    flag: true,                      width: screenSize.width/8, onPressed: handleRangeFill),
+                    ToolButton(icon: Icons.touch_app_outlined,     flag: enableResponseEdit,        width: screenSize.width/8, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
+                    ToolButton(icon: Icons.undo,                   flag: undoredoCtrl.enableUndo(), width: screenSize.width/8, onPressed: handleUndo),
+                    ToolButton(icon: Icons.redo,                   flag: undoredoCtrl.enableRedo(), width: screenSize.width/8, onPressed: handleRedo)
                   ],
                 ),
               ),
@@ -320,93 +165,84 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             /// メインテーブル
             ////////////////////////////////////////////////////////////////////////////////////////////
             
-            (_selectedIndex == 0)
+            (selectedIndex == 0)
             ?
             TableEditor(
-              editorKey:   _editorKey,
-              tableHeight: _screenSize.height * 1.0 - 46 - 60,
-              tableWidth:  _screenSize.width,
-              cellHeight:  _cellHeight,
-              cellWidth:   _cellWidth,
-              titleHeight: _cellHeight*2,
-              titleWidth:  _cellWidth*3.5,
-              titleMargin: _titleMargin,
-              controllerHorizontal_0: controllerHorizontal_0,
-              controllerHorizontal_1: controllerHorizontal_1,
-              controllerVertical_0: controllerVertical_0,
-              controllerVertical_1: controllerVertical_1,
+              editorKey:   editorKey,
+              tableHeight: screenSize.height * 1.0 - 46 - 60,
+              tableWidth:  screenSize.width,
+              cellHeight:  cellHeight,
+              cellWidth:   cellWidth,
+              titleHeight: cellHeight*2,
+              titleWidth:  cellWidth*3.5,
+              titleMargin: titleMargin,
               onChangeSelect: (p0) async {
-                coordinate = p0!;
+                selectedCoodinate = p0!;
                 setState(() {});
                 buildAssignSelectModaleWindow(p0.column, p0.row);
                 setState(() {});
               },
               onInputEnd: null,
               enableEdit: false,
-              selected: coordinate,
-              isDark: _isDark,
-              columnTitles: getColumnTitles(_cellHeight*2, _cellWidth, _shiftTable.shiftFrame.shiftDateRange[0].start, _shiftTable.shiftFrame.shiftDateRange[0].end, _isDark),
-              rowTitles: getRowTitles(_cellHeight, _cellWidth*3.5, _shiftTable.shiftFrame.timeDivs, _isDark),
+              selected: selectedCoodinate,
+              isDark: isDark,
+              columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftTable.shiftFrame.shiftDateRange[0].start, shiftTable.shiftFrame.shiftDateRange[0].end, isDark),
+              rowTitles:    getRowTitles(cellHeight, cellWidth*3.5, shiftTable.shiftFrame.timeDivs, isDark),
               cells: List<List<Widget>>.generate(
-                columnLength, 
+                rowLength, 
                 (i){
                   return List.generate(
-                    rowLength,
+                    columnLength,
                     (j){
-                      return shiftCell( i, j, _shiftTable.shiftFrame.assignTable[i][j] != 0, j == coordinate?.column && i == coordinate?.row);
+                      return shiftCell( i, j, shiftTable.shiftFrame.assignTable[i][j] != 0, j == selectedCoodinate?.column && i == selectedCoodinate?.row);
                     }
                   );
                 },
               ),
             )
             : TableEditor(
-              editorKey:   _editorKey,
-              tableHeight: _screenSize.height * 1.0 - 46 - 60,
-              tableWidth:  _screenSize.width,
-              cellHeight:  _cellHeight,
-              cellWidth:   _cellWidth,
-              titleHeight: _cellHeight*2,
-              titleWidth:  _cellWidth*3.5,
-              titleMargin: _titleMargin,
-              controllerHorizontal_0: controllerHorizontal_0,
-              controllerHorizontal_1: controllerHorizontal_1,
-              controllerVertical_0: controllerVertical_0,
-              controllerVertical_1: controllerVertical_1,
+              editorKey:   editorKey,
+              tableHeight: screenSize.height * 1.0 - 46 - 60,
+              tableWidth:  screenSize.width,
+              cellHeight:  cellHeight,
+              cellWidth:   cellWidth,
+              titleHeight: cellHeight*2,
+              titleWidth:  cellWidth*3.5,
+              titleMargin: titleMargin,
               onChangeSelect: (p0) async {
-                coordinate = p0!;
-                if(_enableResponseEdit && _shiftTable.shiftRequests[_selectedIndex-1].requestTable[p0.row][p0.column] == 1){
-                  _shiftTable.shiftRequests[_selectedIndex-1].responseTable[p0.row][p0.column] = _inkValue;
-                  for(int i = 0; i < _shiftTable.shiftTable[p0.row][p0.column].length; i++){
-                    if(_shiftTable.shiftTable[p0.row][p0.column][i].userIndex == _selectedIndex -1){
-                      _shiftTable.shiftTable[p0.row][p0.column][i].assign = (_inkValue == 1) ? true : false;
+                selectedCoodinate = p0!;
+                if(enableResponseEdit && shiftTable.shiftRequests[selectedIndex-1].requestTable[p0.row][p0.column] == 1){
+                  shiftTable.shiftRequests[selectedIndex-1].responseTable[p0.row][p0.column] = requestInputValue;
+                  for(int i = 0; i < shiftTable.shiftTable[p0.row][p0.column].length; i++){
+                    if(shiftTable.shiftTable[p0.row][p0.column][i].userIndex == selectedIndex -1){
+                      shiftTable.shiftTable[p0.row][p0.column][i].assign = (requestInputValue == 1) ? true : false;
                       break;
                     }
                   }
-                  _shiftTable.calcFitness(_baseDuration.inMinutes, _minDuration.inMinutes, _baseConDay);
+                  shiftTable.calcFitness(baseDuration.inMinutes, minDuration.inMinutes, baseConDay);
                 }
                 setState(() {});
               },
               onInputEnd: (){
-                _registered = false;
-                insertBuffer(_shiftTable.shiftTable);
+                registered = false;
+                insertBuffer(shiftTable.shiftTable);
               },
-              // shiftRequest: _shiftTable.shiftRequests[_selectedIndex-1],
-              columnTitles: getColumnTitles(_cellHeight*2, _cellWidth, _shiftTable.shiftFrame.shiftDateRange[0].start, _shiftTable.shiftFrame.shiftDateRange[0].end, _isDark),
-              rowTitles: getRowTitles(_cellHeight, _cellWidth*3.5, _shiftTable.shiftFrame.timeDivs, _isDark),
+              columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftTable.shiftFrame.shiftDateRange[0].start, shiftTable.shiftFrame.shiftDateRange[0].end, isDark),
+              rowTitles: getRowTitles(cellHeight, cellWidth*3.5, shiftTable.shiftFrame.timeDivs, isDark),
               cells: List<List<Widget>>.generate(
-                columnLength, 
+                rowLength, 
                 (i){
                   return List.generate(
-                    rowLength,
+                    columnLength,
                     (j){
-                      return requestCell( i, j, _selectedIndex-1, _shiftTable.shiftFrame.assignTable[i][j] != 0, j == coordinate?.column && i == coordinate?.row);
+                      return responseCell( i, j, selectedIndex-1, shiftTable.shiftFrame.assignTable[i][j] != 0, j == selectedCoodinate?.column && i == selectedCoodinate?.row);
                     }
                   );
                 },
               ),
-              enableEdit: _enableResponseEdit,
-              selected: coordinate,
-              isDark: _isDark,
+              enableEdit: enableResponseEdit,
+              selected: selectedCoodinate,
+              isDark: isDark,
             ),
             
             ////////////////////////////////////////////////////////////////////////////////////////////
@@ -421,58 +257,41 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    buildBottomButton(
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("      全体      ", style: (_selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                          ],
-                        ),
-                      ),
-                      _selectedIndex == 0,
-                      (){
+                    BottomButton(
+                      content: Text("      全体      ", style: (selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                      flag: selectedIndex == 0,
+                      width: 100,
+                      height: 50,
+                      onPressed: (){
                         setState(() {
-                          _selectedIndex = 0;
+                          selectedIndex = 0;
                         });
                       },
-                      (){}
                     ),
-                    for(int requesterIndex = 0; requesterIndex < _shiftTable.shiftRequests.length; requesterIndex++)
-                    buildBottomButton(
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(_shiftTable.shiftRequests[requesterIndex].displayName, style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("${(_shiftTable.fitness[requesterIndex][1]/60).toStringAsFixed(1)} h / ${(_shiftTable.fitness[requesterIndex][0]/60).toStringAsFixed(1)} h ( ${(_shiftTable.fitness[requesterIndex][2]*100).toStringAsFixed(1)} % )", style: (_selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                          ],
-                        ),
+                    for(int requesterIndex = 0; requesterIndex < shiftTable.shiftRequests.length; requesterIndex++)
+                    BottomButton(
+                      content: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(shiftTable.shiftRequests[requesterIndex].displayName, style: (selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                          Text("${(shiftTable.fitness[requesterIndex][1]/60).toStringAsFixed(1)} h / ${(shiftTable.fitness[requesterIndex][0]/60).toStringAsFixed(1)} h ( ${(shiftTable.fitness[requesterIndex][2]*100).toStringAsFixed(1)} % )", style: (selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                        ],
                       ),
-                      _selectedIndex == requesterIndex+1,
-                      (){
+                      flag: selectedIndex == requesterIndex+1,
+                      width: 200,
+                      height: 50,
+                      onPressed: (){
                         setState(() {
-                          _selectedIndex = requesterIndex + 1; _enableResponseEdit = false;
+                          selectedIndex = requesterIndex + 1; enableResponseEdit = false;
                         });
                       },
-                      (){}
                     ),
-                    if(_shiftTable.shiftRequests.isEmpty)
-                    buildBottomButton(
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("フォロワーがいません。", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                          ],
-                        ),
-                      ),
-                      false,
-                      (){},
-                      (){}
+                    if(shiftTable.shiftRequests.isEmpty)
+                    BottomButton(
+                      content: Text("フォロワーがいません。", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                      flag: false,
+                      width: 150,
+                      height: 50
                     )
                   ],
                 ),
@@ -480,7 +299,6 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -492,37 +310,37 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   Widget shiftCell(int row, int column, bool editable, bool selected) {
 
     int assignNum = 0;
-    for(int i = 0; i < _shiftTable.shiftTable[row][column].length; i++){
-      if(_shiftTable.shiftTable[row][column][i].assign){
+    for(int i = 0; i < shiftTable.shiftTable[row][column].length; i++){
+      if(shiftTable.shiftTable[row][column][i].assign){
         assignNum++;
       }
     }
 
-    var value = (assignNum / _shiftTable.shiftFrame.assignTable[row][column]);
+    var value = (assignNum / shiftTable.shiftFrame.assignTable[row][column]);
 
-    var cellValue = Icon(PopIcons.ok, size: 14 * _cellWidth / 20, color: MyStyle.primaryColor);
+    var cellValue = Icon(PopIcons.ok, size: 14 * cellWidth / 20, color: MyStyle.primaryColor);
     if(value == 0){
-      cellValue = Icon(PopIcons.cancel, size: 14 * _cellWidth / 20, color: Colors.red); 
+      cellValue = Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.red); 
     }
     else if(value < 0.3){
-      cellValue = Icon(PopIcons.cancel, size: 14 * _cellWidth / 20, color: Colors.yellow[800]); 
+      cellValue = Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.yellow[800]); 
     }
     else if(value < 0.7){
-      cellValue = Icon(PopIcons.attention_alt, size: 14 * _cellWidth / 20, color: Colors.red);
+      cellValue = Icon(PopIcons.attention_alt, size: 14 * cellWidth / 20, color: Colors.red);
     }
     else if(value < 1.0){
-      cellValue = Icon(PopIcons.attention_alt, size: 14 * _cellWidth / 20, color: Colors.yellow[800]);
+      cellValue = Icon(PopIcons.attention_alt, size: 14 * cellWidth / 20, color: Colors.yellow[800]);
     }
     else if(value > 1.0){
-      cellValue = Icon(PopIcons.ok, size: 14 * _cellWidth / 20, color: Colors.yellow[800]);
+      cellValue = Icon(PopIcons.ok, size: 14 * cellWidth / 20, color: Colors.yellow[800]);
     }
 
     Color  cellColor = (selected) ? MyStyle.primaryColor.withAlpha(100) : Colors.transparent;
     var cellBoaderWdth = 1.0;
 
     return Container(
-      width: _cellWidth,
-      height: _cellHeight,
+      width: cellWidth,
+      height: cellHeight,
       decoration: BoxDecoration(
         border: Border(
           top:    row == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
@@ -533,33 +351,33 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         color: cellColor
       ),
       child: editable
-      ? Center(child: SizedBox(width: _cellWidth, height: _cellHeight, child: cellValue))
-      : SizedBox(width: _cellWidth, height: _cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
+      ? Center(child: SizedBox(width: cellWidth, height: cellHeight, child: cellValue))
+      : SizedBox(width: cellWidth, height: cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
     );
   }
 
     
   // Matrix Cell Class Instance
-  Widget requestCell(int row, int column, int responseIndex,  bool editable, bool selected) {
+  Widget responseCell(int row, int column, int responseIndex,  bool editable, bool selected) {
 
-    ShiftRequest shiftRequest = _shiftTable.shiftRequests[responseIndex];
+    ShiftRequest shiftRequest = shiftTable.shiftRequests[responseIndex];
     var value = editable ? shiftRequest.requestTable[row][column] : 0;
     Icon cellValue;
     Color cellColor;
 
     if(value == 1){ 
-      cellValue = Icon((shiftRequest.responseTable[row][column] == 1) ? PopIcons.circle : PopIcons.circle_empty, size: 12 * _cellWidth / 20, color: MyStyle.primaryColor);
+      cellValue = Icon((shiftRequest.responseTable[row][column] == 1) ? PopIcons.circle : PopIcons.circle_empty, size: 12 * cellWidth / 20, color: MyStyle.primaryColor);
       cellColor = MyStyle.primaryColor;
     }else{
-      cellValue = Icon(PopIcons.cancel, size: 12 * _cellWidth / 20, color: Colors.red);
+      cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
       cellColor = Colors.red;
     }
 
     cellColor =  (selected) ? cellColor.withAlpha(100) : Colors.transparent;
     var cellBoaderWdth = 1.0;
     return Container(
-      width: _cellWidth,
-      height: _cellHeight,
+      width: cellWidth,
+      height: cellHeight,
       decoration: BoxDecoration(
         border: Border(
           top:    row == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
@@ -570,8 +388,8 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         color: cellColor
       ),
       child: editable
-        ? Center(child: SizedBox(width: _cellWidth, height: _cellHeight,child: cellValue))
-        : SizedBox(width: _cellWidth, height: _cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
+        ? Center(child: SizedBox(width: cellWidth, height: cellHeight,child: cellValue))
+        : SizedBox(width: cellWidth, height: cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
     );
   }
   
@@ -580,37 +398,51 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   ////////////////////////////////////////////////////////////////////////////////////////////
   
   void zoomIn(){
-    if(_enableZoomIn && _cellHeight < _cellSizeMax){
-      _cellHeight += _zoomDiv;
-      _cellWidth  += _zoomDiv;
+    if(enableZoomIn && cellHeight < cellSizeMax){
+      cellHeight += zoomDiv;
+      cellWidth  += zoomDiv;
     }
-    if(_cellHeight >= _cellSizeMax){
-      _enableZoomIn = false;
+    if(cellHeight >= cellSizeMax){
+      enableZoomIn = false;
     }else{
-      _enableZoomIn = true;
+      enableZoomIn = true;
     }
-    if(_cellHeight <= _cellSizeMin){
-      _enableZoomOut = false;
+    if(cellHeight <= cellSizeMin){
+      enableZoomOut = false;
     }else{
-      _enableZoomOut = true;
+      enableZoomOut = true;
     }
   }
 
   void zoomOut(){
-    if(_enableZoomOut && _cellHeight > _cellSizeMin){
-      _cellHeight -= _zoomDiv;
-      _cellWidth  -= _zoomDiv;
+    if(enableZoomOut && cellHeight > cellSizeMin){
+      cellHeight -= zoomDiv;
+      cellWidth  -= zoomDiv;
     }
-    if(_cellHeight >= _cellSizeMax){
-      _enableZoomIn = false;
+    if(cellHeight >= cellSizeMax){
+      enableZoomIn = false;
     }else{
-      _enableZoomIn = true;
+      enableZoomIn = true;
     }
-    if(_cellHeight <= _cellSizeMin){
-      _enableZoomOut = false;
+    if(cellHeight <= cellSizeMin){
+      enableZoomOut = false;
     }else{
-      _enableZoomOut = true;
+      enableZoomOut = true;
     }
+  }
+
+  void handleZoomIn() {
+    setState(() {
+      zoomIn();
+      editorKey = GlobalKey<TableEditorState>();
+    });
+  }
+
+  void handleZoomOut() {
+    setState(() {
+      zoomOut();
+      editorKey = GlobalKey<TableEditorState>();
+    });
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -621,15 +453,29 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
     undoredoCtrl.insertBuffer(table.map((e) => List.from(e.map((f) => List.from(f.map((g) => g.copy())).cast<Candidate>()).toList()).cast<List<Candidate>>()).toList());
   }
 
-  void paintUndoRedo(bool undo){
+  void callUndoRedo(bool undo){
     setState(() {
       if(undo){
-        _shiftTable.shiftTable = undoredoCtrl.undo().map((e) => List.from(e.map((f) => List.from(f.map((g) => g.copy())).cast<Candidate>()).toList()).cast<List<Candidate>>()).toList();
+        shiftTable.shiftTable = undoredoCtrl.undo().map((e) => List.from(e.map((f) => List.from(f.map((g) => g.copy())).cast<Candidate>()).toList()).cast<List<Candidate>>()).toList();
       }else{
-        _shiftTable.shiftTable = undoredoCtrl.redo().map((e) => List.from(e.map((f) => List.from(f.map((g) => g.copy())).cast<Candidate>()).toList()).cast<List<Candidate>>()).toList();
+        shiftTable.shiftTable = undoredoCtrl.redo().map((e) => List.from(e.map((f) => List.from(f.map((g) => g.copy())).cast<Candidate>()).toList()).cast<List<Candidate>>()).toList();
       }
-      _shiftTable.copyshiftTable2ResponseTable();
-      _shiftTable.calcFitness(_baseDuration.inMinutes, _minDuration.inMinutes, _baseConDay);
+      shiftTable.copyshiftTable2ResponseTable();
+      shiftTable.calcFitness(baseDuration.inMinutes, minDuration.inMinutes, baseConDay);
+    });
+  }
+
+  void handleUndo(){
+    setState(() {
+      registered = false;
+      callUndoRedo(true);
+    });
+  }
+
+  void handleRedo(){
+    setState(() {
+      registered = false;
+      callUndoRedo(false);
     });
   }
 
@@ -637,7 +483,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   ///  シフト表に塗る色を選択する
   ////////////////////////////////////////////////////////////////////////////////////////////
   
-  void buildInkChangeModaleWindow() {
+  void buildChangeInputValueModaleWindow() {
     showModalWindow(
       context,
       0.5,
@@ -664,10 +510,34 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         0.5,
         (BuildContext context, int index){
           setState(() {});
-          _inkValue = index; 
+          requestInputValue = index; 
         }
       )
     );
+  }
+
+  void handleTouchEdit(){
+    setState(() {
+      if(selectedIndex != 0){
+        editorKey = GlobalKey<TableEditorState>();
+        enableResponseEdit = !enableResponseEdit;
+      }
+      else{
+        showAlertDialog(context, ref, "エラー", "このツールボタンは「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
+      }
+    });
+  }
+  
+  void handleChangeInputValue(){
+    setState(() {
+      if(selectedIndex != 0){
+        buildChangeInputValueModaleWindow(); 
+        enableResponseEdit = true;
+      }
+      else{
+        showAlertDialog(context, ref, "エラー", "このツールボタンは「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。", true);
+      }
+    });
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -678,12 +548,12 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
     showModalWindow(
       context,
       0.5,
-      InputModalWindowWidget(_shiftTable, column, row)
+      InputModalWindowWidget(shiftTable, column, row)
     ).then((value){
       if(value == true){
         setState(() {});
-        _registered = false;
-        insertBuffer(_shiftTable.shiftTable);
+        registered = false;
+        insertBuffer(shiftTable.shiftTable);
       }
     });
   }
@@ -692,41 +562,41 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   ///   ChatGPT API を呼び出す関数　（今はChatGPTの精度が悪いので使えない）
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  Future<void> callChatGPT() async {
+  // Future<void> callChatGPT() async {
 
-    String message = "I would like to create a shift schedule based on the following information. \n\n";
+  //   String message = "I would like to create a shift schedule based on the following information. \n\n";
 
-    DateTime startDay = _shiftTable.shiftFrame.shiftDateRange[0].start;
-    DateTime endDay   = _shiftTable.shiftFrame.shiftDateRange[0].end;
+  //   DateTime startDay = _shiftTable.shiftFrame.shiftDateRange[0].start;
+  //   DateTime endDay   = _shiftTable.shiftFrame.shiftDateRange[0].end;
 
-    message += "<Duration>\n${DateFormat('MM/dd(EEEE)').format(startDay)} ~  ${DateFormat('MM/dd(EEEE)').format(endDay)}\n\n";
+  //   message += "<Duration>\n${DateFormat('MM/dd(EEEE)').format(startDay)} ~  ${DateFormat('MM/dd(EEEE)').format(endDay)}\n\n";
 
-    message += "<List of time categories>\n";
-    for(int i = 0; i < _shiftTable.shiftFrame.timeDivs.length -1; i++){
-      message += "${DateFormat('hh:mm').format(_shiftTable.shiftFrame.timeDivs[i].startTime)} ~ ${DateFormat('hh:mm').format(_shiftTable.shiftFrame.timeDivs[i].endTime)} \n";
-    }
-    message += "\n";
+  //   message += "<List of time categories>\n";
+  //   for(int i = 0; i < _shiftTable.shiftFrame.timeDivs.length -1; i++){
+  //     message += "${DateFormat('hh:mm').format(_shiftTable.shiftFrame.timeDivs[i].startTime)} ~ ${DateFormat('hh:mm').format(_shiftTable.shiftFrame.timeDivs[i].endTime)} \n";
+  //   }
+  //   message += "\n";
 
-    message += "<Member's Name> \n";
-    for(int i = 0; i < _shiftTable.shiftRequests.length -1; i++){
-      message += "${_shiftTable.shiftRequests[i].displayName} \n";
-    }
+  //   message += "<Member's Name> \n";
+  //   for(int i = 0; i < _shiftTable.shiftRequests.length -1; i++){
+  //     message += "${_shiftTable.shiftRequests[i].displayName} \n";
+  //   }
 
-    message += "\nThe following is a list of shift requests for each member.\n";
-    for(int i = 0; i < _shiftTable.shiftRequests.length -1; i++){
-      message += "[${_shiftTable.shiftRequests[i].displayName}]\n";
-      for(var row = 0; row < _shiftTable.shiftRequests[i].requestTable.length; row++){
-        for(var column = 0; column < _shiftTable.shiftRequests[i].requestTable[row].length; column++){
-          if(_shiftTable.shiftRequests[i].requestTable[row][column] != 0){
-            message += "OK,";
-          }else{
-            message += "NG,";
-          }
-        }
-        message += "\n";
-      }
-    }
-    return;
+  //   message += "\nThe following is a list of shift requests for each member.\n";
+  //   for(int i = 0; i < _shiftTable.shiftRequests.length -1; i++){
+  //     message += "[${_shiftTable.shiftRequests[i].displayName}]\n";
+  //     for(var row = 0; row < _shiftTable.shiftRequests[i].requestTable.length; row++){
+  //       for(var column = 0; column < _shiftTable.shiftRequests[i].requestTable[row].length; column++){
+  //         if(_shiftTable.shiftRequests[i].requestTable[row][column] != 0){
+  //           message += "OK,";
+  //         }else{
+  //           message += "NG,";
+  //         }
+  //       }
+  //       message += "\n";
+  //     }
+  //   }
+  //   return;
 
     // Member:";
 
@@ -743,7 +613,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
     //   ],
     // );
     // print(chatCompletion.choices.first.message);
-  }
+  // }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  シフト表自動入力のためのモーダルウィンドウ
@@ -753,13 +623,19 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
     showModalWindow(
       context,
       0.5,
-      AutoFillModalWindowWidget(shiftTable: _shiftTable)
+      AutoFillModalWindowWidget(shiftTable: shiftTable)
     ).then((value) {
       if(value != null){
         setState(() {});
-        _registered = false;
-        insertBuffer(_shiftTable.shiftTable);
+        registered = false;
+        insertBuffer(shiftTable.shiftTable);
       }
+    });
+  }
+
+  void handleAutoFill(){
+    setState(() {
+      buildAutoFillModalWindow(context);
     });
   }
 
@@ -771,13 +647,19 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
     showModalWindow(
       context,
       0.5,
-      RangeFillModalWindowWidget(shiftTable: _shiftTable)
+      RangeFillModalWindowWidget(shiftTable: shiftTable)
     ).then((value) {
       if(value != null){
         setState(() {});
-        _registered = false;
-        insertBuffer(_shiftTable.shiftTable);
+        registered = false;
+        insertBuffer(shiftTable.shiftTable);
       }
+    });
+  }
+  
+  void handleRangeFill(){
+    setState(() {
+      buildRangeFillModalWindow(context);
     });
   }
 
@@ -787,9 +669,9 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   
   void crearVariables(){
     ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
-    coordinate     = Coordinate(column: 0, row: 0);
-    undoredoCtrl   = UndoRedo(_bufferMax);
-    _selectedIndex = 0;
+    selectedCoodinate     = Coordinate(column: 0, row: 0);
+    undoredoCtrl   = UndoRedo(bufferMax);
+    selectedIndex = 0;
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -820,19 +702,19 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                           children: [
                             SizedBox(
                               width: 10,
-                              child : _displayInfoFlag[0] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
+                              child : displayInfoFlag[0] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
                             ),
                             const SizedBox(width: 10),
                             Text("シフト表について", style: MyStyle.headlineStyleGreen18),
                           ],
                         ),
                         onPressed: (){
-                          _displayInfoFlag[0] = !_displayInfoFlag[0];
+                          displayInfoFlag[0] = !displayInfoFlag[0];
                           setState(() {});
                         },
                       ),
 
-                      if(_displayInfoFlag[0])
+                      if(displayInfoFlag[0])
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Column(
@@ -1008,19 +890,19 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                           children: [
                             SizedBox(
                               width: 10,
-                              child : _displayInfoFlag[1] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
+                              child : displayInfoFlag[1] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
                             ),
                             const SizedBox(width: 10),
                             Text("ツールボタンについて", style: MyStyle.headlineStyleGreen18),
                           ],
                         ),
                         onPressed: (){
-                          _displayInfoFlag[1] = !_displayInfoFlag[1];
+                          displayInfoFlag[1] = !displayInfoFlag[1];
                           setState(() {});
                         },
                       ),
 
-                      if(_displayInfoFlag[1])
+                      if(displayInfoFlag[1])
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Column(
@@ -1034,9 +916,9 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                buildToolButton( Icons.zoom_in,  true, _screenSize.width/7, (){}, (){}),
+                                ToolButton( icon: Icons.zoom_in,  flag: true, width: screenSize.width/7),
                                 const SizedBox(width: 10),
-                                buildToolButton( Icons.zoom_out, true, _screenSize.width/7,(){}, (){}),
+                                ToolButton( icon: Icons.zoom_out, flag: true, width: screenSize.width/7),
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -1047,7 +929,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             const SizedBox(height: 10),
                             Text("自動入力ボタン", style: MyStyle.headlineStyle18),
                             const SizedBox(height: 10),
-                            buildToolButton( Icons.auto_fix_high_outlined, true, _screenSize.width/7,(){}, (){}),
+                            ToolButton( icon: Icons.auto_fix_high_outlined, flag: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
                             Text("自動でシフト表へ割り当てできます。", style: MyStyle.defaultStyleGrey13),
                             Text("入力前に、ボタン長押しし、自動割り当てを行うための基準となる勤務時間を設定してください。", style: MyStyle.defaultStyleGrey13),
@@ -1063,7 +945,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             const SizedBox(height: 10),
                             Text("フィルタ入力ボタン", style: MyStyle.headlineStyle18),
                             const SizedBox(height: 10),
-                            buildToolButton( Icons.filter_alt_outlined, true, _screenSize.width/7, (){}, (){}),
+                            ToolButton( icon: Icons.filter_alt_outlined, flag: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
                             Text("「勤務者名」「日時」を指定して、一括でシフト表に入力できます。", style: MyStyle.defaultStyleGrey13),
                             const SizedBox(height: 10),
@@ -1072,7 +954,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             const SizedBox(height: 10),
                             Text("タッチ入力ボタン", style: MyStyle.headlineStyle18),
                             const SizedBox(height: 10),
-                            buildToolButton(Icons.touch_app_outlined, true, _screenSize.width/7, (){}, (){}),
+                            ToolButton(icon: Icons.touch_app_outlined, flag: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
                             Text("細かい1マス単位の編集ができます。", style: MyStyle.defaultStyleGrey13),
                             Text("タップ後に表のマスをなぞることで「割り当て状態」を編集できます。", style: MyStyle.defaultStyleGrey13),
@@ -1087,9 +969,9 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                buildToolButton( Icons.undo, true, _screenSize.width/7, (){}, (){}),
+                                ToolButton( icon: Icons.undo, flag: true, width: screenSize.width/7),
                                 const SizedBox(width: 10),
-                                buildToolButton( Icons.redo, true, _screenSize.width/7, (){}, (){})
+                                ToolButton( icon: Icons.redo, flag: true, width: screenSize.width/7)
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -1107,19 +989,19 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                           children: [
                             SizedBox(
                               width: 10,
-                              child : _displayInfoFlag[2] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
+                              child : displayInfoFlag[2] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
                             ),
                             const SizedBox(width: 10),
                             Text("シフトリクエスト表について", style: MyStyle.headlineStyleGreen18),
                           ],
                         ),
                         onPressed: (){
-                          _displayInfoFlag[2] = !_displayInfoFlag[2];
+                          displayInfoFlag[2] = !displayInfoFlag[2];
                           setState(() {});
                         },
                       ),
                       
-                      if(_displayInfoFlag[2])
+                      if(displayInfoFlag[2])
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Column(
@@ -1374,13 +1256,13 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
     
     return LayoutBuilder(
       builder: (context, constraints) {
-        var modalHeight  = _screenSize.height * 0.5;
-        var modalWidth   = _screenSize.width - 20 - _screenSize.width * 0.1;
+        var modalHeight  = screenSize.height * 0.5;
+        var modalWidth   = screenSize.width - 20 - screenSize.width * 0.1;
         var paddingHeght = modalHeight * 0.04;
         var buttonHeight = modalHeight * 0.16;
 
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: _screenSize.width * 0.04),
+          padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
           child: SizedBox(
             height: modalHeight,
             child: Column(
@@ -1399,7 +1281,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text("基本勤務時間", style: MyStyle.headlineStyleGreen15),
-                          buildTimePicker(DateTime(1,1,1,0,0).add(_baseDuration), DateTime(1,1,1,0,15), DateTime(1,1,1,23,45), 15, (DateTime val){ _baseDuration = val.difference(DateTime(1,1,1,0,0));}),
+                          buildTimePicker(DateTime(1,1,1,0,0).add(baseDuration), DateTime(1,1,1,0,15), DateTime(1,1,1,23,45), 15, (DateTime val){ baseDuration = val.difference(DateTime(1,1,1,0,0));}),
                         ],
                       )
                     ),
@@ -1409,7 +1291,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text("最短勤務時間", style: MyStyle.headlineStyleGreen15),
-                          buildTimePicker(DateTime(1,1,1,0,0).add(_minDuration), DateTime(1,1,1,0,15), DateTime(1,1,1,23,45), 15, (DateTime val){ _minDuration = val.difference(DateTime(1,1,1,0,0));}),
+                          buildTimePicker(DateTime(1,1,1,0,0).add(minDuration), DateTime(1,1,1,0,15), DateTime(1,1,1,23,45), 15, (DateTime val){ minDuration = val.difference(DateTime(1,1,1,0,0));}),
                         ],
                       )
                     ),
@@ -1421,7 +1303,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                           Text("連続勤務日数", style: MyStyle.headlineStyleGreen15),
                           SizedBox(
                             height: 40,
-                            width: _screenSize.width / 4,
+                            width: screenSize.width / 4,
                             child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 shadowColor: MyStyle.hiddenColor, 
@@ -1435,7 +1317,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                               onPressed: () async {
                                 buildInputBaseConDayModaleWindow();
                               },
-                              child: Text(inputConDayList[_baseConDay], style: MyStyle.headlineStyleGreen18)
+                              child: Text(inputConDayList[baseConDay], style: MyStyle.headlineStyleGreen18)
                             ),
                           )
                         ],
@@ -1448,12 +1330,15 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton(
-                        "自動アサイン", true, modalWidth, buttonHeight,
-                        (){
+                      child: CustomTextButton(
+                        text: "自動アサイン",
+                        flag: true,
+                        width: modalWidth,
+                        height: buttonHeight,
+                        action:(){
                           setState(() {
-                            widget._shiftTable.autoFill(_baseDuration.inMinutes, _minDuration.inMinutes, _baseConDay);
-                            widget._shiftTable.calcFitness( _baseDuration.inMinutes, _minDuration.inMinutes, _baseConDay);
+                            widget._shiftTable.autoFill(baseDuration.inMinutes, minDuration.inMinutes, baseConDay);
+                            widget._shiftTable.calcFitness( baseDuration.inMinutes, minDuration.inMinutes, baseConDay);
                             Navigator.pop(context, true); // これだけでModalWindowのFuture<dynamic>から返せる
                           });
                         }
@@ -1477,7 +1362,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
     DateTime temp = init;
     return SizedBox(
       height: 40,
-      width: _screenSize.width / 4,
+      width: screenSize.width / 4,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           shadowColor: MyStyle.hiddenColor, 
@@ -1496,7 +1381,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
               height: MediaQuery.of(context).size.height * 0.3,
               width: double.maxFinite,
               child: Theme(
-                data: _isDark ? ThemeData.dark() : ThemeData.light(),
+                data: isDark ? ThemeData.dark() : ThemeData.light(),
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.time,
                   initialDateTime: init,
@@ -1531,7 +1416,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
         0.5,
         (BuildContext context, int index){
           setState(() {});
-          _baseConDay = index; 
+          baseConDay = index; 
         }
       )
     );
@@ -1591,14 +1476,14 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
     return LayoutBuilder(
       builder: (context, constraints) {
         
-        var modalHeight  = _screenSize.height * 0.5;
-        var modalWidth   = _screenSize.width - 20 - _screenSize.width * 0.1;
+        var modalHeight  = screenSize.height * 0.5;
+        var modalWidth   = screenSize.width - 20 - screenSize.width * 0.1;
         var paddingHeght = modalHeight * 0.03;
         var buttonHeight = modalHeight * 0.16;
         var widgetHeight = buttonHeight + paddingHeght * 2;
 
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: _screenSize.width * 0.04),
+          padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
           child: SizedBox(
             height: modalHeight,
             child: Column(
@@ -1617,12 +1502,12 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: SizedBox(
-                        child: buildTextButton(
-                          requesterList[selectorsIndex[5]],
-                          false,
-                          modalWidth,
-                          buttonHeight,
-                          (){
+                        child: CustomTextButton(
+                          text: requesterList[selectorsIndex[5]],
+                          flag: false,
+                          width: modalWidth,
+                          height: buttonHeight,
+                          action: (){
                             setState(() {
                               buildSelectorModaleWindow(requesterList, 5);
                             });
@@ -1638,12 +1523,12 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: SizedBox(
-                        child: buildTextButton(
-                          weekSelect[selectorsIndex[0]],
-                          false,
-                          modalWidth * (100 / 330),
-                          buttonHeight,
-                          (){
+                        child: CustomTextButton(
+                          text: weekSelect[selectorsIndex[0]],
+                          flag: false,
+                          width: modalWidth * (100 / 330),
+                          height: buttonHeight,
+                          action: (){
                             setState(() {
                               buildSelectorModaleWindow(weekSelect, 0);
                             });
@@ -1654,12 +1539,12 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                     SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: MyStyle.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton(
-                        weekdaySelect[selectorsIndex[1]],
-                        false,
-                        modalWidth * (100 / 330),
-                        buttonHeight,
-                        (){
+                      child: CustomTextButton(
+                        text: weekdaySelect[selectorsIndex[1]],
+                        flag: false,
+                        width: modalWidth * (100 / 330),
+                        height: buttonHeight,
+                        action: (){
                           setState(() {
                             buildSelectorModaleWindow(weekdaySelect, 1);
                           });
@@ -1675,12 +1560,12 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton(
-                        timeDivs1List[selectorsIndex[2]],
-                        false,
-                        modalWidth * (100 / 330),
-                        buttonHeight,
-                        (){
+                      child: CustomTextButton(
+                        text: timeDivs1List[selectorsIndex[2]],
+                        flag: false,
+                        width: modalWidth * (100 / 330),
+                        height: buttonHeight,
+                        action: (){
                           setState(() {
                             buildSelectorModaleWindow(timeDivs1List, 2);
                           });
@@ -1690,12 +1575,12 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                     SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: MyStyle.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton(
-                        timeDivs2List[selectorsIndex[3]],
-                        false,
-                        modalWidth * (100 / 330),
-                        buttonHeight,
-                        (){
+                      child: CustomTextButton(
+                        text: timeDivs2List[selectorsIndex[3]],
+                        flag: false,
+                        width: modalWidth * (100 / 330),
+                        height: buttonHeight,
+                        action: (){
                           setState(() {
                             buildSelectorModaleWindow(timeDivs2List, 3);
                           });
@@ -1705,11 +1590,12 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                     SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: MyStyle.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildIconButton(
-                        (selectorsIndex[4] == 1) ? const Icon(Icons.circle_outlined, size: 20, color: MyStyle.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red),
-                        false,
-                        modalWidth * (65 / 330), buttonHeight,
-                        (){
+                      child: CustomIconButton(
+                        icon: (selectorsIndex[4] == 1) ? const Icon(Icons.circle_outlined, size: 20, color: MyStyle.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red),
+                        flag: false,
+                        width: modalWidth * (65 / 330),
+                        height: buttonHeight,
+                        action: (){
                           setState(() {
                             buildSelectorModaleWindow(List<Icon>.generate(2, (index) => (index == 1) ? const Icon(Icons.circle_outlined, size: 20, color: MyStyle.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red)), 4);
                           });
@@ -1723,9 +1609,12 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton(
-                        "範囲入力する", true, modalWidth, buttonHeight,
-                        (){
+                      child: CustomTextButton(
+                        text: "範囲入力する",
+                        flag: true,
+                        width: modalWidth,
+                        height: buttonHeight,
+                        action: (){
                           setState(() {
                             var rule = ShiftTableRule(
                               week:      selectorsIndex[0],

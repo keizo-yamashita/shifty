@@ -6,12 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
 import 'package:shift/main.dart';
+import 'package:shift/src/mylibs/shift_editor/editor_appbar.dart';
+import 'package:shift/src/mylibs/shift_editor/table.dart';
+import 'package:shift/src/mylibs/shift_editor/table_title.dart';
 import 'package:shift/src/mylibs/style.dart';
 import 'package:shift/src/mylibs/dialog.dart';
 import 'package:shift/src/mylibs/undo_redo.dart';
 import 'package:shift/src/mylibs/modal_window.dart';
 import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/shift_editor/shift_frame_editor.dart';
 import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 import 'package:shift/src/mylibs/button.dart';
 
@@ -19,20 +21,22 @@ import 'package:shift/src/mylibs/button.dart';
 /// 全体で使用する変数
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-double _cellHeight       = 20;
-double _cellWidth        = 20;
-double _cellSizeMax      = 30;
-double _cellSizeMin      = 10;
-double _zoomDiv          = 1;
-const int _bufferMax     = 50;
+double cellHeight  = 20;
+double cellWidth   = 20;
+double titleMargin = 10;
+double cellSizeMax = 30;
+double cellSizeMin = 10;
+double zoomDiv     = 1;
+int    bufferMax   = 50;
 
-bool _enableEdit         = false;
-bool _enableZoomIn       = true;
-bool _enableZoomOut      = true;
-int  _inkValue           = 1;
-Size _screenSize         = const Size(0, 0);
+bool enableEdit     = false;
+bool enableZoomIn   = true;
+bool enableZoomOut  = true;
+int  inputValue     = 1;
+Size screenSize     = const Size(0, 0);
+bool isDark         = false;
 
-List<bool> _displayInfoFlag = [true, true, true, true];
+List<bool> displayInfoFlag = [true, true, true, true];
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// シフト表の最終チェックに使用するページ (勤務人数も指定)
@@ -48,65 +52,52 @@ class CheckShiftTableWidget extends ConsumerStatefulWidget {
 
 class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
 
-  UndoRedo<List<List<int>>> undoredoCtrl = UndoRedo(_bufferMax);
+  UndoRedo<List<List<int>>> undoredoCtrl = UndoRedo(bufferMax);
 
-  Coordinate? coordinate;
+  Coordinate? selectedCoordinate;
   
-  ShiftFrame _shiftFrame = ShiftFrame();
+  ShiftFrame shiftFrame = ShiftFrame();
+  GlobalKey  editorKey  = GlobalKey<TableEditorState>();
 
   @override
   Widget build(BuildContext context) {
 
-    _shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
+    shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
 
-    _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom);
+    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom);
     
     ref.read(settingProvider).loadPreferences();
+    isDark = ref.read(settingProvider).enableDarkTheme;
 
     if(undoredoCtrl.buffer.isEmpty){
-      insertBuffer(_shiftFrame.assignTable);
+      insertBuffer(shiftFrame.assignTable);
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("割り当て人数の設定",style: MyStyle.headlineStyleGreen20),
-        bottomOpacity: 2.0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 5.0),
-            child: IconButton( 
-              icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
-              tooltip: "使い方",
-              onPressed: () async {
-                showInfoDialog(ref.read(settingProvider).enableDarkTheme);
-              }
-            ),
-          ),
-          // 登録ボタン
-          Padding(
-            padding: const EdgeInsets.only(right: 5.0),
-            child: IconButton(
-              icon: const Icon(Icons.cloud_upload_outlined, size: 30, color: MyStyle.primaryColor),
-              tooltip: "シフト表を作成する",
-              onPressed: (){
-                if(ref.read(signInProvider).user != null){
-                  showConfirmDialog(context, ref, "確認", "このシフト表で作成しますか？", "シフト表を作成しました", (){
-                    _shiftFrame.pushShiftFrame();
-                    crearVariables();
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  });
-                }
-                else{
-                  showAlertDialog(context, ref, "ログインエラー", "未ログイン状態では\n登録できません。\n'ホーム画面'及び'アカウント画面'から\n'ログイン画面'に移動してください。", true);
-                }
-              }
-            ),
-          )
-        ],
-      ),
-    
-      body: SingleChildScrollView(
+    int columnLength = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays + 1;
+    int rowLength    = shiftFrame.timeDivs.length;
+
+    return EditorAppBar(
+      context: context,
+      ref: ref, 
+      registered: true,
+      title: "割り当て人数の設定",
+      handleInfo: (){
+        showInfoDialog(ref.read(settingProvider).enableDarkTheme);
+      },
+      handleRegister: (){
+        if(ref.read(signInProvider).user != null){
+          showConfirmDialog(context, ref, "確認", "このシフト表で作成しますか？", "シフト表を作成しました", (){
+            shiftFrame.pushShiftFrame();
+            crearVariables();
+            Navigator.pop(context);
+            Navigator.pop(context);
+          });
+        }
+        else{
+          showAlertDialog(context, ref, "ログインエラー", "未ログイン状態では\n登録できません。\n'ホーム画面'及び'アカウント画面'から\n'ログイン画面'に移動してください。", true);
+        }
+      },
+      content: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -123,76 +114,16 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    buildToolButton(
-                      Icons.zoom_in,
-                      _enableZoomIn,
-                      _screenSize.width / 7,
-                      (){
-                        setState(() {
-                          zoomIn();
-                        });
-                      },
-                      (){}
-                    ),
-                    buildToolButton(
-                      Icons.zoom_out,
-                      _enableZoomOut,
-                      _screenSize.width / 7,
-                      (){
-                        setState(() {
-                          zoomOut();
-                        });
-                      },
-                      (){}
-                    ),
-                    buildToolButton(
-                      Icons.filter_alt_outlined,
-                      true,
-                      _screenSize.width / 7,
-                      (){
-                        setState(() {
-                          buildAutoFillModalWindow(context);
-                        });
-                      },
-                      (){}
-                    ),
-                    buildToolButton(
-                      Icons.touch_app_outlined,
-                      _enableEdit,
-                      _screenSize.width / 7,
-                      (){
-                        setState(() {
-                          _enableEdit = !_enableEdit;
-                        });
-                      },
-                      (){
-                        setState(() {
-                          buildInkChangeModaleWindow();
-                        });
-                      }
-                    ),
-                    buildToolButton(
-                      Icons.undo,
-                      undoredoCtrl.enableUndo(),
-                      _screenSize.width / 7,
-                      (){
-                        setState(() {
-                          paintUndoRedo(true);
-                        });
-                      },
-                      (){}
-                    ),
-                    buildToolButton(
-                      Icons.redo,
-                      undoredoCtrl.enableRedo(),
-                      _screenSize.width / 7,
-                      (){
-                        setState(() {
-                          paintUndoRedo(false);
-                        });
-                      },
-                      (){}
-                    ),
+                  //　拡大縮小ボタン
+                  ToolButton(icon: Icons.zoom_in,  flag: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn),
+                  ToolButton(icon: Icons.zoom_out, flag: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut),
+                  // 範囲入力ボタン
+                  ToolButton(icon: Icons.filter_alt_outlined, flag: true, width: screenSize.width/7, onPressed: handleRangeFill),
+                  // タッチ入力ボタン
+                  ToolButton(icon: Icons.touch_app_outlined, flag: enableEdit, width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
+                  // Redo Undo ボタン
+                  ToolButton(icon: Icons.undo, flag: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo),
+                  ToolButton(icon: Icons.redo, flag: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo)
                   ],
                 ),
               ),
@@ -202,29 +133,43 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
             /// メインテーブル
             /// height : screenSize.height * 0.075
             ////////////////////////////////////////////////////////////////////////////////////////////
-            
-            ShiftFrameEditor(
-              sheetHeight: _screenSize.height * 1.0 - 46 - 8,
-              sheetWidth:  _screenSize.width,
-              cellHeight:  _cellHeight*1,
-              cellWidth:   _cellWidth*1,
-              titleHeight: _cellHeight*2,
-              titleWidth:  _cellWidth*3.5,
-              onChangeSelect: (p0){
+            TableEditor(
+              editorKey:   editorKey,
+              tableHeight: screenSize.height * 1.0 - 46 - 60,
+              tableWidth:  screenSize.width,
+              cellHeight:  cellHeight,
+              cellWidth:   cellWidth,
+              titleHeight: cellHeight*2,
+              titleWidth:  cellWidth*3.5,
+              titleMargin: titleMargin,
+              onChangeSelect: (p0) async {
                 setState(() {
-                  coordinate = p0!;
-                  if(_enableEdit){
-                    _shiftFrame.assignTable[coordinate!.row][coordinate!.column] = _inkValue;
+                  selectedCoordinate = p0!;
+                  if(enableEdit){
+                    shiftFrame.assignTable[selectedCoordinate!.row][selectedCoordinate!.column] = inputValue;
                   }
                 });
               },
-              onInputEnd: (){ insertBuffer(_shiftFrame.assignTable); },
-              shiftFrame: _shiftFrame,
-              enableEdit: _enableEdit,
-              selected: coordinate,
-              isDark: ref.read(settingProvider).enableDarkTheme,
+              onInputEnd: (){
+                insertBuffer(shiftFrame.assignTable);
+              },
+              columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftFrame.shiftDateRange[0].start, shiftFrame.shiftDateRange[0].end, isDark),
+              rowTitles: getRowTitles(cellHeight, cellWidth*3.5, shiftFrame.timeDivs, isDark),
+              cells: List<List<Widget>>.generate(
+                rowLength, 
+                (i){
+                  return List.generate(
+                    columnLength,
+                    (j){
+                      return shiftFrameCell( i, j, j == selectedCoordinate?.column && i == selectedCoordinate?.row);
+                    }
+                  );
+                },
+              ),
+              enableEdit: enableEdit,
+              selected: selectedCoordinate,
+              isDark: ref.read(settingProvider).enableDarkTheme
             ),
-
             // space
             const SizedBox(height: 8)
           ],
@@ -233,42 +178,85 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
     );
   }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  Cell
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  
+  // Matrix Cell Class Instance
+  Widget shiftFrameCell(int row, int column, bool selected) {
+    var value = shiftFrame.assignTable[row][column];
+    double fontSize = cellHeight / 20 * 10;
+    String cellValue = value.toString();
+    Color  cellFontColor = colorTable[value][0];
+    Color  cellColor =  (selected) ? cellFontColor.withAlpha(100) : cellFontColor.withAlpha(50);
+
+    var cellBoaderWdth = 1.0;
+    return Container(
+      width: cellWidth,
+      height: cellHeight,
+      decoration: BoxDecoration(
+        border: Border(
+          top:    row == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+          bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+          left:   column == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+          right:  BorderSide(width: cellBoaderWdth, color: Colors.grey),
+        ),
+        color: cellColor
+      ),
+      child: Center(child: Text(cellValue, style: TextStyle(color: cellFontColor, fontSize: fontSize), textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center))
+    );
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  Zoom In / Zoom Out 機能の実装
   ////////////////////////////////////////////////////////////////////////////////////////////
   
   void zoomIn(){
-    if(_enableZoomIn && _cellHeight < _cellSizeMax){
-      _cellHeight += _zoomDiv;
-      _cellWidth  += _zoomDiv;
+    if(enableZoomIn && cellHeight < cellSizeMax){
+      cellHeight += zoomDiv;
+      cellWidth  += zoomDiv;
     }
-    if(_cellHeight >= _cellSizeMax){
-      _enableZoomIn = false;
+    if(cellHeight >= cellSizeMax){
+      enableZoomIn = false;
     }else{
-      _enableZoomIn = true;
+      enableZoomIn = true;
     }
-    if(_cellHeight <= _cellSizeMin){
-      _enableZoomOut = false;
+    if(cellHeight <= cellSizeMin){
+      enableZoomOut = false;
     }else{
-      _enableZoomOut = true;
+      enableZoomOut = true;
     }
   }
 
   void zoomOut(){
-    if(_enableZoomOut && _cellHeight > _cellSizeMin){
-      _cellHeight -= _zoomDiv;
-      _cellWidth  -= _zoomDiv;
+    if(enableZoomOut && cellHeight > cellSizeMin){
+      cellHeight -= zoomDiv;
+      cellWidth  -= zoomDiv;
     }
-    if(_cellHeight >= _cellSizeMax){
-      _enableZoomIn = false;
+    if(cellHeight >= cellSizeMax){
+      enableZoomIn = false;
     }else{
-      _enableZoomIn = true;
+      enableZoomIn = true;
     }
-    if(_cellHeight <= _cellSizeMin){
-      _enableZoomOut = false;
+    if(cellHeight <= cellSizeMin){
+      enableZoomOut = false;
     }else{
-      _enableZoomOut = true;
+      enableZoomOut = true;
     }
+  }
+
+  void handleZoomIn() {
+    setState(() {
+      zoomIn();
+      editorKey = GlobalKey<TableEditorState>();
+    });
+  }
+
+  void handleZoomOut() {
+    setState(() {
+      zoomOut();
+      editorKey = GlobalKey<TableEditorState>();
+    });
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -281,13 +269,25 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
     });
   }
 
-  void paintUndoRedo(bool undo){
+  void callUndoRedo(bool undo){
     setState(() {
       if(undo){
-        _shiftFrame.assignTable = undoredoCtrl.undo().map((e) => List.from(e).cast<int>()).toList();
+        shiftFrame.assignTable = undoredoCtrl.undo().map((e) => List.from(e).cast<int>()).toList();
       }else{
-        _shiftFrame.assignTable = undoredoCtrl.redo().map((e) => List.from(e).cast<int>()).toList();
+        shiftFrame.assignTable = undoredoCtrl.redo().map((e) => List.from(e).cast<int>()).toList();
       }
+    });
+  }
+
+  void handleUndo(){
+    setState(() {
+      callUndoRedo(true);
+    });
+  }
+
+  void handleRedo(){
+    setState(() {
+      callUndoRedo(false);
     });
   }
     
@@ -295,7 +295,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
   ///  シフト表に塗る色を選択する
   ////////////////////////////////////////////////////////////////////////////////////////////
   
-  void buildInkChangeModaleWindow() {
+  void buildChangeInputValueModaleWindow() {
     showModalWindow(
       context,
       0.5,
@@ -311,30 +311,57 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
         0.5,
         (BuildContext context, int index){
           setState(() {});
-          _inkValue = index; 
+          inputValue = index; 
         }
       )
     );
   }
 
-  void buildAutoFillModalWindow(BuildContext context){
+  void handleTouchEdit(){
+    setState(() {
+      editorKey = GlobalKey<TableEditorState>();
+      enableEdit = !enableEdit;
+    });
+  }
+  
+  void handleChangeInputValue(){
+    setState(() {
+      buildChangeInputValueModaleWindow();
+    });
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  シフト表範囲一括入力のためのモーダルウィンドウ
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+  void buildRangeFillModalWindow(BuildContext context){
     showModalWindow(
       context,
       0.5,
-      AutoFillWidget(shiftTable: _shiftFrame)
+      AutoFillWidget(shiftTable: shiftFrame)
     ).then((value) {
       if(value != null){
         setState(() {});
-        insertBuffer(_shiftFrame.assignTable);
+        insertBuffer(shiftFrame.assignTable);
       }
     });
   }
 
+  void handleRangeFill(){
+    setState(() {
+      buildRangeFillModalWindow(context);
+    });
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ///  画面遷移時に変数をクリアするための関数
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
   void crearVariables(){
     ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
-    coordinate  = Coordinate(column: 0, row: 0);
-    undoredoCtrl = UndoRedo(_bufferMax);
-    coordinate = null;
+    selectedCoordinate  = Coordinate(column: 0, row: 0);
+    undoredoCtrl = UndoRedo(bufferMax);
+    selectedCoordinate = null;
   }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -367,19 +394,19 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                           children: [
                             SizedBox(
                               width: 10,
-                              child : _displayInfoFlag[0] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
+                              child : displayInfoFlag[0] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
                             ),
                             const SizedBox(width: 10),
                             Text("割り当て人数の設定について", style: MyStyle.headlineStyleGreen18),
                           ],
                         ),
                         onPressed: (){
-                          _displayInfoFlag[0] = !_displayInfoFlag[0];
+                          displayInfoFlag[0] = !displayInfoFlag[0];
                           setState(() {});
                         },
                       ),
 
-                      if(_displayInfoFlag[0])
+                      if(displayInfoFlag[0])
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Column(
@@ -423,19 +450,19 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                           children: [
                             SizedBox(
                               width: 10,
-                              child : _displayInfoFlag[1] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
+                              child : displayInfoFlag[1] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
                             ),
                             const SizedBox(width: 10),
                             Text("ツールボタンについて", style: MyStyle.headlineStyleGreen18),
                           ],
                         ),
                         onPressed: (){
-                          _displayInfoFlag[1] = !_displayInfoFlag[1];
+                          displayInfoFlag[1] = !displayInfoFlag[1];
                           setState(() {});
                         },
                       ),
 
-                      if(_displayInfoFlag[1])
+                      if(displayInfoFlag[1])
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Column(
@@ -539,14 +566,14 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
     
     return LayoutBuilder(
       builder: (context, constraints) {
-        var modalHeight  = _screenSize.height * 0.5;
-        var modalWidth   = _screenSize.width - 10 - _screenSize.width * 0.08;
+        var modalHeight  = screenSize.height * 0.5;
+        var modalWidth   = screenSize.width - 10 - screenSize.width * 0.08;
         var paddingHeght = modalHeight * 0.04;
         var buttonHeight = modalHeight * 0.2;
         var widgetHeight = buttonHeight + paddingHeght * 2;
 
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: _screenSize.width * 0.04),
+          padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
           child: SizedBox(
             height: modalHeight,
             child: Column(
@@ -558,12 +585,12 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: SizedBox(
-                        child: buildTextButton(
-                          weekSelect[selectorsIndex[0]],
-                          false,
-                          modalWidth * (100 / 330),
-                          buttonHeight,
-                          (){
+                        child: CustomTextButton(
+                          text:   weekSelect[selectorsIndex[0]],
+                          flag:   false,
+                          width:  modalWidth * (100 / 330),
+                          height: buttonHeight,
+                          action: (){
                             setState(() {
                               buildSelectorModaleWindow(weekSelect, 0);
                             });
@@ -574,11 +601,12 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                     SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: MyStyle.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton(
-                        weekdaySelect[selectorsIndex[1]],
-                        false, modalWidth * (100 / 330),
-                        buttonHeight,
-                        (){
+                      child: CustomTextButton(
+                        text:   weekdaySelect[selectorsIndex[1]],
+                        flag:   false,
+                        width:  modalWidth * (100 / 330),
+                        height: buttonHeight,
+                        action: (){
                           setState(() {
                             buildSelectorModaleWindow(weekdaySelect, 1);
                           });
@@ -594,12 +622,12 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton(
-                        timeDivs1List[selectorsIndex[2]],
-                        false,
-                        modalWidth * (100 / 330),
-                        buttonHeight,
-                        (){
+                      child: CustomTextButton(
+                        text:   timeDivs1List[selectorsIndex[2]],
+                        flag:   false,
+                        width:  modalWidth * (100 / 330),
+                        height: buttonHeight,
+                        action: (){
                           setState(() {
                             buildSelectorModaleWindow(timeDivs1List, 2);
                           });
@@ -609,11 +637,12 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                     SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: MyStyle.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton(
-                        timeDivs2List[selectorsIndex[3]],
-                        false,
-                        modalWidth * (100 / 330), buttonHeight,
-                        (){
+                      child: CustomTextButton(
+                         text:   timeDivs2List[selectorsIndex[3]],
+                         flag:   false,
+                         width:  modalWidth * (100 / 330),
+                         height: buttonHeight,
+                         action: (){
                           setState(() {
                             buildSelectorModaleWindow(timeDivs2List, 3);
                           });
@@ -623,12 +652,12 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                     SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: MyStyle.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton(
-                        "${selectorsIndex[4]} 人",
-                        false,
-                        modalWidth * (65 / 330),
-                        buttonHeight,
-                        (){
+                      child: CustomTextButton(
+                        text:   "${selectorsIndex[4]} 人",
+                        flag:   false,
+                        width:  modalWidth * (65 / 330),
+                        height: buttonHeight,
+                        action: (){
                           setState(() {
                             buildSelectorModaleWindow(
                               List<Widget>.generate(assignNumSelect.length, (index) => Row(
@@ -650,9 +679,12 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                      child: buildTextButton(
-                        "一括入力", true, modalWidth, buttonHeight,
-                        (){
+                      child: CustomTextButton(
+                        text:   "一括入力",
+                        flag:   true,
+                        width:  modalWidth,
+                        height: buttonHeight,
+                        action: (){
                           setState(() {
                             var rule = AssignRule(
                               week:      selectorsIndex[0],
@@ -735,10 +767,10 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  Auto-Fill条件を登録
+  ///  Range-Fill条件を登録
   ////////////////////////////////////////////////////////////////////////////////////////////
   
-  Widget registerAutoFill(int index, String weekSelect, String weekdaySelect, String timeDivs1Select, String timeDivs2Select,  String assignNumSelect, BuildContext context) {
+  Widget registerRangeFill(int index, String weekSelect, String weekdaySelect, String timeDivs1Select, String timeDivs2Select,  String assignNumSelect, BuildContext context) {
     return ReorderableDragStartListener(
       key: Key(index.toString()),
       index: index,
