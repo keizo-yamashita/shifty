@@ -251,7 +251,13 @@ class ShiftFrame{
                       padding: const EdgeInsets.only(bottom: 10),
                       child: SizedBox(
                         width:  width*0.6,
-                        child: Text(title, style: MyStyle.headlineStyleGreen15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis)
+                        child: Text(
+                          title, 
+                          style: (DateTime.now().compareTo(shiftDateRange[0].end) <= 0) ? MyStyle.headlineStyleGreen15 : MyStyle.defaultStyleGrey15,
+                          textHeightBehavior: MyStyle.defaultBehavior,
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis
+                        )
                       ),
                     ),
                     Text(
@@ -286,6 +292,7 @@ class ShiftFrame{
               }
             ),
           ),
+          if(DateTime.now().compareTo(shiftDateRange[0].end) <= 0)
           Positioned(
             right: 10,
             top: 0,
