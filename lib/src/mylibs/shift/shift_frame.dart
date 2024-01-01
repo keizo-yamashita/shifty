@@ -248,12 +248,12 @@ class ShiftFrame{
                 backgroundColor:  isDark ? Colors.grey[800] : MyStyle.backgroundColor,
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.all(15),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.all(15),
                       child: SizedBox(
                         width:  width*0.6,
                         child: Text(
