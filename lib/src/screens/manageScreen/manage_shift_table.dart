@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,13 +28,13 @@ import 'package:shift/src/mylibs/button.dart';
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 // editor のセルサイズ設定
-double cellHeight  = 20;
-double cellWidth   = 20;
-double titleMargin = 10;
-double cellSizeMax = 30;
-double cellSizeMin = 10;
-double zoomDiv     = 1;
-int    bufferMax   = 50;
+double cellHeight     = 20;
+double cellWidth      = 20;
+double titleMargin    = 10;
+double cellSizeMax    = 30;
+double cellSizeMin    = 10;
+double zoomDiv        = 1;
+int    bufferMax      = 50;
 
 // editor の設定変数
 bool enableZoomIn          = true;
@@ -149,13 +151,13 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ToolButton(icon: Icons.zoom_in,                flag: enableZoomIn,              width: screenSize.width/8, onPressed: handleZoomIn),
-                    ToolButton(icon: Icons.zoom_out,               flag: enableZoomOut,             width: screenSize.width/8, onPressed: handleZoomOut),
-                    ToolButton(icon: Icons.auto_fix_high_outlined, flag: true,                      width: screenSize.width/8, onPressed: handleAutoFill),
-                    ToolButton(icon: Icons.filter_alt_outlined,    flag: true,                      width: screenSize.width/8, onPressed: handleRangeFill),
-                    ToolButton(icon: Icons.touch_app_outlined,     flag: enableResponseEdit,        width: screenSize.width/8, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
-                    ToolButton(icon: Icons.undo,                   flag: undoredoCtrl.enableUndo(), width: screenSize.width/8, onPressed: handleUndo),
-                    ToolButton(icon: Icons.redo,                   flag: undoredoCtrl.enableRedo(), width: screenSize.width/8, onPressed: handleRedo)
+                    ToolButton(icon: Icons.zoom_in,                enable: enableZoomIn,              width: screenSize.width/8, onPressed: handleZoomIn),
+                    ToolButton(icon: Icons.zoom_out,               enable: enableZoomOut,             width: screenSize.width/8, onPressed: handleZoomOut),
+                    ToolButton(icon: Icons.auto_fix_high_outlined, enable: true,                      width: screenSize.width/8, onPressed: handleAutoFill),
+                    ToolButton(icon: Icons.filter_alt_outlined,    enable: true,                      width: screenSize.width/8, onPressed: handleRangeFill),
+                    ToolButton(icon: Icons.touch_app_outlined,     enable: selectedIndex!=0, slash: !enableResponseEdit, width: screenSize.width/8, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
+                    ToolButton(icon: Icons.undo,                   enable: undoredoCtrl.enableUndo(), width: screenSize.width/8, onPressed: handleUndo),
+                    ToolButton(icon: Icons.redo,                   enable: undoredoCtrl.enableRedo(), width: screenSize.width/8, onPressed: handleRedo)
                   ],
                 ),
               ),
@@ -259,7 +261,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                   children: [
                     BottomButton(
                       content: Text("      全体      ", style: (selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                      flag: selectedIndex == 0,
+                      enable: selectedIndex == 0,
                       width: 100,
                       height: 50,
                       onPressed: (){
@@ -277,7 +279,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                           Text("${(shiftTable.fitness[requesterIndex][1]/60).toStringAsFixed(1)} h / ${(shiftTable.fitness[requesterIndex][0]/60).toStringAsFixed(1)} h ( ${(shiftTable.fitness[requesterIndex][2]*100).toStringAsFixed(1)} % )", style: (selectedIndex == requesterIndex+1) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                         ],
                       ),
-                      flag: selectedIndex == requesterIndex+1,
+                      enable: selectedIndex == requesterIndex+1,
                       width: 200,
                       height: 50,
                       onPressed: (){
@@ -289,7 +291,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                     if(shiftTable.shiftRequests.isEmpty)
                     BottomButton(
                       content: Text("フォロワーがいません。", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                      flag: false,
+                      enable: false,
                       width: 150,
                       height: 50
                     )
@@ -399,8 +401,8 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   
   void zoomIn(){
     if(enableZoomIn && cellHeight < cellSizeMax){
-      cellHeight += zoomDiv;
-      cellWidth  += zoomDiv;
+      cellHeight  += zoomDiv;
+      cellWidth   += zoomDiv;
     }
     if(cellHeight >= cellSizeMax){
       enableZoomIn = false;
@@ -416,8 +418,8 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
 
   void zoomOut(){
     if(enableZoomOut && cellHeight > cellSizeMin){
-      cellHeight -= zoomDiv;
-      cellWidth  -= zoomDiv;
+      cellHeight  -= zoomDiv;
+      cellWidth   -= zoomDiv;
     }
     if(cellHeight >= cellSizeMax){
       enableZoomIn = false;
@@ -916,9 +918,9 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                ToolButton( icon: Icons.zoom_in,  flag: true, width: screenSize.width/7),
+                                ToolButton( icon: Icons.zoom_in,  enable: true, width: screenSize.width/7),
                                 const SizedBox(width: 10),
-                                ToolButton( icon: Icons.zoom_out, flag: true, width: screenSize.width/7),
+                                ToolButton( icon: Icons.zoom_out, enable: true, width: screenSize.width/7),
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -929,7 +931,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             const SizedBox(height: 10),
                             Text("自動入力ボタン", style: MyStyle.headlineStyle18),
                             const SizedBox(height: 10),
-                            ToolButton( icon: Icons.auto_fix_high_outlined, flag: true, width: screenSize.width/7),
+                            ToolButton( icon: Icons.auto_fix_high_outlined, enable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
                             Text("自動でシフト表へ割り当てできます。", style: MyStyle.defaultStyleGrey13),
                             Text("入力前に、ボタン長押しし、自動割り当てを行うための基準となる勤務時間を設定してください。", style: MyStyle.defaultStyleGrey13),
@@ -945,7 +947,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             const SizedBox(height: 10),
                             Text("フィルタ入力ボタン", style: MyStyle.headlineStyle18),
                             const SizedBox(height: 10),
-                            ToolButton( icon: Icons.filter_alt_outlined, flag: true, width: screenSize.width/7),
+                            ToolButton( icon: Icons.filter_alt_outlined, enable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
                             Text("「勤務者名」「日時」を指定して、一括でシフト表に入力できます。", style: MyStyle.defaultStyleGrey13),
                             const SizedBox(height: 10),
@@ -954,7 +956,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             const SizedBox(height: 10),
                             Text("タッチ入力ボタン", style: MyStyle.headlineStyle18),
                             const SizedBox(height: 10),
-                            ToolButton(icon: Icons.touch_app_outlined, flag: true, width: screenSize.width/7),
+                            ToolButton(icon: Icons.touch_app_outlined, enable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
                             Text("細かい1マス単位の編集ができます。", style: MyStyle.defaultStyleGrey13),
                             Text("タップ後に表のマスをなぞることで「割り当て状態」を編集できます。", style: MyStyle.defaultStyleGrey13),
@@ -969,9 +971,9 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                ToolButton( icon: Icons.undo, flag: true, width: screenSize.width/7),
+                                ToolButton( icon: Icons.undo, enable: true, width: screenSize.width/7),
                                 const SizedBox(width: 10),
-                                ToolButton( icon: Icons.redo, flag: true, width: screenSize.width/7)
+                                ToolButton( icon: Icons.redo, enable: true, width: screenSize.width/7)
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -1332,7 +1334,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text: "自動アサイン",
-                        flag: true,
+                        enable: true,
                         width: modalWidth,
                         height: buttonHeight,
                         action:(){
@@ -1504,7 +1506,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                       child: SizedBox(
                         child: CustomTextButton(
                           text: requesterList[selectorsIndex[5]],
-                          flag: false,
+                          enable: false,
                           width: modalWidth,
                           height: buttonHeight,
                           action: (){
@@ -1525,7 +1527,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                       child: SizedBox(
                         child: CustomTextButton(
                           text: weekSelect[selectorsIndex[0]],
-                          flag: false,
+                          enable: false,
                           width: modalWidth * (100 / 330),
                           height: buttonHeight,
                           action: (){
@@ -1541,7 +1543,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text: weekdaySelect[selectorsIndex[1]],
-                        flag: false,
+                        enable: false,
                         width: modalWidth * (100 / 330),
                         height: buttonHeight,
                         action: (){
@@ -1562,7 +1564,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text: timeDivs1List[selectorsIndex[2]],
-                        flag: false,
+                        enable: false,
                         width: modalWidth * (100 / 330),
                         height: buttonHeight,
                         action: (){
@@ -1577,7 +1579,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text: timeDivs2List[selectorsIndex[3]],
-                        flag: false,
+                        enable: false,
                         width: modalWidth * (100 / 330),
                         height: buttonHeight,
                         action: (){
@@ -1592,7 +1594,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomIconButton(
                         icon: (selectorsIndex[4] == 1) ? const Icon(Icons.circle_outlined, size: 20, color: MyStyle.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red),
-                        flag: false,
+                        enable: false,
                         width: modalWidth * (65 / 330),
                         height: buttonHeight,
                         action: (){
@@ -1611,7 +1613,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text: "範囲入力する",
-                        flag: true,
+                        enable: true,
                         width: modalWidth,
                         height: buttonHeight,
                         action: (){

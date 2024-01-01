@@ -41,7 +41,7 @@ class TableEditor extends StatefulWidget {
     required this.titleMargin,
     required this.selected,       // selected point cordinate
     required this.onChangeSelect, // chage select callback
-    required this.onInputEnd,     // notifiy input end for create input buffer
+             this.onInputEnd,     // notifiy input end for create input buffer
     required this.enableEdit,     // true = edit enable
     required this.isDark,
     required this.columnTitles,
@@ -75,7 +75,7 @@ class TableEditorState extends State<TableEditor> {
     controllerVertical_1   = verticalScrollGroup.addAndGet();
     super.initState();
   }
-  
+
   @override
   void dispose() {
     controllerHorizontal_0.dispose();

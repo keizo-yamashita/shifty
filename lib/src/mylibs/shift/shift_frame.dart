@@ -16,7 +16,7 @@ import 'package:shift/src/mylibs/style.dart';
 const List<String> weekSelect                  = ["すべての週","第1週","第2週","第3週","第4週"];
 const List<String> weekdaySelect               = ["すべての曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日","日曜日"];
 const List<String> assignNumSelect             = ["0 人", "1 人", "2 人", "3 人", "4 人", "5 人", "6 人", "7 人", "8 人", "9 人", "10 人"];
-const List<String> templateShiftDurationSelect = ["月ごと", "2週間ごと", "1週間ごと"];
+const List<String> templateShiftDurationSelect = ["1月ごと", "2週間ごと", "1週間ごと"];
 const List<String> templateRequestLimitSelect  = ["シフト開始 7 日前まで", "シフト開始 6 日前まで", "シフト開始 5 日前まで", "シフト開始 4 日前まで", "シフト開始 3 日前まで", "シフト開始 2 日前まで"];
 
 List<List<Color>> colorTable = List<List<Color>>.generate(

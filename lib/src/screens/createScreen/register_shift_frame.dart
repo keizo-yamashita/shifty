@@ -115,15 +115,15 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                   //　拡大縮小ボタン
-                  ToolButton(icon: Icons.zoom_in,  flag: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn),
-                  ToolButton(icon: Icons.zoom_out, flag: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut),
+                  ToolButton(icon: Icons.zoom_in,  enable: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn),
+                  ToolButton(icon: Icons.zoom_out, enable: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut),
                   // 範囲入力ボタン
-                  ToolButton(icon: Icons.filter_alt_outlined, flag: true, width: screenSize.width/7, onPressed: handleRangeFill),
+                  ToolButton(icon: Icons.filter_alt_outlined, enable: true, width: screenSize.width/7, onPressed: handleRangeFill),
                   // タッチ入力ボタン
-                  ToolButton(icon: Icons.touch_app_outlined, flag: enableEdit, width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
+                  ToolButton(icon: Icons.touch_app_outlined, enable: true, slash: !enableEdit, width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
                   // Redo Undo ボタン
-                  ToolButton(icon: Icons.undo, flag: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo),
-                  ToolButton(icon: Icons.redo, flag: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo)
+                  ToolButton(icon: Icons.undo, enable: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo),
+                  ToolButton(icon: Icons.redo, enable: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo)
                   ],
                 ),
               ),
@@ -135,7 +135,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
             ////////////////////////////////////////////////////////////////////////////////////////////
             TableEditor(
               editorKey:   editorKey,
-              tableHeight: screenSize.height * 1.0 - 46 - 60,
+              tableHeight: screenSize.height * 1.0 - 60,
               tableWidth:  screenSize.width,
               cellHeight:  cellHeight,
               cellWidth:   cellWidth,
@@ -587,7 +587,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                       child: SizedBox(
                         child: CustomTextButton(
                           text:   weekSelect[selectorsIndex[0]],
-                          flag:   false,
+                          enable:   false,
                           width:  modalWidth * (100 / 330),
                           height: buttonHeight,
                           action: (){
@@ -603,7 +603,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text:   weekdaySelect[selectorsIndex[1]],
-                        flag:   false,
+                        enable:   false,
                         width:  modalWidth * (100 / 330),
                         height: buttonHeight,
                         action: (){
@@ -624,7 +624,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text:   timeDivs1List[selectorsIndex[2]],
-                        flag:   false,
+                        enable:   false,
                         width:  modalWidth * (100 / 330),
                         height: buttonHeight,
                         action: (){
@@ -639,7 +639,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                          text:   timeDivs2List[selectorsIndex[3]],
-                         flag:   false,
+                         enable:   false,
                          width:  modalWidth * (100 / 330),
                          height: buttonHeight,
                          action: (){
@@ -654,7 +654,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text:   "${selectorsIndex[4]} 人",
-                        flag:   false,
+                        enable:   false,
                         width:  modalWidth * (65 / 330),
                         height: buttonHeight,
                         action: (){
@@ -681,7 +681,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text:   "一括入力",
-                        flag:   true,
+                        enable:   true,
                         width:  modalWidth,
                         height: buttonHeight,
                         action: (){

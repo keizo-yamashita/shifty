@@ -17,6 +17,7 @@ import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
 import 'package:shift/src/mylibs/undo_redo.dart';
 import 'package:shift/src/mylibs/modal_window.dart';
 import 'package:shift/src/mylibs/button.dart';
+import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数
@@ -133,15 +134,15 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   //　拡大縮小ボタン
-                  ToolButton(icon: Icons.zoom_in,  flag: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn),
-                  ToolButton(icon: Icons.zoom_out, flag: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut),
+                  ToolButton(icon: Icons.zoom_in,  enable: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn),
+                  ToolButton(icon: Icons.zoom_out, enable: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut),
                   // 範囲入力ボタン
-                  ToolButton(icon: Icons.filter_alt_outlined, flag: isRequestRange(), width: screenSize.width/7, onPressed: handleRangeFill),
+                  ToolButton(icon: Icons.filter_alt_outlined, enable: isRequestRange(), width: screenSize.width/7, onPressed: handleRangeFill),
                   // タッチ入力ボタン
-                  ToolButton(icon: Icons.touch_app_outlined, flag: enableRequestEdit && isRequestRange(), width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
+                  ToolButton(icon: Icons.touch_app_outlined, enable: isRequestRange(), slash: !enableResponseEdit, width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
                   // Redo Undo ボタン
-                  ToolButton(icon: Icons.undo, flag: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo),
-                  ToolButton(icon: Icons.redo, flag: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo)
+                  ToolButton(icon: Icons.undo, enable: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo),
+                  ToolButton(icon: Icons.redo, enable: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo)
                 ],
               ),
             ),
@@ -153,7 +154,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
           (isRequestRange())
           ? TableEditor(
             editorKey:   editorKey,
-            tableHeight: screenSize.height * 1.0 - 46 - 60,
+            tableHeight: screenSize.height * 1.0 - 60,
             tableWidth:  screenSize.width,
             cellHeight:  cellHeight,
             cellWidth:   cellWidth,
@@ -165,7 +166,6 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                 selectedCoodinate = p0!;
               });
             },
-            onInputEnd: (){},
             columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftRequest.shiftFrame.shiftDateRange[0].start, shiftRequest.shiftFrame.shiftDateRange[0].end, isDark),
             rowTitles: getRowTitles(cellHeight, cellWidth*3.5, shiftRequest.shiftFrame.timeDivs, isDark),
             cells: List<List<Widget>>.generate(
@@ -179,13 +179,13 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                 );
               },
             ),
-            enableEdit: false,
+            enableEdit: enableEdit,
             selected: selectedCoodinate,
             isDark: isDark,
           )
           : TableEditor(
             editorKey:   editorKey,
-            tableHeight: screenSize.height * 1.0 - 46 - 60,
+            tableHeight: screenSize.height * 1.0 - 60,
             tableWidth:  screenSize.width,
             cellHeight:  cellHeight,
             cellWidth:   cellWidth,
@@ -646,9 +646,9 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                ToolButton( icon: Icons.zoom_in, flag: true, width: screenSize.width/7),
+                                ToolButton( icon: Icons.zoom_in, enable: true, width: screenSize.width/7),
                                 const SizedBox(width: 10),
-                                ToolButton( icon: Icons.zoom_out, flag: true, width: screenSize.width/7),
+                                ToolButton( icon: Icons.zoom_out, enable: true, width: screenSize.width/7),
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -659,7 +659,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                             const SizedBox(height: 10),
                             Text("フィルタ入力ボタン", style: MyStyle.headlineStyle18),
                             const SizedBox(height: 10),
-                            ToolButton(icon: Icons.filter_alt_outlined, flag: true, width: screenSize.width/7),
+                            ToolButton(icon: Icons.filter_alt_outlined, enable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
                             Text("「日時」「リクエスト」を指定して、一括で入力できます。", style: MyStyle.defaultStyleGrey13),
                             const SizedBox(height: 10),
@@ -668,7 +668,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                             const SizedBox(height: 10),
                             Text("タッチ入力ボタン", style: MyStyle.headlineStyle18),
                             const SizedBox(height: 10),
-                            ToolButton(icon: Icons.touch_app_outlined, flag: true, width: screenSize.width/7),
+                            ToolButton(icon: Icons.touch_app_outlined, enable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
                             Text("細かい1マス単位の編集ができます。", style: MyStyle.defaultStyleGrey13),
                             Text("タップ後に表のマスをなぞることで割り当て状態を編集できます。", style: MyStyle.defaultStyleGrey13),
@@ -682,9 +682,9 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                ToolButton(icon: Icons.undo, flag: true, width: screenSize.width/7),
+                                ToolButton(icon: Icons.undo, enable: true, width: screenSize.width/7),
                                 const SizedBox(width: 10),
-                                ToolButton( icon: Icons.redo, flag: true, width: screenSize.width/7)
+                                ToolButton( icon: Icons.redo, enable: true, width: screenSize.width/7)
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -766,7 +766,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                       child: SizedBox(
                         child: CustomTextButton(
                           text:   weekSelect[selectorsIndex[0]],
-                          flag:   false,
+                          enable:   false,
                           width:  modalWidth * (100 / 330),
                           height: buttonHeight,
                           action: (){
@@ -782,7 +782,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text:   weekdaySelect[selectorsIndex[1]],
-                        flag:   false,
+                        enable:   false,
                         width:  modalWidth * (100 / 330),
                         height: buttonHeight,
                         action: (){
@@ -803,7 +803,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text:   timeDivs1List[selectorsIndex[2]],
-                        flag:   false,
+                        enable:   false,
                         width:  modalWidth * (100 / 330),
                         height: buttonHeight,
                         action: (){
@@ -818,7 +818,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text:   timeDivs2List[selectorsIndex[3]],
-                        flag:   false,
+                        enable:   false,
                         width:  modalWidth * (100 / 330),
                         height: buttonHeight,
                         action: (){
@@ -833,7 +833,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomIconButton(
                         icon:   (selectorsIndex[4] == 1) ? const Icon(Icons.circle_outlined, size: 20, color: MyStyle.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red),
-                        flag:   false,
+                        enable:   false,
                         width:  modalWidth * (65 / 330),
                         height: buttonHeight,
                         action: (){
@@ -852,7 +852,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text:   "一括入力",
-                        flag:   true,
+                        enable:   true,
                         width:  modalWidth,
                         height: buttonHeight * 0.8,
                         action: (){
