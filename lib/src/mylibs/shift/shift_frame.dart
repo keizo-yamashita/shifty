@@ -43,13 +43,15 @@ class ShiftFrame{
   late List<TimeDivision>  timeDivs;
   late List<DateTimeRange> shiftDateRange;
   late List<List<int>>     assignTable;
+  late DateTime            updateTime;
 
   ShiftFrame([
     String?              shiftId,
     String?              shiftName,
     List<TimeDivision>?  timeDivs,
     List<DateTimeRange>? shiftDateRange,
-    List<List<int>>?     assignTable
+    List<List<int>>?     assignTable,
+    DateTime?            updateTime
   ]) {
     this.shiftId        = shiftId ?? "";
     this.shiftName      = shiftName ?? "";
@@ -58,6 +60,7 @@ class ShiftFrame{
       DateTimeRange(start: DateTime(DateTime.now().year, DateTime.now().month + 1, 1), end: DateTime(DateTime.now().year, DateTime.now().month + 2, 0)),
       DateTimeRange(start: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day), end: DateTime(DateTime.now().year, DateTime.now().month + 1, 0))
     ];
+    this.updateTime     = updateTime ?? DateTime.now();
     this.assignTable    = assignTable ?? <List<int>>[];
   }
 
@@ -181,12 +184,12 @@ class ShiftFrame{
   ///  作成したシフト表を Firebase から取ってくる
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  Future<ShiftFrame> pullShiftFrame(DocumentSnapshot<Object?> snapshotTable) async{
+  Future<ShiftFrame> pullShiftFrame(DocumentSnapshot<Object?> snapshotFrame) async{
     
-    shiftId   = snapshotTable.id;
-    shiftName = snapshotTable.get('name');
+    shiftId   = snapshotFrame.id;
+    shiftName = snapshotFrame.get('name');
     
-    var timeDivsMap = snapshotTable.get('time-division');
+    var timeDivsMap = snapshotFrame.get('time-division');
     
     timeDivs = List<TimeDivision>.generate(
       timeDivsMap.length, (index) => TimeDivision(
@@ -197,11 +200,13 @@ class ShiftFrame{
     );
 
     shiftDateRange = [
-      DateTimeRange(start: snapshotTable.get('work-start').toDate(), end: snapshotTable.get('work-end').toDate()),
-      DateTimeRange(start: snapshotTable.get('request-start').toDate(), end: snapshotTable.get('request-end').toDate())
+      DateTimeRange(start: snapshotFrame.get('work-start').toDate(), end: snapshotFrame.get('work-end').toDate()),
+      DateTimeRange(start: snapshotFrame.get('request-start').toDate(), end: snapshotFrame.get('request-end').toDate())
     ];
     
-    var assignMap = snapshotTable.get('assignment');
+    var assignMap = snapshotFrame.get('assignment');
+
+    updateTime = snapshotFrame.get('created-at').toDate();
     
     assignTable = List<List<int>>.generate(
       timeDivs.length,
@@ -292,9 +297,17 @@ class ShiftFrame{
               }
             ),
           ),
-          if(DateTime.now().compareTo(shiftDateRange[0].end) <= 0)
           Positioned(
             right: 10,
+            top: 10,
+            child: SizedBox(
+              width: width * 0.4,
+              child: Text(DateFormat('MM/dd hh:mm').format(updateTime), style: MyStyle.defaultStyleGrey15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.end, overflow: TextOverflow.ellipsis)
+            )
+          ),
+          if(DateTime.now().compareTo(shiftDateRange[0].end) <= 0)
+          Positioned(
+            left: 10,
             top: 0,
             child: SizedBox(
             width: width * 0.2,
