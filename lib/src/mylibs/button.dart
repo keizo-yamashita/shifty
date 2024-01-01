@@ -11,16 +11,18 @@ import 'package:shift/src/mylibs/style.dart';
 
 class ToolButton extends StatelessWidget {
   final IconData icon;
-  final bool flag;
+  final bool enable;
   final double width;
+  final bool  slash;
   final Function? onPressed;
   final Function? onLongPressed;
 
   const ToolButton({
     Key? key,
     required this.icon,
-    required this.flag,
+    required this.enable,
     required this.width,
+    this.slash = false,
     this.onPressed,
     this.onLongPressed,
   }) : super(key: key);
@@ -37,16 +39,33 @@ class ToolButton extends StatelessWidget {
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,
             shadowColor: MyStyle.hiddenColor,
+            // backgroundColor: enable ? MyStyle.primaryColor : null,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(5),
             ),
-            side: BorderSide(color: flag ? MyStyle.primaryColor : MyStyle.hiddenColor),
+            side: BorderSide(color: enable ? MyStyle.primaryColor: MyStyle.hiddenColor),
           ),
           onPressed: onPressed as void Function()?,
           onLongPress: onLongPressed as void Function()?,
-          child: Align(
-              alignment: Alignment.center,
-              child: Icon(icon, color: flag ? MyStyle.primaryColor : MyStyle.hiddenColor, size: 20)),
+          child:
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Icon(icon, color: enable ? MyStyle.primaryColor : MyStyle.hiddenColor, size: 20),
+              // Icon(icon, color: enable ? Colors.white : MyStyle.hiddenColor, size: 20),
+              if(slash)
+              SizedBox(
+                width: 18, height: 18,
+                child: CustomPaint(
+                  painter: SlashPainter(
+                    lineColor: enable ? MyStyle.primaryColor : Colors.grey,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    downRight: true
+                  )
+                )
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -59,7 +78,7 @@ class ToolButton extends StatelessWidget {
 
 class CustomTextButton extends StatelessWidget {
   final String text;
-  final bool flag;
+  final bool enable;
   final double width;
   final double height;
   final Function action;
@@ -67,7 +86,7 @@ class CustomTextButton extends StatelessWidget {
   const CustomTextButton({
     Key? key,
     required this.text,
-    required this.flag,
+    required this.enable,
     required this.width,
     required this.height,
     required this.action,
@@ -84,9 +103,9 @@ class CustomTextButton extends StatelessWidget {
           minimumSize: Size.zero,
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
           ),
-          side: BorderSide(color: flag ? MyStyle.primaryColor : MyStyle.hiddenColor),
+          side: BorderSide(color: enable ? MyStyle.primaryColor : MyStyle.hiddenColor),
         ),
         onPressed: action as void Function()?,
         child: FittedBox(fit: BoxFit.fill, child: Text(text, style: MyStyle.headlineStyleGreen15)),
@@ -97,7 +116,7 @@ class CustomTextButton extends StatelessWidget {
 
 class CustomIconButton extends StatelessWidget {
   final Icon icon;
-  final bool flag;
+  final bool enable;
   final double width;
   final double height;
   final Function action;
@@ -105,7 +124,7 @@ class CustomIconButton extends StatelessWidget {
   const CustomIconButton({
     Key? key,
     required this.icon,
-    required this.flag,
+    required this.enable,
     required this.width,
     required this.height,
     required this.action,
@@ -122,9 +141,9 @@ class CustomIconButton extends StatelessWidget {
           padding: EdgeInsets.zero,
           shadowColor: MyStyle.hiddenColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
           ),
-          side: BorderSide(color: flag ? MyStyle.primaryColor : MyStyle.hiddenColor),
+          side: BorderSide(color: enable ? MyStyle.primaryColor : MyStyle.hiddenColor),
         ),
         onPressed: action as void Function()?,
         child: icon,
@@ -139,7 +158,7 @@ class CustomIconButton extends StatelessWidget {
 
 class BottomButton extends StatelessWidget {
   final Widget content;
-  final bool flag;
+  final bool enable;
   final double width;
   final double height;
   final Function? onPressed;
@@ -148,7 +167,7 @@ class BottomButton extends StatelessWidget {
   const BottomButton({
     Key? key,
     required this.content,
-    required this.flag,
+    required this.enable,
     required this.width,
     required this.height,
     this.onPressed,
@@ -168,9 +187,9 @@ class BottomButton extends StatelessWidget {
             padding: EdgeInsets.zero,
             shadowColor: MyStyle.hiddenColor,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(5),
             ),
-            side: BorderSide(color: flag ? MyStyle.primaryColor : MyStyle.hiddenColor),
+            side: BorderSide(color: enable ? MyStyle.primaryColor : MyStyle.hiddenColor),
           ),
           onPressed: onPressed as void Function()?,
           onLongPress: onLongPressed as void Function()?,
@@ -181,5 +200,54 @@ class BottomButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// DiagonalLinePainter Class
+// ... 斜線を引くためのクラス
+/////////////////////////////////////////////////////////////////////////////////
+
+class SlashPainter extends CustomPainter {
+  
+  final Color lineColor;
+  final Color backgroundColor;
+  final bool downRight;
+
+  SlashPainter({
+    Color? lineColor,
+    Color? backgroundColor,
+    bool? downRight,
+  })
+  : lineColor       = lineColor ?? Colors.grey,
+    backgroundColor = backgroundColor ?? Colors.white,
+    downRight = downRight ?? true;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    
+    final paint = Paint();
+
+    paint.color = backgroundColor;
+    paint.strokeWidth = 3.5;
+    _drawLine(canvas, size, paint);
+
+    paint.color = lineColor;
+    paint.strokeWidth = 1.5;
+    _drawLine(canvas, size, paint);
+  }
+
+  // 線を描画するヘルパーメソッド
+  void _drawLine(Canvas canvas, Size size, Paint paint) {
+    if(downRight){
+      canvas.drawLine(const Offset(0, 0), Offset(size.width, size.height), paint);
+    } else {
+      canvas.drawLine(Offset(0, size.height), Offset(size.width, 0), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant SlashPainter oldDelegate) {
+    return false;
   }
 }
