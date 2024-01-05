@@ -72,7 +72,8 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
       Tab(text: '管理中'),
     ];
 
-    List<Widget> itemList = [
+
+    List<Widget> tabItemList = [
       // フォローしているシフト表
       SingleChildScrollView(
         child: Column(
@@ -146,7 +147,6 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
                         child: Center(child: CircularProgressIndicator(color: MyStyle.primaryColor)),
                       );
                     } else if (snapshot.hasError) {
-                      print(snapshot.error);
                       return const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Center(child: CircularProgressIndicator(color: MyStyle.defaultColor)),
@@ -166,7 +166,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
 
     if((ref.read(settingProvider).defaultShiftView)){
       tabList = tabList.reversed.toList();
-      itemList = itemList.reversed.toList();
+      tabItemList = tabItemList.reversed.toList();
     }
 
     return Scaffold(
@@ -183,7 +183,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
             showSelectDialog(
               context, 
               ref,
-              "追加方法", "シフト表の作成方法を選択してください。",
+              "シフト表の追加", "シフト表の追加方法を選択してください。",
               ["シフト表を作成する", "シフト表をフォローする"]
             ).then((value){
               if(value == 0){
@@ -226,7 +226,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
             height: _screenSize.height - 60 -60,
             child: TabBarView(
               controller: _tabController,
-              children: itemList,
+              children: tabItemList,
             ),
           ),
         ],
@@ -344,14 +344,14 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
                 ref,
                 frame.shiftName,
                 "",
-                ["シフト表IDをコピーする", "シフト表をSNSで共有する", "シフト表を削除する"]
+                ["シフト表IDのコピー", "シフト表をSNSで共有", "次のシフト表を作成", "シフト表の設定", "シフト表を削除"]
               ).then((value){
                 
                 if(value == 0){
                   Clipboard.setData(ClipboardData(text: frame.shiftId));
-                  showAlertDialog( context, ref, "確認", "ID:'${frame.shiftId}'を\nコピーしました！", false);
+                  showAlertDialog( context, ref, "確認", "ID:'${frame.shiftId}'を\nコピーしました。", false);
                 }
-                if(value == 1){
+                else if(value == 1){
                   var message = "[Shifty] シフト表入力依頼です。\n";
                   message += "下記のリンクより入力してください。\n";
                   message += "シフト名      : ${frame.shiftName} \n";
@@ -361,6 +361,12 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
                   Share.share(message);
                 }
                 if(value == 2){
+                  
+                }
+                if(value == 3){
+
+                }
+                else if(value == 4){
                   showConfirmDialog(context, ref, "確認",
                     "シフト表'${frame.shiftName}'\nを削除しますか？\n管理者が削除を行うと、\n'${frame.shiftName}'への登録データはすべて削除されます。",
                     "シフト表'${frame.shiftName}'を削除しました。",
@@ -368,6 +374,8 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
                       removeTableHard(frame.shiftId);
                     }
                   );
+                }else{
+
                 }
               });
             }

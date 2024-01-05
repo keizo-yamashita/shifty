@@ -308,7 +308,7 @@ class DiagonalLinePainter extends CustomPainter {
 
     // 左下から右上に斜線を描く
     canvas.drawLine(const Offset(0, 0), Offset(size.width, size.height), paint);
-    canvas.drawLine(Offset(0, size.height), Offset(size.width, 0), paint);
+    // canvas.drawLine(Offset(0, size.height), Offset(size.width, 0), paint);
   }
 
   @override

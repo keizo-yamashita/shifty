@@ -273,7 +273,11 @@ class ShiftRequest {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: Text(title, style: MyStyle.headlineStyleGreen15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                      child: Column(
+                        children: [
+                          Text("$title ($displayName)", style: (DateTime.now().compareTo(shiftFrame.shiftDateRange[0].end) <= 0) ? MyStyle.headlineStyleGreen15 : MyStyle.defaultStyleGrey15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
                     ),
                     Text(
                       "　　シフト期間 : ${DateFormat('MM/dd').format(shiftFrame.shiftDateRange[0].start)} - ${DateFormat('MM/dd').format(shiftFrame.shiftDateRange[0].end)}", 
@@ -299,20 +303,20 @@ class ShiftRequest {
               }
             ),
           ),
-          Positioned(
-            right: 10,
-            top: 10,
-            child: SizedBox(
-              width: width * 0.4,
-              child: Text(DateFormat('MM/dd hh:mm').format(updateTime), style: MyStyle.defaultStyleGrey15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.end, overflow: TextOverflow.ellipsis)
-            )
-          ),
+          // Positioned(
+          //   right: 10,
+          //   top: 10,
+          //   child: SizedBox(
+          //     width: width * 0.4,
+          //     child: 
+          //   )
+          // ),
           Positioned(
             left: 10,
             top: 10,
             child: SizedBox(
               width: width * 0.4,
-              child: Text("表示名 : $displayName", style: MyStyle.defaultStyleGrey15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis)
+              child: Text(DateFormat('MM/dd hh:mm').format(updateTime), style: MyStyle.defaultStyleGrey15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis)
             )
           ),
         ]

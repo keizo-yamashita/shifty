@@ -1,8 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,7 +28,7 @@ import 'package:shift/src/mylibs/button.dart';
 // editor のセルサイズ設定
 double cellHeight     = 20;
 double cellWidth      = 20;
-double titleMargin    = 10;
+double titleMargin    = 3;
 double cellSizeMax    = 30;
 double cellSizeMin    = 10;
 double zoomDiv        = 1;
@@ -144,22 +142,19 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             /// ツールボタン
             ////////////////////////////////////////////////////////////////////////////////////////////
             // height 30 + 16
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ToolButton(icon: Icons.zoom_in,                enable: enableZoomIn,              width: screenSize.width/8, onPressed: handleZoomIn),
-                    ToolButton(icon: Icons.zoom_out,               enable: enableZoomOut,             width: screenSize.width/8, onPressed: handleZoomOut),
-                    ToolButton(icon: Icons.auto_fix_high_outlined, enable: true,                      width: screenSize.width/8, onPressed: handleAutoFill),
-                    ToolButton(icon: Icons.filter_alt_outlined,    enable: true,                      width: screenSize.width/8, onPressed: handleRangeFill),
-                    ToolButton(icon: Icons.touch_app_outlined,     enable: selectedIndex!=0, slash: !enableResponseEdit, width: screenSize.width/8, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
-                    ToolButton(icon: Icons.undo,                   enable: undoredoCtrl.enableUndo(), width: screenSize.width/8, onPressed: handleUndo),
-                    ToolButton(icon: Icons.redo,                   enable: undoredoCtrl.enableRedo(), width: screenSize.width/8, onPressed: handleRedo)
-                  ],
-                ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, right: 2.0, left: 2.0, bottom: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ToolButton(icon: Icons.zoom_in,                enable: enableZoomIn,              width: screenSize.width/8, onPressed: handleZoomIn),
+                  ToolButton(icon: Icons.zoom_out,               enable: enableZoomOut,             width: screenSize.width/8, onPressed: handleZoomOut),
+                  ToolButton(icon: Icons.auto_fix_high_outlined, enable: true,                      width: screenSize.width/8, onPressed: handleAutoFill),
+                  ToolButton(icon: Icons.filter_alt_outlined,    enable: true,                      width: screenSize.width/8, onPressed: handleRangeFill),
+                  ToolButton(icon: Icons.touch_app_outlined,     enable: selectedIndex!=0, slash: !enableResponseEdit, width: screenSize.width/8, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
+                  ToolButton(icon: Icons.undo,                   enable: undoredoCtrl.enableUndo(), width: screenSize.width/8, onPressed: handleUndo),
+                  ToolButton(icon: Icons.redo,                   enable: undoredoCtrl.enableRedo(), width: screenSize.width/8, onPressed: handleRedo)
+                ],
               ),
             ),
             
@@ -171,7 +166,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             ?
             TableEditor(
               editorKey:   editorKey,
-              tableHeight: screenSize.height * 1.0 - 46 - 60,
+              tableHeight: screenSize.height * 1.0 - 38 - 60,
               tableWidth:  screenSize.width,
               cellHeight:  cellHeight,
               cellWidth:   cellWidth,
@@ -204,7 +199,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             )
             : TableEditor(
               editorKey:   editorKey,
-              tableHeight: screenSize.height * 1.0 - 46 - 60,
+              tableHeight: screenSize.height * 1.0 - 38 - 60,
               tableWidth:  screenSize.width,
               cellHeight:  cellHeight,
               cellWidth:   cellWidth,
@@ -255,7 +250,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 10.0, bottom: 5.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -263,7 +258,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                       content: Text("      全体      ", style: (selectedIndex == 0) ? MyStyle.headlineStyleGreen13 : MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                       enable: selectedIndex == 0,
                       width: 100,
-                      height: 50,
+                      height: 40,
                       onPressed: (){
                         setState(() {
                           selectedIndex = 0;
@@ -281,7 +276,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                       ),
                       enable: selectedIndex == requesterIndex+1,
                       width: 200,
-                      height: 50,
+                      height: 40,
                       onPressed: (){
                         setState(() {
                           selectedIndex = requesterIndex + 1; enableResponseEdit = false;
@@ -290,10 +285,10 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                     ),
                     if(shiftTable.shiftRequests.isEmpty)
                     BottomButton(
-                      content: Text("フォロワーがいません。", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                      content: Text("フォロワーがいません", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                       enable: false,
                       width: 150,
-                      height: 50
+                      height: 40
                     )
                   ],
                 ),
