@@ -29,6 +29,14 @@ class ToolButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    // Scaffoldの背景色を取得
+    Color scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    // 全ビットを反転させる（アルファ値は保持）
+    int invertedColorValue = (scaffoldBackgroundColor.value & 0xFF000000) | (~scaffoldBackgroundColor.value & 0x00FFFFFF);
+    // 反転した色をColorオブジェクトとして作成
+    Color invertedColor = Color(invertedColorValue);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 3),
       child: SizedBox(
@@ -38,8 +46,9 @@ class ToolButton extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,
-            shadowColor: MyStyle.hiddenColor,
-            // backgroundColor: enable ? MyStyle.primaryColor : null,
+            elevation: 2.0,              // enableがtrueの場合は影をつける
+            shadowColor: invertedColor,  // 影の色を設定
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
@@ -176,6 +185,14 @@ class BottomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+    // Scaffoldの背景色を取得
+    Color scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    // 全ビットを反転させる（アルファ値は保持）
+    int invertedColorValue = (scaffoldBackgroundColor.value & 0xFF000000) | (~scaffoldBackgroundColor.value & 0x00FFFFFF);
+    // 反転した色をColorオブジェクトとして作成
+    Color invertedColor = Color(invertedColorValue);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 3),
       child: SizedBox(
@@ -185,7 +202,9 @@ class BottomButton extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,
-            shadowColor: MyStyle.hiddenColor,
+            elevation: 2.0,             // enableがtrueの場合は影をつける
+            shadowColor: invertedColor, // 影の色を設定
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),

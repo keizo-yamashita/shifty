@@ -44,6 +44,7 @@ class ShiftFrame{
   late List<DateTimeRange> shiftDateRange;
   late List<List<int>>     assignTable;
   late DateTime            updateTime;
+  late bool                isTestMode;
 
   ShiftFrame([
     String?              shiftId,
@@ -51,7 +52,8 @@ class ShiftFrame{
     List<TimeDivision>?  timeDivs,
     List<DateTimeRange>? shiftDateRange,
     List<List<int>>?     assignTable,
-    DateTime?            updateTime
+    DateTime?            updateTime,
+    bool?                isTestMode
   ]) {
     this.shiftId        = shiftId ?? "";
     this.shiftName      = shiftName ?? "";
@@ -62,6 +64,7 @@ class ShiftFrame{
     ];
     this.updateTime     = updateTime ?? DateTime.now();
     this.assignTable    = assignTable ?? <List<int>>[];
+    this.isTestMode     = isTestMode ?? false;
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,37 +187,53 @@ class ShiftFrame{
   ///  作成したシフト表を Firebase から取ってくる
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  Future<ShiftFrame> pullShiftFrame(DocumentSnapshot<Object?> snapshotFrame) async{
-    
-    shiftId   = snapshotFrame.id;
-    shiftName = snapshotFrame.get('name');
-    
-    var timeDivsMap = snapshotFrame.get('time-division');
-    
-    timeDivs = List<TimeDivision>.generate(
-      timeDivsMap.length, (index) => TimeDivision(
-        name: timeDivsMap[index]['name'],
-        startTime: timeDivsMap[index]['start-time'].toDate(),
-        endTime: timeDivsMap[index]['end-time'].toDate()
-      )
-    );
+  Future<ShiftFrame> pullShiftFrame(DocumentSnapshot<Object?> snapshotFrame) async {
 
+    // DocumentSnapshotからMapデータを安全に取得
+    Map<String, dynamic> frameData = snapshotFrame.data() as Map<String, dynamic>? ?? {};
+
+    // 各フィールドを安全に取得
+    shiftId = snapshotFrame.id;
+    shiftName = frameData['name'] ?? 'Default Name';
+    updateTime = (frameData['created-at'] as Timestamp?)?.toDate() ?? DateTime.now();
+    
+    var timeDivsMap = frameData['time-division'] as List<dynamic>? ?? [];
+    
     shiftDateRange = [
-      DateTimeRange(start: snapshotFrame.get('work-start').toDate(), end: snapshotFrame.get('work-end').toDate()),
-      DateTimeRange(start: snapshotFrame.get('request-start').toDate(), end: snapshotFrame.get('request-end').toDate())
+      DateTimeRange(
+        start: (frameData['work-start'] as Timestamp?)?.toDate() ?? DateTime.now(),
+        end: (frameData['work-end'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      ),
+      DateTimeRange(
+        start: (frameData['request-start'] as Timestamp?)?.toDate() ?? DateTime.now(),
+        end: (frameData['request-end'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      ),
     ];
-    
-    var assignMap = snapshotFrame.get('assignment');
 
-    updateTime = snapshotFrame.get('created-at').toDate();
-    
-    assignTable = List<List<int>>.generate(
+    timeDivs = timeDivsMap.map((item) {
+      return TimeDivision(
+        name: item['name'] ?? 'Default TimeDivision Name',
+        startTime: (item['start-time'] as Timestamp?)?.toDate() ?? DateTime.now(),
+        endTime: (item['end-time'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      );
+    }).toList();
+
+    var assignMap = frameData['assignment'] as Map<String, dynamic>? ?? {};
+
+    assignTable = List.generate(
       timeDivs.length,
-      (index) => assignMap[index.toString()].cast<int>()
+      (index) {
+        // assignMapから対応するindexのリストを取得し、intにキャスト
+        var assignList = assignMap[index.toString()] as List<dynamic>? ?? [];
+        return assignList.map((e) => e as int).toList();
+      },
     );
+
+    isTestMode = frameData['test-mode'] ?? false;
 
     return this;
   }
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  インスタンスのコピーメソッド
@@ -235,7 +254,7 @@ class ShiftFrame{
   ////////////////////////////////////////////////////////////////////////////////////////////  
   
   Widget buildShiftTableCard(String title, double width, int followersNum, Function onPressed, Function onPressedShare, bool isDark, Function onLongPressed){
-
+    
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Stack(
@@ -254,15 +273,22 @@ class ShiftFrame{
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(15),
-                      child: SizedBox(
-                        width:  width*0.6,
-                        child: Text(
-                          title, 
-                          style: (DateTime.now().compareTo(shiftDateRange[0].end) <= 0) ? MyStyle.headlineStyleGreen15 : MyStyle.defaultStyleGrey15,
-                          textHeightBehavior: MyStyle.defaultBehavior,
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis
-                        )
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if(!isTestMode) 
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Icon(Icons.build_circle, size: 20, color: (DateTime.now().compareTo(shiftDateRange[0].end) <= 0) ? MyStyle.primaryColor : Colors.grey),
+                          ),
+                          Text(
+                            title, 
+                            style: (DateTime.now().compareTo(shiftDateRange[0].end) <= 0) ? MyStyle.headlineStyleGreen15 : MyStyle.defaultStyleGrey15,
+                            textHeightBehavior: MyStyle.defaultBehavior,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis
+                          ),
+                        ],
                       ),
                     ),
                     Text(
@@ -298,16 +324,16 @@ class ShiftFrame{
             ),
           ),
           Positioned(
-            right: 10,
+            left: 10,
             top: 10,
             child: SizedBox(
               width: width * 0.4,
-              child: Text(DateFormat('MM/dd hh:mm').format(updateTime), style: MyStyle.defaultStyleGrey15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.end, overflow: TextOverflow.ellipsis)
+              child: Text(DateFormat('MM/dd hh:mm').format(updateTime), style: MyStyle.defaultStyleGrey15, textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis)
             )
           ),
           if(DateTime.now().compareTo(shiftDateRange[0].end) <= 0)
           Positioned(
-            left: 10,
+            right: 10,
             top: 0,
             child: SizedBox(
             width: width * 0.2,
@@ -316,7 +342,16 @@ class ShiftFrame{
                 icon: const Icon(Icons.ios_share, size: 25, color: MyStyle.primaryColor)
               ),
             )
-          )
+          ),
+          if(DateTime.now().compareTo(shiftDateRange[0].end) <= 0)
+          Positioned(
+            right: 10,
+            top: 0,
+            child: IconButton(
+              onPressed: (){ onPressedShare(); },
+              icon: const Icon(Icons.ios_share, size: 20, color: MyStyle.primaryColor)
+            )
+          ),
         ],  
       ),
     );
