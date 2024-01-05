@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
 import 'package:shift/main.dart';
-import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/components/style/style.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 登録の確認ダイアログ (確認機能付き)

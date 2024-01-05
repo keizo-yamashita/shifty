@@ -5,9 +5,9 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/shift/shift_request.dart';
-import 'package:shift/src/mylibs/shift/shift_table.dart';
+import 'package:shift/src/components/shift/shift_frame.dart';
+import 'package:shift/src/components/shift/shift_request.dart';
+import 'package:shift/src/components/shift/shift_table.dart';
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////

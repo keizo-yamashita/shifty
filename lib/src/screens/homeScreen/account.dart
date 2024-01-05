@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shift/main.dart';
-import 'package:shift/src/mylibs/dialog.dart';
+import 'package:shift/src/components/form/dialog.dart';
 import 'package:shift/src/screens/signInScreen/sign_in.dart';
 import 'package:shift/src/screens/signInScreen/link_account.dart';
-import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/components/style/style.dart';
 
 class AccountScreen extends ConsumerWidget {
   const AccountScreen({Key? key}) : super(key: key);

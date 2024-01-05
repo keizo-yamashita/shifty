@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shift/src/mylibs/dialog.dart';
-import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/style/style.dart';
 
 class EditorAppBar extends StatelessWidget {
   final BuildContext context;

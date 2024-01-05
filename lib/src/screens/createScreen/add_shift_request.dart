@@ -8,10 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shift/main.dart';
-import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/dialog.dart';
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/shift/shift_request.dart';
+import 'package:shift/src/components/style/style.dart';
+import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/shift/shift_frame.dart';
+import 'package:shift/src/components/shift/shift_request.dart';
 
 
 class AddShiftRequestWidget extends ConsumerStatefulWidget {

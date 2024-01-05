@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
+import 'package:shift/src/components/style/style.dart';
+import 'package:shift/src/components/shift/shift_frame.dart';
 
 ///////////////////////////////////////////////////////////////////////
 /// テーブルの要素を作るための関数

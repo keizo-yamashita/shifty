@@ -3,8 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'dart:math';
 
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/shift/shift_request.dart';
+import 'package:shift/src/components/shift/shift_frame.dart';
+import 'package:shift/src/components/shift/shift_request.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// shift request class

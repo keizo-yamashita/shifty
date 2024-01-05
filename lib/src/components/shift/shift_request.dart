@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
+import 'package:shift/src/components/style/style.dart';
+import 'package:shift/src/components/shift/shift_frame.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// shift request class

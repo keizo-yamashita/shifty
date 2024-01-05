@@ -10,11 +10,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
 import 'package:shift/main.dart';
-import 'package:shift/src/mylibs/dialog.dart';
-import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/modal_window.dart';
-import 'package:shift/src/mylibs/undo_redo.dart';
+import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/style/style.dart';
+import 'package:shift/src/components/shift/shift_frame.dart';
+import 'package:shift/src/components/form/modal_window.dart';
+import 'package:shift/src/components/undo_redo.dart';
 import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
 
 class CreateShiftTableWidget extends ConsumerStatefulWidget {

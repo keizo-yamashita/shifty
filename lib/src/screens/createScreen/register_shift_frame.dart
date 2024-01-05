@@ -6,16 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
 import 'package:shift/main.dart';
-import 'package:shift/src/mylibs/shift_editor/editor_appbar.dart';
-import 'package:shift/src/mylibs/shift_editor/table.dart';
-import 'package:shift/src/mylibs/shift_editor/table_title.dart';
-import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/dialog.dart';
-import 'package:shift/src/mylibs/undo_redo.dart';
-import 'package:shift/src/mylibs/modal_window.dart';
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
-import 'package:shift/src/mylibs/button.dart';
+import 'package:shift/src/components/shift_editor/editor_appbar.dart';
+import 'package:shift/src/components/shift_editor/table.dart';
+import 'package:shift/src/components/shift_editor/table_title.dart';
+import 'package:shift/src/components/style/style.dart';
+import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/undo_redo.dart';
+import 'package:shift/src/components/form/modal_window.dart';
+import 'package:shift/src/components/shift/shift_frame.dart';
+import 'package:shift/src/components/shift_editor/coordinate.dart';
+import 'package:shift/src/components/form/button.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数
