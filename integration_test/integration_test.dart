@@ -8,10 +8,10 @@ import 'package:shift/firebase_options.dart';
 import 'package:shift/main.dart';
 import 'package:shift/src/app.dart';
 
-import 'package:shift/src/mylibs/deep_link_mixin.dart';
-import 'package:shift/src/mylibs/sign_in/sign_in_provider.dart';
-import 'package:shift/src/mylibs/shift/shift_provider.dart';
-import 'package:shift/src/mylibs/setting_provider.dart';
+import 'package:shift/src/components/deep_link_mixin.dart';
+import 'package:shift/src/components/sign_in/sign_in_provider.dart';
+import 'package:shift/src/components/shift/shift_provider.dart';
+import 'package:shift/src/components/setting_provider.dart';
 
 final signInProvider       = ChangeNotifierProvider((ref) => SignInProvider());
 final settingProvider      = ChangeNotifierProvider((ref) => SettingProvider());

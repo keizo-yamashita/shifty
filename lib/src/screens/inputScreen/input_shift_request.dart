@@ -5,18 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shift/main.dart';
-import 'package:shift/src/mylibs/pop_icons.dart';
-import 'package:shift/src/mylibs/shift_editor/editor_appbar.dart';
-import 'package:shift/src/mylibs/shift_editor/table.dart';
-import 'package:shift/src/mylibs/shift_editor/table_title.dart';
-import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/dialog.dart';
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/shift/shift_request.dart';
-import 'package:shift/src/mylibs/shift_editor/coordinate.dart';
-import 'package:shift/src/mylibs/undo_redo.dart';
-import 'package:shift/src/mylibs/modal_window.dart';
-import 'package:shift/src/mylibs/button.dart';
+import 'package:shift/src/components/style/pop_icons.dart';
+import 'package:shift/src/components/shift_editor/editor_appbar.dart';
+import 'package:shift/src/components/shift_editor/table.dart';
+import 'package:shift/src/components/shift_editor/table_title.dart';
+import 'package:shift/src/components/style/style.dart';
+import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/shift/shift_frame.dart';
+import 'package:shift/src/components/shift/shift_request.dart';
+import 'package:shift/src/components/shift_editor/coordinate.dart';
+import 'package:shift/src/components/undo_redo.dart';
+import 'package:shift/src/components/form/modal_window.dart';
+import 'package:shift/src/components/form/button.dart';
 import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,13 +84,13 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
     shiftRequest = ref.read(shiftRequestProvider).shiftRequest;
     ref.read(settingProvider).loadPreferences();
 
-    int columnLength = shiftRequest.shiftFrame.shiftDateRange[0].end.difference(shiftRequest.shiftFrame.shiftDateRange[0].start).inDays + 1;
+    int columnLength = shiftRequest.shiftFrame.dateTerm[0].end.difference(shiftRequest.shiftFrame.dateTerm[0].start).inDays + 1;
     int rowLength    = shiftRequest.shiftFrame.timeDivs.length;
 
     //  Undo Redo Buffer が空だったら最初の状態を保存
     if(undoredoCtrl.buffer.isEmpty){
       registered = true;
-      insertBuffer(shiftRequest.requestTable);
+      insertBuffer(shiftRequest.reqTable);
     }
 
     return EditorAppBar(
@@ -134,15 +134,15 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   //　拡大縮小ボタン
-                  ToolButton(icon: Icons.zoom_in,  enable: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn),
-                  ToolButton(icon: Icons.zoom_out, enable: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut),
+                  ToolButton(icon: Icons.zoom_in,  pressEnable: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn),
+                  ToolButton(icon: Icons.zoom_out, pressEnable: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut),
                   // 範囲入力ボタン
-                  ToolButton(icon: Icons.filter_alt_outlined, enable: isRequestRange(), width: screenSize.width/7, onPressed: handleRangeFill),
+                  ToolButton(icon: Icons.filter_alt_outlined, pressEnable: isRequestRange(), width: screenSize.width/7, onPressed: handleRangeFill),
                   // タッチ入力ボタン
-                  ToolButton(icon: Icons.touch_app_outlined, enable: isRequestRange(), slash: !enableResponseEdit, width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
+                  ToolButton(icon: Icons.touch_app_outlined, pressEnable: isRequestRange(), offEnable: !enableResponseEdit, width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
                   // Redo Undo ボタン
-                  ToolButton(icon: Icons.undo, enable: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo),
-                  ToolButton(icon: Icons.redo, enable: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo)
+                  ToolButton(icon: Icons.undo, pressEnable: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo),
+                  ToolButton(icon: Icons.redo, pressEnable: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo)
                 ],
               ),
             ),
@@ -166,7 +166,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                 selectedCoodinate = p0!;
               });
             },
-            columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftRequest.shiftFrame.shiftDateRange[0].start, shiftRequest.shiftFrame.shiftDateRange[0].end, isDark),
+            columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftRequest.shiftFrame.dateTerm[0].start, shiftRequest.shiftFrame.dateTerm[0].end, isDark),
             rowTitles: getRowTitles(cellHeight, cellWidth*3.5, shiftRequest.shiftFrame.timeDivs, isDark),
             cells: List<List<Widget>>.generate(
               rowLength, 
@@ -196,15 +196,15 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
               setState(() {
                 selectedCoodinate = p0!;
                 if(enableRequestEdit){
-                  shiftRequest.requestTable[selectedCoodinate!.row][selectedCoodinate!.column] = requestInputValue;
+                  shiftRequest.reqTable[selectedCoodinate!.row][selectedCoodinate!.column] = requestInputValue;
                 }
               });
             },
             onInputEnd: (){
               registered = false;
-              insertBuffer(shiftRequest.requestTable);
+              insertBuffer(shiftRequest.reqTable);
             },
-            columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftRequest.shiftFrame.shiftDateRange[0].start, shiftRequest.shiftFrame.shiftDateRange[0].end, isDark),
+            columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftRequest.shiftFrame.dateTerm[0].start, shiftRequest.shiftFrame.dateTerm[0].end, isDark),
             rowTitles: getRowTitles(cellHeight, cellWidth*3.5, shiftRequest.shiftFrame.timeDivs, isDark),
             cells: List<List<Widget>>.generate(
               rowLength, 
@@ -234,13 +234,13 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
   
   Widget responseCell(int row, int column, bool editable, bool selected) {
 
-    var value = editable ? shiftRequest.requestTable[row][column] : 0;
+    var value = editable ? shiftRequest.reqTable[row][column] : 0;
     Icon cellValue;
     Color cellColor;
 
     if(value == 1){ 
-      cellValue = Icon((shiftRequest.responseTable[row][column] == 1) ? PopIcons.circle : PopIcons.circle_empty, size: 12 * cellWidth / 20, color: MyStyle.primaryColor);
-      cellColor = MyStyle.primaryColor;
+      cellValue = Icon((shiftRequest.respTable[row][column] == 1) ? PopIcons.circle : PopIcons.circle_empty, size: 12 * cellWidth / 20, color: Styles.primaryColor);
+      cellColor = Styles.primaryColor;
     }else{
       cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
       cellColor = Colors.red;
@@ -268,13 +268,13 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
 
   Widget requestCell(int row, int column, bool editable, bool selected) {
 
-    var value = editable ? shiftRequest.requestTable[row][column] : 0;
+    var value = editable ? shiftRequest.reqTable[row][column] : 0;
     Icon cellValue;
     Color cellColor;
 
     if(value == 1){ 
-      cellValue = Icon(PopIcons.circle_empty, size: 12 * cellWidth / 20, color: MyStyle.primaryColor);
-      cellColor = MyStyle.primaryColor;
+      cellValue = Icon(PopIcons.circle_empty, size: 12 * cellWidth / 20, color: Styles.primaryColor);
+      cellColor = Styles.primaryColor;
     }else{
       cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
       cellColor = Colors.red;
@@ -307,7 +307,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
   bool isRequestRange(){
     DateTime now = DateTime.now();
     // 今の日付が，シフトリクエスト期間かどうか判定 (リクエスト期間 -> true)
-    return (now.compareTo(shiftRequest.shiftFrame.shiftDateRange[1].start) >= 0 && now.compareTo(shiftRequest.shiftFrame.shiftDateRange[1].end) <= 0);
+    return (now.compareTo(shiftRequest.shiftFrame.dateTerm[1].start) >= 0 && now.compareTo(shiftRequest.shiftFrame.dateTerm[1].end) <= 0);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -375,9 +375,9 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
   void callUndoRedo(bool undo){
     setState(() {
       if(undo){
-        shiftRequest.requestTable = undoredoCtrl.undo().map((e) => List.from(e).cast<int>()).toList();
+        shiftRequest.reqTable = undoredoCtrl.undo().map((e) => List.from(e).cast<int>()).toList();
       }else{
-        shiftRequest.requestTable = undoredoCtrl.redo().map((e) => List.from(e).cast<int>()).toList();
+        shiftRequest.reqTable = undoredoCtrl.redo().map((e) => List.from(e).cast<int>()).toList();
       }
     });
   }
@@ -412,15 +412,15 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
             children: [
               const Icon(Icons.clear, size: 30, color: Colors.red),
               const SizedBox(width: 30),
-              Text("NG", style: MyStyle.headlineStyle13,textAlign: TextAlign.center),
+              Text("NG", style: Styles.headlineStyle13,textAlign: TextAlign.center),
             ],
           ),
           Row(
             mainAxisAlignment:  MainAxisAlignment.center,
             children: [
-              const Icon(Icons.circle_outlined, size: 30, color: MyStyle.primaryColor), 
+              const Icon(Icons.circle_outlined, size: 30, color: Styles.primaryColor), 
               const SizedBox(width: 30),
-              Text("OK", style: MyStyle.headlineStyle13,textAlign: TextAlign.center),
+              Text("OK", style: Styles.headlineStyle13,textAlign: TextAlign.center),
             ],
           )
         ],
@@ -466,7 +466,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
       if(value != null){
         setState(() {});
         registered = false;
-        insertBuffer(shiftRequest.requestTable);
+        insertBuffer(shiftRequest.reqTable);
       }
     });
   }
@@ -492,7 +492,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
           builder: (context, setState) {
             return AlertDialog(
               insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              title: Text("「リクエスト入力画面」の使い方", style:  MyStyle.headlineStyleGreen20, textAlign: TextAlign.center),
+              title: Text("「リクエスト入力画面」の使い方", style:  Styles.headlineStyleGreen20, textAlign: TextAlign.center),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.95,
                 height: MediaQuery.of(context).size.height * 0.95,
@@ -508,10 +508,10 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                           children: [
                             SizedBox(
                               width: 10,
-                              child : displayInfoFlag[0] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
+                              child : displayInfoFlag[0] ? Text("-", style: Styles.headlineStyleGreen18) : Text("+", style: Styles.headlineStyleGreen18),
                             ),
                             const SizedBox(width: 10),
-                            Text("シフト表について", style: MyStyle.headlineStyleGreen18),
+                            Text("シフト表について", style: Styles.headlineStyleGreen18),
                           ],
                         ),
                         onPressed: (){
@@ -527,21 +527,21 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // How to Edit
-                            Text("この画面では、シフトリクエストを編集できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("また「シフトリクエスト期間」終了後にシフト表を確認するためにも使用します。", style: MyStyle.defaultStyleGrey13),
+                            Text("この画面では、シフトリクエストを編集できます。", style: Styles.defaultStyleGrey13),
+                            Text("また「シフトリクエスト期間」終了後にシフト表を確認するためにも使用します。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 20),
-                            Text("編集方法", style: MyStyle.headlineStyle18),
+                            Text("編集方法", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
-                            Text("編集は「シフトリクエスト期間」でのみ可能です。", style: MyStyle.defaultStyleGrey13),
-                            Text("「シフトリクエスト期間」中は何度でも編集できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("編集後は、画面右上の「登録」ボタンを押して登録してください。", style: MyStyle.defaultStyleGrey13),
+                            Text("編集は「シフトリクエスト期間」でのみ可能です。", style: Styles.defaultStyleGrey13),
+                            Text("「シフトリクエスト期間」中は何度でも編集できます。", style: Styles.defaultStyleGrey13),
+                            Text("編集後は、画面右上の「登録」ボタンを押して登録してください。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
 
                             const SizedBox(height: 20),
-                            Text("アイコンについて", style: MyStyle.headlineStyle18),
+                            Text("アイコンについて", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
-                            Text("シフト表の表示されるアイコンは、その日時の「リクエスト」を示すものです。", style: MyStyle.defaultStyleGrey13),
-                            Text("アイコンの示す意味は、下記のとおりです。", style: MyStyle.defaultStyleGrey13),
+                            Text("シフト表の表示されるアイコンは、その日時の「リクエスト」を示すものです。", style: Styles.defaultStyleGrey13),
+                            Text("アイコンの示す意味は、下記のとおりです。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
                             Row(
                               children: [
@@ -552,11 +552,11 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                                   ),
                                   child: const Padding(
                                     padding: EdgeInsets.all(2.0),
-                                    child: Icon(Icons.circle_outlined, size: 20, color: MyStyle.primaryColor)
+                                    child: Icon(Icons.circle_outlined, size: 20, color: Styles.primaryColor)
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                SizedBox(width: 80, child: Text("シフト希望", style: MyStyle.defaultStyleGrey13)),
+                                SizedBox(width: 80, child: Text("シフト希望", style: Styles.defaultStyleGrey13)),
                                 const SizedBox(width: 10),
                                 Container(
                                   decoration: BoxDecoration(
@@ -569,7 +569,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                Text("非シフト希望", style: MyStyle.defaultStyleGrey13)
+                                Text("非シフト希望", style: Styles.defaultStyleGrey13)
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -584,30 +584,30 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                                   ),
                                   child: const Padding(
                                     padding: EdgeInsets.all(2.0),
-                                    child: Icon(Icons.circle, size: 20, color: MyStyle.primaryColor),
+                                    child: Icon(Icons.circle, size: 20, color: Styles.primaryColor),
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                Text("シフト確定 ※「リクエスト期間」以降に確認可能", style: MyStyle.defaultStyleGrey13),
+                                Text("シフト確定 ※「リクエスト期間」以降に確認可能", style: Styles.defaultStyleGrey13),
                               ],
                             ),
                             
                             // How to Update
                             const SizedBox(height: 30),
-                            Text("登録方法", style: MyStyle.headlineStyle18),
+                            Text("登録方法", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
                             Row(
                               children: [
-                                const Icon(Icons.cloud_upload_outlined, size: 24, color: MyStyle.primaryColor),
+                                const Icon(Icons.cloud_upload_outlined, size: 24, color: Styles.primaryColor),
                                 const SizedBox(width: 10),
-                                Text("登録ボタン (画面右上)", style: MyStyle.defaultStyleGrey13),
+                                Text("登録ボタン (画面右上)", style: Styles.defaultStyleGrey13),
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("シフトリクエスト表の編集内容は、画面遷移時に破棄されます。", style: MyStyle.defaultStyleGrey13),
-                            Text("編集内容を「登録」するには、画面右上の「登録ボタン」を押してください。", style: MyStyle.defaultStyleRed13),
-                            Text("登録内容は常にシフト管理者に共有されますが、「シフトリクエスト期間」終了日までは何度でも変更できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("「シフトリクエスト期間」終了日までには、必ず登録してください。", style: MyStyle.defaultStyleRed13),
+                            Text("シフトリクエスト表の編集内容は、画面遷移時に破棄されます。", style: Styles.defaultStyleGrey13),
+                            Text("編集内容を「登録」するには、画面右上の「登録ボタン」を押してください。", style: Styles.defaultStyleRed13),
+                            Text("登録内容は常にシフト管理者に共有されますが、「シフトリクエスト期間」終了日までは何度でも変更できます。", style: Styles.defaultStyleGrey13),
+                            Text("「シフトリクエスト期間」終了日までには、必ず登録してください。", style: Styles.defaultStyleRed13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -620,10 +620,10 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                           children: [
                             SizedBox(
                               width: 10,
-                              child : displayInfoFlag[1] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
+                              child : displayInfoFlag[1] ? Text("-", style: Styles.headlineStyleGreen18) : Text("+", style: Styles.headlineStyleGreen18),
                             ),
                             const SizedBox(width: 10),
-                            Text("ツールボタンについて", style: MyStyle.headlineStyleGreen18),
+                            Text("ツールボタンについて", style: Styles.headlineStyleGreen18),
                           ],
                         ),
                         onPressed: (){
@@ -639,57 +639,57 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Zoom Out / In Button
-                            Text("画面上部のツールボタンを用いることで、効率的な編集を行うことができます。", style: MyStyle.defaultStyleGrey13),
+                            Text("画面上部のツールボタンを用いることで、効率的な編集を行うことができます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 20),
-                            Text("拡大・縮小ボタン", style: MyStyle.headlineStyle18),
+                            Text("拡大・縮小ボタン", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                ToolButton( icon: Icons.zoom_in, enable: true, width: screenSize.width/7),
+                                ToolButton( icon: Icons.zoom_in, pressEnable: true, width: screenSize.width/7),
                                 const SizedBox(width: 10),
-                                ToolButton( icon: Icons.zoom_out, enable: true, width: screenSize.width/7),
+                                ToolButton( icon: Icons.zoom_out, pressEnable: true, width: screenSize.width/7),
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("表の拡大・縮小ができます。", style: MyStyle.defaultStyleGrey13),
+                            Text("表の拡大・縮小ができます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
                           
                             // Filterring Input Button
                             const SizedBox(height: 10),
-                            Text("フィルタ入力ボタン", style: MyStyle.headlineStyle18),
+                            Text("フィルタ入力ボタン", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
-                            ToolButton(icon: Icons.filter_alt_outlined, enable: true, width: screenSize.width/7),
+                            ToolButton(icon: Icons.filter_alt_outlined, pressEnable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
-                            Text("「日時」「リクエスト」を指定して、一括で入力できます。", style: MyStyle.defaultStyleGrey13),
+                            Text("「日時」「リクエスト」を指定して、一括で入力できます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
 
                             // Draw Button                             
                             const SizedBox(height: 10),
-                            Text("タッチ入力ボタン", style: MyStyle.headlineStyle18),
+                            Text("タッチ入力ボタン", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
-                            ToolButton(icon: Icons.touch_app_outlined, enable: true, width: screenSize.width/7),
+                            ToolButton(icon: Icons.touch_app_outlined, pressEnable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
-                            Text("細かい1マス単位の編集ができます。", style: MyStyle.defaultStyleGrey13),
-                            Text("タップ後に表のマスをなぞることで割り当て状態を編集できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("入力する「リクエスト」は、ボタンを長押しすることで選択できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("注意 : 使用中、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: MyStyle.defaultStyleRed13),
+                            Text("細かい1マス単位の編集ができます。", style: Styles.defaultStyleGrey13),
+                            Text("タップ後に表のマスをなぞることで割り当て状態を編集できます。", style: Styles.defaultStyleGrey13),
+                            Text("入力する「リクエスト」は、ボタンを長押しすることで選択できます。", style: Styles.defaultStyleGrey13),
+                            Text("注意 : 使用中、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: Styles.defaultStyleRed13),
 
                             // Redo / Undo Button
                             const SizedBox(height: 10),
-                            Text("戻る・進む ボタン", style: MyStyle.headlineStyle18),
+                            Text("戻る・進む ボタン", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                ToolButton(icon: Icons.undo, enable: true, width: screenSize.width/7),
+                                ToolButton(icon: Icons.undo, pressEnable: true, width: screenSize.width/7),
                                 const SizedBox(width: 10),
-                                ToolButton( icon: Icons.redo, enable: true, width: screenSize.width/7)
+                                ToolButton( icon: Icons.redo, pressEnable: true, width: screenSize.width/7)
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("編集したシフトリクエスト表を「前の状態」や「次の状態」に戻すことができます。", style: MyStyle.defaultStyleGrey13),
-                            Text("注意 : 遡れる状態は最大50であり、一度管理者画面を閉じると過去の変更履歴は破棄されます。", style: MyStyle.defaultStyleRed13),
+                            Text("編集したシフトリクエスト表を「前の状態」や「次の状態」に戻すことができます。", style: Styles.defaultStyleGrey13),
+                            Text("注意 : 遡れる状態は最大50であり、一度管理者画面を閉じると過去の変更履歴は破棄されます。", style: Styles.defaultStyleRed13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -700,7 +700,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
               ),
               actions: <Widget>[
                 TextButton(
-                  child: Text('閉じる', style: MyStyle.headlineStyleGreen13),
+                  child: Text('閉じる', style: Styles.headlineStyleGreen13),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -777,7 +777,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         )
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: MyStyle.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -792,7 +792,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: MyStyle.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
                     SizedBox(height: widgetHeight, width: modalWidth * (100 / 330))
                   ],
                 ),
@@ -813,7 +813,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: MyStyle.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: Styles.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -828,17 +828,17 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: MyStyle.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: Styles.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomIconButton(
-                        icon:   (selectorsIndex[4] == 1) ? const Icon(Icons.circle_outlined, size: 20, color: MyStyle.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red),
+                        icon:   (selectorsIndex[4] == 1) ? const Icon(Icons.circle_outlined, size: 20, color: Styles.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red),
                         enable:   false,
                         width:  modalWidth * (65 / 330),
                         height: buttonHeight,
                         action: (){
                           setState(() {
-                            buildSelectorModaleWindow(List<Icon>.generate(2, (index) => (index == 1) ? const Icon(Icons.circle_outlined, size: 20, color: MyStyle.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red)), 4);
+                            buildSelectorModaleWindow(List<Icon>.generate(2, (index) => (index == 1) ? const Icon(Icons.circle_outlined, size: 20, color: Styles.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red)), 4);
                           });
                         }
                       ),
@@ -911,9 +911,9 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
         width: 300,
         height: 80,
         decoration: BoxDecoration(
-          color: MyStyle.backgroundColor,
+          color: Styles.bgColor,
           border: Border.all(
-            color: MyStyle.hiddenColor
+            color: Styles.hiddenColor
           ),
           borderRadius: BorderRadius.circular(10)
         ),
@@ -925,15 +925,15 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Text(weekSelect,      style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(' の ',          style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(weekdaySelect,   style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(' の ',          style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(timeDivs1Select, style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(' - ',           style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(timeDivs2Select, style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(' は ',          style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(requestSelect,   style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
+                  Text(weekSelect,      style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' の ',          style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(weekdaySelect,   style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' の ',          style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(timeDivs1Select, style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' - ',           style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(timeDivs2Select, style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' は ',          style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(requestSelect,   style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
                 ],
               ),
             ),
@@ -943,7 +943,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                 setState(() {});
               },
               icon: const Icon(Icons.delete, size: 20),
-              color: MyStyle.hiddenColor,
+              color: Styles.hiddenColor,
             ),
           ],
         ),

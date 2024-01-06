@@ -8,8 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shift/main.dart';
 import 'package:shift/src/app.dart';
-import 'package:shift/src/mylibs/deep_link_mixin.dart';
-import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/components/deep_link_mixin.dart';
+import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -60,7 +60,7 @@ class SplashScreenState extends ConsumerState<SplashScreen> with DeepLinkMixin{
 
     return Material(
       child: Container(
-        decoration: MyStyle.gradientDecolation,
+        decoration: Styles.gradientDecolation,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(40.0),

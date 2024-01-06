@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shift/src/mylibs/style.dart';
-import 'package:shift/src/mylibs/dialog.dart';
+import 'package:shift/src/components/style/style.dart';
+import 'package:shift/src/components/form/dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,9 +45,9 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("本アプリがご期待に添えず、ご不便をお掛けしている場合は、どのようなご要望でもお申し付け下さい。", style: MyStyle.defaultStyleGrey15),
+                      Text("本アプリがご期待に添えず、ご不便をお掛けしている場合は、どのようなご要望でもお申し付け下さい。", style: Styles.defaultStyleGrey15),
                       SizedBox(height: _screenSize.height/40),
-                      Text("例) 〇〇な機能が欲しい。〇〇が使いづらい。", style: MyStyle.defaultStyleGrey15)
+                      Text("例) 〇〇な機能が欲しい。〇〇が使いづらい。", style: Styles.defaultStyleGrey15)
                     ],
                   )
                 ),
@@ -56,8 +56,8 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
                   width: _screenSize.width * 0.90,
                   child: TextField(
                     controller: textConroller,
-                    cursorColor: MyStyle.primaryColor,
-                    style: MyStyle.headlineStyle15,
+                    cursorColor: Styles.primaryColor,
+                    style: Styles.headlineStyle15,
                     focusNode: focusNode,
                     maxLines: 5,
                     maxLength: 500,
@@ -66,17 +66,17 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: MyStyle.hiddenColor,
+                          color: Styles.hiddenColor,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: MyStyle.primaryColor,
+                          color: Styles.primaryColor,
                         ),
                       ),
                       hintText: 'ご要望はこちらに入力して下さい。',
-                      hintStyle: MyStyle.defaultStyleGrey15
+                      hintStyle: Styles.defaultStyleGrey15
                     ),
         
                     keyboardType: TextInputType.text,
@@ -97,11 +97,11 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
                       style: OutlinedButton.styleFrom(
                       minimumSize: Size.zero,
                       padding: EdgeInsets.zero,
-                      shadowColor: MyStyle.primaryColor, 
+                      shadowColor: Styles.primaryColor, 
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      side: const BorderSide(color: MyStyle.primaryColor),
+                      side: const BorderSide(color: Styles.primaryColor),
                     ),
                     onPressed: () {
                       setState(() {
@@ -115,7 +115,7 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
                         }
                       });
                     },
-                    child: Text("送信", style: MyStyle.headlineStyleGreen15),
+                    child: Text("送信", style: Styles.headlineStyleGreen15),
                   ),
                 ),
               ],

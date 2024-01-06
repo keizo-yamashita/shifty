@@ -2,7 +2,6 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,7 +9,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class SignInProvider extends ChangeNotifier {
-
   User? _user;
   User? get user => _user;
 
@@ -18,55 +16,71 @@ class SignInProvider extends ChangeNotifier {
   /// ログインメソッド
   ////////////////////////////////////////////////////////////////////////////////////////////
 
-  Future<String> login(String providerName, bool fromGuest, [String? email, String? password]) async {
-
+  Future<String> login(
+    String providerName,
+    bool fromGuest, [
+    String? email,
+    String? password,
+  ]) async {
     String message = "";
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// Google でログイン
     ////////////////////////////////////////////////////////////////////////////////////////////
-    if(providerName == "google"){
-      await GoogleSignIn().signIn().then(
-        (googleSignIn) async {
-          final GoogleSignInAuthentication? googleAuth = await googleSignIn?.authentication;
-          final credential = GoogleAuthProvider.credential(
-            accessToken: googleAuth?.accessToken,
-            idToken: googleAuth?.idToken
-          );
-          try{
-            if(fromGuest){
-              await _user?.linkWithCredential(credential).then((value) => _user = value.user);
-            }else{
-              await FirebaseAuth.instance.signInWithCredential(credential).then((value) => _user = value.user);
-              notifyListeners();
-            }
+
+    if (providerName == "google") {
+      await GoogleSignIn().signIn().then((googleSignIn) async {
+        final GoogleSignInAuthentication? googleAuth =
+            await googleSignIn?.authentication;
+
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken,
+          idToken: googleAuth?.idToken,
+        );
+
+        try {
+          if (fromGuest) {
+            await _user
+                ?.linkWithCredential(credential)
+                .then((value) => _user = value.user);
+          } else {
+            await FirebaseAuth.instance
+                .signInWithCredential(credential)
+                .then((value) => _user = value.user);
+            notifyListeners();
           }
-          on FirebaseAuthException catch(e){
-            message = encodeFirebaseAuthException(e);
-          }
+        } on FirebaseAuthException catch (e) {
+          message = encodeFirebaseAuthException(e);
         }
-      );
+      });
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// Apple でログイン
     ////////////////////////////////////////////////////////////////////////////////////////////
-    else if(providerName == 'apple'){
+
+    else if (providerName == 'apple') {
       final appleCredential = await SignInWithApple.getAppleIDCredential(
-          scopes: [
-            AppleIDAuthorizationScopes.email,
-            AppleIDAuthorizationScopes.fullName,
-          ],
-        );
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
       OAuthProvider oauthProvider = OAuthProvider('apple.com');
       final credential = oauthProvider.credential(
         idToken: appleCredential.identityToken,
         accessToken: appleCredential.authorizationCode,
       );
-      try{
-        if(fromGuest){
-          await _user?.linkWithCredential(credential).then((value) => _user = value.user);
-        }else{
-          await FirebaseAuth.instance.signInWithCredential(credential).then((value) => _user = value.user);
+
+      try {
+        if (fromGuest) {
+          await _user
+              ?.linkWithCredential(credential)
+              .then((value) => _user = value.user);
+        } else {
+          await FirebaseAuth.instance
+              .signInWithCredential(credential)
+              .then((value) => _user = value.user);
         }
       } on FirebaseAuthException catch (e) {
         message = encodeFirebaseAuthException(e);
@@ -75,19 +89,21 @@ class SignInProvider extends ChangeNotifier {
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// ゲストアカウントでログイン
     ////////////////////////////////////////////////////////////////////////////////////////////
-    else if(providerName == "guest"){
+    else if (providerName == "guest") {
       await FirebaseAuth.instance.signInAnonymously().then(
-        (credential){
+        (credential) {
           _user = credential.user;
-        }
+        },
       );
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// メールでサインアップ
     ////////////////////////////////////////////////////////////////////////////////////////////
-    else if(providerName == "mail-create"){
+    else if (providerName == "mail-create") {
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email!, password: password!).then((value) => _user = value.user);
+        await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email!, password: password!)
+            .then((value) => _user = value.user);
       } on FirebaseAuthException catch (e) {
         message = encodeFirebaseAuthException(e);
       }
@@ -95,13 +111,18 @@ class SignInProvider extends ChangeNotifier {
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// メールでログイン
     ////////////////////////////////////////////////////////////////////////////////////////////
-    else if(providerName == "mail-signin"){
-      final credential = EmailAuthProvider.credential(email: email!, password: password!);
+    else if (providerName == "mail-signin") {
+      final credential =
+          EmailAuthProvider.credential(email: email!, password: password!);
       try {
-        if(fromGuest){
-          await _user?.linkWithCredential(credential).then((value) => _user = value.user);
-        }else{
-          await FirebaseAuth.instance.signInWithCredential(credential).then((value) => _user = value.user);
+        if (fromGuest) {
+          await _user
+              ?.linkWithCredential(credential)
+              .then((value) => _user = value.user);
+        } else {
+          await FirebaseAuth.instance
+              .signInWithCredential(credential)
+              .then((value) => _user = value.user);
         }
       } on FirebaseAuthException catch (e) {
         message = encodeFirebaseAuthException(e);
@@ -132,119 +153,139 @@ class SignInProvider extends ChangeNotifier {
   ////////////////////////////////////////////////////////////////////////////////////////////
   /// ユーザーのデータを全て削除するメソッド
   ////////////////////////////////////////////////////////////////////////////////////////////
-  
+
   Future deleteUserData() async {
-    final user      = FirebaseAuth.instance.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
     final firestore = FirebaseFirestore.instance;
-    final uid       = user?.uid;
+    final uid = user?.uid;
+
     // このユーザーが登録したシフトリクエストを削除する
-    firestore.collection('shift-follower').where('user-id', isEqualTo: uid).get().then(
-      (querySnapshot) {
-        // 各ドキュメントに対して削除操作を行う
-        for(var doc in querySnapshot.docs){
-          doc.reference.delete().then((_) {
-            print("Document successfully deleted!");
-          }).catchError((error) {
-            print("Error removing document: $error");
-          });
-        }
+    firestore
+        .collection('shift-follower')
+        .where('user-id', isEqualTo: uid)
+        .get()
+        .then((querySnapshot) {
+      // 各ドキュメントに対して削除操作を行う
+      for (var doc in querySnapshot.docs) {
+        doc.reference.delete().then((_) {
+          print("Document successfully deleted!");
+        }).catchError((error) {
+          print("Error removing document: $error");
+        });
       }
-    ).catchError(
-      (error) {
-        print("Error getting documents: $error");
-      }
-   );
+    }).catchError((error) {
+      print("Error getting documents: $error");
+    });
 
     // このユーザが作成したシフト表とそれに基づくシフトリクエストを削除する
     print(user?.uid);
-    firestore.collection('shift-leader').where('user-id', isEqualTo: user?.uid).get().then(
+    firestore
+        .collection('shift-leader')
+        .where('user-id', isEqualTo: user?.uid)
+        .get()
+        .then(
       (querySnapshot) {
         print(querySnapshot.docs.length);
         // 各ドキュメントに対して削除操作を行う
-        for(var doc in querySnapshot.docs){
+        for (var doc in querySnapshot.docs) {
           var tableId = doc.id;
-          doc.reference.delete().then((_) {
-            print("Document successfully deleted!");
-            firestore.collection('shift-follower').where('reference', isEqualTo: firestore.collection('shift-leader').doc(tableId)).get().then(
-              (querySnapshot) {
-                // 各ドキュメントに対して削除操作を行う
-                for(var doc in querySnapshot.docs){
-                  doc.reference.delete().then((_) {
-                    print("Document successfully deleted!");
-                  }).catchError((error) {
-                    print("Error removing document: $error");
-                  });
-                }
-              }
-            ).catchError(
-              (error) {
-                print("Error getting documents: $error");
-              }
-            );
-          }).catchError((error) {
-            print("Error removing document: $error");
-          });
+          doc.reference.delete().then(
+            (_) {
+              print("Document successfully deleted!");
+              firestore
+                  .collection('shift-follower')
+                  .where(
+                    'reference',
+                    isEqualTo:
+                        firestore.collection('shift-leader').doc(tableId),
+                  )
+                  .get()
+                  .then(
+                (querySnapshot) {
+                  // 各ドキュメントに対して削除操作を行う
+                  for (var doc in querySnapshot.docs) {
+                    doc.reference.delete().then(
+                      (_) {
+                        print("Document successfully deleted!");
+                      },
+                    ).catchError(
+                      (error) {
+                        print("Error removing document: $error");
+                      },
+                    );
+                  }
+                },
+              ).catchError(
+                (error) {
+                  print("Error getting documents: $error");
+                },
+              );
+            },
+          ).catchError(
+            (error) {
+              print("Error removing document: $error");
+            },
+          );
         }
-      }
+      },
     ).catchError(
       (error) {
         print("Error getting documents: $error");
-      }
-   );
+      },
+    );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   /// 現在ログインしているユーザを削除する
   ////////////////////////////////////////////////////////////////////////////////////////////
-  
+
   Future<bool> deleteUser() async {
     final user = FirebaseAuth.instance.currentUser;
     bool result = false;
     // ユーザーを削除
     user?.delete().then(
-      (value){
+      (value) {
         FirebaseAuth.instance.signOut().then(
           (value) async {
             _user = null;
             result = false;
-          }
+          },
         ).catchError(
-          (onError){
+          (onError) {
             result = true;
-          }
+          },
         );
         notifyListeners();
-      }
+      },
     );
     return result;
   }
 
-  String encodeFirebaseAuthException(FirebaseAuthException error){
-
+  String encodeFirebaseAuthException(FirebaseAuthException error) {
     var message = "success";
 
-    switch(error.code){
+    switch (error.code) {
       // for linkWithCredential
-      case "credential-already-in-use" :
-      case "provider-already-linked" :
+      case "credential-already-in-use":
+      case "provider-already-linked":
         message = "このアカウントは既に使用されているため連携できません。他のアカウントをお試しください。";
         break;
-      case "invalid-credential" :
+      case "invalid-credential":
         message = "このアカウントは連携できません。他のアカウント(ログイン方法)をお試しください。";
         break;
-      case "email-already-in-use" :
+      case "email-already-in-use":
         message = "このメールアドレスは既に使用されているため登録できません。他のメールアドレスをお試しください。";
         break;
-      case "operation-not-allowed" :
+      case "operation-not-allowed":
         message = "このプロバイダ及びアカウントは使用できません。他のプロバイダ・アカウントをお試しください。";
         break;
-      case "invalid-email" :
+      case "invalid-email":
         message = "有効なメールアドレスと入力してください。";
         break;
-      case "invalid-verification-code" :
+      case "invalid-verification-code":
         message = "アカウントのパスワードが正しくありません。正しいパスワードを使用してください。";
         break;
-      case "invalid-verification-id" :
+      case "invalid-verification-id":
         message = "アカウントのIDが正しくありません。正しいIDを使用してください。";
         break;
       case "account-exists-with-different-credential":
@@ -264,5 +305,5 @@ class SignInProvider extends ChangeNotifier {
         break;
     }
     return message;
- }
+  }
 }

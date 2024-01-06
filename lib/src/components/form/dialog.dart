@@ -6,21 +6,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 // my package
 import 'package:shift/main.dart';
-import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/components/style/style.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 登録の確認ダイアログ (確認機能付き)
 /// title : タイトルの文章
 /// message1 : 確認メッセージ
 /// message2 : OK選択時に表示するメッセージ
-/// onAccept : OK選択時に実行する関数 
+/// onAccept : OK選択時に実行する関数
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-Future<bool> showConfirmDialog(BuildContext context, WidgetRef ref, String title, String message1, String message2, Function onAccept, [ bool confirm = false, bool error = false] ) async {
-
+Future<bool> showConfirmDialog(
+  BuildContext context,
+  WidgetRef ref,
+  String title,
+  String message1,
+  String message2,
+  Function onAccept, [
+  bool confirm = false,
+  bool error = false,
+]) async {
   ref.read(settingProvider).loadPreferences();
   bool isDark = ref.read(settingProvider).enableDarkTheme;
 
@@ -30,30 +37,53 @@ Future<bool> showConfirmDialog(BuildContext context, WidgetRef ref, String title
     context: context,
     builder: (_) {
       return Theme(
-        data:  isDark ? ThemeData.dark() : ThemeData.light(),
+        data: isDark ? ThemeData.dark() : ThemeData.light(),
         child: CupertinoAlertDialog(
-          title: Text('$title\n', style: error ? MyStyle.defaultStyleRed15 : MyStyle.headlineStyleGreen15),
-          content: Text(message1, style: isDark ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13),
+          title: Text(
+            '$title\n',
+            style:
+                error ? Styles.defaultStyleRed15 : Styles.headlineStyleGreen15,
+          ),
+          content: Text(
+            message1,
+            style: isDark
+                ? Styles.defaultStyleWhite13
+                : Styles.defaultStyleBlack13,
+          ),
           actions: <Widget>[
             // Apply Button
             CupertinoDialogAction(
-              child: Text('OK', style: MyStyle.headlineStyleGreen15),
+              child: Text(
+                'OK',
+                style: Styles.headlineStyleGreen15,
+              ),
               onPressed: () {
                 onAccept();
-                Navigator.pop(context);     
+                Navigator.pop(context);
                 accepted = true;
-                if(confirm){
+                if (confirm) {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return Theme(
                         data: isDark ? ThemeData.dark() : ThemeData.light(),
                         child: CupertinoAlertDialog(
-                          title: Text('完了\n', style: MyStyle.headlineStyleGreen15),
-                          content: Text(message2, style: isDark ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13,),
+                          title: Text(
+                            '完了\n',
+                            style: Styles.headlineStyleGreen15,
+                          ),
+                          content: Text(
+                            message2,
+                            style: isDark
+                                ? Styles.defaultStyleWhite13
+                                : Styles.defaultStyleBlack13,
+                          ),
                           actions: <Widget>[
                             CupertinoDialogAction(
-                              child: Text('OK', style: MyStyle.headlineStyleGreen15),
+                              child: Text(
+                                'OK',
+                                style: Styles.headlineStyleGreen15,
+                              ),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
@@ -68,7 +98,7 @@ Future<bool> showConfirmDialog(BuildContext context, WidgetRef ref, String title
             ),
             // Canncel Button
             CupertinoDialogAction(
-              child: Text('Cancel', style: MyStyle.defaultStyleRed15),
+              child: Text('Cancel', style: Styles.defaultStyleRed15),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -87,10 +117,15 @@ Future<bool> showConfirmDialog(BuildContext context, WidgetRef ref, String title
 /// title : タイトルの文章 message : 確認メッセージ
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void showAlertDialog(BuildContext context, WidgetRef ref, String title, String message, bool error){
-  
+void showAlertDialog(
+  BuildContext context,
+  WidgetRef ref,
+  String title,
+  String message,
+  bool error,
+) {
   ref.read(settingProvider).loadPreferences();
-  
+
   bool isDark = ref.read(settingProvider).enableDarkTheme;
 
   showDialog(
@@ -99,12 +134,27 @@ void showAlertDialog(BuildContext context, WidgetRef ref, String title, String m
       return Theme(
         data: isDark ? ThemeData.dark() : ThemeData.light(),
         child: CupertinoAlertDialog(
-          title: Text('$title\n', style: (!error) ? MyStyle.headlineStyleGreen15 : MyStyle.defaultStyleRed15),
-          content: Text(message,  style: isDark ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13),
+          title: Text(
+            '$title\n',
+            style: (!error)
+                ? Styles.headlineStyleGreen15
+                : Styles.defaultStyleRed15,
+          ),
+          content: Text(
+            message,
+            style: isDark
+                ? Styles.defaultStyleWhite13
+                : Styles.defaultStyleBlack13,
+          ),
           actions: <Widget>[
             // Apply Button
             CupertinoDialogAction(
-              child: Text('OK', style: (!error) ? MyStyle.headlineStyleGreen15 : MyStyle.defaultStyleRed15),
+              child: Text(
+                'OK',
+                style: (!error)
+                    ? Styles.headlineStyleGreen15
+                    : Styles.defaultStyleRed15,
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -116,14 +166,18 @@ void showAlertDialog(BuildContext context, WidgetRef ref, String title, String m
   );
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 選択ダイアログ (Futureで押された値を返す)
 /// title : タイトルの文章 message : 選択のためのヒント
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-Future<int?> showSelectDialog(BuildContext context, WidgetRef ref, String title, String message, List<String> options) async {
-  
+Future<int?> showSelectDialog(
+  BuildContext context,
+  WidgetRef ref,
+  String title,
+  String message,
+  List<String> options,
+) async {
   int? selectedOption;
 
   ref.read(settingProvider).loadPreferences();
@@ -131,23 +185,32 @@ Future<int?> showSelectDialog(BuildContext context, WidgetRef ref, String title,
 
   await showDialog(
     context: context,
-    barrierColor: isDark ? Colors.grey.withOpacity(0.1) : Colors.black.withOpacity(0.5),
+    barrierColor:
+        isDark ? Colors.grey.withOpacity(0.1) : Colors.black.withOpacity(0.5),
     builder: (BuildContext context) {
       return Theme(
         data: isDark ? ThemeData.dark() : ThemeData.light(),
         child: CupertinoAlertDialog(
-          title: Text('$title\n', style: MyStyle.headlineStyleGreen15),
+          title: Text(
+            '$title\n',
+            style: Styles.headlineStyleGreen15,
+          ),
           content: Column(
             children: [
-              for(int i = 0; i < options.length; i++)
-              CupertinoDialogAction(
-                child: Text(options[i], style: isDark ? MyStyle.defaultStyleWhite13 : MyStyle.defaultStyleBlack13),
-                onPressed: () {
-                  selectedOption = i;
-                  Navigator.pop(context);
-                }
-              )
-            ]
+              for (int i = 0; i < options.length; i++)
+                CupertinoDialogAction(
+                  child: Text(
+                    options[i],
+                    style: isDark
+                        ? Styles.defaultStyleWhite13
+                        : Styles.defaultStyleBlack13,
+                  ),
+                  onPressed: () {
+                    selectedOption = i;
+                    Navigator.pop(context);
+                  },
+                ),
+            ],
           ),
         ),
       );
@@ -162,10 +225,13 @@ Future<int?> showSelectDialog(BuildContext context, WidgetRef ref, String title,
 /// title : タイトルの文章 message : 選択のためのヒント
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-Future<int?> showInfoDialog(BuildContext context, WidgetRef ref, String title, Widget description) async {
-  
+Future<int?> showInfoDialog(
+  BuildContext context,
+  WidgetRef ref,
+  String title,
+  Widget description,
+) async {
   int? selectedOption;
-
   ref.read(settingProvider).loadPreferences();
 
   await showDialog(
@@ -174,12 +240,19 @@ Future<int?> showInfoDialog(BuildContext context, WidgetRef ref, String title, W
       return StatefulBuilder(
         builder: (context, SetState) {
           return AlertDialog(
-            insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            title: Text(title, style:  MyStyle.headlineStyleGreen20, textAlign: TextAlign.center),
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 20,
+            ),
+            title: Text(
+              title,
+              style: Styles.headlineStyleGreen20,
+              textAlign: TextAlign.center,
+            ),
             content: SizedBox(
               width: MediaQuery.of(context).size.width * 0.90,
               child: SingleChildScrollView(
-                child: description
+                child: description,
               ),
             ),
             actions: <Widget>[
@@ -191,9 +264,9 @@ Future<int?> showInfoDialog(BuildContext context, WidgetRef ref, String title, W
               ),
             ],
           );
-        }
+        },
       );
-    }
+    },
   );
 
   return selectedOption;

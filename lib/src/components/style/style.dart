@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MyStyle{
+class Styles{
   static TextStyle headlineStyle20 = GoogleFonts.mPlus1(fontSize: 20, fontWeight: FontWeight.bold);
   static TextStyle headlineStyle18 = GoogleFonts.mPlus1(fontSize: 18, fontWeight: FontWeight.bold);
   static TextStyle headlineStyle15 = GoogleFonts.mPlus1(fontSize: 15, fontWeight: FontWeight.bold);
@@ -51,7 +51,7 @@ class MyStyle{
  static const TextHeightBehavior defaultBehavior = TextHeightBehavior(applyHeightToLastDescent: false, applyHeightToFirstAscent: false);
 
   // Colors
-  static const backgroundColor          = Color(0xffffffff);
+  static const bgColor          = Color(0xffffffff);
   static const secondaryBackgroundColor = Color.fromARGB(255, 255, 254, 250);
   static const primaryColor             = Color(0xff14C38E);
   static const secondaryColor           = Color(0xffB8F1B0);

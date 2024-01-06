@@ -1,14 +1,12 @@
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 import 'package:flutter/material.dart';
 
-import 'package:shift/src/mylibs/shift/shift_frame.dart';
-import 'package:shift/src/mylibs/shift/shift_request.dart';
-import 'package:shift/src/mylibs/shift/shift_table.dart';
-
+import 'package:shift/src/components/shift/shift_frame.dart';
+import 'package:shift/src/components/shift/shift_request.dart';
+import 'package:shift/src/components/shift/shift_table.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// シフト関係のクラスの Provider
@@ -26,7 +24,6 @@ class ShiftFrameProvider extends ChangeNotifier {
 }
 
 class ShiftRequestProvider extends ChangeNotifier {
-
   ShiftRequest _shiftRequest = ShiftRequest(ShiftFrame());
 
   ShiftRequest get shiftRequest => _shiftRequest;
@@ -38,8 +35,10 @@ class ShiftRequestProvider extends ChangeNotifier {
 }
 
 class ShiftTableProvider extends ChangeNotifier {
-
-  ShiftTable _shiftTable = ShiftTable(ShiftFrame(), [ShiftRequest(ShiftFrame())]);
+  ShiftTable _shiftTable = ShiftTable(
+    ShiftFrame(),
+    [ShiftRequest(ShiftFrame())],
+  );
 
   ShiftTable get shiftTable => _shiftTable;
 

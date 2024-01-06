@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 import 'package:flutter/material.dart';
-import 'package:shift/src/mylibs/style.dart';
+import 'package:shift/src/components/style/style.dart';
 
 
 // 未実装
@@ -24,7 +24,7 @@ class NotificationScreen extends StatelessWidget {
               return Container(
                 height: 80,
                 width: 80,
-                color: MyStyle.primaryColor,
+                color: Styles.primaryColor,
               );
             },
             padding: EdgeInsets.zero,
