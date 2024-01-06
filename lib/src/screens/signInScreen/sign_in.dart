@@ -38,42 +38,42 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
           FocusScope.of(context).unfocus();
         },
         child: Container(
-          decoration: MyStyle.gradientDecolation,
+          decoration: Styles.gradientDecolation,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text('Shifty へようこそ', style: MyStyle.headlineStyleWhite25),
+                Text('Shifty へようこそ', style: Styles.headlineStyleWhite25),
                 const SizedBox(height: 10),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.8, child: const Divider(color: Colors.white,)),
                 const SizedBox(height: 10),
-                Text('メールアドレスを用いてログイン', style: MyStyle.headlineStyleWhite20),
+                Text('メールアドレスを用いてログイン', style: Styles.headlineStyleWhite20),
                 const SizedBox(height: 10),
                 SizedBox(
                   width: min(MediaQuery.of(context).size.width * 0.8, 300),
                   child: TextFormField(
                     controller: inputMailController,
-                    cursorColor: MyStyle.backgroundColor,
-                    style: MyStyle.defaultStyleWhite15,
+                    cursorColor: Styles.bgColor,
+                    style: Styles.defaultStyleWhite15,
                     autofillHints: const [AutofillHints.email], 
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
-                      prefixIconColor: MyStyle.primaryColor,
+                      prefixIconColor: Styles.primaryColor,
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: MyStyle.backgroundColor,
+                          color: Styles.bgColor,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: MyStyle.backgroundColor,
+                          color: Styles.bgColor,
                         ),
                       ),
                       prefixIcon: const Icon(Icons.input, color: Colors.white),
                       hintText: 'メールアドレス',
-                      hintStyle: MyStyle.defaultStyleWhite15,
+                      hintStyle: Styles.defaultStyleWhite15,
                     ),
                     keyboardType: TextInputType.text,
                   ),
@@ -85,27 +85,27 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                   width: min(MediaQuery.of(context).size.width * 0.8, 300),
                   child: TextFormField(
                     controller: inputPasswordController,
-                    cursorColor: MyStyle.backgroundColor,
-                    style: MyStyle.defaultStyleWhite15,
+                    cursorColor: Styles.bgColor,
+                    style: Styles.defaultStyleWhite15,
                     autofillHints: const [AutofillHints.password], 
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
-                      prefixIconColor: MyStyle.primaryColor,
+                      prefixIconColor: Styles.primaryColor,
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: MyStyle.backgroundColor,
+                          color: Styles.bgColor,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: MyStyle.backgroundColor,
+                          color: Styles.bgColor,
                         ),
                       ),
                       prefixIcon: const Icon(Icons.input, color: Colors.white),
                       hintText: 'パスワード',
-                      hintStyle: MyStyle.defaultStyleWhite15,
+                      hintStyle: Styles.defaultStyleWhite15,
                     ),
                     keyboardType: TextInputType.text,
                     obscureText: true,
@@ -115,26 +115,26 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    signInButton(context, ref, "mail-create", "", "新規登録", Colors.tealAccent, MyStyle.headlineStyleBlack18, 75, inputMailController.text, inputPasswordController.text),
+                    signInButton(context, ref, "mail-create", "", "新規登録", Colors.tealAccent, Styles.headlineStyleBlack18, 75, inputMailController.text, inputPasswordController.text),
                     const SizedBox(width: 20),
-                    signInButton(context, ref, "mail-signin", "", "ログイン", Colors.yellow[100]!, MyStyle.headlineStyleBlack18, 75, inputMailController.text, inputPasswordController.text),
+                    signInButton(context, ref, "mail-signin", "", "ログイン", Colors.yellow[100]!, Styles.headlineStyleBlack18, 75, inputMailController.text, inputPasswordController.text),
                   ],
                 ),
                 const SizedBox(height: 10),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.8, child: const Divider(color: Colors.white,)),
                 const SizedBox(height: 10),
-                Text('プロバイダーを用いてログイン', style: MyStyle.headlineStyleWhite20),
+                Text('プロバイダーを用いてログイン', style: Styles.headlineStyleWhite20),
                 const SizedBox(height: 10),
-                signInButton(context, ref, "google", "assets/google_logo.png", "sign in with Google", Colors.white, MyStyle.headlineStyleBlack18),
+                signInButton(context, ref, "google", "assets/google_logo.png", "sign in with Google", Colors.white, Styles.headlineStyleBlack18),
                 const SizedBox(height: 10),
-                signInButton(context, ref, "apple", "assets/apple_logo.png",   "sign in with Apple ID", Colors.black, MyStyle.headlineStyleWhite18),
+                signInButton(context, ref, "apple", "assets/apple_logo.png",   "sign in with Apple ID", Colors.black, Styles.headlineStyleWhite18),
                 
                 const SizedBox(height: 10),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.8, child: const Divider(color: Colors.white,)),
                 const SizedBox(height: 10),
-                Text('ゲストユーザとしてログイン', style: MyStyle.headlineStyleWhite20),
+                Text('ゲストユーザとしてログイン', style: Styles.headlineStyleWhite20),
                 const SizedBox(height: 10),
-                signInButton(context, ref, "guest", "assets/person2.png", "ゲストログイン", Colors.tealAccent, MyStyle.headlineStyleBlack18),
+                signInButton(context, ref, "guest", "assets/person2.png", "ゲストログイン", Colors.tealAccent, Styles.headlineStyleBlack18),
               ],
             ),
           ),
@@ -149,7 +149,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
       height: 50,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          shadowColor: MyStyle.hiddenColor, 
+          shadowColor: Styles.hiddenColor, 
           minimumSize: Size.zero,
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(

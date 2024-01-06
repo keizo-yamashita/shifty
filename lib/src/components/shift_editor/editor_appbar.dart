@@ -32,10 +32,19 @@ class EditorAppBar extends StatelessWidget {
           return;
         }
         final NavigatorState navigator = Navigator.of(context);
-        if(registered){
+        if (registered) {
           navigator.pop();
-        }else{
-          final bool shouldPop = await showConfirmDialog( context, ref, "注意", "データが保存されていません。\n未登録のデータは破棄されます。", "", (){}, false, true);
+        } else {
+          final bool shouldPop = await showConfirmDialog(
+            context,
+            ref,
+            "注意",
+            "データが保存されていません。\n未登録のデータは破棄されます。",
+            "",
+            () {},
+            false,
+            true,
+          );
           if (shouldPop) {
             navigator.pop();
           }
@@ -43,34 +52,45 @@ class EditorAppBar extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: FittedBox(fit: BoxFit.fill, child: Text(title, style: MyStyle.headlineStyleGreen20),),
+          title: FittedBox(
+            fit: BoxFit.fill,
+            child: Text(title, style: Styles.headlineStyleGreen20),
+          ),
           bottomOpacity: 2.0,
           elevation: 2.0,
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 5.0),
               child: IconButton(
-                icon: const Icon(Icons.info_outline, size: 30, color: MyStyle.primaryColor),
+                icon: const Icon(
+                  Icons.info_outline,
+                  size: 30,
+                  color: Styles.primaryColor,
+                ),
                 tooltip: "使い方",
                 onPressed: () async {
                   handleInfo?.call();
-                }
+                },
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 5.0),
               child: IconButton(
-                icon: const Icon(Icons.cloud_upload_outlined, size: 30, color: MyStyle.primaryColor),
+                icon: const Icon(
+                  Icons.cloud_upload_outlined,
+                  size: 30,
+                  color: Styles.primaryColor,
+                ),
                 tooltip: "登録する",
-                onPressed: (){
+                onPressed: () {
                   handleRegister?.call();
-                }
+                },
               ),
             ),
           ],
         ),
         resizeToAvoidBottomInset: false,
-        body: content
+        body: content,
       ),
     );
   }

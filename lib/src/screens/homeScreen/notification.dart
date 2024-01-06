@@ -24,7 +24,7 @@ class NotificationScreen extends StatelessWidget {
               return Container(
                 height: 80,
                 width: 80,
-                color: MyStyle.primaryColor,
+                color: Styles.primaryColor,
               );
             },
             padding: EdgeInsets.zero,

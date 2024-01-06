@@ -1,4 +1,3 @@
-
 //////////////////////////////////////////////////////////////////////
 /// import
 //////////////////////////////////////////////////////////////////////
@@ -10,7 +9,11 @@ import 'package:shift/src/components/style/style.dart';
 /// Show Modal Window
 //////////////////////////////////////////////////////////////////////
 
-Future<dynamic> showModalWindow(BuildContext context, double height, Widget child){
+Future<dynamic> showModalWindow(
+  BuildContext context,
+  double height,
+  Widget child,
+) {
   return showModalBottomSheet(
     useRootNavigator: true,
     //モーダルの背景の色、透過
@@ -23,7 +26,7 @@ Future<dynamic> showModalWindow(BuildContext context, double height, Widget chil
     ),
     builder: (BuildContext context) {
       return Padding(
-       padding: const EdgeInsets.symmetric(horizontal: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 0),
         child: Container(
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
@@ -43,21 +46,21 @@ Future<dynamic> showModalWindow(BuildContext context, double height, Widget chil
                   height: 4,
                   decoration: BoxDecoration(
                     color: Colors.grey,
-                    borderRadius: BorderRadius.circular(10)
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 const SizedBox(height: 8),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * height - 20,
                   width: MediaQuery.of(context).size.width,
-                  child: child
+                  child: child,
                 )
               ],
-            )
+            ),
           ),
-        )
+        ),
       );
-    }
+    },
   );
 }
 
@@ -65,27 +68,35 @@ Future<dynamic> showModalWindow(BuildContext context, double height, Widget chil
 /// Show Modal Window の中身の Widget を作るやつ
 //////////////////////////////////////////////////////////////////////
 
-Widget buildModalWindowContainer(BuildContext context,  list, double height, Function(BuildContext, int) onTapped, {Text? title, bool? fadeout}){
+Widget buildModalWindowContainer(
+  BuildContext context,
+  list,
+  double height,
+  Function(BuildContext, int) onTapped, [
+  Text? title,
+  bool? fadeout,
+]) {
   return LayoutBuilder(
-    builder: (context, constraint){
+    builder: (context, constraint) {
       return Column(
         children: [
-          if(title != null)
-          SizedBox(
-            height:40,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: 1,
-              itemBuilder: (BuildContext context, int index){
-                return ListTile(
-                  title: title,
-                  onTap: (){
-                    Navigator.of(context).pop();
-                  },
-                );
-              }
-            ),
-          ),
+          (title != null)
+              ? SizedBox(
+                  height: 40,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: title,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    },
+                  ),
+                )
+              : Container(),
           SizedBox(
             height: MediaQuery.of(context).size.height * height - 20,
             child: ListView.builder(
@@ -93,17 +104,23 @@ Widget buildModalWindowContainer(BuildContext context,  list, double height, Fun
               itemCount: list.length,
               itemBuilder: (BuildContext context, int index) {
                 return Column(
-                  children: [            
+                  children: [
                     ListTile(
-                      title: (list.runtimeType == List<String>) ? Text(list[index], style: MyStyle.headlineStyle15,textAlign: TextAlign.center) : list[index],
+                      title: (list.runtimeType == List<String>)
+                          ? Text(
+                              list[index],
+                              style: Styles.headlineStyle15,
+                              textAlign: TextAlign.center,
+                            )
+                          : list[index],
                       onTap: () {
                         onTapped(context, index);
-                        if(fadeout == null || fadeout == true){
+                        if (fadeout == null || fadeout == true) {
                           Navigator.of(context).pop();
                         }
                       },
                     ),
-                    const Divider(thickness: 2)
+                    const Divider(thickness: 2),
                   ],
                 );
               },
@@ -111,6 +128,6 @@ Widget buildModalWindowContainer(BuildContext context,  list, double height, Fun
           ),
         ],
       );
-    }
+    },
   );
 }

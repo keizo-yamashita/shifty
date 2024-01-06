@@ -5,37 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:shift/src/components/style/style.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-///  ページ上部のツールボタン作成に使用 (onPress OnLongPress 2つの関数を使用)
-///  OnLongPress に 0.5 秒の検出時間がかかるので，GestureDetector で検出したほうがいいかも
+///  ページ上部のツールボタン作成に使用
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 class ToolButton extends StatelessWidget {
   final IconData icon;
-  final bool enable;
+  final bool pressEnable;
   final double width;
-  final bool  slash;
+  final bool offEnable;
   final Function? onPressed;
   final Function? onLongPressed;
 
   const ToolButton({
     Key? key,
     required this.icon,
-    required this.enable,
+    required this.pressEnable,
     required this.width,
-    this.slash = false,
+    this.offEnable = false,
     this.onPressed,
     this.onLongPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
-    // Scaffoldの背景色を取得
-    Color scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    // 全ビットを反転させる（アルファ値は保持）
-    int invertedColorValue = (scaffoldBackgroundColor.value & 0xFF000000) | (~scaffoldBackgroundColor.value & 0x00FFFFFF);
-    // 反転した色をColorオブジェクトとして作成
-    Color invertedColor = Color(invertedColorValue);
+    Color bgColor = Theme.of(context).scaffoldBackgroundColor;
+    int invValue = (bgColor.value & 0xFF000000) | (~bgColor.value & 0x00FFFFFF);
+    Color invBgColor = Color(invValue);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -46,33 +41,40 @@ class ToolButton extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,
-            elevation: 2.0,              // enableがtrueの場合は影をつける
-            shadowColor: invertedColor,  // 影の色を設定
+            elevation: 2.0, // enableがtrueの場合は影をつける
+            shadowColor: invBgColor, // 影の色を設定
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
-            side: BorderSide(color: enable ? MyStyle.primaryColor: MyStyle.hiddenColor),
+            side: BorderSide(
+              color: pressEnable ? Styles.primaryColor : Styles.hiddenColor,
+            ),
           ),
           onPressed: onPressed as void Function()?,
           onLongPress: onLongPressed as void Function()?,
-          child:
-          Stack(
+          child: Stack(
             alignment: Alignment.center,
             children: [
-              Icon(icon, color: enable ? MyStyle.primaryColor : MyStyle.hiddenColor, size: 20),
-              // Icon(icon, color: enable ? Colors.white : MyStyle.hiddenColor, size: 20),
-              if(slash)
-              SizedBox(
-                width: 18, height: 18,
-                child: CustomPaint(
-                  painter: SlashPainter(
-                    lineColor: enable ? MyStyle.primaryColor : Colors.grey,
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    downRight: true
-                  )
-                )
-              )
+              Icon(
+                icon,
+                color: pressEnable ? Styles.primaryColor : Styles.hiddenColor,
+                size: 20,
+              ),
+              offEnable
+                  ? SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CustomPaint(
+                        painter: SlashPainter(
+                          lineColor:
+                              pressEnable ? Styles.primaryColor : Colors.grey,
+                          backgroundColor: bgColor,
+                          downRight: true,
+                        ),
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),
@@ -81,9 +83,9 @@ class ToolButton extends StatelessWidget {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
-///  Auto-Fill UI作成に使用するテキストボタンを構築
-////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+///  Auto-Fill UI 作成に使用するテキストボタンを構築
+/////////////////////////////////////////////////////////////////////////////////
 
 class CustomTextButton extends StatelessWidget {
   final String text;
@@ -108,16 +110,21 @@ class CustomTextButton extends StatelessWidget {
       height: height,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          shadowColor: MyStyle.hiddenColor,
+          shadowColor: Styles.hiddenColor,
           minimumSize: Size.zero,
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),
-          side: BorderSide(color: enable ? MyStyle.primaryColor : MyStyle.hiddenColor),
+          side: BorderSide(
+            color: enable ? Styles.primaryColor : Styles.hiddenColor,
+          ),
         ),
         onPressed: action as void Function()?,
-        child: FittedBox(fit: BoxFit.fill, child: Text(text, style: MyStyle.headlineStyleGreen15)),
+        child: FittedBox(
+          fit: BoxFit.fill,
+          child: Text(text, style: Styles.headlineStyleGreen15),
+        ),
       ),
     );
   }
@@ -148,11 +155,13 @@ class CustomIconButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           minimumSize: Size.zero,
           padding: EdgeInsets.zero,
-          shadowColor: MyStyle.hiddenColor,
+          shadowColor: Styles.hiddenColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),
-          side: BorderSide(color: enable ? MyStyle.primaryColor : MyStyle.hiddenColor),
+          side: BorderSide(
+            color: enable ? Styles.primaryColor : Styles.hiddenColor,
+          ),
         ),
         onPressed: action as void Function()?,
         child: icon,
@@ -161,9 +170,9 @@ class CustomIconButton extends StatelessWidget {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
-///  ページ下部の切り替えボタン作成に使用 (onPress OnLongPress 2つの関数を使用)
-////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+///  ページ下部の切り替えボタン作成に使用
+/////////////////////////////////////////////////////////////////////////////////
 
 class BottomButton extends StatelessWidget {
   final Widget content;
@@ -185,13 +194,9 @@ class BottomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-    // Scaffoldの背景色を取得
-    Color scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    // 全ビットを反転させる（アルファ値は保持）
-    int invertedColorValue = (scaffoldBackgroundColor.value & 0xFF000000) | (~scaffoldBackgroundColor.value & 0x00FFFFFF);
-    // 反転した色をColorオブジェクトとして作成
-    Color invertedColor = Color(invertedColorValue);
+    Color bgColor = Theme.of(context).scaffoldBackgroundColor;
+    int invValue = (bgColor.value & 0xFF000000) | (~bgColor.value & 0x00FFFFFF);
+    Color invBgColor = Color(invValue);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -202,13 +207,15 @@ class BottomButton extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,
-            elevation: 2.0,             // enableがtrueの場合は影をつける
-            shadowColor: invertedColor, // 影の色を設定
+            elevation: 2.0, // enableがtrueの場合は影をつける
+            shadowColor: invBgColor, // 影の色を設定
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
-            side: BorderSide(color: enable ? MyStyle.primaryColor : MyStyle.hiddenColor),
+            side: BorderSide(
+              color: enable ? Styles.primaryColor : Styles.hiddenColor,
+            ),
           ),
           onPressed: onPressed as void Function()?,
           onLongPress: onLongPressed as void Function()?,
@@ -228,23 +235,18 @@ class BottomButton extends StatelessWidget {
 /////////////////////////////////////////////////////////////////////////////////
 
 class SlashPainter extends CustomPainter {
-  
   final Color lineColor;
   final Color backgroundColor;
   final bool downRight;
 
-  SlashPainter({
-    Color? lineColor,
-    Color? backgroundColor,
-    bool? downRight,
-  })
-  : lineColor       = lineColor ?? Colors.grey,
-    backgroundColor = backgroundColor ?? Colors.white,
-    downRight = downRight ?? true;
+  const SlashPainter({
+    this.lineColor = Colors.grey,
+    this.backgroundColor = Colors.white,
+    this.downRight = true,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    
     final paint = Paint();
 
     paint.color = backgroundColor;
@@ -258,8 +260,9 @@ class SlashPainter extends CustomPainter {
 
   // 線を描画するヘルパーメソッド
   void _drawLine(Canvas canvas, Size size, Paint paint) {
-    if(downRight){
-      canvas.drawLine(const Offset(0, 0), Offset(size.width, size.height), paint);
+    if (downRight) {
+      canvas.drawLine(
+          const Offset(0, 0), Offset(size.width, size.height), paint);
     } else {
       canvas.drawLine(Offset(0, size.height), Offset(size.width, 0), paint);
     }

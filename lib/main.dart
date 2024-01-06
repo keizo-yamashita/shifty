@@ -54,10 +54,10 @@ class MyAppState extends ConsumerState<MyApp>{
     return MaterialApp(
       title: 'Shifty',
       theme: ThemeData(
-        primaryColor: MyStyle.primaryColor,
+        primaryColor: Styles.primaryColor,
         appBarTheme: AppBarTheme(
-          backgroundColor: MyStyle.backgroundColor.withOpacity(0.9),
-          foregroundColor: MyStyle.primaryColor,
+          backgroundColor: Styles.bgColor.withOpacity(0.9),
+          foregroundColor: Styles.primaryColor,
           elevation: 2.0
         ),
         cupertinoOverrideTheme: const CupertinoThemeData(
@@ -66,16 +66,16 @@ class MyAppState extends ConsumerState<MyApp>{
         ),
         datePickerTheme: const DatePickerThemeData(
           rangePickerBackgroundColor: Colors.white,
-          rangePickerHeaderForegroundColor: MyStyle.primaryColor,
+          rangePickerHeaderForegroundColor: Styles.primaryColor,
         ),
         brightness: Brightness.light
       ),
       darkTheme: ThemeData(
-        primaryColor: MyStyle.primaryColor,
+        primaryColor: Styles.primaryColor,
         scaffoldBackgroundColor: Colors.grey[800],
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.grey[900]?.withOpacity(0.9),
-          foregroundColor: MyStyle.primaryColor,
+          foregroundColor: Styles.primaryColor,
           elevation: 2.0
         ),
         cupertinoOverrideTheme: const CupertinoThemeData(

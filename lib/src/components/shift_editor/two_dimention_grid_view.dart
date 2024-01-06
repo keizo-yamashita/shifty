@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:math' as math;
 
-
 class TwoDimensionalGridView extends TwoDimensionalScrollView {
   const TwoDimensionalGridView({
     super.key,
@@ -99,14 +98,14 @@ class TwoDimensionalGridViewport extends TwoDimensionalViewport {
     RenderTwoDimensionalGridViewport renderObject,
   ) {
     renderObject
-      ..horizontalOffset        = horizontalOffset
+      ..horizontalOffset = horizontalOffset
       ..horizontalAxisDirection = horizontalAxisDirection
-      ..verticalOffset          = verticalOffset
-      ..verticalAxisDirection   = verticalAxisDirection
-      ..mainAxis                = mainAxis
-      ..delegate                = delegate
-      ..cacheExtent             = cacheExtent
-      ..clipBehavior            = clipBehavior;
+      ..verticalOffset = verticalOffset
+      ..verticalAxisDirection = verticalAxisDirection
+      ..mainAxis = mainAxis
+      ..delegate = delegate
+      ..cacheExtent = cacheExtent
+      ..clipBehavior = clipBehavior;
   }
 }
 
@@ -135,39 +134,66 @@ class RenderTwoDimensionalGridViewport extends RenderTwoDimensionalViewport {
   @override
   void layoutChildSequence() {
     final double horizontalPixels = horizontalOffset.pixels;
-    final double verticalPixels   = verticalOffset.pixels;
-    final double viewportWidth    = viewportDimension.width + cacheExtent;
-    final double viewportHeight   = viewportDimension.height + cacheExtent;
-    final TwoDimensionalChildBuilderDelegate builderDelegate = delegate as TwoDimensionalChildBuilderDelegate;
+    final double verticalPixels = verticalOffset.pixels;
+    final double viewportWidth = viewportDimension.width + cacheExtent;
+    final double viewportHeight = viewportDimension.height + cacheExtent;
+    final TwoDimensionalChildBuilderDelegate builderDelegate =
+        delegate as TwoDimensionalChildBuilderDelegate;
 
-    final int maxRowIndex    = builderDelegate.maxYIndex!;
+    final int maxRowIndex = builderDelegate.maxYIndex!;
     final int maxColumnIndex = builderDelegate.maxXIndex!;
 
-    final int leadingColumn  = math.max(((horizontalPixels+otherColumnWidth-firstColumnWidth) / otherColumnWidth).floor(), 0);
-    final int leadingRow     = math.max(((verticalPixels+otherRowHeight-firstRowHeight) / otherRowHeight).floor(), 0);
-    final int trailingColumn = math.min(((horizontalPixels + viewportWidth) / otherColumnWidth).ceil(), maxColumnIndex);
-    final int trailingRow    = math.min(((verticalPixels + viewportHeight) / otherRowHeight).ceil(), maxRowIndex);
+    final int leadingColumn = math.max(
+      ((horizontalPixels + otherColumnWidth - firstColumnWidth) /
+              otherColumnWidth)
+          .floor(),
+      0,
+    );
+    final int leadingRow = math.max(
+      ((verticalPixels + otherRowHeight - firstRowHeight) / otherRowHeight)
+          .floor(),
+      0,
+    );
+    final int trailingColumn = math.min(
+      ((horizontalPixels + viewportWidth) / otherColumnWidth).ceil(),
+      maxColumnIndex,
+    );
+    final int trailingRow = math.min(
+      ((verticalPixels + viewportHeight) / otherRowHeight).ceil(),
+      maxRowIndex,
+    );
 
-    double xLayoutOffset = (leadingColumn == 0 ? 0 : (firstColumnWidth + (leadingColumn - 1) * otherColumnWidth)) - horizontalOffset.pixels;
-    
+    double xLayoutOffset = (leadingColumn == 0
+            ? 0
+            : (firstColumnWidth + (leadingColumn - 1) * otherColumnWidth)) -
+        horizontalOffset.pixels;
+
     for (int column = leadingColumn; column <= trailingColumn; column++) {
-      double yLayoutOffset = (leadingRow == 0 ? 0 : (firstRowHeight + (leadingRow - 1) * otherRowHeight)) - verticalOffset.pixels;
+      double yLayoutOffset = (leadingRow == 0
+              ? 0
+              : (firstRowHeight + (leadingRow - 1) * otherRowHeight)) -
+          verticalOffset.pixels;
 
       for (int row = leadingRow; row <= trailingRow; row++) {
-        final ChildVicinity vicinity = ChildVicinity(xIndex: column, yIndex: row);
+        
+        final ChildVicinity vicinity = ChildVicinity(
+          xIndex: column,
+          yIndex: row,
+        );
+
         final RenderBox child = buildOrObtainChildFor(vicinity)!;
         child.layout(constraints.loosen());
 
         // Subclasses only need to set the normalized layout offset. The super
         // class adjusts for reversed axes.
         parentDataOf(child).layoutOffset = Offset(xLayoutOffset, yLayoutOffset);
-        if(row == 0) {
+        if (row == 0) {
           yLayoutOffset += firstRowHeight;
         } else {
           yLayoutOffset += otherRowHeight;
         }
       }
-      if(column == 0) {
+      if (column == 0) {
         xLayoutOffset += firstColumnWidth;
       } else {
         xLayoutOffset += otherColumnWidth;
@@ -175,15 +201,28 @@ class RenderTwoDimensionalGridViewport extends RenderTwoDimensionalViewport {
     }
 
     // Set the min and max scroll extents for each axis.
-    final double verticalExtent = otherRowHeight * (maxRowIndex + 1) + (firstRowHeight-otherRowHeight)*2;
+    final double verticalExtent = otherRowHeight * (maxRowIndex + 1) +
+        (firstRowHeight - otherRowHeight) * 2;
+
     verticalOffset.applyContentDimensions(
       0.0,
-      clampDouble(verticalExtent - viewportDimension.height, 1.0, double.infinity),
+      clampDouble(
+        verticalExtent - viewportDimension.height,
+        1.0,
+        double.infinity,
+      ),
     );
-    final double horizontalExtent = otherColumnWidth * (maxColumnIndex + 1) + (firstColumnWidth-otherColumnWidth)*2;
+
+    final double horizontalExtent = otherColumnWidth * (maxColumnIndex + 1) +
+        (firstColumnWidth - otherColumnWidth) * 2;
+
     horizontalOffset.applyContentDimensions(
       0.0,
-      clampDouble(horizontalExtent - viewportDimension.width, 1.0, double.infinity),
+      clampDouble(
+        horizontalExtent - viewportDimension.width,
+        1.0,
+        double.infinity,
+      ),
     );
   }
 }

@@ -42,21 +42,21 @@ class AccountScreen extends ConsumerWidget {
             decoration: const BoxDecoration(
               shape: BoxShape.circle
             ),
-            child: const Icon(Icons.account_circle_outlined, color: MyStyle.primaryColor, size: 80),
+            child: const Icon(Icons.account_circle_outlined, color: Styles.primaryColor, size: 80),
           ),
           (ref.read(signInProvider).user != null)
           ? Column(
             children: [
               const SizedBox(height: 20),
               if(!ref.read(signInProvider).user!.isAnonymous) ...[
-                Text("ユーザー名 : ${ref.read(signInProvider).user?.providerData[0].displayName ?? ref.read(signInProvider).user?.uid ?? ''}", style: MyStyle.headlineStyle15, overflow: TextOverflow.ellipsis),
-                Text("メール : ${ref.read(signInProvider).user?.providerData[0].email ?? ''}", style: MyStyle.headlineStyle15, overflow: TextOverflow.ellipsis),
-                Text("ユーザーID : ${ref.read(signInProvider).user?.uid ?? ''}", style: MyStyle.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                Text("ユーザー名 : ${ref.read(signInProvider).user?.providerData[0].displayName ?? ref.read(signInProvider).user?.uid ?? ''}", style: Styles.headlineStyle15, overflow: TextOverflow.ellipsis),
+                Text("メール : ${ref.read(signInProvider).user?.providerData[0].email ?? ''}", style: Styles.headlineStyle15, overflow: TextOverflow.ellipsis),
+                Text("ユーザーID : ${ref.read(signInProvider).user?.uid ?? ''}", style: Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: 200,
                   child: OutlinedButton(
-                    child: Text('ログアウト', style: MyStyle.defaultStyleRed15),
+                    child: Text('ログアウト', style: Styles.defaultStyleRed15),
                     onPressed: () {
                       showConfirmDialog(
                         context, ref, "確認", "ログアウトしますか？\n登録したデータは失われません。", "ログアウトしました。", (){
@@ -71,7 +71,7 @@ class AccountScreen extends ConsumerWidget {
                 SizedBox(
                   width: 200,
                   child: OutlinedButton(
-                    child: Text('アカウント削除', style: MyStyle.defaultStyleRed15),
+                    child: Text('アカウント削除', style: Styles.defaultStyleRed15),
                     onPressed: () {
                       showConfirmDialog(
                         context, ref, "確認", "アカウントを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "ユーザを削除しました。", (){
@@ -94,13 +94,13 @@ class AccountScreen extends ConsumerWidget {
                 ),
               ]
               else ...[
-                Text("ゲストユーザ", style: MyStyle.headlineStyle20, overflow: TextOverflow.ellipsis),
-                Text("${ref.read(signInProvider).user?.uid}", style: MyStyle.headlineStyle15, overflow: TextOverflow.ellipsis),
+                Text("ゲストユーザ", style: Styles.headlineStyle20, overflow: TextOverflow.ellipsis),
+                Text("${ref.read(signInProvider).user?.uid}", style: Styles.headlineStyle15, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: 200,
                   child: OutlinedButton(
-                    child: Text('ゲストユーザの削除', style: MyStyle.defaultStyleRed15),
+                    child: Text('ゲストユーザの削除', style: Styles.defaultStyleRed15),
                     onPressed: () {
                       showConfirmDialog(
                         context, ref, "確認", "ゲストデータを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "ゲストユーザを削除しました。", (){
@@ -125,7 +125,7 @@ class AccountScreen extends ConsumerWidget {
                 SizedBox(
                   width: 200,
                   child: OutlinedButton(
-                    child: Text('アカウント連携', style: MyStyle.headlineStyleGreen15),
+                    child: Text('アカウント連携', style: Styles.headlineStyleGreen15),
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (c) => const LinkAccountScreen()));
                     },
@@ -137,12 +137,12 @@ class AccountScreen extends ConsumerWidget {
           : Column(
             children: [
               const SizedBox(height: 20),
-              Text("未ログイン状態", style: MyStyle.headlineStyle15, overflow: TextOverflow.ellipsis),
+              Text("未ログイン状態", style: Styles.headlineStyle15, overflow: TextOverflow.ellipsis),
               const SizedBox(height: 20),
               SizedBox(
                 width: 150,
                 child: OutlinedButton(
-                  child: Text('ログイン画面へ', style: MyStyle.headlineStyleGreen15),
+                  child: Text('ログイン画面へ', style: Styles.headlineStyleGreen15),
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (c) => const SignInScreen()));
                   },

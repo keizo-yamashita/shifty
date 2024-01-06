@@ -40,14 +40,14 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
               children: [
                 SizedBox(
                   width: _screenSize.width * 0.8,
-                  child: Text("カラーテーマの設定", style: MyStyle.headlineStyle20)
+                  child: Text("カラーテーマの設定", style: Styles.headlineStyle20)
                 ),
                 SizedBox(
                   child: ListTile(
-                    title: Text((enableDarkTheme) ? "ダークテーマ" : "ライトテーマ", style: MyStyle.headlineStyle15),
+                    title: Text((enableDarkTheme) ? "ダークテーマ" : "ライトテーマ", style: Styles.headlineStyle15),
                     leading: CupertinoSwitch(
-                      thumbColor: MyStyle.primaryColor,
-                      activeColor : MyStyle.primaryColor.withAlpha(100),
+                      thumbColor: Styles.primaryColor,
+                      activeColor : Styles.primaryColor.withAlpha(100),
                       value: enableDarkTheme,
                       onChanged: (result){
                         setState(() {
@@ -58,20 +58,20 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     ),
                   ),
                 ),
-                Text("「ライトテーマ」/「ダークテーマ」どちらを使用するか設定します。", style: MyStyle.defaultStyleGrey15),
+                Text("「ライトテーマ」/「ダークテーマ」どちらを使用するか設定します。", style: Styles.defaultStyleGrey15),
                 
                 SizedBox(height: _screenSize.height * 0.05),
       
                 SizedBox(
                   width: _screenSize.width * 0.8,
-                  child: Text("デフォルトで表示するシフト表", style: MyStyle.headlineStyle20)
+                  child: Text("デフォルトで表示するシフト表", style: Styles.headlineStyle20)
                 ),
                 SizedBox(
                   child: ListTile(
-                    title: Text((defaultShiftView) ? "管理中のシフト表" : "フォロー中のシフト表", style: MyStyle.headlineStyle15),
+                    title: Text((defaultShiftView) ? "管理中のシフト表" : "フォロー中のシフト表", style: Styles.headlineStyle15),
                     leading: CupertinoSwitch(
-                      thumbColor: MyStyle.primaryColor,
-                      activeColor : MyStyle.primaryColor.withAlpha(100),
+                      thumbColor: Styles.primaryColor,
+                      activeColor : Styles.primaryColor.withAlpha(100),
                       value: defaultShiftView,
                       onChanged: (result){
                         setState(() {
@@ -82,8 +82,8 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     ),
                   ),
                 ),
-                Text("「ホーム画面」で「管理中のシフト表」/「フォロー中のシフト表」どちらをデフォルト表示にするか設定します。", style: MyStyle.defaultStyleGrey15),
-                Text("シフト表管理者は「管理中のシフト表」を設定することをお勧めします。", style: MyStyle.defaultStyleGrey15)
+                Text("「ホーム画面」で「管理中のシフト表」/「フォロー中のシフト表」どちらをデフォルト表示にするか設定します。", style: Styles.defaultStyleGrey15),
+                Text("シフト表管理者は「管理中のシフト表」を設定することをお勧めします。", style: Styles.defaultStyleGrey15)
               ],
             ),
           ),

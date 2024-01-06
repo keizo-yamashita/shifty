@@ -60,7 +60,7 @@ class SplashScreenState extends ConsumerState<SplashScreen> with DeepLinkMixin{
 
     return Material(
       child: Container(
-        decoration: MyStyle.gradientDecolation,
+        decoration: Styles.gradientDecolation,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(40.0),

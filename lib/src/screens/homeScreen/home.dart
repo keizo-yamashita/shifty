@@ -85,13 +85,13 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
                 if (snapshot.hasError) {
                   return const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Center(child: CircularProgressIndicator(color: MyStyle.defaultColor)),
+                    child: Center(child: CircularProgressIndicator(color: Styles.defaultColor)),
                   );
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Center(child: CircularProgressIndicator(color: MyStyle.primaryColor)),
+                    child: Center(child: CircularProgressIndicator(color: Styles.primaryColor)),
                   );
                 }
                 return FutureBuilder<Widget>(
@@ -100,12 +100,12 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
                     if(snapshot.connectionState == ConnectionState.waiting){
                       return const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Center(child: CircularProgressIndicator(color: MyStyle.primaryColor)),
+                        child: Center(child: CircularProgressIndicator(color: Styles.primaryColor)),
                       );
                     }else if(snapshot.hasError) {
                       return const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Center(child: CircularProgressIndicator(color: MyStyle.defaultColor)),
+                        child: Center(child: CircularProgressIndicator(color: Styles.defaultColor)),
                       );
                     }else{
                       return snapshot.data!;
@@ -129,13 +129,13 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
                 if (snapshot.hasError) {
                   return const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Center(child: CircularProgressIndicator(color: MyStyle.defaultColor)),
+                    child: Center(child: CircularProgressIndicator(color: Styles.defaultColor)),
                   );
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Center(child: CircularProgressIndicator(color: MyStyle.primaryColor)),
+                    child: Center(child: CircularProgressIndicator(color: Styles.primaryColor)),
                   );
                 }
                 return FutureBuilder<Widget>(
@@ -144,12 +144,12 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Center(child: CircularProgressIndicator(color: MyStyle.primaryColor)),
+                        child: Center(child: CircularProgressIndicator(color: Styles.primaryColor)),
                       );
                     } else if (snapshot.hasError) {
                       return const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Center(child: CircularProgressIndicator(color: MyStyle.defaultColor)),
+                        child: Center(child: CircularProgressIndicator(color: Styles.defaultColor)),
                       );
                     } else {
                       return snapshot.data!;
@@ -173,8 +173,8 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: _screenSize.height/60, right: _screenSize.width/60),
         child: FloatingActionButton(
-          foregroundColor: MyStyle.backgroundColor,
-          backgroundColor: MyStyle.primaryColor,
+          foregroundColor: Styles.bgColor,
+          backgroundColor: Styles.primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(40),
           ),
@@ -215,9 +215,9 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
             height: 60,
             child: TabBar(
               controller: _tabController,
-              indicatorColor: MyStyle.primaryColor,
-              labelStyle: MyStyle.headlineStyle15,
-              labelColor: MyStyle.primaryColor,  
+              indicatorColor: Styles.primaryColor,
+              labelStyle: Styles.headlineStyle15,
+              labelColor: Styles.primaryColor,  
               unselectedLabelColor: Colors.grey, 
               tabs: tabList,
             ),
@@ -243,7 +243,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
     if(docs.isEmpty){
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 32.0),
-        child: Text("フォロー中のシフト表はありません。", style: MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
+        child: Text("フォロー中のシフト表はありません。", style: Styles.defaultStyleGrey15, textAlign: TextAlign.center),
       );
     }else{
       // とってきたシフトリクエストが参照しているシフト表を取ってくる
@@ -290,7 +290,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
     if(docs.isEmpty){
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 32.0),
-        child: Text("管理中のシフト表はありません。", style: MyStyle.defaultStyleGrey15, textAlign: TextAlign.center),
+        child: Text("管理中のシフト表はありません。", style: Styles.defaultStyleGrey15, textAlign: TextAlign.center),
       );
     }else{
       // とってきたシフトリクエストが参照しているシフト表を取ってくる
@@ -326,8 +326,8 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
             (){
               var message = "[Shifty] シフト表の共有\n\n";
               message += "シフト名　　　 : ${frame.shiftName} \n";
-              message += "リクエスト期間 : ${DateFormat('MM/dd').format(frame.shiftDateRange[1].start)} - ${DateFormat('MM/dd').format(frame.shiftDateRange[1].end)}\n";
-              message += "シフト期間　　 : ${DateFormat('MM/dd').format(frame.shiftDateRange[0].start)} - ${DateFormat('MM/dd').format(frame.shiftDateRange[0].end)}\n\n";
+              message += "リクエスト期間 : ${DateFormat('MM/dd').format(frame.dateTerm[1].start)} - ${DateFormat('MM/dd').format(frame.dateTerm[1].end)}\n";
+              message += "シフト期間　　 : ${DateFormat('MM/dd').format(frame.dateTerm[0].start)} - ${DateFormat('MM/dd').format(frame.dateTerm[0].end)}\n\n";
               message += "下記のリンクよりシフトリクエストを入力して下さい。\n";
               message += "shifty://user/?id=${frame.shiftId}";
               message += "\n\n";
@@ -355,8 +355,8 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
                   var message = "[Shifty] シフト表入力依頼です。\n";
                   message += "下記のリンクより入力してください。\n";
                   message += "シフト名      : ${frame.shiftName} \n";
-                  message += "　シフト期間　 : ${DateFormat('MM/dd').format(frame.shiftDateRange[0].start)} - ${DateFormat('MM/dd').format(frame.shiftDateRange[0].end)}\n";
-                  message += "リクエスト期間 : ${DateFormat('MM/dd').format(frame.shiftDateRange[1].start)} - ${DateFormat('MM/dd').format(frame.shiftDateRange[1].end)}\n";
+                  message += "　シフト期間　 : ${DateFormat('MM/dd').format(frame.dateTerm[0].start)} - ${DateFormat('MM/dd').format(frame.dateTerm[0].end)}\n";
+                  message += "リクエスト期間 : ${DateFormat('MM/dd').format(frame.dateTerm[1].start)} - ${DateFormat('MM/dd').format(frame.dateTerm[1].end)}\n";
                   message += "shifty://user/?id=${frame.shiftId}";
                   Share.share(message);
                 }

@@ -73,7 +73,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
       insertBuffer(shiftFrame.assignTable);
     }
 
-    int columnLength = shiftFrame.shiftDateRange[0].end.difference(shiftFrame.shiftDateRange[0].start).inDays + 1;
+    int columnLength = shiftFrame.dateTerm[0].end.difference(shiftFrame.dateTerm[0].start).inDays + 1;
     int rowLength    = shiftFrame.timeDivs.length;
 
     return EditorAppBar(
@@ -115,15 +115,15 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                   //　拡大縮小ボタン
-                  ToolButton(icon: Icons.zoom_in,  enable: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn),
-                  ToolButton(icon: Icons.zoom_out, enable: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut),
+                  ToolButton(icon: Icons.zoom_in,  pressEnable: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn),
+                  ToolButton(icon: Icons.zoom_out, pressEnable: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut),
                   // 範囲入力ボタン
-                  ToolButton(icon: Icons.filter_alt_outlined, enable: true, width: screenSize.width/7, onPressed: handleRangeFill),
+                  ToolButton(icon: Icons.filter_alt_outlined, pressEnable: true, width: screenSize.width/7, onPressed: handleRangeFill),
                   // タッチ入力ボタン
-                  ToolButton(icon: Icons.touch_app_outlined, enable: true, slash: !enableEdit, width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
+                  ToolButton(icon: Icons.touch_app_outlined, pressEnable: true, offEnable: !enableEdit, width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
                   // Redo Undo ボタン
-                  ToolButton(icon: Icons.undo, enable: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo),
-                  ToolButton(icon: Icons.redo, enable: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo)
+                  ToolButton(icon: Icons.undo, pressEnable: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo),
+                  ToolButton(icon: Icons.redo, pressEnable: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo)
                   ],
                 ),
               ),
@@ -153,7 +153,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
               onInputEnd: (){
                 insertBuffer(shiftFrame.assignTable);
               },
-              columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftFrame.shiftDateRange[0].start, shiftFrame.shiftDateRange[0].end, isDark),
+              columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftFrame.dateTerm[0].start, shiftFrame.dateTerm[0].end, isDark),
               rowTitles: getRowTitles(cellHeight, cellWidth*3.5, shiftFrame.timeDivs, isDark),
               cells: List<List<Widget>>.generate(
                 rowLength, 
@@ -203,7 +203,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
         ),
         color: cellColor
       ),
-      child: Center(child: Text(cellValue, style: TextStyle(color: cellFontColor, fontSize: fontSize), textHeightBehavior: MyStyle.defaultBehavior, textAlign: TextAlign.center))
+      child: Center(child: Text(cellValue, style: TextStyle(color: cellFontColor, fontSize: fontSize), textHeightBehavior: Styles.defaultBehavior, textAlign: TextAlign.center))
     );
   }
 
@@ -304,7 +304,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
         List<Widget>.generate(assignNumSelect.length, (index) => Row(
             mainAxisAlignment:  MainAxisAlignment.center,
             children: [ 
-              Text(assignNumSelect[index], style: MyStyle.headlineStyle13,textAlign: TextAlign.center),
+              Text(assignNumSelect[index], style: Styles.headlineStyle13,textAlign: TextAlign.center),
             ],
           )
         ),
@@ -376,7 +376,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
           builder: (context, setState) {
             return AlertDialog(
               insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              title: Text("「シフト作成画面②」の使い方", style:  MyStyle.headlineStyleGreen20, textAlign: TextAlign.center),
+              title: Text("「シフト作成画面②」の使い方", style:  Styles.headlineStyleGreen20, textAlign: TextAlign.center),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.95,
                 height: MediaQuery.of(context).size.height * 0.95,
@@ -385,7 +385,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 20),
-                      Text("この画面では、シフト表の割り当て人数を設定します。", style: MyStyle.defaultStyleGrey13),
+                      Text("この画面では、シフト表の割り当て人数を設定します。", style: Styles.defaultStyleGrey13),
                       
                       // About Shift Table Buttons 
                       const SizedBox(height: 20),
@@ -394,10 +394,10 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                           children: [
                             SizedBox(
                               width: 10,
-                              child : displayInfoFlag[0] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
+                              child : displayInfoFlag[0] ? Text("-", style: Styles.headlineStyleGreen18) : Text("+", style: Styles.headlineStyleGreen18),
                             ),
                             const SizedBox(width: 10),
-                            Text("割り当て人数の設定について", style: MyStyle.headlineStyleGreen18),
+                            Text("割り当て人数の設定について", style: Styles.headlineStyleGreen18),
                           ],
                         ),
                         onPressed: (){
@@ -413,28 +413,28 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // How to Edit
-                            Text("この画面では、シフト表の各日時に対する割り当て人数を設定します。", style: MyStyle.defaultStyleGrey13),
-                            Text("シフト表作成後に割り当て人数を変更することはできません。", style: MyStyle.defaultStyleRed13),
+                            Text("この画面では、シフト表の各日時に対する割り当て人数を設定します。", style: Styles.defaultStyleGrey13),
+                            Text("シフト表作成後に割り当て人数を変更することはできません。", style: Styles.defaultStyleRed13),
                             const SizedBox(height: 20),
-                            Text("編集方法", style: MyStyle.headlineStyle15),
+                            Text("編集方法", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("シフト表の各マスの数字は、その日時の割り当て人数を示すものです。", style: MyStyle.defaultStyleGrey13),
-                            Text("画面上部のツールボタンを使用することで、割り当て人数を編集できます。", style: MyStyle.defaultStyleGrey13),
+                            Text("シフト表の各マスの数字は、その日時の割り当て人数を示すものです。", style: Styles.defaultStyleGrey13),
+                            Text("画面上部のツールボタンを使用することで、割り当て人数を編集できます。", style: Styles.defaultStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/create_2_1.png"),
                             ),
-                            Text("画面を横向きにすることもできます。", style: MyStyle.defaultStyleGrey13), 
-                            Text("見やすい画面で作業しましょう。", style: MyStyle.defaultStyleGrey13), 
+                            Text("画面を横向きにすることもできます。", style: Styles.defaultStyleGrey13), 
+                            Text("見やすい画面で作業しましょう。", style: Styles.defaultStyleGrey13), 
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/create_2_2.png"),
                             ),
-                            Text("登録方法", style: MyStyle.headlineStyle15),
+                            Text("登録方法", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("編集後は、画面右上の「登録」ボタンを押して登録して下さい。", style: MyStyle.defaultStyleGrey13),
-                            Text("編集内容を「登録」しない場合、画面遷移時に破棄されます。", style: MyStyle.defaultStyleRed13),
-                            Text("作成したシフト表の共有方法については、「ホーム画面」の i ボタンより参照して下さい。", style: MyStyle.defaultStyleGrey13),
+                            Text("編集後は、画面右上の「登録」ボタンを押して登録して下さい。", style: Styles.defaultStyleGrey13),
+                            Text("編集内容を「登録」しない場合、画面遷移時に破棄されます。", style: Styles.defaultStyleRed13),
+                            Text("作成したシフト表の共有方法については、「ホーム画面」の i ボタンより参照して下さい。", style: Styles.defaultStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/create_2_3.png"),
@@ -450,10 +450,10 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                           children: [
                             SizedBox(
                               width: 10,
-                              child : displayInfoFlag[1] ? Text("-", style: MyStyle.headlineStyleGreen18) : Text("+", style: MyStyle.headlineStyleGreen18),
+                              child : displayInfoFlag[1] ? Text("-", style: Styles.headlineStyleGreen18) : Text("+", style: Styles.headlineStyleGreen18),
                             ),
                             const SizedBox(width: 10),
-                            Text("ツールボタンについて", style: MyStyle.headlineStyleGreen18),
+                            Text("ツールボタンについて", style: Styles.headlineStyleGreen18),
                           ],
                         ),
                         onPressed: (){
@@ -468,33 +468,33 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("画面上部のツールボタンを用いることで、効率的な編集を行うことができます。", style: MyStyle.defaultStyleGrey13),
+                            Text("画面上部のツールボタンを用いることで、効率的な編集を行うことができます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 20),
                             // Zoom Out / In Button
-                            Text("拡大・縮小ボタン", style: MyStyle.headlineStyle15),
+                            Text("拡大・縮小ボタン", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("表の拡大・縮小ができます。", style: MyStyle.defaultStyleGrey13),
-                            Text("見やすいサイズで作業しましょう。", style: MyStyle.defaultStyleGrey13),
+                            Text("表の拡大・縮小ができます。", style: Styles.defaultStyleGrey13),
+                            Text("見やすいサイズで作業しましょう。", style: Styles.defaultStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/create_2_4.png"),
                             ),
                           
                             // Filterring Input Button
-                            Text("一括入力ボタン", style: MyStyle.headlineStyle15),
+                            Text("一括入力ボタン", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("特定の「日時」に「割当て人数」一括入力できます。", style: MyStyle.defaultStyleGrey13),
+                            Text("特定の「日時」に「割当て人数」一括入力できます。", style: Styles.defaultStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/create_2_5.png"),
                             ),
 
                             // Draw Button                             
-                            Text("タッチ入力ボタン", style: MyStyle.headlineStyle15),
+                            Text("タッチ入力ボタン", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("タップ後に表のマスをなぞることで細かい1マス単位の割り当て人数を編集できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("設定する割当て人数は、ボタンを長押しすることで選択できます。", style: MyStyle.defaultStyleGrey13),
-                            Text("注意 : 使用中、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: MyStyle.defaultStyleRed13),
+                            Text("タップ後に表のマスをなぞることで細かい1マス単位の割り当て人数を編集できます。", style: Styles.defaultStyleGrey13),
+                            Text("設定する割当て人数は、ボタンを長押しすることで選択できます。", style: Styles.defaultStyleGrey13),
+                            Text("注意 : 使用中、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: Styles.defaultStyleRed13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
@@ -508,10 +508,10 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
 
                             // Redo / Undo Button
                             const SizedBox(height: 10),
-                            Text("戻る・進む ボタン", style: MyStyle.headlineStyle15),
+                            Text("戻る・進む ボタン", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("編集した割り当て表を「前の状態」や「次の状態」に戻すことができます。", style: MyStyle.defaultStyleGrey13),
-                            Text("注意 : 遡れる状態は最大50であり、一度シフト表作成画面を閉じると過去の変更履歴は破棄されます。", style: MyStyle.defaultStyleRed13),
+                            Text("編集した割り当て表を「前の状態」や「次の状態」に戻すことができます。", style: Styles.defaultStyleGrey13),
+                            Text("注意 : 遡れる状態は最大50であり、一度シフト表作成画面を閉じると過去の変更履歴は破棄されます。", style: Styles.defaultStyleRed13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -522,7 +522,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
               ),
               actions: <Widget>[
                 TextButton(
-                  child: Text('閉じる', style: MyStyle.headlineStyleGreen13),
+                  child: Text('閉じる', style: Styles.headlineStyleGreen13),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -598,7 +598,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         )
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: MyStyle.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -613,7 +613,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: MyStyle.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
                     SizedBox(height: widgetHeight, width: modalWidth * (100 / 330))
                   ],
                 ),
@@ -634,7 +634,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: MyStyle.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: Styles.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -649,7 +649,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: MyStyle.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: Styles.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -663,7 +663,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                               List<Widget>.generate(assignNumSelect.length, (index) => Row(
                                 mainAxisAlignment:  MainAxisAlignment.center,
                                 children: [
-                                  Text(assignNumSelect[index], style: MyStyle.headlineStyle13,textAlign: TextAlign.center),
+                                  Text(assignNumSelect[index], style: Styles.headlineStyle13,textAlign: TextAlign.center),
                                 ],
                               )),
                               4
@@ -779,7 +779,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
         height: 80,
         decoration: BoxDecoration(
           border: Border.all(
-            color: MyStyle.hiddenColor
+            color: Styles.hiddenColor
           ),
           borderRadius: BorderRadius.circular(10)
         ),
@@ -791,16 +791,16 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Text(weekSelect,      style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(' の ',          style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(weekdaySelect,   style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(' の ',          style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(timeDivs1Select, style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(' - ',           style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(timeDivs2Select, style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(' の勤務人数は ',  style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(assignNumSelect, style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
-                  Text(' 人',           style: MyStyle.defaultStyleGrey13, textHeightBehavior: MyStyle.defaultBehavior),
+                  Text(weekSelect,      style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' の ',          style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(weekdaySelect,   style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' の ',          style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(timeDivs1Select, style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' - ',           style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(timeDivs2Select, style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' の勤務人数は ',  style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(assignNumSelect, style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' 人',           style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
                 ],
               ),
             ),
@@ -809,7 +809,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                 setState(() {});
               },
               icon: const Icon(Icons.delete, size: 20),
-              color: MyStyle.hiddenColor,
+              color: Styles.hiddenColor,
             ),
           ],
         ),

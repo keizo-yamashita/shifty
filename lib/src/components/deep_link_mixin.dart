@@ -11,7 +11,6 @@ import 'package:uni_links/uni_links.dart';
 ////////////////////////////////////////////////////////////////////////////////
 
 mixin DeepLinkMixin<T extends StatefulWidget> on State<T> {
- 
   StreamSubscription? _sub;
 
   @override
@@ -38,7 +37,6 @@ mixin DeepLinkMixin<T extends StatefulWidget> on State<T> {
 ////////////////////////////////////////////////////////////////////////////////
 
 class DeepLinkProvider extends ChangeNotifier {
-
   String _shiftFrameId = "";
   String get shiftFrameId => _shiftFrameId;
 

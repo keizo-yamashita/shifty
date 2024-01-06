@@ -30,7 +30,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("アカウント連携", style: MyStyle.headlineStyleGreen20),
+        title: Text("アカウント連携", style: Styles.headlineStyleGreen20),
       ),
       extendBody: true,
       extendBodyBehindAppBar: true,
@@ -40,7 +40,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
           FocusScope.of(context).unfocus();
         },
         child: Container(
-          decoration: MyStyle.gradientDecolation,
+          decoration: Styles.gradientDecolation,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -48,38 +48,38 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                 SizedBox(height: screenSize.height * 0.04 + appBarHeight),
                 SizedBox(
                   width: screenSize.width*0.8,
-                  child: Text('下記のいづれかの方法でログインすることで、ゲストアカウントを通常アカウントと連携します。連携後は、他端末への移行や複数端末でのログインが可能になります。', style: MyStyle.headlineStyleWhite15),
+                  child: Text('下記のいづれかの方法でログインすることで、ゲストアカウントを通常アカウントと連携します。連携後は、他端末への移行や複数端末でのログインが可能になります。', style: Styles.headlineStyleWhite15),
                 ),
                 const SizedBox(height: 20),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.8, child: const Divider(color: Colors.white,)),
                 const SizedBox(height: 10),
-                Text('メールアドレスを用いてログイン', style: MyStyle.headlineStyleWhite20),
+                Text('メールアドレスを用いてログイン', style: Styles.headlineStyleWhite20),
                 const SizedBox(height: 10),
                 SizedBox(
                   width: min(MediaQuery.of(context).size.width * 0.8, 300),
                   child: TextFormField(
                     controller: inputMailController,
-                    cursorColor: MyStyle.backgroundColor,
-                    style: MyStyle.defaultStyleWhite15,
+                    cursorColor: Styles.bgColor,
+                    style: Styles.defaultStyleWhite15,
                     autofillHints: const [AutofillHints.email], 
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
-                      prefixIconColor: MyStyle.primaryColor,
+                      prefixIconColor: Styles.primaryColor,
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: MyStyle.backgroundColor,
+                          color: Styles.bgColor,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: MyStyle.backgroundColor,
+                          color: Styles.bgColor,
                         ),
                       ),
                       prefixIcon: const Icon(Icons.input, color: Colors.white),
                       hintText: 'メールアドレス',
-                      hintStyle: MyStyle.defaultStyleWhite15,
+                      hintStyle: Styles.defaultStyleWhite15,
                     ),
                     keyboardType: TextInputType.text,
                   ),
@@ -91,42 +91,42 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                   width: min(MediaQuery.of(context).size.width * 0.8, 300),
                   child: TextFormField(
                     controller: inputPasswordController,
-                    cursorColor: MyStyle.backgroundColor,
-                    style: MyStyle.defaultStyleWhite15,
+                    cursorColor: Styles.bgColor,
+                    style: Styles.defaultStyleWhite15,
                     autofillHints: const [AutofillHints.password], 
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
-                      prefixIconColor: MyStyle.primaryColor,
+                      prefixIconColor: Styles.primaryColor,
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: MyStyle.backgroundColor,
+                          color: Styles.bgColor,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: MyStyle.backgroundColor,
+                          color: Styles.bgColor,
                         ),
                       ),
                       prefixIcon: const Icon(Icons.input, color: Colors.white),
                       hintText: 'パスワード',
-                      hintStyle: MyStyle.defaultStyleWhite15,
+                      hintStyle: Styles.defaultStyleWhite15,
                     ),
                     keyboardType: TextInputType.text,
                     obscureText: true,
                   ),
                 ),
                 const SizedBox(height: 10),
-                linkButton(context, ref, "mail-signin", "assets/mail.png", "新規登録 & ログイン", Colors.yellow[100]!, MyStyle.headlineStyleBlack18, 180, inputMailController.text, inputPasswordController.text),
+                linkButton(context, ref, "mail-signin", "assets/mail.png", "新規登録 & ログイン", Colors.yellow[100]!, Styles.headlineStyleBlack18, 180, inputMailController.text, inputPasswordController.text),
                 const SizedBox(height: 10),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.8, child: const Divider(color: Colors.white,)),
                 const SizedBox(height: 10),
-                Text('プロバイダーを用いてログイン', style: MyStyle.headlineStyleWhite20),
+                Text('プロバイダーを用いてログイン', style: Styles.headlineStyleWhite20),
                 const SizedBox(height: 20),
-                linkButton(context, ref, "google", "assets/google_logo.png", "sign in with Google", Colors.white, MyStyle.headlineStyleBlack18),
+                linkButton(context, ref, "google", "assets/google_logo.png", "sign in with Google", Colors.white, Styles.headlineStyleBlack18),
                 const SizedBox(height: 10),
-                linkButton(context, ref, "apple", "assets/apple_logo.png",   "sign in with Apple ID", Colors.black, MyStyle.headlineStyleWhite18),
+                linkButton(context, ref, "apple", "assets/apple_logo.png",   "sign in with Apple ID", Colors.black, Styles.headlineStyleWhite18),
               ],
             ),
           ),
@@ -141,7 +141,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
       height: 50,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          shadowColor: MyStyle.hiddenColor, 
+          shadowColor: Styles.hiddenColor, 
           minimumSize: Size.zero,
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
