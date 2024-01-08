@@ -134,7 +134,7 @@ class ShiftFrame {
   ShiftFrame initTable() {
     bool isTimeDivsLenMismatch = (getTimeDivsLen() != assignTable.length);
 
-    bool isDateLenMismatch = (getDateLen() != assignTable[0].length);
+    bool isDateLenMismatch = isTimeDivsLenMismatch ? false : (getDateLen() != assignTable[0].length);
 
     if (isTimeDivsLenMismatch || isDateLenMismatch) {
       assignTable = List<List<int>>.generate(
@@ -483,7 +483,7 @@ class ShiftFrame {
               ),
             ),
           ),
-          if (isEndShiftTerm())
+          if (!isEndShiftTerm())
             Positioned(
               right: 10,
               top: 0,
@@ -493,7 +493,7 @@ class ShiftFrame {
                 },
                 icon: const Icon(
                   Icons.ios_share,
-                  size: 20,
+                  size: 25,
                   color: Styles.primaryColor,
                 ),
               ),

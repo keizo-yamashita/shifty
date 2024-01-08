@@ -5,18 +5,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 // my package
 import 'package:shift/main.dart';
-import 'package:shift/src/components/form/button.dart';
 import 'package:shift/src/components/form/dialog.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/form/modal_window.dart';
 import 'package:shift/src/components/undo_redo.dart';
 import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
+import 'package:shift/src/components/form/create_shift/input_shift_name.dart';
+import 'package:shift/src/components/form/create_shift/input_date_term.dart';
 
 class CreateShiftTableWidget extends ConsumerStatefulWidget {
   const CreateShiftTableWidget({Key? key}) : super(key: key);
@@ -26,54 +27,9 @@ class CreateShiftTableWidget extends ConsumerStatefulWidget {
 
 class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
     with SingleTickerProviderStateMixin {
-  // シフト作成期間の日数を表す変数
-  int shiftManageRangeDuration = 0;
-  int templateShiftTermIndex = 0;
-  int templateReqLimitIndex = 5;
 
-  final List<DateTimeRange> templateDateRange = [
-    DateTimeRange(
-      start: DateTime(
-        DateTime.now().add(const Duration(days: 1)).year,
-        DateTime.now().add(const Duration(days: 1)).month + 1,
-        1,
-      ),
-      end: DateTime(
-        DateTime.now().add(const Duration(days: 1)).year,
-        DateTime.now().add(const Duration(days: 2)).month + 2,
-        0,
-      ),
-    ),
-    DateTimeRange(
-      start: DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day,
-      ),
-      end: DateTime(
-        DateTime.now().add(const Duration(days: 1)).year,
-        DateTime.now().add(const Duration(days: 1)).month + 1,
-        -1,
-      ),
-    ),
-  ];
-
-  final List<DateTimeRange> customDateRange = [
-    DateTimeRange(
-      start: DateTime.now().add(
-        const Duration(days: 11),
-      ),
-      end: DateTime.now().add(
-        const Duration(days: 30),
-      ),
-    ),
-    DateTimeRange(
-      start: DateTime.now(),
-      end: DateTime.now().add(
-        const Duration(days: 9),
-      ),
-    )
-  ];
+  // シフト準備期間が確保されているか確認するためのbool値
+  bool existPrepareTerm = false;
 
   // シフト時間区部設定のための parameters
   DateTime startTime = DateTime(1, 1, 1, 9, 0);
@@ -94,30 +50,16 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
   // TextField の動作をスムーズにするための変数
   final FocusNode focusNode = FocusNode();
   final TextEditingController textConroller = TextEditingController();
-  int dateRangePickerIndex = 0;
-
-  // タブコントローラー
-  late TabController _tabController;
-
+  
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('ja_JP', null).then((_) => setState(() {}));
-    _tabController = TabController(length: 2, vsync: this);
 
     ref.read(settingProvider).loadPreferences();
     isDark = ref.read(settingProvider).enableDarkTheme;
     shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
-    shiftFrame.dateTerm[0] = templateDateRange[0];
-    shiftFrame.dateTerm[1] = templateDateRange[1];
     insertBuffer(shiftFrame.timeDivs);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _tabController.removeListener(() {});
-    super.dispose();
   }
 
   @override
@@ -133,12 +75,6 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
     // シフト表名の更新
     textConroller.text = shiftFrame.shiftName;
 
-    // シフト作成期間の日数を表す変数
-    shiftManageRangeDuration = shiftFrame.dateTerm[0].start
-            .subtract(const Duration(days: 1))
-            .difference(shiftFrame.dateTerm[1].end.add(const Duration(days: 1)))
-            .inDays +
-        1;
 
     return GestureDetector(
       onTap: () {
@@ -206,7 +142,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                         context,
                         "シフト表の名前を指定して下さい。",
                       );
-                    } else if (shiftManageRangeDuration < 1) {
+                    } else if (existPrepareTerm) {
                       _onCreateScheduleItemTapped(
                         context,
                         "※ リクエストに対するシフト作成期間が必要なため、\n「リクエスト期間」「シフト期間」には1日以上の間隔を空けて下さい。",
@@ -256,8 +192,23 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(height: screenSize.height * 0.1 + appBarHeight),
-                  inputShiftNameField(),
-                  inputDateTermField(),
+                  
+                  ShiftNameInputWidget(
+                    textController: textConroller,
+                    focusNode: focusNode,
+                    onTextChanged: (String inputValue) {
+                      shiftFrame.shiftName = inputValue;
+                    },
+                  ),
+                  
+                  DateTermInputWidget(
+                    onDateTermChanged: (shiftTerm, requestTerm, existTerm){
+                      shiftFrame.dateTerm[0] = shiftTerm;
+                      shiftFrame.dateTerm[1] = requestTerm;
+                      existPrepareTerm = existTerm;
+                    }
+                  ),
+
                   SizedBox(height: screenSize.height * 0.1),
                   // Divider(height: screenSize.height * 0.04, thickness: 1),
 
@@ -406,574 +357,6 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
     );
   }
 
-  Widget inputShiftNameField() {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: screenSize.width * 0.04),
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: FittedBox(
-              fit: BoxFit.fill,
-              child: Text(
-                "① 作成するシフト表名を入力して下さい。（最大10文字）",
-                style: isDark
-                    ? Styles.defaultStyleWhite15
-                    : Styles.defaultStyleBlack15,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: screenSize.height * 0.02),
-        SizedBox(
-          width: screenSize.width * 0.90,
-          child: TextField(
-            controller: textConroller,
-            cursorColor: Styles.primaryColor,
-            style: Styles.headlineStyleGreen15,
-            focusNode: focusNode,
-            autofocus: false,
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 20.0,
-              ),
-              prefixIconColor: Styles.primaryColor,
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: const BorderSide(
-                  color: Styles.hiddenColor,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: const BorderSide(
-                  color: Styles.primaryColor,
-                ),
-              ),
-              prefixIcon: const Icon(Icons.input),
-              hintText: 'シフト表名 (例) 〇〇店シフト',
-              hintStyle: Styles.defaultStyleGrey15,
-            ),
-            maxLength: 10,
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.go,
-            onTap: () {
-              FocusScope.of(context).requestFocus(focusNode);
-            },
-            onChanged: (value) {
-              shiftFrame.shiftName = value;
-            },
-          ),
-        ),
-        SizedBox(height: screenSize.height * 0.1),
-      ],
-    );
-  }
-
-  inputDateTermField() {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: screenSize.width * 0.04),
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: FittedBox(
-              fit: BoxFit.fill,
-              child: Text(
-                "② 「リクエスト期間」/「シフト期間」を設定して下さい。",
-                style: isDark
-                    ? Styles.defaultStyleWhite15
-                    : Styles.defaultStyleBlack15,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: screenSize.height * 0.02),
-        TabBar(
-          controller: _tabController,
-          indicatorColor: Styles.primaryColor,
-          dividerColor: Colors.grey,
-          labelStyle: Styles.headlineStyle13,
-          labelColor: Styles.primaryColor,
-          unselectedLabelColor: Colors.grey,
-          tabs: const [
-            Tab(text: 'テンプレート'),
-            Tab(text: 'カスタム'),
-          ],
-          onTap: (int index) {
-            dateRangePickerIndex = index;
-            if (index == 0) {
-              shiftFrame.dateTerm = templateDateRange;
-            } else {
-              shiftFrame.dateTerm = customDateRange;
-            }
-            setState(() {});
-          },
-        ),
-        SizedBox(height: screenSize.height * 0.04),
-        SizedBox(
-          height: (dateRangePickerIndex == 0) ? 68 + 20 + 36 * 3 : 48 * 3,
-          child: TabBarView(
-            controller: _tabController,
-            children: <Widget>[
-              Column(
-                children: [
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     buildInputBox(
-                  //       SizedBox(
-                  //         height: 20,
-                  //         child: Text(
-                  //           "シフト表の周期",
-                  //           style: Styles.defaultStyleGrey15,
-                  //         ),
-                  //       ),
-                  //       SizedBox(
-                  //         width: screenSize.width * 0.445,
-                  //         height: 40,
-                  //         child: OutlinedButton(
-                  //           style: OutlinedButton.styleFrom(
-                  //             shadowColor: Styles.hiddenColor,
-                  //             minimumSize: Size.zero,
-                  //             padding: EdgeInsets.zero,
-                  //             shape: RoundedRectangleBorder(
-                  //               borderRadius: BorderRadius.circular(5),
-                  //             ),
-                  //             side: const BorderSide(
-                  //               color: Styles.hiddenColor,
-                  //             ),
-                  //           ),
-                  //           onPressed: () async {
-                  //             showModalWindow(
-                  //               context,
-                  //               0.5,
-                  //               buildModalWindowContainer(
-                  //                 context,
-                  //                 List<Widget>.generate(
-                  //                   templateShiftTermSelect.length,
-                  //                   (index) => Row(
-                  //                     mainAxisAlignment:
-                  //                         MainAxisAlignment.center,
-                  //                     children: [
-                  //                       Text(
-                  //                         templateShiftTermSelect[index],
-                  //                         style: Styles.headlineStyle13,
-                  //                         textAlign: TextAlign.center,
-                  //                       ),
-                  //                     ],
-                  //                   ),
-                  //                 ),
-                  //                 0.5,
-                  //                 (BuildContext context, int index) {
-                  //                   templateShiftTermIndex = index;
-                  //                   updateTemplateShiftRange();
-                  //                   setState(() {});
-                  //                 },
-                  //               ),
-                  //             );
-                  //           },
-                  //           child: Text(
-                  //             templateShiftTermSelect[templateShiftTermIndex],
-                  //             style: Styles.headlineStyleGreen15,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     SizedBox(width: screenSize.width * 0.01),
-                  //     buildInputBox(
-                  //       SizedBox(
-                  //         height: 20,
-                  //         child: Text(
-                  //           "リクエスト入力期限",
-                  //           style: Styles.defaultStyleGrey15,
-                  //         ),
-                  //       ),
-                  //       SizedBox(
-                  //         width: screenSize.width * 0.445,
-                  //         height: 40,
-                  //         child: OutlinedButton(
-                  //           style: OutlinedButton.styleFrom(
-                  //             shadowColor: Styles.hiddenColor,
-                  //             minimumSize: Size.zero,
-                  //             padding: EdgeInsets.zero,
-                  //             shape: RoundedRectangleBorder(
-                  //               borderRadius: BorderRadius.circular(5),
-                  //             ),
-                  //             side: const BorderSide(
-                  //               color: Styles.hiddenColor,
-                  //             ),
-                  //           ),
-                  //           onPressed: () async {
-                  //             showModalWindow(
-                  //               context,
-                  //               0.5,
-                  //               buildModalWindowContainer(
-                  //                 context,
-                  //                 List<Widget>.generate(
-                  //                   templateReqLimitSelect.length,
-                  //                   (index) => Row(
-                  //                     mainAxisAlignment:
-                  //                         MainAxisAlignment.center,
-                  //                     children: [
-                  //                       Text(
-                  //                         templateReqLimitSelect[index],
-                  //                         style: Styles.headlineStyle13,
-                  //                         textAlign: TextAlign.center,
-                  //                       ),
-                  //                     ],
-                  //                   ),
-                  //                 ),
-                  //                 0.5,
-                  //                 (BuildContext context, int index) {
-                  //                   templateReqLimitIndex = index;
-                  //                   updateTemplateShiftRange();
-                  //                   setState(() {});
-                  //                 },
-                  //               ),
-                  //             );
-                  //           },
-                  //           child: Text(
-                  //             templateReqLimitSelect[templateReqLimitIndex],
-                  //             style: Styles.headlineStyleGreen15,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  Table(
-                    columnWidths: const <int, TableColumnWidth>{
-                      0: IntrinsicColumnWidth(flex: 0.4),
-                      1: IntrinsicColumnWidth(flex: 0.1),
-                      2: IntrinsicColumnWidth(flex: 0.5),
-                    },
-                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                    children: [
-                      tableRow(
-                        'シフト表の周期',
-                        CustomTextButton(
-                          text: templateShiftTermSelect[templateShiftTermIndex],
-                          enable: true,
-                          width: screenSize.width * 0.445,
-                          height: 40,
-                          action: () async {
-                            showModalWindow(
-                              context,
-                              0.5,
-                              buildModalWindowContainer(
-                                context,
-                                List<Widget>.generate(
-                                  templateShiftTermSelect.length,
-                                  (index) => Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        templateShiftTermSelect[index],
-                                        style: Styles.headlineStyle13,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                0.5,
-                                (BuildContext context, int index) {
-                                  templateShiftTermIndex = index;
-                                  updateTemplateShiftRange();
-                                  setState(() {});
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      tableRow(
-                        'シフトリクエスト期間',
-                        SizedBox(
-                          height: 20,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                DateFormat('MM/dd', 'ja_JP')
-                                    .format(templateDateRange[1].start),
-                                style: Styles.headlineStyleGreen15,
-                              ),
-                              Text(
-                                " - ",
-                                style: Styles.headlineStyleGreen15,
-                              ),
-                              Text(
-                                DateFormat('MM/dd', 'ja_JP').format(
-                                  templateDateRange[1].end,
-                                ),
-                                style: Styles.headlineStyleGreen15,
-                              ),
-                              Text(
-                                " [ ${(templateDateRange[1].end.difference(templateDateRange[1].start).inDays + 1).toString().padLeft(2, ' ')}日 ]",
-                                style: Styles.headlineStyleGreen15,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      tableRow(
-                        'シフト期間',
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: SizedBox(
-                            height: 20,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  DateFormat('MM/dd', 'ja_JP')
-                                      .format(templateDateRange[0].start),
-                                  style: Styles.headlineStyleGreen15,
-                                ),
-                                Text(
-                                  " - ",
-                                  style: Styles.headlineStyleGreen15,
-                                ),
-                                Text(
-                                  DateFormat('MM/dd', 'ja_JP')
-                                      .format(templateDateRange[0].end),
-                                  style: Styles.headlineStyleGreen15,
-                                ),
-                                Text(
-                                  " [ ${(templateDateRange[0].end.difference(templateDateRange[0].start).inDays + 1).toString().padLeft(2, ' ')}日 ]",
-                                  style: Styles.headlineStyleGreen15,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      tableRow(
-                        'シフト作成期間',
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Center(
-                            child: (templateDateRange[0]
-                                            .start
-                                            .subtract(const Duration(days: 1))
-                                            .difference(
-                                              templateDateRange[1].end.add(
-                                                    const Duration(days: 1),
-                                                  ),
-                                            )
-                                            .inDays +
-                                        1 <=
-                                    0)
-                                ? Text(
-                                    "確保できません",
-                                    style: Styles.defaultStyleRed15,
-                                  )
-                                : SizedBox(
-                                    height: 20,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          DateFormat('MM/dd', 'ja_JP').format(
-                                            templateDateRange[1].end.add(
-                                                  const Duration(days: 1),
-                                                ),
-                                          ),
-                                          style: Styles.headlineStyleGreen15,
-                                        ),
-                                        Text(
-                                          " - ",
-                                          style: Styles.headlineStyleGreen15,
-                                        ),
-                                        Text(
-                                          DateFormat('MM/dd', 'ja_JP').format(
-                                            templateDateRange[0].start.subtract(
-                                                  const Duration(days: 1),
-                                                ),
-                                          ),
-                                          style: Styles.headlineStyleGreen15,
-                                        ),
-                                        Text(
-                                          " [ ${(templateDateRange[0].start.subtract(const Duration(days: 1)).difference(templateDateRange[1].end.add(const Duration(days: 1))).inDays + 1).toString().padLeft(2, ' ')}日 ]",
-                                          style: Styles.headlineStyleGreen15,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
-                child: Table(
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: IntrinsicColumnWidth(flex: 0.4),
-                    1: IntrinsicColumnWidth(flex: 0.1),
-                    2: IntrinsicColumnWidth(flex: 0.5),
-                  },
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  children: [
-                    TableRow(children: [
-                      Text('シフトリクエスト期間',
-                          style: Styles.defaultStyleGrey15,
-                          textAlign: TextAlign.right),
-                      Text('  ⇨',
-                          style: Styles.defaultStyleGrey15,
-                          textAlign: TextAlign.center),
-                      SizedBox(
-                        height: 48,
-                        width: screenSize.width * 0.45,
-                        child: buildInputBox(
-                          null,
-                          buildDateRangePicker(1),
-                        ),
-                      )
-                    ]),
-                    TableRow(children: [
-                      Text('シフト期間',
-                          style: Styles.defaultStyleGrey15,
-                          textAlign: TextAlign.right),
-                      Text('  ⇨',
-                          style: Styles.defaultStyleGrey15,
-                          textAlign: TextAlign.center),
-                      SizedBox(
-                        height: 48,
-                        width: screenSize.width * 0.45,
-                        child: buildInputBox(
-                          null,
-                          buildDateRangePicker(0),
-                        ),
-                      )
-                    ]),
-                    TableRow(
-                      children: [
-                        Text('シフト作成期間',
-                            style: Styles.defaultStyleGrey15,
-                            textAlign: TextAlign.right),
-                        Text('  ⇨',
-                            style: Styles.defaultStyleGrey15,
-                            textAlign: TextAlign.center),
-                        SizedBox(
-                          height: 48,
-                          child: Center(
-                            child: (customDateRange[0]
-                                            .start
-                                            .subtract(const Duration(days: 1))
-                                            .difference(
-                                              customDateRange[1].end.add(
-                                                    const Duration(days: 1),
-                                                  ),
-                                            )
-                                            .inDays +
-                                        1 <=
-                                    0)
-                                ? Text(
-                                    "確保できません",
-                                    style: Styles.defaultStyleRed15,
-                                  )
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        DateFormat('MM/dd', 'ja_JP').format(
-                                          customDateRange[1].end.add(
-                                                const Duration(days: 1),
-                                              ),
-                                        ),
-                                        style: Styles.headlineStyleGreen15,
-                                      ),
-                                      Text(
-                                        " - ",
-                                        style: Styles.headlineStyleGreen15,
-                                      ),
-                                      Text(
-                                        DateFormat('MM/dd', 'ja_JP').format(
-                                          customDateRange[0].start.subtract(
-                                                const Duration(days: 1),
-                                              ),
-                                        ),
-                                        style: Styles.headlineStyleGreen15,
-                                      ),
-                                      Text(
-                                        " [ ${(customDateRange[0].start.subtract(const Duration(days: 1)).difference(customDateRange[1].end.add(const Duration(days: 1))).inDays + 1).toString().padLeft(2, ' ')}日 ]",
-                                        style: Styles.headlineStyleGreen15,
-                                      ),
-                                    ],
-                                  ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-        SizedBox(height: screenSize.height * 0.02),
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: screenSize.width * 0.08,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text("※ ", style: Styles.defaultStyleRed13),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "リクエスト期間中はシフトを組むことができません。",
-                      style: Styles.defaultStyleRed13,
-                      maxLines: 4,
-                    ),
-                    Text(
-                      "リクエスト期間終了日からシフト開始日までの期間がシフト作成期間となります。(1日以上の期間を設けて下さい。)",
-                      style: Styles.defaultStyleRed13,
-                      maxLines: 4,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  TableRow tableRow(String title, Widget child) {
-    return TableRow(
-      children: [
-        Text(
-          title,
-          style: Styles.defaultStyleGrey15,
-          textAlign: TextAlign.right,
-        ),
-        Text(
-          '  ⇨',
-          style: Styles.defaultStyleGrey15,
-          textAlign: TextAlign.center,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 8.0,
-          ),
-          child: SizedBox(height: 20, child: child),
-        ),
-      ],
-    );
-  }
-
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  redo undo 機能の実装
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -995,57 +378,6 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
             undoredoCtrl.redo().map((e) => TimeDivision.copy(e)).toList();
       }
     });
-  }
-
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  /// シフト期間テンプレートを使った時の処理
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  void updateTemplateShiftRange() {
-    var date = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    ).add(
-      Duration(days: 7 - templateReqLimitIndex - 1),
-    );
-    var now = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
-
-    DateTime startDate = date;
-    DateTime endDate = date;
-
-    if (templateShiftTermIndex == 0) {
-      // 月ごとの場合
-      startDate = DateTime(date.year, date.month + 1, 1);
-      endDate = DateTime(date.year, date.month + 2, 0);
-    } else if (templateShiftTermIndex == 1) {
-      // 二週毎の場合
-      DateTime startOfThisWeek = date.subtract(
-          Duration(days: date.add(const Duration(days: 1)).weekday - 2));
-      startDate = startOfThisWeek.add(const Duration(days: 7));
-      endDate = startDate.add(const Duration(days: 13));
-    } else if (templateShiftTermIndex == 2) {
-      // 一週毎の場合
-      DateTime startOfThisWeek = date.subtract(
-          Duration(days: date.add(const Duration(days: 1)).weekday - 2));
-      startDate = startOfThisWeek.add(const Duration(days: 7));
-      endDate = startDate.add(const Duration(days: 6));
-    } else {
-      print("index error");
-    }
-
-    templateDateRange[0] = DateTimeRange(start: startDate, end: endDate);
-    templateDateRange[1] = DateTimeRange(
-      start: now,
-      end: startDate.subtract(
-        Duration(days: 7 - templateReqLimitIndex),
-      ),
-    );
-
-    shiftFrame.dateTerm = templateDateRange;
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -1072,81 +404,6 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
         );
       },
     );
-  }
-
-  Widget buildDateRangePicker(int index) {
-    return SizedBox(
-      height: 40,
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          shadowColor: Styles.hiddenColor,
-          minimumSize: Size.zero,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          side: const BorderSide(color: Styles.hiddenColor),
-        ),
-        onPressed: () async {
-          final x = pickDateRange(context, customDateRange[index]);
-          x.then((value) => customDateRange[index] = value);
-          shiftFrame.dateTerm = customDateRange;
-          setState(() {});
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              DateFormat('MM/dd', 'ja_JP').format(customDateRange[index].start),
-              style: Styles.headlineStyleGreen15,
-            ),
-            Text(
-              " - ",
-              style: Styles.headlineStyleGreen15,
-            ),
-            Text(
-              DateFormat('MM/dd', 'ja_JP').format(customDateRange[index].end),
-              style: Styles.headlineStyleGreen15,
-            ),
-            Text(
-              " [ ${(customDateRange[index].end.difference(customDateRange[index].start).inDays + 1).toString().padLeft(2, ' ')}日 ]",
-              style: Styles.headlineStyleGreen15,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<DateTimeRange> pickDateRange(
-      BuildContext context, DateTimeRange initialDateRange) async {
-    DateTimeRange? newDateRange = await showDateRangePicker(
-      context: context,
-      initialDateRange: initialDateRange,
-      firstDate: DateTime.now().subtract(const Duration(days: 10)),
-      lastDate: DateTime.now().add(const Duration(days: 180)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            datePickerTheme: DatePickerThemeData(
-              dividerColor: Styles.primaryColor.withAlpha(100),
-              shadowColor: Styles.primaryColor,
-              dayBackgroundColor:
-                  MaterialStateProperty.all<Color>(Styles.primaryColor),
-              rangeSelectionBackgroundColor: Styles.primaryColor.withAlpha(100),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (newDateRange != null) {
-      setState(() {});
-      return Future<DateTimeRange>.value(newDateRange);
-    } else {
-      setState(() {});
-      return Future<DateTimeRange>.value(initialDateRange);
-    }
   }
 
   Widget buildTimePicker(DateTime init, DateTime min, DateTime max,
