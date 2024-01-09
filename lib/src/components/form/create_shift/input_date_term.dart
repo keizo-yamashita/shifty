@@ -4,27 +4,25 @@ import 'package:shift/src/components/form/button.dart';
 import 'package:shift/src/components/form/modal_window.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DateTermInputWidget extends ConsumerStatefulWidget {
+class InputDateTerm extends StatefulWidget {
   final Function(
     DateTimeRange shiftTerm,
     DateTimeRange requestTerm,
     bool existPrepareTerm,
   ) onDateTermChanged;
 
-  const DateTermInputWidget({
+  const InputDateTerm({
     super.key,
     required this.onDateTermChanged,
   });
 
   @override
-  DateTermInputWidgetState createState() => DateTermInputWidgetState();
+  InputDateTermState createState() => InputDateTermState();
 }
 
-class DateTermInputWidgetState extends ConsumerState<DateTermInputWidget>
+class InputDateTermState extends State<InputDateTerm>
     with SingleTickerProviderStateMixin {
-  double appBarHeight = 0;
   Size screenSize = const Size(0, 0);
   late TabController tabController;
 
@@ -32,8 +30,6 @@ class DateTermInputWidgetState extends ConsumerState<DateTermInputWidget>
   int templateShiftTermIndex = 0;
   int templateReqLimitIndex = 5;
   int tabIndex = 0;
-
-  DateTime base = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
   final List<DateTimeRange> templateDateRange = [
     DateTimeRange(
@@ -64,17 +60,26 @@ class DateTermInputWidgetState extends ConsumerState<DateTermInputWidget>
 
   final List<DateTimeRange> customDateRange = [
     DateTimeRange(
-      start: DateTime.now().add(
-        const Duration(days: 11),
-      ),
-      end: DateTime.now().add(
-        const Duration(days: 30),
-      ),
-    ),
+        start: DateTime(
+          DateTime.now().add(const Duration(days: 11)).year,
+          DateTime.now().add(const Duration(days: 11)).month,
+          DateTime.now().add(const Duration(days: 11)).day,
+        ),
+        end: DateTime(
+          DateTime.now().add(const Duration(days: 30)).year,
+          DateTime.now().add(const Duration(days: 30)).month,
+          DateTime.now().add(const Duration(days: 30)).day,
+        )),
     DateTimeRange(
-      start: DateTime.now(),
-      end: DateTime.now().add(
-        const Duration(days: 9),
+      start: DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      ),
+      end: DateTime(
+        DateTime.now().add(const Duration(days: 9)).year,
+        DateTime.now().add(const Duration(days: 9)).month,
+        DateTime.now().add(const Duration(days: 9)).day,
       ),
     )
   ];
@@ -113,88 +118,81 @@ class DateTermInputWidgetState extends ConsumerState<DateTermInputWidget>
 
   @override
   Widget build(BuildContext context) {
-    screenSize = Size(
-      MediaQuery.of(context).size.width,
-      MediaQuery.of(context).size.height,
-    );
-
+    screenSize = MediaQuery.of(context).size;
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: FittedBox(
-              fit: BoxFit.fill,
-              child: Text(
-                "② 「リクエスト期間」/「シフト期間」を設定して下さい。",
-                style: isDark
-                    ? Styles.defaultStyleWhite15
-                    : Styles.defaultStyleBlack15,
-              ),
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.topLeft,
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: Text(
+              "② 「リクエスト期間」/「シフト期間」を設定して下さい。",
+              style: isDark
+                  ? Styles.defaultStyleWhite15
+                  : Styles.defaultStyleBlack15,
             ),
           ),
-          SizedBox(height: screenSize.height * 0.02),
-          TabBar(
-            controller: tabController,
-            indicatorColor: Styles.primaryColor,
-            dividerColor: Colors.grey,
-            labelStyle: Styles.headlineStyle13,
-            labelColor: Styles.primaryColor,
-            unselectedLabelColor: Colors.grey,
-            tabs: const [
-              Tab(text: 'テンプレート'),
-              Tab(text: 'カスタム'),
-            ],
-            onTap: (int index) {
-              tabIndex = index;
-              if (tabIndex == 0) {
-                widget.onDateTermChanged(
-                  templateDateRange[0],
-                  templateDateRange[1],
-                  existPrepareTerm,
-                );
-              } else if (tabIndex == 1) {
-                widget.onDateTermChanged(
-                  customDateRange[0],
-                  customDateRange[1],
-                  existPrepareTerm,
-                );
-              }
-              setState(() {});
-            },
-          ),
-          SizedBox(height: screenSize.height * 0.02),
-          tabBarView(),
-          SizedBox(height: screenSize.height * 0.02),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text("※ ", style: Styles.defaultStyleRed13),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "リクエスト期間中はシフトを組むことができません。",
-                      style: Styles.defaultStyleRed13,
-                      maxLines: 4,
-                    ),
-                    Text(
-                      "リクエスト期間終了日からシフト開始日までの期間がシフト作成期間となります。(1日以上の期間を設けて下さい。)",
-                      style: Styles.defaultStyleRed13,
-                      maxLines: 4,
-                    ),
-                  ],
-                ),
+        ),
+        SizedBox(height: screenSize.height * 0.02),
+        TabBar(
+          controller: tabController,
+          indicatorColor: Styles.primaryColor,
+          dividerColor: Colors.grey,
+          labelStyle: Styles.headlineStyle13,
+          labelColor: Styles.primaryColor,
+          unselectedLabelColor: Colors.grey,
+          tabs: const [
+            Tab(text: 'テンプレート'),
+            Tab(text: 'カスタム'),
+          ],
+          onTap: (int index) {
+            tabIndex = index;
+            if (tabIndex == 0) {
+              widget.onDateTermChanged(
+                templateDateRange[0],
+                templateDateRange[1],
+                existPrepareTerm,
+              );
+            } else if (tabIndex == 1) {
+              widget.onDateTermChanged(
+                customDateRange[0],
+                customDateRange[1],
+                existPrepareTerm,
+              );
+            }
+            setState(() {});
+          },
+        ),
+        SizedBox(height: screenSize.height * 0.02),
+        tabBarView(),
+        SizedBox(height: screenSize.height * 0.02),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text("※ ", style: Styles.defaultStyleRed13),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "リクエスト期間中はシフトを組むことができません。",
+                    style: Styles.defaultStyleRed13,
+                    maxLines: 4,
+                  ),
+                  Text(
+                    "リクエスト期間終了日からシフト開始日までの期間がシフト作成期間となります。(1日以上の期間を設けて下さい。)",
+                    style: Styles.defaultStyleRed13,
+                    maxLines: 4,
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -284,9 +282,12 @@ class DateTermInputWidgetState extends ConsumerState<DateTermInputWidget>
             tableRow(
               'シフト作成期間',
               (!exitPrepareTerm)
-                  ? Text(
-                      "確保できません",
-                      style: Styles.defaultStyleRed15,
+                  ? Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "確保できません",
+                        style: Styles.defaultStyleRed15,
+                      ),
                     )
                   : printDateTerm(DateTimeRange(start: start, end: end)),
             ),
@@ -301,14 +302,11 @@ class DateTermInputWidgetState extends ConsumerState<DateTermInputWidget>
   ///////////////////////////////////////////////
 
   Widget buildCustomSelector() {
-    DateTime end = customDateRange[0].start;
-    DateTime start = customDateRange[1].end;
+    DateTime end = customDateRange[0].start.subtract(const Duration(days: 1));
+    DateTime start = customDateRange[1].end.add(const Duration(days: 1));
 
-    existPrepareTerm = (end.difference(start).inDays > 0);
-    
-    print(end);
-    print(start);
-    
+    existPrepareTerm = (end.difference(start).inDays > 1);
+
     return Table(
       columnWidths: const <int, TableColumnWidth>{
         0: IntrinsicColumnWidth(flex: 0.4),
@@ -354,11 +352,19 @@ class DateTermInputWidgetState extends ConsumerState<DateTermInputWidget>
         tableRow(
           'シフト作成期間',
           (!existPrepareTerm)
-              ? Text(
-                  "確保できません",
-                  style: Styles.defaultStyleRed15,
+              ? Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "確保できません",
+                    style: Styles.defaultStyleRed15,
+                  ),
                 )
-              : printDateTerm(DateTimeRange(start: start, end: end)),
+              : printDateTerm(
+                  DateTimeRange(
+                    start: start.add(const Duration(days: 1)),
+                    end: end.subtract(const Duration(days: 1)),
+                  ),
+                ),
         ),
       ],
     );
