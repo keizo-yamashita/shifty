@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shift/src/components/style/style.dart';
 
-class ShiftNameInputWidget extends StatelessWidget {
+class InputShiftName extends StatelessWidget {
   final FocusNode focusNode;
   final TextEditingController textController;
   final Function(String) onTextChanged;
 
-  const ShiftNameInputWidget({
+  const InputShiftName({
     super.key,
     required this.focusNode,
     required this.textController,
@@ -20,24 +20,21 @@ class ShiftNameInputWidget extends StatelessWidget {
 
     return Column(
       children: [
-        Padding(
-          padding: EdgeInsets.only(left: screenSize.width * 0.04),
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: FittedBox(
-              fit: BoxFit.fill,
-              child: Text(
-                "① 作成するシフト表名を入力して下さい。（最大10文字）",
-                style: isDark
-                    ? Styles.defaultStyleWhite15
-                    : Styles.defaultStyleBlack15,
-              ),
+        Align(
+          alignment: Alignment.topLeft,
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: Text(
+              "① 作成するシフト表名を入力して下さい。（最大10文字）",
+              style: isDark
+                  ? Styles.defaultStyleWhite15
+                  : Styles.defaultStyleBlack15,
             ),
           ),
         ),
         SizedBox(height: screenSize.height * 0.02),
         SizedBox(
-          width: screenSize.width * 0.90,
+          height: 80,
           child: TextField(
             controller: textController,
             cursorColor: Styles.primaryColor,
@@ -76,7 +73,6 @@ class ShiftNameInputWidget extends StatelessWidget {
             },
           ),
         ),
-        SizedBox(height: screenSize.height * 0.1),
       ],
     );
   }
