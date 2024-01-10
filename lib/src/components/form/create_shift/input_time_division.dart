@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shift/src/components/form/button.dart';
 import 'package:shift/src/components/form/modal_window.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/undo_redo.dart';
 
-
 class InputTimeDivision extends StatefulWidget {
-  
   const InputTimeDivision({
     super.key,
   });
@@ -22,8 +21,8 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
 
   // 時間区分のカスタムのための変数
   List<TimeDivision> timeDivs = [];
-  List<TimeDivision> timeDivsTemp = [];
-  int durationTemp = 60;
+  List<TimeDivision> timeDivsAxis = [];
+  int durationAxis = 60;
 
   // シフト時間区部設定のための parameters
   DateTime startTime = DateTime(1, 1, 1, 9, 0);
@@ -32,7 +31,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
 
   UndoRedo<List<TimeDivision>> undoredoCtrl = UndoRedo<List<TimeDivision>>(50);
 
-    @override
+  @override
   void initState() {
     super.initState();
     insertBuffer(timeDivs);
@@ -60,7 +59,6 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
         SizedBox(height: screenSize.height * 0.04),
 
         SizedBox(
-          width: screenSize.width * 0.90,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -84,7 +82,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 30),
+                padding: const EdgeInsets.only(top: 22),
                 child: Text("〜", style: Styles.headlineStyleGreen15),
               ),
               buildInputBox(
@@ -107,7 +105,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 30),
+                padding: const EdgeInsets.only(top: 40),
                 child: Text("...", style: Styles.headlineStyleGreen15),
               ),
               buildInputBox(
@@ -133,27 +131,17 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           ),
         ),
         SizedBox(height: screenSize.height * 0.02),
-        SizedBox(
-          width: screenSize.width * 0.9,
+        CustomTextButton(
+          text: "入力",
+          enable: true,
+          width: screenSize.width,
           height: 40,
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              minimumSize: Size.zero,
-              padding: EdgeInsets.zero,
-              shadowColor: Styles.primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              side: const BorderSide(color: Styles.primaryColor),
-            ),
-            onPressed: () {
-              setState(() {
-                createMimimumDivision(startTime, endTime, duration);
-                // insertBuffer(shiftFrame.timeDivs);
-              });
-            },
-            child: Text("入力", style: Styles.headlineStyleGreen15),
-          ),
+          action: () {
+            setState(() {
+              createMimimumDivision(startTime, endTime, duration);
+              insertBuffer(timeDivs);
+            });
+          },
         ),
         // Divider(height: screenSize.height * 0.04, thickness: 1),
         SizedBox(height: screenSize.height * 0.02),
@@ -182,7 +170,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
     DateTime temp = init;
 
     return SizedBox(
-      height: 50,
+      height: 40,
       width: screenSize.width / 4,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
@@ -241,17 +229,16 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           if (temp.compareTo(end) > 0) {
             temp = end;
           }
-          timeDivs.add(
-            TimeDivision(
-              name: "${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}-${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}",
-              startTime: DateTime(1, 1, 1, start.hour, start.minute),
-              endTime: DateTime(1, 1, 1, temp.hour, temp.minute),
-            )
-          );
+          timeDivs.add(TimeDivision(
+            name:
+                "${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}-${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}",
+            startTime: DateTime(1, 1, 1, start.hour, start.minute),
+            endTime: DateTime(1, 1, 1, temp.hour, temp.minute),
+          ));
           start = temp;
         }
-        timeDivsTemp = List.of(timeDivs);
-        durationTemp = duration.hour * 60 + duration.minute;
+        timeDivsAxis = List.of(timeDivs);
+        durationAxis = duration.hour * 60 + duration.minute;
       },
     );
   }
@@ -293,13 +280,13 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
     );
   }
 
-    ///////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////
   /// Build Schedule Editor
   ///////////////////////////////////////////////////////////////////////////////////
 
   buildScheduleEditor() {
     double height = 40;
-    double boader = 3;
+    double boader = 4;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -308,7 +295,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
         SizedBox(
           child: Column(
             children: [
-              for (final timeDiv in timeDivsTemp)
+              for (final timeDiv in timeDivsAxis)
                 SizedBox(
                   height: height + boader,
                   child: Text(
@@ -322,7 +309,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
               SizedBox(
                 height: height + boader,
                 child: Text(
-                  "${timeDivsTemp.last.endTime.hour.toString().padLeft(2, '0')}:${timeDivsTemp.last.endTime.minute.toString().padLeft(2, '0')}-",
+                  "${timeDivsAxis.last.endTime.hour.toString().padLeft(2, '0')}:${timeDivsAxis.last.endTime.minute.toString().padLeft(2, '0')}-",
                   style: Styles.defaultStyleGrey15,
                   textHeightBehavior: Styles.defaultBehavior,
                   textAlign: TextAlign.center,
@@ -336,7 +323,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           width: 200,
           child: Column(
             children: [
-              const Padding(padding: EdgeInsets.all(5)),
+              const Padding(padding: EdgeInsets.all(6)),
               for (int i = 0; i < timeDivs.length; i++)
                 Column(
                   children: [
@@ -356,33 +343,15 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                           );
                           insertBuffer(timeDivs);
                         },
-                        borderRadius: BorderRadius.circular(10),
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(color: Styles.hiddenColor),
-                              borderRadius: BorderRadius.circular(5.0)),
-                          height: (height *
-                                  (((timeDivs[i].endTime.hour * 60 +
-                                                  timeDivs[i].endTime.minute) -
-                                              (timeDivs[i].startTime.hour * 60 +
-                                                  timeDivs[i]
-                                                      .startTime
-                                                      .minute)) /
-                                          durationTemp)
-                                      .ceil()) +
-                              (boader *
-                                  ((((timeDivs[i].endTime.hour * 60 +
-                                                      timeDivs[i]
-                                                          .endTime
-                                                          .minute) -
-                                                  (timeDivs[i].startTime.hour *
-                                                          60 +
-                                                      timeDivs[i]
-                                                          .startTime
-                                                          .minute)) /
-                                              durationTemp)
-                                          .ceil() -
-                                      1)),
+                              borderRadius: BorderRadius.circular(2.0)),
+                          height: ((height + boader) *
+                                  (calcDurationInMinute(timeDivs[i]) /
+                                          durationAxis)
+                                      .ceil()) -
+                              boader,
                           child: Center(
                             child: Text(
                               "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')} - ${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}",
@@ -402,6 +371,11 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
         ),
       ],
     );
+  }
+
+  int calcDurationInMinute(TimeDivision timeDiv) {
+    return (timeDiv.endTime.hour * 60 + timeDiv.endTime.minute) -
+        (timeDiv.startTime.hour * 60 + timeDiv.startTime.minute);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////

@@ -187,7 +187,6 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(height: screenSize.height * 0.06 + appBarHeight),
-
                   InputShiftName(
                     textController: textConroller,
                     focusNode: focusNode,
@@ -195,20 +194,15 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                       shiftFrame.shiftName = inputValue;
                     },
                   ),
-
                   SizedBox(height: screenSize.height * 0.06),
-
                   InputDateTerm(
                       onDateTermChanged: (shiftTerm, requestTerm, existTerm) {
                     shiftFrame.dateTerm[0] = shiftTerm;
                     shiftFrame.dateTerm[1] = requestTerm;
                     existPrepareTerm = existTerm;
                   }),
-
                   SizedBox(height: screenSize.height * 0.06),
-
                   InputTimeDivision(),
-
                   SizedBox(height: screenSize.height * 0.1 + appBarHeight),
                 ],
               ),
