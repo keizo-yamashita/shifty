@@ -32,17 +32,14 @@ class InputShiftName extends StatelessWidget {
         ),
         SizedBox(height: screenSize.height * 0.02),
         SizedBox(
-          height: 80,
+          height: 70,
           child: TextField(
             controller: textController,
             cursorColor: Styles.primaryColor,
-            style: Styles.headlineStyleGreen15,
+            style: Styles.defaultStyleGreen13,
             focusNode: focusNode,
             autofocus: false,
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 20.0,
-              ),
               prefixIconColor: Styles.primaryColor,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
@@ -58,7 +55,7 @@ class InputShiftName extends StatelessWidget {
               ),
               prefixIcon: const Icon(Icons.input),
               hintText: 'シフト表名 (例) 〇〇店シフト',
-              hintStyle: Styles.defaultStyle15,
+              hintStyle: Styles.defaultStyle13,
             ),
             maxLength: 10,
             keyboardType: TextInputType.text,

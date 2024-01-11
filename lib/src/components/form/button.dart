@@ -123,7 +123,7 @@ class CustomTextButton extends StatelessWidget {
         onPressed: action as void Function()?,
         child: FittedBox(
           fit: BoxFit.fill,
-          child: Text(text, style: Styles.defaultStyleGreen15),
+          child: Text(text, style: Styles.defaultStyleGreen13),
         ),
       ),
     );

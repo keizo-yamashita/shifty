@@ -67,7 +67,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                     fit: BoxFit.fill,
                     child: Text(
                       "始業時間",
-                      style: Styles.defaultStyle15,
+                      style: Styles.defaultStyle13,
                     ),
                   ),
                 ),
@@ -80,8 +80,8 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 22),
-                child: Text("〜", style: Styles.headlineStyleGreen15),
+                padding: const EdgeInsets.only(bottom: 25),
+                child: Text("〜", style: Styles.defaultStyleGreen13),
               ),
               buildInputBox(
                 SizedBox(
@@ -90,7 +90,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                     fit: BoxFit.fill,
                     child: Text(
                       "終業時間",
-                      style: Styles.defaultStyle15,
+                      style: Styles.defaultStyle13,
                     ),
                   ),
                 ),
@@ -103,8 +103,8 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: Text("...", style: Styles.headlineStyleGreen15),
+                padding: const EdgeInsets.only(bottom: 25),
+                child: Text("...", style: Styles.headlineStyleGreen13),
               ),
               buildInputBox(
                 SizedBox(
@@ -113,7 +113,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                     fit: BoxFit.fill,
                     child: Text(
                       "管理間隔",
-                      style: Styles.defaultStyle15,
+                      style: Styles.defaultStyle13,
                     ),
                   ),
                 ),
@@ -141,22 +141,21 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
             });
           },
         ),
-        // Divider(height: screenSize.height * 0.04, thickness: 1),
-        SizedBox(height: screenSize.height * 0.02),
+        SizedBox(height: screenSize.height * 0.04),
 
         ////////////////////////////////////////////////////////////////////////////
         /// 登録した時間区分一覧
         ////////////////////////////////////////////////////////////////////////////
         Text(
           "時間区分一覧（タップで結合）",
-          style: Styles.defaultStyle15,
+          style: Styles.defaultStyle13,
           textAlign: TextAlign.left,
         ),
-        SizedBox(height: screenSize.height * 0.02),
+        SizedBox(height: screenSize.height * 0.04),
         (timeDivs.isEmpty)
             ? Text(
                 "登録されている時間区分がありません。",
-                style: Styles.defaultStyle15,
+                style: Styles.defaultStyle13,
               )
             : buildScheduleEditor(),
       ],
@@ -211,7 +210,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
         },
         child: Text(
           '${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}',
-          style: Styles.headlineStyleGreen15,
+          style: Styles.defaultStyleGreen13,
         ),
       ),
     );
@@ -268,12 +267,12 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
   Widget buildInputBox(Widget? title, Widget child) {
     return Column(
       children: [
+        child,
         if (title != null)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
             child: title,
           ),
-        child
       ],
     );
   }
@@ -298,7 +297,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                   height: height + boader,
                   child: Text(
                     "${timeDiv.startTime.hour.toString().padLeft(2, '0')}:${timeDiv.startTime.minute.toString().padLeft(2, '0')}-",
-                    style: Styles.headlineStyleGrey15,
+                    style: Styles.defaultStyle13,
                     textHeightBehavior: Styles.defaultBehavior,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
@@ -308,7 +307,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                 height: height + boader,
                 child: Text(
                   "${timeDivsAxis.last.endTime.hour.toString().padLeft(2, '0')}:${timeDivsAxis.last.endTime.minute.toString().padLeft(2, '0')}-",
-                  style: Styles.headlineStyleGrey15,
+                  style: Styles.defaultStyle13,
                   textHeightBehavior: Styles.defaultBehavior,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
@@ -353,7 +352,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                           child: Center(
                             child: Text(
                               "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')} - ${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}",
-                              style: Styles.headlineStyleGreen15,
+                              style: Styles.defaultStyleGreen13,
                               textHeightBehavior: Styles.defaultBehavior,
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,

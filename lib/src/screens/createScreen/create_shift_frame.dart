@@ -223,11 +223,11 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: const Text('入力エラー\n', style: TextStyle(color: Colors.red)),
-          content: Text(message, style: Styles.headlineStyleBlack13),
+          title: Text('入力エラー\n', style: Styles.defaultStyleRed15),
+          content: Text(message, style: Styles.defaultStyle13),
           actions: <Widget>[
             CupertinoDialogAction(
-              child: const Text('OK', style: TextStyle(color: Colors.red)),
+              child: Text('OK', style: Styles.defaultStyleRed13),
               onPressed: () {
                 Navigator.pop(context);
                 setState(() {});

@@ -137,7 +137,7 @@ class InputDateTermState extends State<InputDateTerm>
           controller: tabController,
           indicatorColor: Styles.primaryColor,
           dividerColor: Colors.grey,
-          labelStyle: Styles.defaultStyle15,
+          labelStyle: Styles.defaultStyle13,
           labelColor: Styles.primaryColor,
           tabs: const [
             Tab(text: 'テンプレート'),
@@ -227,9 +227,9 @@ class InputDateTermState extends State<InputDateTerm>
       children: [
         Table(
           columnWidths: const <int, TableColumnWidth>{
-            0: IntrinsicColumnWidth(flex: 0.45),
+            0: IntrinsicColumnWidth(flex: 0.35),
             1: IntrinsicColumnWidth(flex: 0.05),
-            2: IntrinsicColumnWidth(flex: 0.5),
+            2: IntrinsicColumnWidth(flex: 0.6),
           },
           defaultVerticalAlignment: TableCellVerticalAlignment.middle,
           children: [
@@ -282,7 +282,7 @@ class InputDateTermState extends State<InputDateTerm>
                       alignment: Alignment.center,
                       child: Text(
                         "確保できません",
-                        style: Styles.headlineStyleRed15,
+                        style: Styles.defaultStyleRed13,
                       ),
                     )
                   : printDateTerm(DateTimeRange(start: start, end: end)),
@@ -305,9 +305,9 @@ class InputDateTermState extends State<InputDateTerm>
 
     return Table(
       columnWidths: const <int, TableColumnWidth>{
-        0: IntrinsicColumnWidth(flex: 0.45),
+        0: IntrinsicColumnWidth(flex: 0.35),
         1: IntrinsicColumnWidth(flex: 0.05),
-        2: IntrinsicColumnWidth(flex: 0.5),
+        2: IntrinsicColumnWidth(flex: 0.6),
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
@@ -352,7 +352,7 @@ class InputDateTermState extends State<InputDateTerm>
                   alignment: Alignment.center,
                   child: Text(
                     "確保できません",
-                    style: Styles.defaultStyleRed15,
+                    style: Styles.defaultStyleRed13,
                   ),
                 )
               : printDateTerm(
@@ -375,7 +375,7 @@ class InputDateTermState extends State<InputDateTerm>
       children: [
         Text(
           title,
-          style: Styles.defaultStyleBlack15,
+          style: Styles.defaultStyle13,
           textAlign: TextAlign.right,
         ),
         Container(),
@@ -401,18 +401,18 @@ class InputDateTermState extends State<InputDateTerm>
       children: [
         Text(
           DateFormat('MM/dd', 'ja_JP').format(dateTerm.start),
-          style: Styles.defaultStyleGreen15,
-        ),
-        Text(
-          " - ",
           style: Styles.defaultStyleGreen13,
         ),
         Text(
-          DateFormat('MM/dd', 'ja_JP').format(dateTerm.end),
-          style: Styles.defaultStyleGreen15,
+          " - ",
+          style: Styles.defaultStyleGreen10,
         ),
         Text(
-          " (${(dateTerm.end.difference(dateTerm.start).inDays + 1).toString().padLeft(2, ' ')}日)",
+          DateFormat('MM/dd', 'ja_JP').format(dateTerm.end),
+          style: Styles.defaultStyleGreen13,
+        ),
+        Text(
+          "  ( ${(dateTerm.end.difference(dateTerm.start).inDays + 1).toString().padLeft(2, ' ')}日 )",
           style: Styles.defaultStyleGreen13,
         ),
       ],
@@ -446,7 +446,7 @@ class InputDateTermState extends State<InputDateTerm>
                 children: [
                   Text(
                     items[index],
-                    style: Styles.headlineStyle15,
+                    style: Styles.defaultStyle15,
                     textAlign: TextAlign.center,
                   ),
                 ],

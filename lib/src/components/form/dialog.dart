@@ -42,20 +42,18 @@ Future<bool> showConfirmDialog(
           title: Text(
             '$title\n',
             style:
-                error ? Styles.headlineStyleRed15 : Styles.headlineStyleGreen15,
+                error ? Styles.defaultStyleRed15 : Styles.defaultStyleGreen15,
           ),
           content: Text(
             message1,
-            style: isDark
-                ? Styles.headlineStyleWhite13
-                : Styles.headlineStyleBlack13,
+            style: Styles.defaultStyle13
           ),
           actions: <Widget>[
             // Apply Button
             CupertinoDialogAction(
               child: Text(
                 'OK',
-                style: Styles.headlineStyleGreen15,
+                style: Styles.defaultStyleGreen15,
               ),
               onPressed: () {
                 onAccept();
@@ -70,19 +68,17 @@ Future<bool> showConfirmDialog(
                         child: CupertinoAlertDialog(
                           title: Text(
                             '完了\n',
-                            style: Styles.headlineStyleGreen15,
+                            style: Styles.defaultStyleGreen15,
                           ),
                           content: Text(
                             message2,
-                            style: isDark
-                                ? Styles.headlineStyleWhite13
-                                : Styles.headlineStyleBlack13,
+                            style: Styles.defaultStyle13
                           ),
                           actions: <Widget>[
                             CupertinoDialogAction(
                               child: Text(
                                 'OK',
-                                style: Styles.headlineStyleGreen15,
+                                style: Styles.defaultStyleGreen15,
                               ),
                               onPressed: () {
                                 Navigator.pop(context);
@@ -98,7 +94,7 @@ Future<bool> showConfirmDialog(
             ),
             // Canncel Button
             CupertinoDialogAction(
-              child: Text('Cancel', style: Styles.headlineStyleRed15),
+              child: Text('Cancel', style: Styles.defaultStyleRed15),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -137,14 +133,12 @@ void showAlertDialog(
           title: Text(
             '$title\n',
             style: (!error)
-                ? Styles.headlineStyleGreen15
-                : Styles.headlineStyleRed15,
+                ? Styles.defaultStyleGreen15
+                : Styles.defaultStyleRed15,
           ),
           content: Text(
             message,
-            style: isDark
-                ? Styles.headlineStyleWhite13
-                : Styles.headlineStyleBlack13,
+            style: Styles.defaultStyle13,
           ),
           actions: <Widget>[
             // Apply Button
@@ -152,8 +146,8 @@ void showAlertDialog(
               child: Text(
                 'OK',
                 style: (!error)
-                    ? Styles.headlineStyleGreen15
-                    : Styles.headlineStyleRed15,
+                    ? Styles.defaultStyleGreen15
+                    : Styles.defaultStyleRed15,
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -193,7 +187,7 @@ Future<int?> showSelectDialog(
         child: CupertinoAlertDialog(
           title: Text(
             '$title\n',
-            style: Styles.headlineStyleGreen15,
+            style: Styles.defaultStyleGreen15,
           ),
           content: Column(
             children: [
@@ -202,8 +196,8 @@ Future<int?> showSelectDialog(
                   child: Text(
                     options[i],
                     style: isDark
-                        ? Styles.headlineStyleWhite13
-                        : Styles.headlineStyleBlack13,
+                        ? Styles.defaultStyleWhite13
+                        : Styles.defaultStyleBlack13,
                   ),
                   onPressed: () {
                     selectedOption = i;
@@ -246,7 +240,7 @@ Future<int?> showInfoDialog(
             ),
             title: Text(
               title,
-              style: Styles.headlineStyleGreen20,
+              style: Styles.defaultStyleGreen20,
               textAlign: TextAlign.center,
             ),
             content: SizedBox(

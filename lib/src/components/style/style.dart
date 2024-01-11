@@ -43,11 +43,13 @@ class Styles{
   static TextStyle defaultStyle18 = GoogleFonts.mPlus1(fontSize: 18, fontWeight: FontWeight.normal);
   static TextStyle defaultStyle15 = GoogleFonts.mPlus1(fontSize: 15, fontWeight: FontWeight.normal);
   static TextStyle defaultStyle13 = GoogleFonts.mPlus1(fontSize: 13, fontWeight: FontWeight.normal);
+  static TextStyle defaultStyle10 = GoogleFonts.mPlus1(fontSize: 10, fontWeight: FontWeight.normal);
 
   static TextStyle defaultStyleGreen20 = GoogleFonts.mPlus1(color: primaryColor,   fontSize: 20, fontWeight: FontWeight.normal);
   static TextStyle defaultStyleGreen18 = GoogleFonts.mPlus1(color: primaryColor,   fontSize: 18, fontWeight: FontWeight.normal);
   static TextStyle defaultStyleGreen15 = GoogleFonts.mPlus1(color: primaryColor,   fontSize: 15, fontWeight: FontWeight.normal);
   static TextStyle defaultStyleGreen13 = GoogleFonts.mPlus1(color: primaryColor,   fontSize: 13, fontWeight: FontWeight.normal);
+  static TextStyle defaultStyleGreen10 = GoogleFonts.mPlus1(color: primaryColor,   fontSize: 10, fontWeight: FontWeight.normal);
   
   static TextStyle defaultStyleWhite25 = GoogleFonts.mPlus1(color: Colors.white, fontSize: 25, fontWeight: FontWeight.normal);
   static TextStyle defaultStyleWhite20 = GoogleFonts.mPlus1(color: Colors.white, fontSize: 20, fontWeight: FontWeight.normal);
