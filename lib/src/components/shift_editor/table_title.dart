@@ -31,7 +31,7 @@ List<Widget> getColumnTitles(
       width: width,
       height: height,
       alignment: Alignment.center,
-      child: Text("", style: Styles.defaultStyleBlack10),
+      child: Text("", style: Styles.headlineStyleBlack10),
     )
   ];
 

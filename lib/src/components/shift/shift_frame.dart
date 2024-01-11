@@ -424,7 +424,7 @@ class ShiftFrame {
                           Text(
                             title,
                             style: (isEndShiftTerm())
-                                ? Styles.defaultStyleGrey15
+                                ? Styles.headlineStyleGrey15
                                 : Styles.headlineStyleGreen15,
                             textHeightBehavior: Styles.defaultBehavior,
                             textAlign: TextAlign.center,
@@ -437,7 +437,7 @@ class ShiftFrame {
                       "　　シフト期間 : ${DateFormat('MM/dd').format(dateTerm[0].start)} - ${DateFormat('MM/dd').format(dateTerm[0].end)}",
                       style: (isInShiftTerm())
                           ? Styles.headlineStyleGreen15
-                          : Styles.defaultStyleGrey15,
+                          : Styles.headlineStyleGrey15,
                       textHeightBehavior: Styles.defaultBehavior,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -446,14 +446,14 @@ class ShiftFrame {
                       "リクエスト期間 : ${DateFormat('MM/dd').format(dateTerm[1].start)} - ${DateFormat('MM/dd').format(dateTerm[1].end)}",
                       style: (isInRequestTerm())
                           ? Styles.headlineStyleGreen15
-                          : Styles.defaultStyleGrey15,
+                          : Styles.headlineStyleGrey15,
                       textHeightBehavior: Styles.defaultBehavior,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       "　フォロワー数 : $followersNum 人",
-                      style: Styles.defaultStyleGrey15,
+                      style: Styles.headlineStyleGrey15,
                       textHeightBehavior: Styles.defaultBehavior,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -476,7 +476,7 @@ class ShiftFrame {
               width: width * 0.4,
               child: Text(
                 DateFormat('MM/dd hh:mm').format(updateTime),
-                style: Styles.defaultStyleGrey15,
+                style: Styles.headlineStyleGrey15,
                 textHeightBehavior: Styles.defaultBehavior,
                 textAlign: TextAlign.start,
                 overflow: TextOverflow.ellipsis,

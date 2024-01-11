@@ -58,7 +58,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     ),
                   ),
                 ),
-                Text("「ライトテーマ」/「ダークテーマ」どちらを使用するか設定します。", style: Styles.defaultStyleGrey15),
+                Text("「ライトテーマ」/「ダークテーマ」どちらを使用するか設定します。", style: Styles.headlineStyleGrey15),
                 
                 SizedBox(height: _screenSize.height * 0.05),
       
@@ -82,8 +82,8 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     ),
                   ),
                 ),
-                Text("「ホーム画面」で「管理中のシフト表」/「フォロー中のシフト表」どちらをデフォルト表示にするか設定します。", style: Styles.defaultStyleGrey15),
-                Text("シフト表管理者は「管理中のシフト表」を設定することをお勧めします。", style: Styles.defaultStyleGrey15)
+                Text("「ホーム画面」で「管理中のシフト表」/「フォロー中のシフト表」どちらをデフォルト表示にするか設定します。", style: Styles.headlineStyleGrey15),
+                Text("シフト表管理者は「管理中のシフト表」を設定することをお勧めします。", style: Styles.headlineStyleGrey15)
               ],
             ),
           ),

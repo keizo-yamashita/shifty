@@ -119,7 +119,6 @@ class InputDateTermState extends State<InputDateTerm>
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       children: [
@@ -129,9 +128,7 @@ class InputDateTermState extends State<InputDateTerm>
             fit: BoxFit.fill,
             child: Text(
               "② 「リクエスト期間」/「シフト期間」を設定して下さい。",
-              style: isDark
-                  ? Styles.defaultStyleWhite15
-                  : Styles.defaultStyleBlack15,
+              style: Styles.defaultStyle15,
             ),
           ),
         ),
@@ -140,9 +137,8 @@ class InputDateTermState extends State<InputDateTerm>
           controller: tabController,
           indicatorColor: Styles.primaryColor,
           dividerColor: Colors.grey,
-          labelStyle: Styles.headlineStyle13,
+          labelStyle: Styles.defaultStyle15,
           labelColor: Styles.primaryColor,
-          unselectedLabelColor: Colors.grey,
           tabs: const [
             Tab(text: 'テンプレート'),
             Tab(text: 'カスタム'),
@@ -172,7 +168,7 @@ class InputDateTermState extends State<InputDateTerm>
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text("※ ", style: Styles.defaultStyleRed13),
+            Text("※ ", style: Styles.headlineStyleRed13),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,8 +227,8 @@ class InputDateTermState extends State<InputDateTerm>
       children: [
         Table(
           columnWidths: const <int, TableColumnWidth>{
-            0: IntrinsicColumnWidth(flex: 0.4),
-            1: IntrinsicColumnWidth(flex: 0.1),
+            0: IntrinsicColumnWidth(flex: 0.45),
+            1: IntrinsicColumnWidth(flex: 0.05),
             2: IntrinsicColumnWidth(flex: 0.5),
           },
           defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -286,7 +282,7 @@ class InputDateTermState extends State<InputDateTerm>
                       alignment: Alignment.center,
                       child: Text(
                         "確保できません",
-                        style: Styles.defaultStyleRed15,
+                        style: Styles.headlineStyleRed15,
                       ),
                     )
                   : printDateTerm(DateTimeRange(start: start, end: end)),
@@ -309,8 +305,8 @@ class InputDateTermState extends State<InputDateTerm>
 
     return Table(
       columnWidths: const <int, TableColumnWidth>{
-        0: IntrinsicColumnWidth(flex: 0.4),
-        1: IntrinsicColumnWidth(flex: 0.1),
+        0: IntrinsicColumnWidth(flex: 0.45),
+        1: IntrinsicColumnWidth(flex: 0.05),
         2: IntrinsicColumnWidth(flex: 0.5),
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -379,14 +375,10 @@ class InputDateTermState extends State<InputDateTerm>
       children: [
         Text(
           title,
-          style: Styles.defaultStyleGrey15,
+          style: Styles.defaultStyleBlack15,
           textAlign: TextAlign.right,
         ),
-        Text(
-          ' ⇨ ',
-          style: Styles.defaultStyleGrey15,
-          textAlign: TextAlign.center,
-        ),
+        Container(),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: SizedBox(
@@ -409,19 +401,19 @@ class InputDateTermState extends State<InputDateTerm>
       children: [
         Text(
           DateFormat('MM/dd', 'ja_JP').format(dateTerm.start),
-          style: Styles.headlineStyleGreen15,
+          style: Styles.defaultStyleGreen15,
         ),
         Text(
           " - ",
-          style: Styles.headlineStyleGreen15,
+          style: Styles.defaultStyleGreen13,
         ),
         Text(
           DateFormat('MM/dd', 'ja_JP').format(dateTerm.end),
-          style: Styles.headlineStyleGreen15,
+          style: Styles.defaultStyleGreen15,
         ),
         Text(
-          " [ ${(dateTerm.end.difference(dateTerm.start).inDays + 1).toString().padLeft(2, ' ')}日 ]",
-          style: Styles.headlineStyleGreen15,
+          " (${(dateTerm.end.difference(dateTerm.start).inDays + 1).toString().padLeft(2, ' ')}日)",
+          style: Styles.defaultStyleGreen13,
         ),
       ],
     );
@@ -454,7 +446,7 @@ class InputDateTermState extends State<InputDateTerm>
                 children: [
                   Text(
                     items[index],
-                    style: Styles.headlineStyle13,
+                    style: Styles.headlineStyle15,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -497,7 +489,16 @@ class InputDateTermState extends State<InputDateTerm>
           });
           setState(() {});
         },
-        child: printDateTerm(dateTerm),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              const Icon(Icons.calendar_month, color: Styles.primaryColor),
+              printDateTerm(dateTerm),
+            ],
+          ),
+        ),
       ),
     );
   }

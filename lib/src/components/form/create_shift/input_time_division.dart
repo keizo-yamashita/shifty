@@ -50,13 +50,11 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
             fit: BoxFit.fill,
             child: Text(
               "③ 基本となる時間区分を設定して下さい。",
-              style: isDark
-                  ? Styles.defaultStyleWhite15
-                  : Styles.defaultStyleBlack15,
+              style: Styles.defaultStyle15,
             ),
           ),
         ),
-        SizedBox(height: screenSize.height * 0.04),
+        SizedBox(height: screenSize.height * 0.02),
 
         SizedBox(
           child: Row(
@@ -69,7 +67,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                     fit: BoxFit.fill,
                     child: Text(
                       "始業時間",
-                      style: Styles.defaultStyleGrey15,
+                      style: Styles.defaultStyle15,
                     ),
                   ),
                 ),
@@ -92,7 +90,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                     fit: BoxFit.fill,
                     child: Text(
                       "終業時間",
-                      style: Styles.defaultStyleGrey15,
+                      style: Styles.defaultStyle15,
                     ),
                   ),
                 ),
@@ -115,7 +113,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                     fit: BoxFit.fill,
                     child: Text(
                       "管理間隔",
-                      style: Styles.defaultStyleGrey15,
+                      style: Styles.defaultStyle15,
                     ),
                   ),
                 ),
@@ -151,14 +149,14 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
         ////////////////////////////////////////////////////////////////////////////
         Text(
           "時間区分一覧（タップで結合）",
-          style: Styles.defaultStyleGrey15,
+          style: Styles.defaultStyle15,
           textAlign: TextAlign.left,
         ),
-        SizedBox(height: screenSize.height * 0.04),
+        SizedBox(height: screenSize.height * 0.02),
         (timeDivs.isEmpty)
             ? Text(
                 "登録されている時間区分がありません。",
-                style: Styles.defaultStyleGrey15,
+                style: Styles.defaultStyle15,
               )
             : buildScheduleEditor(),
       ],
@@ -300,7 +298,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                   height: height + boader,
                   child: Text(
                     "${timeDiv.startTime.hour.toString().padLeft(2, '0')}:${timeDiv.startTime.minute.toString().padLeft(2, '0')}-",
-                    style: Styles.defaultStyleGrey15,
+                    style: Styles.headlineStyleGrey15,
                     textHeightBehavior: Styles.defaultBehavior,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
@@ -310,7 +308,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                 height: height + boader,
                 child: Text(
                   "${timeDivsAxis.last.endTime.hour.toString().padLeft(2, '0')}:${timeDivsAxis.last.endTime.minute.toString().padLeft(2, '0')}-",
-                  style: Styles.defaultStyleGrey15,
+                  style: Styles.headlineStyleGrey15,
                   textHeightBehavior: Styles.defaultBehavior,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
@@ -346,7 +344,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(color: Styles.hiddenColor),
-                              borderRadius: BorderRadius.circular(2.0)),
+                              borderRadius: BorderRadius.circular(3.0)),
                           height: ((height + boader) *
                                   (calcDurationInMinute(timeDivs[i]) /
                                           durationAxis)

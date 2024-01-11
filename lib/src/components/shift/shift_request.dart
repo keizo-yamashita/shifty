@@ -304,7 +304,7 @@ class ShiftRequest {
                           Text(
                             "$title ($displayName)",
                             style: (shiftFrame.isEndShiftTerm())
-                                ? Styles.defaultStyleGrey15
+                                ? Styles.headlineStyleGrey15
                                 : Styles.headlineStyleGreen15,
                             textHeightBehavior: Styles.defaultBehavior,
                             textAlign: TextAlign.center,
@@ -317,7 +317,7 @@ class ShiftRequest {
                       "　　シフト期間 : ${DateFormat('MM/dd').format(shiftFrame.dateTerm[0].start)} - ${DateFormat('MM/dd').format(shiftFrame.dateTerm[0].end)}",
                       style: (shiftFrame.isInShiftTerm())
                           ? Styles.headlineStyleGreen15
-                          : Styles.defaultStyleGrey15,
+                          : Styles.headlineStyleGrey15,
                       textHeightBehavior: Styles.defaultBehavior,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -326,7 +326,7 @@ class ShiftRequest {
                       "リクエスト期間 : ${DateFormat('MM/dd').format(shiftFrame.dateTerm[1].start)} - ${DateFormat('MM/dd').format(shiftFrame.dateTerm[1].end)}",
                       style: (shiftFrame.isInRequestTerm())
                           ? Styles.headlineStyleGreen15
-                          : Styles.defaultStyleGrey15,
+                          : Styles.headlineStyleGrey15,
                       textHeightBehavior: Styles.defaultBehavior,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -349,7 +349,7 @@ class ShiftRequest {
               width: width * 0.4,
               child: Text(
                 DateFormat('MM/dd hh:mm').format(updateTime),
-                style: Styles.defaultStyleGrey15,
+                style: Styles.headlineStyleGrey15,
                 textHeightBehavior: Styles.defaultBehavior,
                 textAlign: TextAlign.start,
                 overflow: TextOverflow.ellipsis,

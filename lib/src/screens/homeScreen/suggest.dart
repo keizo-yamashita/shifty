@@ -45,9 +45,9 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("本アプリがご期待に添えず、ご不便をお掛けしている場合は、どのようなご要望でもお申し付け下さい。", style: Styles.defaultStyleGrey15),
+                      Text("本アプリがご期待に添えず、ご不便をお掛けしている場合は、どのようなご要望でもお申し付け下さい。", style: Styles.headlineStyleGrey15),
                       SizedBox(height: _screenSize.height/40),
-                      Text("例) 〇〇な機能が欲しい。〇〇が使いづらい。", style: Styles.defaultStyleGrey15)
+                      Text("例) 〇〇な機能が欲しい。〇〇が使いづらい。", style: Styles.headlineStyleGrey15)
                     ],
                   )
                 ),
@@ -76,7 +76,7 @@ class _SuggestionBoxScreenState extends ConsumerState<SuggestionBoxScreen>  with
                         ),
                       ),
                       hintText: 'ご要望はこちらに入力して下さい。',
-                      hintStyle: Styles.defaultStyleGrey15
+                      hintStyle: Styles.headlineStyleGrey15
                     ),
         
                     keyboardType: TextInputType.text,

@@ -72,11 +72,11 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
                     children: [
                       Text(
                         "注意 : 未ログイン状態です。",
-                        style: Styles.defaultStyleRed15,
+                        style: Styles.headlineStyleRed15,
                       ),
                       Text(
                         "シフト表をフォローすることはできません。",
-                        style: Styles.defaultStyleRed15,
+                        style: Styles.headlineStyleRed15,
                       ),
                       const SizedBox(height: 20),
                     ],
@@ -87,7 +87,7 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
 
                 Text(
                   "シフト表のIDを入力して下さい (半角英数20文字)",
-                  style: Styles.defaultStyleGrey15,
+                  style: Styles.headlineStyleGrey15,
                 ),
                 SizedBox(height: _screenSize.height * 0.04),
                 SizedBox(
@@ -121,7 +121,7 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
                       ),
                       prefixIcon: const Icon(Icons.input),
                       hintText: 'シフト表のID (半角英数20文字)',
-                      hintStyle: Styles.defaultStyleGrey15,
+                      hintStyle: Styles.headlineStyleGrey15,
                     ),
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.go,
@@ -147,7 +147,7 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
                 SizedBox(height: _screenSize.height * 0.04),
 
                 Text("あなたの表示名を入力して下さい (最大6文字)",
-                    style: Styles.defaultStyleGrey15),
+                    style: Styles.headlineStyleGrey15),
 
                 SizedBox(height: _screenSize.height * 0.04),
 
@@ -179,7 +179,7 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
                       ),
                       prefixIcon: const Icon(Icons.input),
                       hintText: '(ex) 福岡 太郎',
-                      hintStyle: Styles.defaultStyleGrey15,
+                      hintStyle: Styles.headlineStyleGrey15,
                     ),
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.go,
@@ -356,8 +356,8 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
     } else {
       return Column(
         children: [
-          Text("このIDを持つシフト表はしないようです", style: Styles.defaultStyleRed15),
-          Text("IDをもう一度確認してください", style: Styles.defaultStyleRed15),
+          Text("このIDを持つシフト表はしないようです", style: Styles.headlineStyleRed15),
+          Text("IDをもう一度確認してください", style: Styles.headlineStyleRed15),
         ],
       );
     }

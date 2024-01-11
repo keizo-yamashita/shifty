@@ -234,14 +234,14 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // how to use Managed Shift
-                            Text("「管理中のシフト表」の一覧が表示されます。", style: Styles.defaultStyleGrey13),
-                            Text("表示されるカードをタップすることで「シフトリクエストの確認」「シフトの管理」を行うことができます。", style: Styles.defaultStyleGrey13),
-                            Text("シフト管理者としてシフト表を作成したい場合、下記の手順に従って下さい。", style: Styles.defaultStyleGrey13),
+                            Text("「管理中のシフト表」の一覧が表示されます。", style: Styles.headlineStyleGrey13),
+                            Text("表示されるカードをタップすることで「シフトリクエストの確認」「シフトの管理」を行うことができます。", style: Styles.headlineStyleGrey13),
+                            Text("シフト管理者としてシフト表を作成したい場合、下記の手順に従って下さい。", style: Styles.headlineStyleGrey13),
                             const SizedBox(height: 20),
                             Text("1. シフト表の作成", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("管理者としてシフト表を作成します。", style: Styles.defaultStyleGrey13),
-                            Text("画面遷移後「シフト表作成画面」より参照して下さい。", style: Styles.defaultStyleGrey13),
+                            Text("管理者としてシフト表を作成します。", style: Styles.headlineStyleGrey13),
+                            Text("画面遷移後「シフト表作成画面」より参照して下さい。", style: Styles.headlineStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
@@ -254,11 +254,11 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                             const SizedBox(height: 10),
                             Text("2. シフト表の共有", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("フォロワーにシフト表を共有します。", style: Styles.defaultStyleGrey13),
-                            Text("共有リンクからアプリを開くには事前のアプリインストールが必要です。", style: Styles.defaultStyleGrey13),
+                            Text("フォロワーにシフト表を共有します。", style: Styles.headlineStyleGrey13),
+                            Text("共有リンクからアプリを開くには事前のアプリインストールが必要です。", style: Styles.headlineStyleGrey13),
                             const SizedBox(height: 10),
-                            Text("共有リンクから管理者もフォロワーとして登録することができます。", style: Styles.defaultStyleGrey13),
-                            Text("※ 一度、管理者自身がリンクからシフトリクエストを入力し、テストしてみることをお勧めします。", style: Styles.defaultStyleRed13),
+                            Text("共有リンクから管理者もフォロワーとして登録することができます。", style: Styles.headlineStyleGrey13),
+                            Text("※ 一度、管理者自身がリンクからシフトリクエストを入力し、テストしてみることをお勧めします。", style: Styles.headlineStyleRed13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
@@ -271,17 +271,17 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                             const SizedBox(height: 10),
                             Text("3. シフト表の管理", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("管理者としてシフト表を管理します。", style: Styles.defaultStyleGrey13),
-                            Text("画面遷移後「シフト管理画面」より参照して下さい。", style: Styles.defaultStyleGrey13),
+                            Text("管理者としてシフト表を管理します。", style: Styles.headlineStyleGrey13),
+                            Text("画面遷移後「シフト管理画面」より参照して下さい。", style: Styles.headlineStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/home_5.png"),
                             ),
                             Text("4. シフト表の削除", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("誤ったシフト表やシフト期間が満了したシフト表は削除しましょう。", style: Styles.defaultStyleGrey13),
-                            Text("削除すると、フォロワーが登録した内容含む全ての登録データが削除されます。", style: Styles.defaultStyleGrey13),
-                            Text("よく確認してから、削除して下さい。", style: Styles.defaultStyleGrey13),
+                            Text("誤ったシフト表やシフト期間が満了したシフト表は削除しましょう。", style: Styles.headlineStyleGrey13),
+                            Text("削除すると、フォロワーが登録した内容含む全ての登録データが削除されます。", style: Styles.headlineStyleGrey13),
+                            Text("よく確認してから、削除して下さい。", style: Styles.headlineStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/home_6.png"),
@@ -314,13 +314,13 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // hou to use Followed Shift
-                            Text("「フォロー中のシフト表」の一覧が表示されます。", style: Styles.defaultStyleGrey13),
-                            Text("表示されるカードをタップすることで「シフトリクエストの入力」「シフト表の確認」を行うことができます。", style: Styles.defaultStyleGrey13),
+                            Text("「フォロー中のシフト表」の一覧が表示されます。", style: Styles.headlineStyleGrey13),
+                            Text("表示されるカードをタップすることで「シフトリクエストの入力」「シフト表の確認」を行うことができます。", style: Styles.headlineStyleGrey13),
                             const SizedBox(height: 20),
                             Text("1. シフト表のフォロー", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("シフト表管理者が共有する共有リンクをタップすることで、フォロー画面に遷移します。", style: Styles.defaultStyleGrey13),
-                            Text("※ 共有リンクからアプリを開くには事前のアプリインストールが必要です。", style: Styles.defaultStyleRed13),
+                            Text("シフト表管理者が共有する共有リンクをタップすることで、フォロー画面に遷移します。", style: Styles.headlineStyleGrey13),
+                            Text("※ 共有リンクからアプリを開くには事前のアプリインストールが必要です。", style: Styles.headlineStyleRed13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
@@ -333,9 +333,9 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                             const SizedBox(height: 10),
                             Text("2. 「シフトリクエストの入力」/「シフトの確認」", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("カードをタップすることで画面遷移します  。", style: Styles.defaultStyleGrey13),
-                            Text("「シフトリクエストの入力」は「リクエスト期間」でのみ行えます。", style: Styles.defaultStyleGrey13),
-                            Text("「シフトの確認」は「リクエスト期間終了後」にのみ行えます。", style: Styles.defaultStyleGrey13),
+                            Text("カードをタップすることで画面遷移します  。", style: Styles.headlineStyleGrey13),
+                            Text("「シフトリクエストの入力」は「リクエスト期間」でのみ行えます。", style: Styles.headlineStyleGrey13),
+                            Text("「シフトの確認」は「リクエスト期間終了後」にのみ行えます。", style: Styles.headlineStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/home_9.png"),
@@ -343,8 +343,8 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                             const SizedBox(height: 10),
                             Text("3. フォローの解除", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
-                            Text("一度フォローを解除すると、フォロー中に登録した内容は全て破棄されます。", style: Styles.defaultStyleGrey13),
-                            Text("よく確認してから、削除してください。", style: Styles.defaultStyleGrey13),
+                            Text("一度フォローを解除すると、フォロー中に登録した内容は全て破棄されます。", style: Styles.headlineStyleGrey13),
+                            Text("よく確認してから、削除してください。", style: Styles.headlineStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/home_10.png"),
