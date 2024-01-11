@@ -51,12 +51,12 @@ class AccountScreen extends ConsumerWidget {
               if(!ref.read(signInProvider).user!.isAnonymous) ...[
                 Text("ユーザー名 : ${ref.read(signInProvider).user?.providerData[0].displayName ?? ref.read(signInProvider).user?.uid ?? ''}", style: Styles.headlineStyle15, overflow: TextOverflow.ellipsis),
                 Text("メール : ${ref.read(signInProvider).user?.providerData[0].email ?? ''}", style: Styles.headlineStyle15, overflow: TextOverflow.ellipsis),
-                Text("ユーザーID : ${ref.read(signInProvider).user?.uid ?? ''}", style: Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                Text("ユーザーID : ${ref.read(signInProvider).user?.uid ?? ''}", style: Styles.headlineStyleGrey13, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: 200,
                   child: OutlinedButton(
-                    child: Text('ログアウト', style: Styles.defaultStyleRed15),
+                    child: Text('ログアウト', style: Styles.headlineStyleRed15),
                     onPressed: () {
                       showConfirmDialog(
                         context, ref, "確認", "ログアウトしますか？\n登録したデータは失われません。", "ログアウトしました。", (){
@@ -71,7 +71,7 @@ class AccountScreen extends ConsumerWidget {
                 SizedBox(
                   width: 200,
                   child: OutlinedButton(
-                    child: Text('アカウント削除', style: Styles.defaultStyleRed15),
+                    child: Text('アカウント削除', style: Styles.headlineStyleRed15),
                     onPressed: () {
                       showConfirmDialog(
                         context, ref, "確認", "アカウントを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "ユーザを削除しました。", (){
@@ -100,7 +100,7 @@ class AccountScreen extends ConsumerWidget {
                 SizedBox(
                   width: 200,
                   child: OutlinedButton(
-                    child: Text('ゲストユーザの削除', style: Styles.defaultStyleRed15),
+                    child: Text('ゲストユーザの削除', style: Styles.headlineStyleRed15),
                     onPressed: () {
                       showConfirmDialog(
                         context, ref, "確認", "ゲストデータを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "ゲストユーザを削除しました。", (){

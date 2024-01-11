@@ -42,13 +42,13 @@ Future<bool> showConfirmDialog(
           title: Text(
             '$title\n',
             style:
-                error ? Styles.defaultStyleRed15 : Styles.headlineStyleGreen15,
+                error ? Styles.headlineStyleRed15 : Styles.headlineStyleGreen15,
           ),
           content: Text(
             message1,
             style: isDark
-                ? Styles.defaultStyleWhite13
-                : Styles.defaultStyleBlack13,
+                ? Styles.headlineStyleWhite13
+                : Styles.headlineStyleBlack13,
           ),
           actions: <Widget>[
             // Apply Button
@@ -75,8 +75,8 @@ Future<bool> showConfirmDialog(
                           content: Text(
                             message2,
                             style: isDark
-                                ? Styles.defaultStyleWhite13
-                                : Styles.defaultStyleBlack13,
+                                ? Styles.headlineStyleWhite13
+                                : Styles.headlineStyleBlack13,
                           ),
                           actions: <Widget>[
                             CupertinoDialogAction(
@@ -98,7 +98,7 @@ Future<bool> showConfirmDialog(
             ),
             // Canncel Button
             CupertinoDialogAction(
-              child: Text('Cancel', style: Styles.defaultStyleRed15),
+              child: Text('Cancel', style: Styles.headlineStyleRed15),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -138,13 +138,13 @@ void showAlertDialog(
             '$title\n',
             style: (!error)
                 ? Styles.headlineStyleGreen15
-                : Styles.defaultStyleRed15,
+                : Styles.headlineStyleRed15,
           ),
           content: Text(
             message,
             style: isDark
-                ? Styles.defaultStyleWhite13
-                : Styles.defaultStyleBlack13,
+                ? Styles.headlineStyleWhite13
+                : Styles.headlineStyleBlack13,
           ),
           actions: <Widget>[
             // Apply Button
@@ -153,7 +153,7 @@ void showAlertDialog(
                 'OK',
                 style: (!error)
                     ? Styles.headlineStyleGreen15
-                    : Styles.defaultStyleRed15,
+                    : Styles.headlineStyleRed15,
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -202,8 +202,8 @@ Future<int?> showSelectDialog(
                   child: Text(
                     options[i],
                     style: isDark
-                        ? Styles.defaultStyleWhite13
-                        : Styles.defaultStyleBlack13,
+                        ? Styles.headlineStyleWhite13
+                        : Styles.headlineStyleBlack13,
                   ),
                   onPressed: () {
                     selectedOption = i;

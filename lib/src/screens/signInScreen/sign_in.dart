@@ -54,7 +54,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                   child: TextFormField(
                     controller: inputMailController,
                     cursorColor: Styles.bgColor,
-                    style: Styles.defaultStyleWhite15,
+                    style: Styles.headlineStyleWhite15,
                     autofillHints: const [AutofillHints.email], 
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -73,7 +73,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                       ),
                       prefixIcon: const Icon(Icons.input, color: Colors.white),
                       hintText: 'メールアドレス',
-                      hintStyle: Styles.defaultStyleWhite15,
+                      hintStyle: Styles.headlineStyleWhite15,
                     ),
                     keyboardType: TextInputType.text,
                   ),
@@ -86,7 +86,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                   child: TextFormField(
                     controller: inputPasswordController,
                     cursorColor: Styles.bgColor,
-                    style: Styles.defaultStyleWhite15,
+                    style: Styles.headlineStyleWhite15,
                     autofillHints: const [AutofillHints.password], 
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -105,7 +105,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                       ),
                       prefixIcon: const Icon(Icons.input, color: Colors.white),
                       hintText: 'パスワード',
-                      hintStyle: Styles.defaultStyleWhite15,
+                      hintStyle: Styles.headlineStyleWhite15,
                     ),
                     keyboardType: TextInputType.text,
                     obscureText: true,

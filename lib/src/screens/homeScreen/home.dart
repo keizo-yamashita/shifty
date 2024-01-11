@@ -243,7 +243,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
     if(docs.isEmpty){
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 32.0),
-        child: Text("フォロー中のシフト表はありません。", style: Styles.defaultStyleGrey15, textAlign: TextAlign.center),
+        child: Text("フォロー中のシフト表はありません。", style: Styles.headlineStyleGrey15, textAlign: TextAlign.center),
       );
     }else{
       // とってきたシフトリクエストが参照しているシフト表を取ってくる
@@ -290,7 +290,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
     if(docs.isEmpty){
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 32.0),
-        child: Text("管理中のシフト表はありません。", style: Styles.defaultStyleGrey15, textAlign: TextAlign.center),
+        child: Text("管理中のシフト表はありません。", style: Styles.headlineStyleGrey15, textAlign: TextAlign.center),
       );
     }else{
       // とってきたシフトリクエストが参照しているシフト表を取ってくる

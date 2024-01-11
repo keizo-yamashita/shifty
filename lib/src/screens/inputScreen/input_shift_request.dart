@@ -527,21 +527,21 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // How to Edit
-                            Text("この画面では、シフトリクエストを編集できます。", style: Styles.defaultStyleGrey13),
-                            Text("また「シフトリクエスト期間」終了後にシフト表を確認するためにも使用します。", style: Styles.defaultStyleGrey13),
+                            Text("この画面では、シフトリクエストを編集できます。", style: Styles.headlineStyleGrey13),
+                            Text("また「シフトリクエスト期間」終了後にシフト表を確認するためにも使用します。", style: Styles.headlineStyleGrey13),
                             const SizedBox(height: 20),
                             Text("編集方法", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
-                            Text("編集は「シフトリクエスト期間」でのみ可能です。", style: Styles.defaultStyleGrey13),
-                            Text("「シフトリクエスト期間」中は何度でも編集できます。", style: Styles.defaultStyleGrey13),
-                            Text("編集後は、画面右上の「登録」ボタンを押して登録してください。", style: Styles.defaultStyleGrey13),
+                            Text("編集は「シフトリクエスト期間」でのみ可能です。", style: Styles.headlineStyleGrey13),
+                            Text("「シフトリクエスト期間」中は何度でも編集できます。", style: Styles.headlineStyleGrey13),
+                            Text("編集後は、画面右上の「登録」ボタンを押して登録してください。", style: Styles.headlineStyleGrey13),
                             const SizedBox(height: 10),
 
                             const SizedBox(height: 20),
                             Text("アイコンについて", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
-                            Text("シフト表の表示されるアイコンは、その日時の「リクエスト」を示すものです。", style: Styles.defaultStyleGrey13),
-                            Text("アイコンの示す意味は、下記のとおりです。", style: Styles.defaultStyleGrey13),
+                            Text("シフト表の表示されるアイコンは、その日時の「リクエスト」を示すものです。", style: Styles.headlineStyleGrey13),
+                            Text("アイコンの示す意味は、下記のとおりです。", style: Styles.headlineStyleGrey13),
                             const SizedBox(height: 10),
                             Row(
                               children: [
@@ -556,7 +556,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                SizedBox(width: 80, child: Text("シフト希望", style: Styles.defaultStyleGrey13)),
+                                SizedBox(width: 80, child: Text("シフト希望", style: Styles.headlineStyleGrey13)),
                                 const SizedBox(width: 10),
                                 Container(
                                   decoration: BoxDecoration(
@@ -569,7 +569,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                Text("非シフト希望", style: Styles.defaultStyleGrey13)
+                                Text("非シフト希望", style: Styles.headlineStyleGrey13)
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -588,7 +588,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                Text("シフト確定 ※「リクエスト期間」以降に確認可能", style: Styles.defaultStyleGrey13),
+                                Text("シフト確定 ※「リクエスト期間」以降に確認可能", style: Styles.headlineStyleGrey13),
                               ],
                             ),
                             
@@ -600,14 +600,14 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                               children: [
                                 const Icon(Icons.cloud_upload_outlined, size: 24, color: Styles.primaryColor),
                                 const SizedBox(width: 10),
-                                Text("登録ボタン (画面右上)", style: Styles.defaultStyleGrey13),
+                                Text("登録ボタン (画面右上)", style: Styles.headlineStyleGrey13),
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("シフトリクエスト表の編集内容は、画面遷移時に破棄されます。", style: Styles.defaultStyleGrey13),
-                            Text("編集内容を「登録」するには、画面右上の「登録ボタン」を押してください。", style: Styles.defaultStyleRed13),
-                            Text("登録内容は常にシフト管理者に共有されますが、「シフトリクエスト期間」終了日までは何度でも変更できます。", style: Styles.defaultStyleGrey13),
-                            Text("「シフトリクエスト期間」終了日までには、必ず登録してください。", style: Styles.defaultStyleRed13),
+                            Text("シフトリクエスト表の編集内容は、画面遷移時に破棄されます。", style: Styles.headlineStyleGrey13),
+                            Text("編集内容を「登録」するには、画面右上の「登録ボタン」を押してください。", style: Styles.headlineStyleRed13),
+                            Text("登録内容は常にシフト管理者に共有されますが、「シフトリクエスト期間」終了日までは何度でも変更できます。", style: Styles.headlineStyleGrey13),
+                            Text("「シフトリクエスト期間」終了日までには、必ず登録してください。", style: Styles.headlineStyleRed13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -639,7 +639,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Zoom Out / In Button
-                            Text("画面上部のツールボタンを用いることで、効率的な編集を行うことができます。", style: Styles.defaultStyleGrey13),
+                            Text("画面上部のツールボタンを用いることで、効率的な編集を行うことができます。", style: Styles.headlineStyleGrey13),
                             const SizedBox(height: 20),
                             Text("拡大・縮小ボタン", style: Styles.headlineStyle18),
                             const SizedBox(height: 10),
@@ -652,7 +652,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("表の拡大・縮小ができます。", style: Styles.defaultStyleGrey13),
+                            Text("表の拡大・縮小ができます。", style: Styles.headlineStyleGrey13),
                             const SizedBox(height: 10),
                           
                             // Filterring Input Button
@@ -661,7 +661,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                             const SizedBox(height: 10),
                             ToolButton(icon: Icons.filter_alt_outlined, pressEnable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
-                            Text("「日時」「リクエスト」を指定して、一括で入力できます。", style: Styles.defaultStyleGrey13),
+                            Text("「日時」「リクエスト」を指定して、一括で入力できます。", style: Styles.headlineStyleGrey13),
                             const SizedBox(height: 10),
 
                             // Draw Button                             
@@ -670,10 +670,10 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                             const SizedBox(height: 10),
                             ToolButton(icon: Icons.touch_app_outlined, pressEnable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
-                            Text("細かい1マス単位の編集ができます。", style: Styles.defaultStyleGrey13),
-                            Text("タップ後に表のマスをなぞることで割り当て状態を編集できます。", style: Styles.defaultStyleGrey13),
-                            Text("入力する「リクエスト」は、ボタンを長押しすることで選択できます。", style: Styles.defaultStyleGrey13),
-                            Text("注意 : 使用中、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: Styles.defaultStyleRed13),
+                            Text("細かい1マス単位の編集ができます。", style: Styles.headlineStyleGrey13),
+                            Text("タップ後に表のマスをなぞることで割り当て状態を編集できます。", style: Styles.headlineStyleGrey13),
+                            Text("入力する「リクエスト」は、ボタンを長押しすることで選択できます。", style: Styles.headlineStyleGrey13),
+                            Text("注意 : 使用中、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: Styles.headlineStyleRed13),
 
                             // Redo / Undo Button
                             const SizedBox(height: 10),
@@ -688,8 +688,8 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("編集したシフトリクエスト表を「前の状態」や「次の状態」に戻すことができます。", style: Styles.defaultStyleGrey13),
-                            Text("注意 : 遡れる状態は最大50であり、一度管理者画面を閉じると過去の変更履歴は破棄されます。", style: Styles.defaultStyleRed13),
+                            Text("編集したシフトリクエスト表を「前の状態」や「次の状態」に戻すことができます。", style: Styles.headlineStyleGrey13),
+                            Text("注意 : 遡れる状態は最大50であり、一度管理者画面を閉じると過去の変更履歴は破棄されます。", style: Styles.headlineStyleRed13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -777,7 +777,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         )
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.headlineStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -792,7 +792,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.headlineStyleGrey13))),
                     SizedBox(height: widgetHeight, width: modalWidth * (100 / 330))
                   ],
                 ),
@@ -813,7 +813,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: Styles.headlineStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -828,7 +828,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: Styles.headlineStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomIconButton(
@@ -925,15 +925,15 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Text(weekSelect,      style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(' の ',          style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(weekdaySelect,   style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(' の ',          style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(timeDivs1Select, style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(' - ',           style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(timeDivs2Select, style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(' は ',          style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(requestSelect,   style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(weekSelect,      style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' の ',          style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(weekdaySelect,   style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' の ',          style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(timeDivs1Select, style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' - ',           style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(timeDivs2Select, style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' は ',          style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(requestSelect,   style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
                 ],
               ),
             ),

@@ -385,7 +385,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 20),
-                      Text("この画面では、シフト表の割り当て人数を設定します。", style: Styles.defaultStyleGrey13),
+                      Text("この画面では、シフト表の割り当て人数を設定します。", style: Styles.headlineStyleGrey13),
                       
                       // About Shift Table Buttons 
                       const SizedBox(height: 20),
@@ -413,28 +413,28 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // How to Edit
-                            Text("この画面では、シフト表の各日時に対する割り当て人数を設定します。", style: Styles.defaultStyleGrey13),
-                            Text("シフト表作成後に割り当て人数を変更することはできません。", style: Styles.defaultStyleRed13),
+                            Text("この画面では、シフト表の各日時に対する割り当て人数を設定します。", style: Styles.headlineStyleGrey13),
+                            Text("シフト表作成後に割り当て人数を変更することはできません。", style: Styles.headlineStyleRed13),
                             const SizedBox(height: 20),
                             Text("編集方法", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("シフト表の各マスの数字は、その日時の割り当て人数を示すものです。", style: Styles.defaultStyleGrey13),
-                            Text("画面上部のツールボタンを使用することで、割り当て人数を編集できます。", style: Styles.defaultStyleGrey13),
+                            Text("シフト表の各マスの数字は、その日時の割り当て人数を示すものです。", style: Styles.headlineStyleGrey13),
+                            Text("画面上部のツールボタンを使用することで、割り当て人数を編集できます。", style: Styles.headlineStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/create_2_1.png"),
                             ),
-                            Text("画面を横向きにすることもできます。", style: Styles.defaultStyleGrey13), 
-                            Text("見やすい画面で作業しましょう。", style: Styles.defaultStyleGrey13), 
+                            Text("画面を横向きにすることもできます。", style: Styles.headlineStyleGrey13), 
+                            Text("見やすい画面で作業しましょう。", style: Styles.headlineStyleGrey13), 
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/create_2_2.png"),
                             ),
                             Text("登録方法", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("編集後は、画面右上の「登録」ボタンを押して登録して下さい。", style: Styles.defaultStyleGrey13),
-                            Text("編集内容を「登録」しない場合、画面遷移時に破棄されます。", style: Styles.defaultStyleRed13),
-                            Text("作成したシフト表の共有方法については、「ホーム画面」の i ボタンより参照して下さい。", style: Styles.defaultStyleGrey13),
+                            Text("編集後は、画面右上の「登録」ボタンを押して登録して下さい。", style: Styles.headlineStyleGrey13),
+                            Text("編集内容を「登録」しない場合、画面遷移時に破棄されます。", style: Styles.headlineStyleRed13),
+                            Text("作成したシフト表の共有方法については、「ホーム画面」の i ボタンより参照して下さい。", style: Styles.headlineStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/create_2_3.png"),
@@ -468,13 +468,13 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("画面上部のツールボタンを用いることで、効率的な編集を行うことができます。", style: Styles.defaultStyleGrey13),
+                            Text("画面上部のツールボタンを用いることで、効率的な編集を行うことができます。", style: Styles.headlineStyleGrey13),
                             const SizedBox(height: 20),
                             // Zoom Out / In Button
                             Text("拡大・縮小ボタン", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("表の拡大・縮小ができます。", style: Styles.defaultStyleGrey13),
-                            Text("見やすいサイズで作業しましょう。", style: Styles.defaultStyleGrey13),
+                            Text("表の拡大・縮小ができます。", style: Styles.headlineStyleGrey13),
+                            Text("見やすいサイズで作業しましょう。", style: Styles.headlineStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/create_2_4.png"),
@@ -483,7 +483,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                             // Filterring Input Button
                             Text("一括入力ボタン", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("特定の「日時」に「割当て人数」一括入力できます。", style: Styles.defaultStyleGrey13),
+                            Text("特定の「日時」に「割当て人数」一括入力できます。", style: Styles.headlineStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/create_2_5.png"),
@@ -492,9 +492,9 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                             // Draw Button                             
                             Text("タッチ入力ボタン", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("タップ後に表のマスをなぞることで細かい1マス単位の割り当て人数を編集できます。", style: Styles.defaultStyleGrey13),
-                            Text("設定する割当て人数は、ボタンを長押しすることで選択できます。", style: Styles.defaultStyleGrey13),
-                            Text("注意 : 使用中、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: Styles.defaultStyleRed13),
+                            Text("タップ後に表のマスをなぞることで細かい1マス単位の割り当て人数を編集できます。", style: Styles.headlineStyleGrey13),
+                            Text("設定する割当て人数は、ボタンを長押しすることで選択できます。", style: Styles.headlineStyleGrey13),
+                            Text("注意 : 使用中、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: Styles.headlineStyleRed13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
@@ -510,8 +510,8 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                             const SizedBox(height: 10),
                             Text("戻る・進む ボタン", style: Styles.headlineStyle15),
                             const SizedBox(height: 10),
-                            Text("編集した割り当て表を「前の状態」や「次の状態」に戻すことができます。", style: Styles.defaultStyleGrey13),
-                            Text("注意 : 遡れる状態は最大50であり、一度シフト表作成画面を閉じると過去の変更履歴は破棄されます。", style: Styles.defaultStyleRed13),
+                            Text("編集した割り当て表を「前の状態」や「次の状態」に戻すことができます。", style: Styles.headlineStyleGrey13),
+                            Text("注意 : 遡れる状態は最大50であり、一度シフト表作成画面を閉じると過去の変更履歴は破棄されます。", style: Styles.headlineStyleRed13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -598,7 +598,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         )
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.headlineStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -613,7 +613,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.headlineStyleGrey13))),
                     SizedBox(height: widgetHeight, width: modalWidth * (100 / 330))
                   ],
                 ),
@@ -634,7 +634,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: Styles.headlineStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -649,7 +649,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: Styles.headlineStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -791,16 +791,16 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Text(weekSelect,      style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(' の ',          style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(weekdaySelect,   style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(' の ',          style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(timeDivs1Select, style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(' - ',           style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(timeDivs2Select, style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(' の勤務人数は ',  style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(assignNumSelect, style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
-                  Text(' 人',           style: Styles.defaultStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(weekSelect,      style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' の ',          style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(weekdaySelect,   style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' の ',          style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(timeDivs1Select, style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' - ',           style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(timeDivs2Select, style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' の勤務人数は ',  style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(assignNumSelect, style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
+                  Text(' 人',           style: Styles.headlineStyleGrey13, textHeightBehavior: Styles.defaultBehavior),
                 ],
               ),
             ),

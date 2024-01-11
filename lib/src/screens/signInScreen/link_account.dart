@@ -60,7 +60,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                   child: TextFormField(
                     controller: inputMailController,
                     cursorColor: Styles.bgColor,
-                    style: Styles.defaultStyleWhite15,
+                    style: Styles.headlineStyleWhite15,
                     autofillHints: const [AutofillHints.email], 
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -79,7 +79,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                       ),
                       prefixIcon: const Icon(Icons.input, color: Colors.white),
                       hintText: 'メールアドレス',
-                      hintStyle: Styles.defaultStyleWhite15,
+                      hintStyle: Styles.headlineStyleWhite15,
                     ),
                     keyboardType: TextInputType.text,
                   ),
@@ -92,7 +92,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                   child: TextFormField(
                     controller: inputPasswordController,
                     cursorColor: Styles.bgColor,
-                    style: Styles.defaultStyleWhite15,
+                    style: Styles.headlineStyleWhite15,
                     autofillHints: const [AutofillHints.password], 
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -111,7 +111,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                       ),
                       prefixIcon: const Icon(Icons.input, color: Colors.white),
                       hintText: 'パスワード',
-                      hintStyle: Styles.defaultStyleWhite15,
+                      hintStyle: Styles.headlineStyleWhite15,
                     ),
                     keyboardType: TextInputType.text,
                     obscureText: true,

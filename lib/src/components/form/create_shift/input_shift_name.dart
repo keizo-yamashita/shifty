@@ -26,9 +26,7 @@ class InputShiftName extends StatelessWidget {
             fit: BoxFit.fill,
             child: Text(
               "① 作成するシフト表名を入力して下さい。（最大10文字）",
-              style: isDark
-                  ? Styles.defaultStyleWhite15
-                  : Styles.defaultStyleBlack15,
+              style: Styles.defaultStyle15,
             ),
           ),
         ),
@@ -60,7 +58,7 @@ class InputShiftName extends StatelessWidget {
               ),
               prefixIcon: const Icon(Icons.input),
               hintText: 'シフト表名 (例) 〇〇店シフト',
-              hintStyle: Styles.defaultStyleGrey15,
+              hintStyle: Styles.defaultStyle15,
             ),
             maxLength: 10,
             keyboardType: TextInputType.text,

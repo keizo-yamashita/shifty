@@ -224,7 +224,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: const Text('入力エラー\n', style: TextStyle(color: Colors.red)),
-          content: Text(message, style: Styles.defaultStyleBlack13),
+          content: Text(message, style: Styles.headlineStyleBlack13),
           actions: <Widget>[
             CupertinoDialogAction(
               child: const Text('OK', style: TextStyle(color: Colors.red)),
@@ -274,11 +274,11 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                           children: [
                             Text(
                               "この画面では、シフト表の基本設定を行います。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Text(
                               "以下の各項目を入力して下さい。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                           ],
                         ),
@@ -297,11 +297,11 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                             const SizedBox(height: 10),
                             Text(
                               "「作成するシフト表」の名前を入力して下さい。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Text(
                               "最大文字数は10文字です。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -329,25 +329,25 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                             const SizedBox(height: 10),
                             Text(
                               "　　「シフト期間」... 作成するシフト表のシフト期間",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Text(
                               "「リクエスト期間」... シフト表のリクエスト募集期間",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             const SizedBox(height: 10),
                             Text(
                               "例)",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Text(
                               "'12/1 ~ 12/31' の間のシフトリクエストを '11/15 ~ 11/25' の間に受け取り、11/26 ~ 11/30 の間にシフトを組みたい場合",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             const SizedBox(height: 10),
                             Text(
                               "この場合、参考画像のように設定します。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -364,11 +364,11 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                             ),
                             Text(
                               "「シフト期間」と「リクエスト期間」の間の期間で、シフトを組みます。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Text(
                               "そのため「シフト期間」と「リクエスト期間」の間は１日以上の間隔が必要です。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             const SizedBox(height: 10),
                           ],
@@ -390,25 +390,25 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                             // hou to use Followed Shift
                             Text(
                               "「基本の時間区分」とは、シフト表の時間区分のことです。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Text(
                               "「始業時間」「就業時間」「管理間隔」を設定後、「入力ボタン」を押し、時間区分のリストを作成してください。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             const SizedBox(height: 10),
                             Text(
                               "例)",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Text(
                               "始業時間 8:00 ~ 就業時間 22:00 で 1 時間間隔でシフトを組む場合",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             const SizedBox(height: 10),
                             Text(
                               "この場合、参考画像のように設定します。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -425,16 +425,16 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                             ),
                             Text(
                               "「始業時間」「就業時間」は、平均的な勤務日の「始業時間」「就業時間」を設定してください。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Text(
                               "平日や休日で勤務時間が異なる場合は、できるだけ「勤務時間」が長い方に合わせましょう。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             const SizedBox(height: 10),
                             Text(
                               "「入力ボタン」を押すと「始業時間」から「就業時間」までの時間が「管理間隔」で分割されたリストが表示されます。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                           ],
                         ),
@@ -455,16 +455,16 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                             const SizedBox(height: 10),
                             Text(
                               "各時間区分をタップすると、その下部の時間区分と連結できます。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Text(
                               "理想の時間区分にカスタマイズしましょう。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             const SizedBox(height: 10),
                             Text(
                               "時間区分の変更履歴は「戻るボタン」で遡ることができます。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -498,7 +498,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                             const SizedBox(height: 10),
                             Text(
                               "各項目の入力が終了したら、画面右上の「次へボタン」より「勤務人数の設定画面」へと遷移します。",
-                              style: Styles.defaultStyleGrey13,
+                              style: Styles.headlineStyleGrey13,
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
