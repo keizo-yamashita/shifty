@@ -16,7 +16,6 @@ class InputShiftName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       children: [
@@ -32,7 +31,6 @@ class InputShiftName extends StatelessWidget {
         ),
         SizedBox(height: screenSize.height * 0.02),
         SizedBox(
-          height: 70,
           child: TextField(
             controller: textController,
             cursorColor: Styles.primaryColor,
@@ -40,6 +38,7 @@ class InputShiftName extends StatelessWidget {
             focusNode: focusNode,
             autofocus: false,
             decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(vertical: 8),
               prefixIconColor: Styles.primaryColor,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),

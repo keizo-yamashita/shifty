@@ -31,7 +31,7 @@ List<Widget> getColumnTitles(
       width: width,
       height: height,
       alignment: Alignment.center,
-      child: Text("", style: Styles.headlineStyleBlack10),
+      child: Text("", style: Styles.defaultStyleBlack10),
     )
   ];
 
@@ -144,7 +144,7 @@ List<Widget> getRowTitles(
           child: Text(
             timeDivs[i].name,
             style: Styles.tableTitleStyle(
-                (isDark) ? Colors.white : Colors.black54),
+                (isDark) ? Colors.white : Colors.black54,),
           ),
         ),
       ),

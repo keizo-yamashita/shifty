@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // my package
 import 'package:shift/main.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/form/utility/dialog.dart';
 
 class LinkAccountScreen extends ConsumerStatefulWidget {
   const LinkAccountScreen({Key? key}) : super(key: key);

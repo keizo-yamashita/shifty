@@ -424,8 +424,8 @@ class ShiftFrame {
                           Text(
                             title,
                             style: (isEndShiftTerm())
-                                ? Styles.headlineStyleGrey15
-                                : Styles.headlineStyleGreen15,
+                                ? Styles.defaultStyleGrey15
+                                : Styles.defaultStyleGreen15,
                             textHeightBehavior: Styles.defaultBehavior,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
@@ -436,8 +436,8 @@ class ShiftFrame {
                     Text(
                       "　　シフト期間 : ${DateFormat('MM/dd').format(dateTerm[0].start)} - ${DateFormat('MM/dd').format(dateTerm[0].end)}",
                       style: (isInShiftTerm())
-                          ? Styles.headlineStyleGreen15
-                          : Styles.headlineStyleGrey15,
+                          ? Styles.defaultStyleGreen15
+                          : Styles.defaultStyleGrey15,
                       textHeightBehavior: Styles.defaultBehavior,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -445,15 +445,15 @@ class ShiftFrame {
                     Text(
                       "リクエスト期間 : ${DateFormat('MM/dd').format(dateTerm[1].start)} - ${DateFormat('MM/dd').format(dateTerm[1].end)}",
                       style: (isInRequestTerm())
-                          ? Styles.headlineStyleGreen15
-                          : Styles.headlineStyleGrey15,
+                          ? Styles.defaultStyleGreen15
+                          : Styles.defaultStyleGrey15,
                       textHeightBehavior: Styles.defaultBehavior,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       "　フォロワー数 : $followersNum 人",
-                      style: Styles.headlineStyleGrey15,
+                      style: Styles.defaultStyleGrey15,
                       textHeightBehavior: Styles.defaultBehavior,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -476,7 +476,7 @@ class ShiftFrame {
               width: width * 0.4,
               child: Text(
                 DateFormat('MM/dd hh:mm').format(updateTime),
-                style: Styles.headlineStyleGrey15,
+                style: Styles.defaultStyleGrey15,
                 textHeightBehavior: Styles.defaultBehavior,
                 textAlign: TextAlign.start,
                 overflow: TextOverflow.ellipsis,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/style/style.dart';
 
 class EditorAppBar extends StatelessWidget {
@@ -52,9 +52,10 @@ class EditorAppBar extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: FittedBox(
             fit: BoxFit.fill,
-            child: Text(title, style: Styles.headlineStyleGreen20),
+            child: Text(title, style: Styles.defaultStyleGreen20),
           ),
           bottomOpacity: 2.0,
           elevation: 2.0,

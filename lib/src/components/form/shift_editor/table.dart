@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:shift/src/components/shift_editor/two_dimention_grid_view.dart';
-import 'package:shift/src/components/shift_editor/coordinate.dart';
-import 'package:shift/src/components/shift_editor/linkled_scroll.dart';
+import 'package:shift/src/components/form/shift_editor/two_dimention_grid_view.dart';
+import 'package:shift/src/components/form/shift_editor/coordinate.dart';
+import 'package:shift/src/components/form/shift_editor/linkled_scroll.dart';
 
 class TableEditor extends StatefulWidget {
   // key : テーブルを拡大縮小させたタイミングで更新する必要あり
@@ -98,7 +98,7 @@ class TableEditorState extends State<TableEditor> {
             return Padding(
               padding: EdgeInsets.only(
                 top: (i == 0) ? widget.titleMargin : 0,
-                right: (j == rowLength) ? widget.titleMargin : 0,
+                right: (j == rowLength) ? widget.titleMargin*2 : 0,
                 left: (j == 0) ? widget.titleMargin : 0,
                 bottom: (i == columnLength) ? widget.titleMargin : 0,
               ),
@@ -139,7 +139,7 @@ class TableEditorState extends State<TableEditor> {
                           SizedBox(width: widget.titleMargin),
                           for (int i = 0; i < widget.columnTitles.length; i++)
                             widget.columnTitles[i],
-                          SizedBox(width: widget.titleMargin),
+                          SizedBox(width: widget.titleMargin*2),
                         ],
                       ),
                     ),

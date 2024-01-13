@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shift/main.dart';
 import 'package:flutter/material.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/form/utility/dialog.dart';
 
 final GlobalKey<ScaffoldState> _signInScaffoldKey = GlobalKey<ScaffoldState>();
 

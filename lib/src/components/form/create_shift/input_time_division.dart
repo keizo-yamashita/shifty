@@ -1,13 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shift/src/components/form/button.dart';
-import 'package:shift/src/components/form/modal_window.dart';
+import 'package:shift/src/components/form/utility/button.dart';
+import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/undo_redo.dart';
 
 class InputTimeDivision extends StatefulWidget {
+  final Function(
+    List<TimeDivision> timeDivs,
+  ) onTimeDivsChanged;
+
   const InputTimeDivision({
+    required this.onTimeDivsChanged,
     super.key,
   });
 
@@ -129,17 +134,39 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           ),
         ),
         SizedBox(height: screenSize.height * 0.02),
-        CustomTextButton(
-          text: "入力",
-          enable: true,
-          width: screenSize.width,
-          height: 40,
-          action: () {
-            setState(() {
-              createMimimumDivision(startTime, endTime, duration);
-              insertBuffer(timeDivs);
-            });
-          },
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CustomTextButton(
+              text: "入力",
+              enable: true,
+              width: screenSize.width * 0.44,
+              height: 30,
+              onPressed: () {
+                setState(
+                  () {
+                    createMimimumDivision(startTime, endTime, duration);
+                    insertBuffer(timeDivs);
+                    widget.onTimeDivsChanged(timeDivs);
+                  },
+                );
+              },
+            ),
+            CustomTextButton(
+              text: "戻す",
+              enable: undoredoCtrl.enableUndo(),
+              width: screenSize.width * 0.44,
+              height: 30,
+              onPressed: () {
+                setState(
+                  () {
+                    timeDivsUndoRedo(true);
+                    widget.onTimeDivsChanged(timeDivs);
+                  },
+                );
+              },
+            ),
+          ],
         ),
         SizedBox(height: screenSize.height * 0.04),
 
@@ -166,53 +193,42 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
       int interval, Function(DateTime) callback) {
     DateTime temp = init;
 
-    return SizedBox(
-      height: 40,
+    return CustomTextButton(
       width: screenSize.width / 4,
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          shadowColor: Styles.hiddenColor,
-          minimumSize: Size.zero,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          side: const BorderSide(color: Styles.hiddenColor),
-        ),
-        onPressed: () async {
-          await showModalWindow(
-            context,
-            0.4,
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.3,
-              width: double.maxFinite,
-              child: Theme(
-                data: isDark ? ThemeData.dark() : ThemeData.light(),
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.time,
-                  initialDateTime: init,
-                  minuteInterval: interval,
-                  minimumDate: min,
-                  maximumDate: max,
-                  onDateTimeChanged: (val) {
-                    setState(
-                      () {
-                        temp = val;
-                        callback(val);
-                      },
-                    );
-                  },
-                  use24hFormat: true,
-                ),
+      height: 40,
+      enable: true,
+      icon: Icons.watch_later_outlined,
+      text:
+          '${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}',
+      onPressed: () async {
+        await showModalWindow(
+          context,
+          0.4,
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
+            width: double.maxFinite,
+            child: Theme(
+              data: isDark ? ThemeData.dark() : ThemeData.light(),
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.time,
+                initialDateTime: init,
+                minuteInterval: interval,
+                minimumDate: min,
+                maximumDate: max,
+                onDateTimeChanged: (val) {
+                  setState(
+                    () {
+                      temp = val;
+                      callback(val);
+                    },
+                  );
+                },
+                use24hFormat: true,
               ),
             ),
-          );
-        },
-        child: Text(
-          '${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}',
-          style: Styles.defaultStyleGreen13,
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -226,12 +242,14 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           if (temp.compareTo(end) > 0) {
             temp = end;
           }
-          timeDivs.add(TimeDivision(
-            name:
-                "${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}-${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}",
-            startTime: DateTime(1, 1, 1, start.hour, start.minute),
-            endTime: DateTime(1, 1, 1, temp.hour, temp.minute),
-          ));
+          timeDivs.add(
+            TimeDivision(
+              name:
+                  "${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}-${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}",
+              startTime: DateTime(1, 1, 1, start.hour, start.minute),
+              endTime: DateTime(1, 1, 1, temp.hour, temp.minute),
+            ),
+          );
           start = temp;
         }
         timeDivsAxis = List.of(timeDivs);
@@ -317,7 +335,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           ),
         ),
         SizedBox(
-          width: 200,
+          width: 180,
           child: Column(
             children: [
               const Padding(padding: EdgeInsets.all(6)),
