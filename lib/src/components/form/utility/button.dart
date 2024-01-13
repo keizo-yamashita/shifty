@@ -114,7 +114,7 @@ class CustomTextButton extends StatelessWidget {
         children: [
           if (icon != null)
           Positioned(
-            left: 10,
+            left: 5,
             child: Icon(
               icon!,
               size: 20,
@@ -246,7 +246,7 @@ class BottomButton extends StatelessWidget {
           onPressed: onPressed as void Function()?,
           onLongPress: onLongPressed as void Function()?,
           child: Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(2.0),
             child: content,
           ),
         ),

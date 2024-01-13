@@ -52,9 +52,10 @@ class EditorAppBar extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: FittedBox(
             fit: BoxFit.fill,
-            child: Text(title, style: Styles.headlineStyleGreen20),
+            child: Text(title, style: Styles.defaultStyleGreen20),
           ),
           bottomOpacity: 2.0,
           elevation: 2.0,

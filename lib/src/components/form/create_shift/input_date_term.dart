@@ -84,7 +84,8 @@ class InputDateTermState extends State<InputDateTerm>
     )
   ];
 
-  bool existPrepareTerm = false;
+  bool existTemplatePrepareTerm = false;
+  bool existCustomPrepareTerm = false;
 
   @override
   void initState() {
@@ -94,12 +95,12 @@ class InputDateTermState extends State<InputDateTerm>
     DateTime end = templateDateRange[0].start.subtract(const Duration(days: 1));
     DateTime start = templateDateRange[1].end.add(const Duration(days: 1));
 
-    existPrepareTerm = (end.difference(start).inDays >= 0);
+    existTemplatePrepareTerm = (end.difference(start).inDays >= 0);
 
     widget.onDateTermChanged(
       templateDateRange[0],
       templateDateRange[1],
-      existPrepareTerm,
+      existTemplatePrepareTerm,
     );
   }
 
@@ -143,13 +144,13 @@ class InputDateTermState extends State<InputDateTerm>
               widget.onDateTermChanged(
                 templateDateRange[0],
                 templateDateRange[1],
-                existPrepareTerm,
+                existTemplatePrepareTerm,
               );
             } else if (tabIndex == 1) {
               widget.onDateTermChanged(
                 customDateRange[0],
                 customDateRange[1],
-                existPrepareTerm,
+                existCustomPrepareTerm,
               );
             }
             setState(() {});
@@ -208,8 +209,7 @@ class InputDateTermState extends State<InputDateTerm>
   Widget buildTempleteSelector() {
     DateTime end = templateDateRange[0].start.subtract(const Duration(days: 1));
     DateTime start = templateDateRange[1].end.add(const Duration(days: 1));
-
-    existPrepareTerm = (end.difference(start).inDays >= 0);
+    existTemplatePrepareTerm = (end.difference(start).inDays >= 0);
 
     return Column(
       children: [
@@ -229,10 +229,18 @@ class InputDateTermState extends State<InputDateTerm>
                 (int index) {
                   templateShiftTermIndex = index;
                   updateTemplateShiftRange();
+                  DateTime end = templateDateRange[0].start.subtract(
+                        const Duration(days: 1),
+                      );
+                  DateTime start = templateDateRange[1].end.add(
+                        const Duration(days: 1),
+                      );
+                  existTemplatePrepareTerm =
+                      (end.difference(start).inDays >= 0);
                   widget.onDateTermChanged(
                     templateDateRange[0],
                     templateDateRange[1],
-                    existPrepareTerm,
+                    existTemplatePrepareTerm,
                   );
                   setState(() {});
                 },
@@ -246,10 +254,17 @@ class InputDateTermState extends State<InputDateTerm>
                 (int index) {
                   templateReqLimitIndex = index;
                   updateTemplateShiftRange();
+                  DateTime end = templateDateRange[0]
+                      .start
+                      .subtract(const Duration(days: 1));
+                  DateTime start =
+                      templateDateRange[1].end.add(const Duration(days: 1));
+                  existTemplatePrepareTerm =
+                      (end.difference(start).inDays >= 0);
                   widget.onDateTermChanged(
                     templateDateRange[0],
                     templateDateRange[1],
-                    existPrepareTerm,
+                    existTemplatePrepareTerm,
                   );
                   setState(() {});
                 },
@@ -265,7 +280,7 @@ class InputDateTermState extends State<InputDateTerm>
             ),
             tableRow(
               'シフト作成期間',
-              (!existPrepareTerm)
+              (!existTemplatePrepareTerm)
                   ? Container(
                       alignment: Alignment.center,
                       child: Text(
@@ -293,8 +308,7 @@ class InputDateTermState extends State<InputDateTerm>
   Widget buildCustomSelector() {
     DateTime end = customDateRange[0].start.subtract(const Duration(days: 1));
     DateTime start = customDateRange[1].end.add(const Duration(days: 1));
-
-    existPrepareTerm = (end.difference(start).inDays >= 0);
+    existCustomPrepareTerm = (end.difference(start).inDays >= 0);
 
     return Table(
       columnWidths: const <int, TableColumnWidth>{
@@ -312,10 +326,15 @@ class InputDateTermState extends State<InputDateTerm>
               customDateRange[1],
               (value) {
                 customDateRange[1] = value;
+                DateTime end =
+                    customDateRange[0].start.subtract(const Duration(days: 1));
+                DateTime start =
+                    customDateRange[1].end.add(const Duration(days: 1));
+                existCustomPrepareTerm = (end.difference(start).inDays >= 0);
                 widget.onDateTermChanged(
                   customDateRange[0],
                   customDateRange[1],
-                  existPrepareTerm,
+                  existCustomPrepareTerm,
                 );
               },
             ),
@@ -329,10 +348,15 @@ class InputDateTermState extends State<InputDateTerm>
               customDateRange[0],
               (value) {
                 customDateRange[0] = value;
+                DateTime end =
+                    customDateRange[0].start.subtract(const Duration(days: 1));
+                DateTime start =
+                    customDateRange[1].end.add(const Duration(days: 1));
+                existCustomPrepareTerm = (end.difference(start).inDays >= 0);
                 widget.onDateTermChanged(
                   customDateRange[0],
                   customDateRange[1],
-                  existPrepareTerm,
+                  existCustomPrepareTerm,
                 );
               },
             ),
@@ -340,7 +364,7 @@ class InputDateTermState extends State<InputDateTerm>
         ),
         tableRow(
           'シフト作成期間',
-          (!existPrepareTerm)
+          (!existCustomPrepareTerm)
               ? Container(
                   alignment: Alignment.center,
                   child: Text(
@@ -349,18 +373,18 @@ class InputDateTermState extends State<InputDateTerm>
                   ),
                 )
               : Padding(
-                padding: EdgeInsets.only(left: screenSize.width * 0.03),
-                child: SizedBox(
-                  width: screenSize.width * 0.6,
-                  height: 40,
-                  child: printDateTerm(
+                  padding: EdgeInsets.only(left: screenSize.width * 0.03),
+                  child: SizedBox(
+                    width: screenSize.width * 0.6,
+                    height: 40,
+                    child: printDateTerm(
                       DateTimeRange(
                         start: start,
                         end: end,
                       ),
                     ),
+                  ),
                 ),
-              ),
         ),
       ],
     );

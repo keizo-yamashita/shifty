@@ -33,22 +33,22 @@ class HomeWidget extends ConsumerStatefulWidget {
 
 class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProviderStateMixin {
   
-  bool   isOwner       = false;
-  double _appBarHeight = 0;     
-  Size   _screenSize   = const Size(0, 0);
+  bool   isOwner      = false;
+  double appBarHeight = 0;     
+  Size   screenSize   = const Size(0, 0);
 
     // タブコントローラー
-  late TabController _tabController;
+  late TabController tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    tabController.dispose();
     super.dispose();
   }
 
@@ -56,8 +56,8 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
   Widget build(BuildContext context) {
 
     // AppBar の高さの取得 & スクリーンサイズの取得 (AppBarはこのbuildでは作ってないので appbar の高さはいらない)
-    _appBarHeight = MediaQuery.of(context).padding.top;
-    _screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - _appBarHeight);
+    appBarHeight = MediaQuery.of(context).padding.top;
+    screenSize   = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - appBarHeight);
 
     String id = ref.read(deepLinkProvider).shiftFrameId;
 
@@ -71,7 +71,6 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
       Tab(text: 'フォロー中'),
       Tab(text: '管理中'),
     ];
-
 
     List<Widget> tabItemList = [
       // フォローしているシフト表
@@ -171,7 +170,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
 
     return Scaffold(
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: _screenSize.height/60, right: _screenSize.width/60),
+        padding: EdgeInsets.only(bottom: screenSize.height/60, right: screenSize.width/60),
         child: FloatingActionButton(
           foregroundColor: Styles.bgColor,
           backgroundColor: Styles.primaryColor,
@@ -210,22 +209,22 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: _appBarHeight),
+          SizedBox(height: appBarHeight),
           SizedBox(
             height: 60,
             child: TabBar(
-              controller: _tabController,
+              controller: tabController,
               indicatorColor: Styles.primaryColor,
-              labelStyle: Styles.headlineStyle15,
+              labelStyle: Styles.defaultStyle15,
               labelColor: Styles.primaryColor,  
               unselectedLabelColor: Colors.grey, 
               tabs: tabList,
             ),
           ),
           SizedBox(
-            height: _screenSize.height - 60 -60,
+            height: screenSize.height - 60 -60,
             child: TabBarView(
-              controller: _tabController,
+              controller: tabController,
               children: tabItemList,
             ),
           ),
@@ -243,7 +242,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
     if(docs.isEmpty){
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 32.0),
-        child: Text("フォロー中のシフト表はありません。", style: Styles.headlineStyleGrey15, textAlign: TextAlign.center),
+        child: Text("フォロー中のシフト表はありません。", style: Styles.defaultStyleGrey15, textAlign: TextAlign.center),
       );
     }else{
       // とってきたシフトリクエストが参照しているシフト表を取ってくる
@@ -261,7 +260,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
         shiftCard.add(
           request.buildShiftRequestCard(
             frame.shiftName,
-            _screenSize.width * 0.8,
+            screenSize.width * 0.8,
             (){
               ref.read(shiftRequestProvider).shiftRequest = request;
               Navigator.push(context, MaterialPageRoute(builder: (c) => const InputShiftRequestWidget()));
@@ -270,7 +269,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
             (){
               showConfirmDialog(context, ref, "確認", "シフト表'${frame.shiftName}'のフォローを解除しますか？", "シフト表'${frame.shiftName}'のフォローを解除しました。", (){
                 removeTableSoft(request.requestId);
-              });
+              },);
             }
           )
         );
@@ -306,7 +305,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
         shiftCard.add(
           frame.buildShiftTableCard(
             frame.shiftName,
-            _screenSize.width * 0.8,
+            screenSize.width * 0.8,
             followersNum,
             () async{
               List<ShiftRequest> requests = [];

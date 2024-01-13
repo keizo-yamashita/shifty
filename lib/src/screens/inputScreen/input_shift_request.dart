@@ -26,7 +26,7 @@ import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
 // editor のセルサイズ設定
 double cellHeight  = 20;
 double cellWidth   = 20;
-double titleMargin = 10;
+double titleMargin = 3;
 double cellSizeMax = 30;
 double cellSizeMin = 10;
 double zoomDiv     = 1;
@@ -77,7 +77,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
   Widget build(BuildContext context) {
 
     // 画面サイズの取得
-    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom);
+    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom/2);
 
     // Provider 処理
     isDark        = ref.read(settingProvider).enableDarkTheme;
@@ -129,20 +129,20 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   //　拡大縮小ボタン
-                  ToolButton(icon: Icons.zoom_in,  pressEnable: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn),
-                  ToolButton(icon: Icons.zoom_out, pressEnable: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut),
+                  ToolButton(icon: Icons.zoom_in,  pressEnable: enableZoomIn,  width: screenSize.width/7, onPressed: handleZoomIn,),
+                  ToolButton(icon: Icons.zoom_out, pressEnable: enableZoomOut, width: screenSize.width/7, onPressed: handleZoomOut,),
                   // 範囲入力ボタン
-                  ToolButton(icon: Icons.filter_alt_outlined, pressEnable: isRequestRange(), width: screenSize.width/7, onPressed: handleRangeFill),
+                  ToolButton(icon: Icons.filter_alt_outlined, pressEnable: isRequestRange(), width: screenSize.width/7, onPressed: handleRangeFill,),
                   // タッチ入力ボタン
-                  ToolButton(icon: Icons.touch_app_outlined, pressEnable: isRequestRange(), offEnable: !enableResponseEdit, width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
+                  ToolButton(icon: Icons.touch_app_outlined, pressEnable: isRequestRange(), offEnable: !enableResponseEdit, width: screenSize.width/7, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue,),
                   // Redo Undo ボタン
-                  ToolButton(icon: Icons.undo, pressEnable: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo),
-                  ToolButton(icon: Icons.redo, pressEnable: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo)
+                  ToolButton(icon: Icons.undo, pressEnable: undoredoCtrl.enableUndo(), width: screenSize.width/7, onPressed: handleUndo,),
+                  ToolButton(icon: Icons.redo, pressEnable: undoredoCtrl.enableRedo(), width: screenSize.width/7, onPressed: handleRedo,),
                 ],
               ),
             ),
@@ -154,7 +154,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
           (isRequestRange())
           ? TableEditor(
             editorKey:   editorKey,
-            tableHeight: screenSize.height * 1.0 - 60,
+            tableHeight: screenSize.height * 1.0 - 65,
             tableWidth:  screenSize.width,
             cellHeight:  cellHeight,
             cellWidth:   cellWidth,
@@ -185,7 +185,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
           )
           : TableEditor(
             editorKey:   editorKey,
-            tableHeight: screenSize.height * 1.0 - 60,
+            tableHeight: screenSize.height * 1.0 - 65,
             tableWidth:  screenSize.width,
             cellHeight:  cellHeight,
             cellWidth:   cellWidth,
@@ -246,23 +246,25 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
       cellColor = Colors.red;
     }
 
-    cellColor =  (selected) ? cellColor.withAlpha(100) : Colors.transparent;
+    cellColor =  selected ? cellColor.withAlpha(200) : cellColor.withAlpha(50);
     var cellBoaderWdth = 1.0;
-    return Container(
-      width: cellWidth,
-      height: cellHeight,
-      decoration: BoxDecoration(
-        border: Border(
-          top:    row == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
-          bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
-          left:   column == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
-          right:  BorderSide(width: cellBoaderWdth, color: Colors.grey),
+    return SizedBox(
+      child: Container(
+        width: cellWidth,
+        height: cellHeight,
+        decoration: BoxDecoration(
+          border: Border(
+            top:    row == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+            bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+            left:   column == 0 ? BorderSide(width: cellBoaderWdth, color: Colors.grey) : BorderSide.none,
+            right:  BorderSide(width: cellBoaderWdth, color: Colors.grey),
+          ),
+          color: cellColor
         ),
-        color: cellColor
+        child: editable
+          ? Center(child: SizedBox(width: cellWidth, height: cellHeight,child: cellValue))
+          : SizedBox(width: cellWidth, height: cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
       ),
-      child: editable
-        ? Center(child: SizedBox(width: cellWidth, height: cellHeight,child: cellValue))
-        : SizedBox(width: cellWidth, height: cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
     );
   }
 

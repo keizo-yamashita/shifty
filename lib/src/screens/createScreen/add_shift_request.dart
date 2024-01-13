@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shift/main.dart';
+import 'package:shift/src/components/form/utility/button.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
@@ -27,7 +28,7 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
   late TextEditingController textTableIdConroller;
   late TextEditingController textDisplayNameConroller;
 
-  Size _screenSize = const Size(0, 0);
+  Size screenSize = const Size(0, 0);
 
   @override
   void initState() {
@@ -40,7 +41,7 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = Size(
+    screenSize = Size(
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height -
           AppBar().preferredSize.height -
@@ -55,28 +56,30 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
         resizeToAvoidBottomInset: false,
         //AppBar
         appBar: AppBar(
-          title: Text("シフト表のフォロー", style: Styles.headlineStyleGreen20),
+          centerTitle: true,
+          title: Text("シフト表のフォロー", style: Styles.defaultStyleGreen20),
           bottomOpacity: 2.0,
           elevation: 2.0,
         ),
         extendBody: true,
         extendBodyBehindAppBar: true,
         body: SafeArea(
-          child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(height: _screenSize.height * 0.04),
+                SizedBox(height: screenSize.height * 0.04),
                 if (ref.read(signInProvider).user == null)
                   Column(
                     children: [
                       Text(
                         "注意 : 未ログイン状態です。",
-                        style: Styles.headlineStyleRed15,
+                        style: Styles.defaultStyleRed15,
                       ),
                       Text(
                         "シフト表をフォローすることはできません。",
-                        style: Styles.headlineStyleRed15,
+                        style: Styles.defaultStyleRed15,
                       ),
                       const SizedBox(height: 20),
                     ],
@@ -84,50 +87,51 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
                 ////////////////////////////////////////////////////////////////////////////
                 /// シフト名の名前の入力
                 ////////////////////////////////////////////////////////////////////////////
-
-                Text(
-                  "シフト表のIDを入力して下さい (半角英数20文字)",
-                  style: Styles.headlineStyleGrey15,
-                ),
-                SizedBox(height: _screenSize.height * 0.04),
-                SizedBox(
-                  width: _screenSize.width * 0.9,
-                  child: TextField(
-                    controller: textTableIdConroller,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-zA-Z0-9]'),
-                      ),
-                      LengthLimitingTextInputFormatter(20),
-                    ],
-                    cursorColor: Styles.primaryColor,
-                    style: Styles.headlineStyleGreen15,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 20.0,
-                      ),
-                      prefixIconColor: Styles.primaryColor,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                          color: Styles.hiddenColor,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                          color: Styles.primaryColor,
-                        ),
-                      ),
-                      prefixIcon: const Icon(Icons.input),
-                      hintText: 'シフト表のID (半角英数20文字)',
-                      hintStyle: Styles.headlineStyleGrey15,
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Text(
+                      "シフト表のIDを入力して下さい (半角英数20文字)",
+                      style: Styles.defaultStyle15,
                     ),
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.go,
                   ),
                 ),
-                SizedBox(height: _screenSize.height * 0.04),
+                SizedBox(height: screenSize.height * 0.04),
+
+                TextField(
+                  controller: textTableIdConroller,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z0-9]'),
+                    ),
+                    LengthLimitingTextInputFormatter(20),
+                  ],
+                  cursorColor: Styles.primaryColor,
+                  style: Styles.defaultStyleGreen15,
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                    prefixIconColor: Styles.primaryColor,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: const BorderSide(
+                        color: Styles.hiddenColor,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: const BorderSide(
+                        color: Styles.primaryColor,
+                      ),
+                    ),
+                    prefixIcon: const Icon(Icons.input),
+                    hintText: 'シフト表のID (半角英数20文字)',
+                    hintStyle: Styles.defaultStyle15,
+                  ),
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.go,
+                ),
+                SizedBox(height: screenSize.height * 0.04),
 
                 // (textTableIdConroller.text != "") ?
                 // StreamBuilder<DocumentSnapshot>(
@@ -144,79 +148,80 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
                 // )
                 // : Container(),
 
-                SizedBox(height: _screenSize.height * 0.04),
-
-                Text("あなたの表示名を入力して下さい (最大6文字)",
-                    style: Styles.headlineStyleGrey15),
-
-                SizedBox(height: _screenSize.height * 0.04),
-
-                SizedBox(
-                  width: _screenSize.width * 0.90,
-                  child: TextField(
-                    controller: textDisplayNameConroller,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                    cursorColor: Styles.primaryColor,
-                    style: Styles.headlineStyleGreen15,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 20.0,
-                      ),
-                      prefixIconColor: Styles.primaryColor,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                          color: Styles.hiddenColor,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                          color: Styles.primaryColor,
-                        ),
-                      ),
-                      prefixIcon: const Icon(Icons.input),
-                      hintText: '(ex) 福岡 太郎',
-                      hintStyle: Styles.headlineStyleGrey15,
+                SizedBox(height: screenSize.height * 0.02),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Text(
+                      "あなたの表示名を入力して下さい (最大6文字)",
+                      style: Styles.defaultStyle15,
                     ),
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.go,
                   ),
                 ),
-                SizedBox(height: _screenSize.height * 0.08),
-                SizedBox(
-                  width: _screenSize.width * 0.90,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      shadowColor: Styles.hiddenColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      side: const BorderSide(color: Styles.primaryColor),
-                    ),
-                    onPressed: () async {
-                      var tableId = textTableIdConroller.text;
-                      var displayName = textDisplayNameConroller.text;
 
-                      if (ref.read(signInProvider).user == null) {
-                        showAlertDialog(
-                          context,
-                          ref,
-                          "ログインエラー",
-                          "未ログイン状態では\nフォローできません。\n'ホーム画面'及び'アカウント画面'から\n'ログイン画面'に移動してください。",
-                          true,
-                        );
-                      } else {
-                        // Table ID が入力されているか
-                        if (tableId.isNotEmpty) {
-                          // Firestoreからシフト表を取ってくる (そのIDのシフト表が存在する確認する)
-                          FirebaseFirestore.instance
-                              .collection('shift-leader')
-                              .doc(tableId)
-                              .get()
-                              .then((value) {
+                SizedBox(height: screenSize.height * 0.04),
+
+                TextField(
+                  controller: textDisplayNameConroller,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(6),
+                  ],
+                  cursorColor: Styles.primaryColor,
+                  style: Styles.defaultStyleGreen15,
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                    prefixIconColor: Styles.primaryColor,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: const BorderSide(
+                        color: Styles.hiddenColor,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: const BorderSide(
+                        color: Styles.primaryColor,
+                      ),
+                    ),
+                    prefixIcon: const Icon(Icons.input),
+                    hintText: '(ex) 福岡 太郎',
+                    hintStyle: Styles.defaultStyleGrey15,
+                  ),
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.go,
+                ),
+
+                SizedBox(height: screenSize.height * 0.08),
+
+                CustomTextButton(
+                  icon: Icons.add,
+                  text: "フォローする",
+                  enable: true,
+                  width: screenSize.width * 0.9,
+                  height: 40,
+                  onPressed: () async {
+                    var tableId = textTableIdConroller.text;
+                    var displayName = textDisplayNameConroller.text;
+
+                    if (ref.read(signInProvider).user == null) {
+                      showAlertDialog(
+                        context,
+                        ref,
+                        "ログインエラー",
+                        "未ログイン状態では\nフォローできません。\n'ホーム画面'及び'アカウント画面'から\n'ログイン画面'に移動してください。",
+                        true,
+                      );
+                    } else {
+                      // Table ID が入力されているか
+                      if (tableId.isNotEmpty) {
+                        // Firestoreからシフト表を取ってくる (そのIDのシフト表が存在する確認する)
+                        FirebaseFirestore.instance
+                            .collection('shift-leader')
+                            .doc(tableId)
+                            .get()
+                            .then(
+                          (value) {
                             if (value.exists) {
                               // リクエスト募集中かどうか確認
                               var now = DateTime.now();
@@ -246,11 +251,12 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
                                         if (displayName ==
                                             snapshot.get('display-name')) {
                                           showAlertDialog(
-                                              context,
-                                              ref,
-                                              "エラー",
-                                              "すでに同じ表示名が使用されているようです\n別の表示名を入力してください",
-                                              true);
+                                            context,
+                                            ref,
+                                            "エラー",
+                                            "すでに同じ表示名が使用されているようです\n別の表示名を入力してください",
+                                            true,
+                                          );
                                           errorFlag = true;
                                           break;
                                         }
@@ -306,25 +312,21 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
                                 true,
                               );
                             }
-                          });
-                        } else {
-                          // IDが入力されていない
-                          showAlertDialog(
-                            context,
-                            ref,
-                            "エラー",
-                            "シフト表のIDが\n入力されていません。",
-                            true,
-                          );
-                        }
+                          },
+                        );
+                      } else {
+                        // IDが入力されていない
+                        showAlertDialog(
+                          context,
+                          ref,
+                          "エラー",
+                          "シフト表のIDが\n入力されていません。",
+                          true,
+                        );
                       }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 15.0),
-                      child: Text("フォローする", style: Styles.headlineStyleGreen15),
-                    ),
-                  ),
-                )
+                    }
+                  },
+                ),
               ],
             ),
           ),
@@ -345,19 +347,19 @@ class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
         children: [
           Text(
             "シフト表が見つかりました！",
-            style: Styles.headlineStyleGreen15,
+            style: Styles.defaultStyleGreen15,
           ),
           Text(
             "シフト表名 : ${doc.get('name')}",
-            style: Styles.headlineStyleGreen15,
+            style: Styles.defaultStyleGreen15,
           ),
         ],
       );
     } else {
       return Column(
         children: [
-          Text("このIDを持つシフト表はしないようです", style: Styles.headlineStyleRed15),
-          Text("IDをもう一度確認してください", style: Styles.headlineStyleRed15),
+          Text("このIDを持つシフト表は存在しないようです", style: Styles.defaultStyleRed15),
+          Text("IDをもう一度確認してください", style: Styles.defaultStyleRed15),
         ],
       );
     }

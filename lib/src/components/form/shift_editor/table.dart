@@ -98,7 +98,7 @@ class TableEditorState extends State<TableEditor> {
             return Padding(
               padding: EdgeInsets.only(
                 top: (i == 0) ? widget.titleMargin : 0,
-                right: (j == rowLength) ? widget.titleMargin : 0,
+                right: (j == rowLength) ? widget.titleMargin*2 : 0,
                 left: (j == 0) ? widget.titleMargin : 0,
                 bottom: (i == columnLength) ? widget.titleMargin : 0,
               ),
@@ -139,7 +139,7 @@ class TableEditorState extends State<TableEditor> {
                           SizedBox(width: widget.titleMargin),
                           for (int i = 0; i < widget.columnTitles.length; i++)
                             widget.columnTitles[i],
-                          SizedBox(width: widget.titleMargin),
+                          SizedBox(width: widget.titleMargin*2),
                         ],
                       ),
                     ),

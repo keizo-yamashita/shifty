@@ -83,7 +83,7 @@ class Styles{
   static const Color tableColumnsColor = primaryColor;
   static const Color tableBorderColor  = secondaryColor;
 
-  static TextStyle tableTitleStyle([Color? color, double? size]){ return GoogleFonts.mPlus1(color: color, fontWeight: FontWeight.bold);}
+  static TextStyle tableTitleStyle([Color? color, double? size]){ return GoogleFonts.mPlus1(color: color, fontWeight: FontWeight.normal);}
 
  static const TextHeightBehavior defaultBehavior = TextHeightBehavior(applyHeightToLastDescent: false, applyHeightToFirstAscent: false);
 

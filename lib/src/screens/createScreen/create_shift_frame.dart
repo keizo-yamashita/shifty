@@ -24,7 +24,6 @@ class CreateShiftTableWidget extends ConsumerStatefulWidget {
 
 class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
     with SingleTickerProviderStateMixin {
-
   // シフト準備期間が確保されているか確認するためのbool値
   bool existPrepareTerm = false;
 
@@ -114,28 +113,17 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                 onPressed: () {
                   if (shiftFrame.timeDivs.isEmpty) {
                     showAlertDialog(
-                      context,
-                      ref,
-                      "入力エラー",
-                      "1つ以上の時間区分を入力して下さい。",
-                      true
-                    );
+                        context, ref, "入力エラー", "1つ以上の時間区分を入力して下さい。", true);
                   } else if (shiftFrame.shiftName == '') {
                     showAlertDialog(
-                      context,
-                      ref,
-                      "入力エラー",
-                      "シフト表の名前を指定して下さい。",
-                      true
-                    );
+                        context, ref, "入力エラー", "シフト表の名前を指定して下さい。", true);
                   } else if (!existPrepareTerm) {
                     showAlertDialog(
-                      context,
-                      ref,
-                      "入力エラー",
-                      "リクエストに対するシフト作成期間が必要なため、\n「リクエスト期間」「シフト期間」には1日以上の間隔を空けて下さい。",
-                      true
-                    );
+                        context,
+                        ref,
+                        "入力エラー",
+                        "リクエストに対するシフト作成期間が必要なため、\n「リクエスト期間」「シフト期間」には1日以上の間隔を空けて下さい。",
+                        true);
                   } else {
                     shiftFrame.initTable();
                     ref.read(shiftFrameProvider).shiftFrame = shiftFrame;
@@ -169,16 +157,19 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                   ),
                   SizedBox(height: screenSize.height * 0.05),
                   InputDateTerm(
-                    onDateTermChanged: (DateTimeRange shiftTerm, DateTimeRange requestTerm, bool existTerm) {
-                    shiftFrame.dateTerm[0] = shiftTerm;
-                    shiftFrame.dateTerm[1] = requestTerm;
-                    existPrepareTerm = existTerm;
-                  },),
+                    onDateTermChanged: (DateTimeRange shiftTerm,
+                        DateTimeRange requestTerm, bool existTerm) {
+                      shiftFrame.dateTerm[0] = shiftTerm;
+                      shiftFrame.dateTerm[1] = requestTerm;
+                      existPrepareTerm = existTerm;
+                    },
+                  ),
                   SizedBox(height: screenSize.height * 0.1),
                   InputTimeDivision(
                     onTimeDivsChanged: (List<TimeDivision> timeDivs) {
-                    shiftFrame.timeDivs = timeDivs;
-                  },),
+                      shiftFrame.timeDivs = timeDivs;
+                    },
+                  ),
                   SizedBox(height: screenSize.height * 0.1 + appBarHeight),
                 ],
               ),

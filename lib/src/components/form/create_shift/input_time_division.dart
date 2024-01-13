@@ -7,7 +7,6 @@ import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/undo_redo.dart';
 
 class InputTimeDivision extends StatefulWidget {
-  
   final Function(
     List<TimeDivision> timeDivs,
   ) onTimeDivsChanged;
@@ -141,26 +140,30 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
             CustomTextButton(
               text: "入力",
               enable: true,
-              width: screenSize.width*0.44,
-              height: 40,
+              width: screenSize.width * 0.44,
+              height: 30,
               onPressed: () {
-                setState(() {
-                  createMimimumDivision(startTime, endTime, duration);
-                  insertBuffer(timeDivs);
-                  widget.onTimeDivsChanged(timeDivs);
-                });
+                setState(
+                  () {
+                    createMimimumDivision(startTime, endTime, duration);
+                    insertBuffer(timeDivs);
+                    widget.onTimeDivsChanged(timeDivs);
+                  },
+                );
               },
             ),
             CustomTextButton(
               text: "戻す",
               enable: undoredoCtrl.enableUndo(),
-              width: screenSize.width*0.44,
-              height: 40,
+              width: screenSize.width * 0.44,
+              height: 30,
               onPressed: () {
-                setState(() {
-                  timeDivsUndoRedo(true);
-                  widget.onTimeDivsChanged(timeDivs);
-                });
+                setState(
+                  () {
+                    timeDivsUndoRedo(true);
+                    widget.onTimeDivsChanged(timeDivs);
+                  },
+                );
               },
             ),
           ],
@@ -195,7 +198,8 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
       height: 40,
       enable: true,
       icon: Icons.watch_later_outlined,
-      text: '${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}',
+      text:
+          '${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}',
       onPressed: () async {
         await showModalWindow(
           context,
@@ -238,12 +242,14 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           if (temp.compareTo(end) > 0) {
             temp = end;
           }
-          timeDivs.add(TimeDivision(
-            name:
-                "${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}-${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}",
-            startTime: DateTime(1, 1, 1, start.hour, start.minute),
-            endTime: DateTime(1, 1, 1, temp.hour, temp.minute),
-          ));
+          timeDivs.add(
+            TimeDivision(
+              name:
+                  "${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}-${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}",
+              startTime: DateTime(1, 1, 1, start.hour, start.minute),
+              endTime: DateTime(1, 1, 1, temp.hour, temp.minute),
+            ),
+          );
           start = temp;
         }
         timeDivsAxis = List.of(timeDivs);

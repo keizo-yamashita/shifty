@@ -68,7 +68,8 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
     (ref.watch(signInProvider).user != null) ? Scaffold(
         //AppBar
         appBar: AppBar(
-          title: Text(_contents[_selectedIndex].contentTitle ,style: Styles.headlineStyleGreen20),
+          centerTitle: true,
+          title: Text(_contents[_selectedIndex].contentTitle ,style: Styles.defaultStyleGreen20),
           bottomOpacity: 2.0,
           actions: [
             if(_selectedIndex == 0)
@@ -131,14 +132,14 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                             ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                FittedBox(fit: BoxFit.fitWidth, child: Text((!ref.read(signInProvider).user!.isAnonymous) ? (ref.read(signInProvider).user?.providerData[0].displayName ?? ref.read(signInProvider).user?.uid ?? "") :  "ゲストユーザ", style: Styles.headlineStyleWhite20, overflow: TextOverflow.ellipsis)),
+                                FittedBox(fit: BoxFit.fitWidth, child: Text((!ref.read(signInProvider).user!.isAnonymous) ? (ref.read(signInProvider).user?.providerData[0].displayName ?? ref.read(signInProvider).user?.uid ?? "") :  "ゲストユーザ", style: Styles.defaultStyleWhite20, overflow: TextOverflow.ellipsis)),
                                 FittedBox(fit: BoxFit.fitWidth, child: Text((!ref.read(signInProvider).user!.isAnonymous) ? (ref.read(signInProvider).user?.providerData[0].email ?? '') : ref.read(signInProvider).user?.uid ?? "", style: GoogleFonts.mPlus1(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)),
                               ],
                             )
                             : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("未ログイン", style: Styles.headlineStyleWhite20, overflow: TextOverflow.ellipsis),
+                                Text("未ログイン", style: Styles.defaultStyleWhite20, overflow: TextOverflow.ellipsis),
                               ],
                             )
                           ),
@@ -150,7 +151,7 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
               ),
               for(int index = 0; index < _contents.length; index++)
               ListTile(
-                title: Text(_contents[index].contentTitle, style: Styles.headlineStyle15),
+                title: Text(_contents[index].contentTitle, style: Styles.defaultStyle15),
                 leading: Icon(_contents[index].contentIcon, color: Styles.primaryColor, size: 30),
                 onTap: () {
                   setState(() => _selectedIndex = index);
@@ -202,7 +203,7 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
           builder: (context, setState) {
             return AlertDialog(
               insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              title: Text("「ホーム画面」の使い方", style:  Styles.headlineStyleGreen20, textAlign: TextAlign.center),
+              title: Text("「ホーム画面」の使い方", style:  Styles.defaultStyleGreen20, textAlign: TextAlign.center),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.95,
                 height: MediaQuery.of(context).size.height * 0.95,
@@ -216,10 +217,10 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                           children: [
                             SizedBox(
                               width: 10,
-                              child : _displayInfoFlag[0] ? Text("-", style: Styles.headlineStyleGreen18) : Text("+", style: Styles.headlineStyleGreen18),
+                              child : _displayInfoFlag[0] ? Text("-", style: Styles.defaultStyleGreen18) : Text("+", style: Styles.defaultStyleGreen18),
                             ),
                             const SizedBox(width: 10),
-                            Text("「管理中のシフト表」について", style: Styles.headlineStyleGreen18),
+                            Text("「管理中のシフト表」について", style: Styles.defaultStyleGreen18),
                           ],
                         ),
                         onPressed: (){
@@ -234,14 +235,14 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // how to use Managed Shift
-                            Text("「管理中のシフト表」の一覧が表示されます。", style: Styles.headlineStyleGrey13),
-                            Text("表示されるカードをタップすることで「シフトリクエストの確認」「シフトの管理」を行うことができます。", style: Styles.headlineStyleGrey13),
-                            Text("シフト管理者としてシフト表を作成したい場合、下記の手順に従って下さい。", style: Styles.headlineStyleGrey13),
+                            Text("「管理中のシフト表」の一覧が表示されます。", style: Styles.defaultStyleGrey13),
+                            Text("表示されるカードをタップすることで「シフトリクエストの確認」「シフトの管理」を行うことができます。", style: Styles.defaultStyleGrey13),
+                            Text("シフト管理者としてシフト表を作成したい場合、下記の手順に従って下さい。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 20),
-                            Text("1. シフト表の作成", style: Styles.headlineStyle15),
+                            Text("1. シフト表の作成", style: Styles.defaultStyle15),
                             const SizedBox(height: 10),
-                            Text("管理者としてシフト表を作成します。", style: Styles.headlineStyleGrey13),
-                            Text("画面遷移後「シフト表作成画面」より参照して下さい。", style: Styles.headlineStyleGrey13),
+                            Text("管理者としてシフト表を作成します。", style: Styles.defaultStyleGrey13),
+                            Text("画面遷移後「シフト表作成画面」より参照して下さい。", style: Styles.defaultStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
@@ -252,13 +253,13 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                               ),
                             ),
                             const SizedBox(height: 10),
-                            Text("2. シフト表の共有", style: Styles.headlineStyle15),
+                            Text("2. シフト表の共有", style: Styles.defaultStyle15),
                             const SizedBox(height: 10),
-                            Text("フォロワーにシフト表を共有します。", style: Styles.headlineStyleGrey13),
-                            Text("共有リンクからアプリを開くには事前のアプリインストールが必要です。", style: Styles.headlineStyleGrey13),
+                            Text("フォロワーにシフト表を共有します。", style: Styles.defaultStyleGrey13),
+                            Text("共有リンクからアプリを開くには事前のアプリインストールが必要です。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
-                            Text("共有リンクから管理者もフォロワーとして登録することができます。", style: Styles.headlineStyleGrey13),
-                            Text("※ 一度、管理者自身がリンクからシフトリクエストを入力し、テストしてみることをお勧めします。", style: Styles.headlineStyleRed13),
+                            Text("共有リンクから管理者もフォロワーとして登録することができます。", style: Styles.defaultStyleGrey13),
+                            Text("※ 一度、管理者自身がリンクからシフトリクエストを入力し、テストしてみることをお勧めします。", style: Styles.defaultStyleRed13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
@@ -269,19 +270,19 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                               ),
                             ),
                             const SizedBox(height: 10),
-                            Text("3. シフト表の管理", style: Styles.headlineStyle15),
+                            Text("3. シフト表の管理", style: Styles.defaultStyle15),
                             const SizedBox(height: 10),
-                            Text("管理者としてシフト表を管理します。", style: Styles.headlineStyleGrey13),
-                            Text("画面遷移後「シフト管理画面」より参照して下さい。", style: Styles.headlineStyleGrey13),
+                            Text("管理者としてシフト表を管理します。", style: Styles.defaultStyleGrey13),
+                            Text("画面遷移後「シフト管理画面」より参照して下さい。", style: Styles.defaultStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/home_5.png"),
                             ),
-                            Text("4. シフト表の削除", style: Styles.headlineStyle15),
+                            Text("4. シフト表の削除", style: Styles.defaultStyle15),
                             const SizedBox(height: 10),
-                            Text("誤ったシフト表やシフト期間が満了したシフト表は削除しましょう。", style: Styles.headlineStyleGrey13),
-                            Text("削除すると、フォロワーが登録した内容含む全ての登録データが削除されます。", style: Styles.headlineStyleGrey13),
-                            Text("よく確認してから、削除して下さい。", style: Styles.headlineStyleGrey13),
+                            Text("誤ったシフト表やシフト期間が満了したシフト表は削除しましょう。", style: Styles.defaultStyleGrey13),
+                            Text("削除すると、フォロワーが登録した内容含む全ての登録データが削除されます。", style: Styles.defaultStyleGrey13),
+                            Text("よく確認してから、削除して下さい。", style: Styles.defaultStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/home_6.png"),
@@ -296,10 +297,10 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                           children: [
                             SizedBox(
                               width: 10,
-                              child : _displayInfoFlag[1] ? Text("-", style: Styles.headlineStyleGreen18) : Text("+", style: Styles.headlineStyleGreen18),
+                              child : _displayInfoFlag[1] ? Text("-", style: Styles.defaultStyleGreen18) : Text("+", style: Styles.defaultStyleGreen18),
                             ),
                             const SizedBox(width: 10),
-                            Text("「フォロー中のシフト表」について", style: Styles.headlineStyleGreen18),
+                            Text("「フォロー中のシフト表」について", style: Styles.defaultStyleGreen18),
                           ],
                         ),
                         onPressed: (){
@@ -314,13 +315,13 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // hou to use Followed Shift
-                            Text("「フォロー中のシフト表」の一覧が表示されます。", style: Styles.headlineStyleGrey13),
-                            Text("表示されるカードをタップすることで「シフトリクエストの入力」「シフト表の確認」を行うことができます。", style: Styles.headlineStyleGrey13),
+                            Text("「フォロー中のシフト表」の一覧が表示されます。", style: Styles.defaultStyleGrey13),
+                            Text("表示されるカードをタップすることで「シフトリクエストの入力」「シフト表の確認」を行うことができます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 20),
-                            Text("1. シフト表のフォロー", style: Styles.headlineStyle15),
+                            Text("1. シフト表のフォロー", style: Styles.defaultStyle15),
                             const SizedBox(height: 10),
-                            Text("シフト表管理者が共有する共有リンクをタップすることで、フォロー画面に遷移します。", style: Styles.headlineStyleGrey13),
-                            Text("※ 共有リンクからアプリを開くには事前のアプリインストールが必要です。", style: Styles.headlineStyleRed13),
+                            Text("シフト表管理者が共有する共有リンクをタップすることで、フォロー画面に遷移します。", style: Styles.defaultStyleGrey13),
+                            Text("※ 共有リンクからアプリを開くには事前のアプリインストールが必要です。", style: Styles.defaultStyleRed13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
@@ -331,20 +332,20 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
                               ),
                             ),
                             const SizedBox(height: 10),
-                            Text("2. 「シフトリクエストの入力」/「シフトの確認」", style: Styles.headlineStyle15),
+                            Text("2. 「シフトリクエストの入力」/「シフトの確認」", style: Styles.defaultStyle15),
                             const SizedBox(height: 10),
-                            Text("カードをタップすることで画面遷移します  。", style: Styles.headlineStyleGrey13),
-                            Text("「シフトリクエストの入力」は「リクエスト期間」でのみ行えます。", style: Styles.headlineStyleGrey13),
-                            Text("「シフトの確認」は「リクエスト期間終了後」にのみ行えます。", style: Styles.headlineStyleGrey13),
+                            Text("カードをタップすることで画面遷移します  。", style: Styles.defaultStyleGrey13),
+                            Text("「シフトリクエストの入力」は「リクエスト期間」でのみ行えます。", style: Styles.defaultStyleGrey13),
+                            Text("「シフトの確認」は「リクエスト期間終了後」にのみ行えます。", style: Styles.defaultStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/home_9.png"),
                             ),
                             const SizedBox(height: 10),
-                            Text("3. フォローの解除", style: Styles.headlineStyle18),
+                            Text("3. フォローの解除", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
-                            Text("一度フォローを解除すると、フォロー中に登録した内容は全て破棄されます。", style: Styles.headlineStyleGrey13),
-                            Text("よく確認してから、削除してください。", style: Styles.headlineStyleGrey13),
+                            Text("一度フォローを解除すると、フォロー中に登録した内容は全て破棄されます。", style: Styles.defaultStyleGrey13),
+                            Text("よく確認してから、削除してください。", style: Styles.defaultStyleGrey13),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset("assets/how_to_use/home_10.png"),
@@ -359,7 +360,7 @@ class AppWidgetState extends ConsumerState<AppWidget> with DeepLinkMixin{
               ),
               actions: <Widget>[
                 TextButton(
-                  child: Text('閉じる', style: Styles.headlineStyleGreen13),
+                  child: Text('閉じる', style: Styles.defaultStyleGreen13),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

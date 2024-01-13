@@ -109,7 +109,7 @@ Widget buildModalWindowContainer(
                       title: (list.runtimeType == List<String>)
                           ? Text(
                               list[index],
-                              style: Styles.headlineStyle15,
+                              style: Styles.defaultStyle13,
                               textAlign: TextAlign.center,
                             )
                           : list[index],

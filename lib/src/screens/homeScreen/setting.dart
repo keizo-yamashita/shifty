@@ -38,52 +38,54 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: _screenSize.width * 0.8,
-                  child: Text("カラーテーマの設定", style: Styles.headlineStyle20)
-                ),
-                SizedBox(
-                  child: ListTile(
-                    title: Text((enableDarkTheme) ? "ダークテーマ" : "ライトテーマ", style: Styles.headlineStyle15),
-                    leading: CupertinoSwitch(
-                      thumbColor: Styles.primaryColor,
-                      activeColor : Styles.primaryColor.withAlpha(100),
-                      value: enableDarkTheme,
-                      onChanged: (result){
-                        setState(() {
-                          ref.read(settingProvider).enableDarkTheme = result;
-                          ref.read(settingProvider).storePreferences();
-                        });
-                      },
-                    ),
+                Text("カラーテーマの設定", style: Styles.defaultStyle15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical:  10),
+                  child: Row(
+                    children: [
+                      CupertinoSwitch(
+                        thumbColor: Styles.primaryColor,
+                        activeColor : Styles.primaryColor.withAlpha(100),
+                        value: enableDarkTheme,
+                        onChanged: (result){
+                          setState(() {
+                            ref.read(settingProvider).enableDarkTheme = result;
+                            ref.read(settingProvider).storePreferences();
+                          });
+                        },
+                      ),
+                      const SizedBox(width: 20),
+                      Text((enableDarkTheme) ? "ダークテーマ" : "ライトテーマ", style: Styles.defaultStyle13),
+                    ],
                   ),
                 ),
-                Text("「ライトテーマ」/「ダークテーマ」どちらを使用するか設定します。", style: Styles.headlineStyleGrey15),
+                Text("「ライトテーマ」/「ダークテーマ」どちらを使用するか設定します。", style: Styles.defaultStyleGrey13),
                 
-                SizedBox(height: _screenSize.height * 0.05),
+                SizedBox(height: _screenSize.height * 0.1),
       
-                SizedBox(
-                  width: _screenSize.width * 0.8,
-                  child: Text("デフォルトで表示するシフト表", style: Styles.headlineStyle20)
-                ),
-                SizedBox(
-                  child: ListTile(
-                    title: Text((defaultShiftView) ? "管理中のシフト表" : "フォロー中のシフト表", style: Styles.headlineStyle15),
-                    leading: CupertinoSwitch(
-                      thumbColor: Styles.primaryColor,
-                      activeColor : Styles.primaryColor.withAlpha(100),
-                      value: defaultShiftView,
-                      onChanged: (result){
-                        setState(() {
-                          ref.read(settingProvider).defaultShiftView = result;
-                          ref.read(settingProvider).storePreferences();
-                        });
-                      },
-                    ),
+                Text("デフォルトで表示するシフト表", style: Styles.defaultStyle15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical:  10),
+                  child: Row(
+                    children: [
+                      CupertinoSwitch(
+                        thumbColor: Styles.primaryColor,
+                        activeColor : Styles.primaryColor.withAlpha(100),
+                        value: defaultShiftView,
+                        onChanged: (result){
+                          setState(() {
+                            ref.read(settingProvider).defaultShiftView = result;
+                            ref.read(settingProvider).storePreferences();
+                          });
+                        },
+                      ),
+                      const SizedBox(width: 20),
+                      Text((defaultShiftView) ? "管理中のシフト表" : "フォロー中のシフト表", style: Styles.defaultStyle13),
+                    ],
                   ),
                 ),
-                Text("「ホーム画面」で「管理中のシフト表」/「フォロー中のシフト表」どちらをデフォルト表示にするか設定します。", style: Styles.headlineStyleGrey15),
-                Text("シフト表管理者は「管理中のシフト表」を設定することをお勧めします。", style: Styles.headlineStyleGrey15)
+                Text("「ホーム画面」で「管理中のシフト表」/「フォロー中のシフト表」どちらをデフォルト表示にするか設定します。", style: Styles.defaultStyleGrey13),
+                Text("シフト表管理者は「管理中のシフト表」を設定することをお勧めします。", style: Styles.defaultStyleGrey13)
               ],
             ),
           ),

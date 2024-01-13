@@ -202,7 +202,7 @@ class RenderTwoDimensionalGridViewport extends RenderTwoDimensionalViewport {
 
     // Set the min and max scroll extents for each axis.
     final double verticalExtent = otherRowHeight * (maxRowIndex + 1) +
-        (firstRowHeight - otherRowHeight) * 2;
+        (firstRowHeight - otherRowHeight) * 3;
 
     verticalOffset.applyContentDimensions(
       0.0,
@@ -214,7 +214,7 @@ class RenderTwoDimensionalGridViewport extends RenderTwoDimensionalViewport {
     );
 
     final double horizontalExtent = otherColumnWidth * (maxColumnIndex + 1) +
-        (firstColumnWidth - otherColumnWidth) * 2;
+        (firstColumnWidth - otherColumnWidth) * 3;
 
     horizontalOffset.applyContentDimensions(
       0.0,

@@ -79,7 +79,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   Widget build(BuildContext context) {
 
     // 画面サイズの取得
-    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top  - MediaQuery.of(context).padding.bottom/2);
+    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top  - MediaQuery.of(context).padding.bottom);
 
     // Provider 処理
     shiftTable = ref.read(shiftTableProvider).shiftTable;
@@ -91,8 +91,8 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
       insertBuffer(shiftTable.shiftTable);
     }
     
-    int columnLength = shiftTable.shiftFrame.dateTerm[0].end.difference(shiftTable.shiftFrame.dateTerm[0].start).inDays + 1;
-    int rowLength    = shiftTable.shiftFrame.timeDivs.length;
+    int columnLength = shiftTable.shiftFrame.getDateLen();
+    int rowLength    = shiftTable.shiftFrame.getTimeDivsLen();
 
     // Firestoreからシフト表に対するシフト希望表を取ってくる           
     return EditorAppBar(
@@ -108,7 +108,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         // リクエスト期間ではないことを確認
         if(!(now.compareTo(shiftTable.shiftFrame.dateTerm[1].start) >= 0 && now.compareTo(shiftTable.shiftFrame.dateTerm[1].end) <= 0)){
           if(registered){
-            showAlertDialog(context, ref, "注意", "シフトは変更されていないため、登録できません。", true);
+            showAlertDialog(context, ref, "注意", "シフトは変更されていないため、登録できません。", true,);
           }else{
             // シフト期間ではないことを確認
             if(!(now.compareTo(shiftTable.shiftFrame.dateTerm[0].start) >= 0 && now.compareTo(shiftTable.shiftFrame.dateTerm[0].end) <= 0)){
@@ -118,7 +118,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                   shiftTable.pushShiftTable();
                 },
                 true,
-                false
+                false,
               );
             }else{
               showConfirmDialog(
@@ -127,12 +127,12 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                   shiftTable.pushShiftTable();
                 },
                 true,
-                false
+                false,
               );
             }
           }
         }else{
-          showAlertDialog(context, ref, "注意", "リクエスト期間内であるため、登録できません。", true);
+          showAlertDialog(context, ref, "注意", "リクエスト期間内であるため、登録できません。", true,);
         }
       },
       content: Column(
@@ -143,17 +143,17 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             ////////////////////////////////////////////////////////////////////////////////////////////
             // height 30 + 16
             Padding(
-              padding: const EdgeInsets.only(top: 8.0, right: 2.0, left: 2.0, bottom: 5),
+              padding: const EdgeInsets.only(top: 10.0, right: 2.0, left: 2.0, bottom: 10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ToolButton(icon: Icons.zoom_in,                pressEnable: enableZoomIn,              width: screenSize.width/8, onPressed: handleZoomIn),
-                  ToolButton(icon: Icons.zoom_out,               pressEnable: enableZoomOut,             width: screenSize.width/8, onPressed: handleZoomOut),
-                  ToolButton(icon: Icons.auto_fix_high_outlined, pressEnable: true,                      width: screenSize.width/8, onPressed: handleAutoFill),
-                  ToolButton(icon: Icons.filter_alt_outlined,    pressEnable: true,                      width: screenSize.width/8, onPressed: handleRangeFill),
-                  ToolButton(icon: Icons.touch_app_outlined,     pressEnable: selectedIndex!=0, offEnable: !enableResponseEdit, width: screenSize.width/8, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue),
-                  ToolButton(icon: Icons.undo,                   pressEnable: undoredoCtrl.enableUndo(), width: screenSize.width/8, onPressed: handleUndo),
-                  ToolButton(icon: Icons.redo,                   pressEnable: undoredoCtrl.enableRedo(), width: screenSize.width/8, onPressed: handleRedo)
+                  ToolButton(icon: Icons.zoom_in,                pressEnable: enableZoomIn,              width: screenSize.width/8, onPressed: handleZoomIn,),
+                  ToolButton(icon: Icons.zoom_out,               pressEnable: enableZoomOut,             width: screenSize.width/8, onPressed: handleZoomOut,),
+                  ToolButton(icon: Icons.auto_fix_high_outlined, pressEnable: true,                      width: screenSize.width/8, onPressed: handleAutoFill,),
+                  ToolButton(icon: Icons.filter_alt_outlined,    pressEnable: true,                      width: screenSize.width/8, onPressed: handleRangeFill,),
+                  ToolButton(icon: Icons.touch_app_outlined,     pressEnable: selectedIndex!=0, offEnable: !enableResponseEdit, width: screenSize.width/8, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue,),
+                  ToolButton(icon: Icons.undo,                   pressEnable: undoredoCtrl.enableUndo(), width: screenSize.width/8, onPressed: handleUndo,),
+                  ToolButton(icon: Icons.redo,                   pressEnable: undoredoCtrl.enableRedo(), width: screenSize.width/8, onPressed: handleRedo,),
                 ],
               ),
             ),
@@ -166,7 +166,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             ?
             TableEditor(
               editorKey:   editorKey,
-              tableHeight: screenSize.height * 1.0 - 38 - 60,
+              tableHeight: screenSize.height * 1.0 - 45 - 55,
               tableWidth:  screenSize.width,
               cellHeight:  cellHeight,
               cellWidth:   cellWidth,
@@ -199,7 +199,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             )
             : TableEditor(
               editorKey:   editorKey,
-              tableHeight: screenSize.height * 1.0 - 38 - 60,
+              tableHeight: screenSize.height * 1.0 - 45 - 55,
               tableWidth:  screenSize.width,
               cellHeight:  cellHeight,
               cellWidth:   cellWidth,
@@ -246,16 +246,16 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             /// 切り替えボタン
             ////////////////////////////////////////////////////////////////////////////////////////////
             
-            // height : 50 + 10
+            // height : 55
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
-                padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 10.0, bottom: 5.0),
+                padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     BottomButton(
-                      content: Text("      全体      ", style: (selectedIndex == 0) ? Styles.headlineStyleGreen13 : Styles.headlineStyleGrey13, overflow: TextOverflow.ellipsis),
+                      content: Text("      全体      ", style: (selectedIndex == 0) ? Styles.defaultStyleGreen13 : Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                       enable: selectedIndex == 0,
                       width: 100,
                       height: 40,
@@ -270,12 +270,12 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                       content: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(shiftTable.requests[requesterIndex].displayName, style: (selectedIndex == requesterIndex+1) ? Styles.headlineStyleGreen13 : Styles.headlineStyleGrey13, overflow: TextOverflow.ellipsis),
-                          Text("${(shiftTable.fitness[requesterIndex][1]/60).toStringAsFixed(1)} h / ${(shiftTable.fitness[requesterIndex][0]/60).toStringAsFixed(1)} h ( ${(shiftTable.fitness[requesterIndex][2]*100).toStringAsFixed(1)} % )", style: (selectedIndex == requesterIndex+1) ? Styles.headlineStyleGreen13 : Styles.headlineStyleGrey13, overflow: TextOverflow.ellipsis),
+                          Text(shiftTable.requests[requesterIndex].displayName, style: (selectedIndex == requesterIndex+1) ? Styles.defaultStyleGreen13 : Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                          Text("${(shiftTable.fitness[requesterIndex][1]/60).toStringAsFixed(1)} h / ${(shiftTable.fitness[requesterIndex][0]/60).toStringAsFixed(1)} h ( ${(shiftTable.fitness[requesterIndex][2]*100).toStringAsFixed(1)} % )", style: (selectedIndex == requesterIndex+1) ? Styles.defaultStyleGreen10 : Styles.defaultStyleGrey10, overflow: TextOverflow.ellipsis),
                         ],
                       ),
                       enable: selectedIndex == requesterIndex+1,
-                      width: 200,
+                      width: 150,
                       height: 40,
                       onPressed: (){
                         setState(() {
@@ -285,7 +285,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                     ),
                     if(shiftTable.requests.isEmpty)
                     BottomButton(
-                      content: Text("フォロワーがいません", style: Styles.headlineStyleGrey13, overflow: TextOverflow.ellipsis),
+                      content: Text("フォロワーがいません", style: Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
                       enable: false,
                       width: 150,
                       height: 40
@@ -492,7 +492,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             children: [
               const Icon(Icons.circle_outlined, size: 30, color: Styles.primaryColor), 
               const SizedBox(width: 30),
-              Text("非割り当て", style: Styles.headlineStyle13,textAlign: TextAlign.center),
+              Text("非割り当て", style: Styles.defaultStyle13,textAlign: TextAlign.center),
             ],
           ),
           Row(
@@ -500,7 +500,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             children: [
               const Icon(Icons.circle, size: 30, color: Styles.primaryColor),
               const SizedBox(width: 30),
-              Text("割り当て", style: Styles.headlineStyle13,textAlign: TextAlign.center),
+              Text("割り当て", style: Styles.defaultStyle13,textAlign: TextAlign.center),
             ],
           )
         ],
@@ -651,7 +651,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
         registered = false;
         insertBuffer(shiftTable.shiftTable);
       }
-    });
+    },);
   }
   
   void handleRangeFill(){
@@ -683,7 +683,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
           builder: (context, setState) {
             return AlertDialog(
               insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              title: Text("「シフト管理画面」の使い方", style:  Styles.headlineStyleGreen20, textAlign: TextAlign.center),
+              title: Text("「シフト管理画面」の使い方", style:  Styles.defaultStyleGreen20, textAlign: TextAlign.center),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.95,
                 height: MediaQuery.of(context).size.height * 0.95,
@@ -699,10 +699,10 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                           children: [
                             SizedBox(
                               width: 10,
-                              child : displayInfoFlag[0] ? Text("-", style: Styles.headlineStyleGreen18) : Text("+", style: Styles.headlineStyleGreen18),
+                              child : displayInfoFlag[0] ? Text("-", style: Styles.defaultStyleGreen18) : Text("+", style: Styles.defaultStyleGreen18),
                             ),
                             const SizedBox(width: 10),
-                            Text("シフト表について", style: Styles.headlineStyleGreen18),
+                            Text("シフト表について", style: Styles.defaultStyleGreen18),
                           ],
                         ),
                         onPressed: (){
@@ -718,14 +718,14 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // How to Edit
-                            Text("この画面では、「シフトリクエスト期間」終了後、「シフト表」を編集できます。", style: Styles.headlineStyleGrey13),
+                            Text("この画面では、「シフトリクエスト期間」終了後、「シフト表」を編集できます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 20),
-                            Text("編集方法", style: Styles.headlineStyle18),
+                            Text("編集方法", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
-                            Text("各日時に対応するマスをタップすると、その日時を希望者の一覧が表示されます。", style: Styles.headlineStyleGrey13),
-                            Text("希望者の名前をタップするとその希望者の「割り当て」/「非割り当て」状態にすることができます。", style: Styles.headlineStyleGrey13),
-                            Text("編集後は、画面右上の「登録」ボタンを押して登録してください。", style: Styles.headlineStyleGrey13),
-                            Text("注意 : 編集は常に行うことはできますが、「シフトリクエスト期間」終了後にしか登録できません。", style: Styles.headlineStyleGrey13),
+                            Text("各日時に対応するマスをタップすると、その日時を希望者の一覧が表示されます。", style: Styles.defaultStyleGrey13),
+                            Text("希望者の名前をタップするとその希望者の「割り当て」/「非割り当て」状態にすることができます。", style: Styles.defaultStyleGrey13),
+                            Text("編集後は、画面右上の「登録」ボタンを押して登録してください。", style: Styles.defaultStyleGrey13),
+                            Text("注意 : 編集は常に行うことはできますが、「シフトリクエスト期間」終了後にしか登録できません。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -741,7 +741,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   ],
                                 ),
                                 const SizedBox(width: 10),
-                                Text("割り当て状態", style: Styles.headlineStyleGrey13),
+                                Text("割り当て状態", style: Styles.defaultStyleGrey13),
                                 const SizedBox(width: 10),
                                   const Stack(
                                   alignment: Alignment.center,
@@ -754,15 +754,15 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   ],
                                 ),
                                 const SizedBox(width: 10),
-                                Text("非割り当て状態", style: Styles.headlineStyleGrey13),
+                                Text("非割り当て状態", style: Styles.defaultStyleGrey13),
                               ],
                             ),
 
                             const SizedBox(height: 20),
-                            Text("アイコンについて", style: Styles.headlineStyle18),
+                            Text("アイコンについて", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
-                            Text("シフト表の表示されるアイコンは、その日時の割り当て充足率を示すものです。", style: Styles.headlineStyleGrey13),
-                            Text("アイコンの示す意味は、下記のとおりです。", style: Styles.headlineStyleGrey13),
+                            Text("シフト表の表示されるアイコンは、その日時の割り当て充足率を示すものです。", style: Styles.defaultStyleGrey13),
+                            Text("アイコンの示す意味は、下記のとおりです。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
                             Row(
                               children: [
@@ -777,7 +777,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                SizedBox(width: 80, child: Text("0 %", style: Styles.headlineStyleGrey13)),
+                                SizedBox(width: 80, child: Text("0 %", style: Styles.defaultStyleGrey13)),
                                 const SizedBox(width: 10),
                                 Container(
                                   decoration: BoxDecoration(
@@ -790,7 +790,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                Text("1 ~ 29 %", style: Styles.headlineStyleGrey13)
+                                Text("1 ~ 29 %", style: Styles.defaultStyleGrey13)
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -809,7 +809,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                SizedBox(width: 80, child: Text("30 ~ 69 %", style: Styles.headlineStyleGrey13)),
+                                SizedBox(width: 80, child: Text("30 ~ 69 %", style: Styles.defaultStyleGrey13)),
                                 const SizedBox(width: 10),
                                 Container(
                                   decoration: BoxDecoration(
@@ -822,7 +822,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                Text("70% ~ 99%", style: Styles.headlineStyleGrey13),
+                                Text("70% ~ 99%", style: Styles.defaultStyleGrey13),
 
                               ],
                             ),
@@ -842,7 +842,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                SizedBox(width: 80, child: Text("100 %", style: Styles.headlineStyleGrey13)),
+                                SizedBox(width: 80, child: Text("100 %", style: Styles.defaultStyleGrey13)),
                                 const SizedBox(width: 10),
                                 Container(
                                   decoration: BoxDecoration(
@@ -855,26 +855,26 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                Text("101 % 以上", style: Styles.headlineStyleGrey13),
+                                Text("101 % 以上", style: Styles.defaultStyleGrey13),
                               ],
                             ),
                             
                             // How to Update
                             const SizedBox(height: 30),
-                            Text("登録方法", style: Styles.headlineStyle18),
+                            Text("登録方法", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
                             Row(
                               children: [
                                 const Icon(Icons.cloud_upload_outlined, size: 24, color: Styles.primaryColor),
                                 const SizedBox(width: 10),
-                                Text("登録ボタン (画面右上)", style: Styles.headlineStyleGrey13),
+                                Text("登録ボタン (画面右上)", style: Styles.defaultStyleGrey13),
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("シフト表の編集内容は、「登録」しない場合、画面遷移時に破棄されます。", style: Styles.headlineStyleGrey13),
-                            Text("入力したシフト表を「登録」するには、画面右上の「登録ボタン」を押してください。", style: Styles.headlineStyleGrey13),
-                            Text("登録したシフト表は常にシフト希望者に共有されますが、「シフト表作成者のみ」が変更を加えることができます。", style: Styles.headlineStyleGrey13),
-                            Text("「シフト期間」開始日までには、必ず登録してください。", style: Styles.headlineStyleGrey13),
+                            Text("シフト表の編集内容は、「登録」しない場合、画面遷移時に破棄されます。", style: Styles.defaultStyleGrey13),
+                            Text("入力したシフト表を「登録」するには、画面右上の「登録ボタン」を押してください。", style: Styles.defaultStyleGrey13),
+                            Text("登録したシフト表は常にシフト希望者に共有されますが、「シフト表作成者のみ」が変更を加えることができます。", style: Styles.defaultStyleGrey13),
+                            Text("「シフト期間」開始日までには、必ず登録してください。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -887,10 +887,10 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                           children: [
                             SizedBox(
                               width: 10,
-                              child : displayInfoFlag[1] ? Text("-", style: Styles.headlineStyleGreen18) : Text("+", style: Styles.headlineStyleGreen18),
+                              child : displayInfoFlag[1] ? Text("-", style: Styles.defaultStyleGreen18) : Text("+", style: Styles.defaultStyleGreen18),
                             ),
                             const SizedBox(width: 10),
-                            Text("ツールボタンについて", style: Styles.headlineStyleGreen18),
+                            Text("ツールボタンについて", style: Styles.defaultStyleGreen18),
                           ],
                         ),
                         onPressed: (){
@@ -906,9 +906,9 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Zoom Out / In Button
-                            Text("「シフト表」上部のツールボタンを用いることで、効率的なシフト表の編集を行うことができます。", style: Styles.headlineStyleGrey13),
+                            Text("「シフト表」上部のツールボタンを用いることで、効率的なシフト表の編集を行うことができます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 20),
-                            Text("拡大・縮小ボタン", style: Styles.headlineStyle18),
+                            Text("拡大・縮小ボタン", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -919,49 +919,49 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("シフト表の拡大・縮小ができます。", style: Styles.headlineStyleGrey13),
+                            Text("シフト表の拡大・縮小ができます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
                           
                             // Auto Fill Button
                             const SizedBox(height: 10),
-                            Text("自動入力ボタン", style: Styles.headlineStyle18),
+                            Text("自動入力ボタン", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
                             ToolButton( icon: Icons.auto_fix_high_outlined, pressEnable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
-                            Text("自動でシフト表へ割り当てできます。", style: Styles.headlineStyleGrey13),
-                            Text("入力前に、ボタン長押しし、自動割り当てを行うための基準となる勤務時間を設定してください。", style: Styles.headlineStyleGrey13),
+                            Text("自動でシフト表へ割り当てできます。", style: Styles.defaultStyleGrey13),
+                            Text("入力前に、ボタン長押しし、自動割り当てを行うための基準となる勤務時間を設定してください。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
-                            Text("(例)8時間を設定 -> 8時間を基準の勤務時間として割り当てを行われる", style: Styles.headlineStyleGrey13),
+                            Text("(例)8時間を設定 -> 8時間を基準の勤務時間として割り当てを行われる", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
-                            Text("注意1 : 全ての勤務者の希望通過率を基準に自動入力されます。そのため，設定した希望勤務時間に満たない割り当ても生じます。", style: Styles.headlineStyleGrey13),
+                            Text("注意1 : 全ての勤務者の希望通過率を基準に自動入力されます。そのため，設定した希望勤務時間に満たない割り当ても生じます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
-                            Text("注意2 : 入力の手間を軽減することを目的としており，質を保証するものではありません。自動入力後，必ずご確認ください。改善案等がございましたら、ぜひご連絡くださいませ。", style: Styles.headlineStyleGrey13),
+                            Text("注意2 : 入力の手間を軽減することを目的としており，質を保証するものではありません。自動入力後，必ずご確認ください。改善案等がございましたら、ぜひご連絡くださいませ。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
                           
                             // Filterring Input Button
                             const SizedBox(height: 10),
-                            Text("フィルタ入力ボタン", style: Styles.headlineStyle18),
+                            Text("フィルタ入力ボタン", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
                             ToolButton( icon: Icons.filter_alt_outlined, pressEnable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
-                            Text("「勤務者名」「日時」を指定して、一括でシフト表に入力できます。", style: Styles.headlineStyleGrey13),
+                            Text("「勤務者名」「日時」を指定して、一括でシフト表に入力できます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
 
                             // Draw Button                             
                             const SizedBox(height: 10),
-                            Text("タッチ入力ボタン", style: Styles.headlineStyle18),
+                            Text("タッチ入力ボタン", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
                             ToolButton(icon: Icons.touch_app_outlined, pressEnable: true, width: screenSize.width/7),
                             const SizedBox(height: 10),
-                            Text("細かい1マス単位の編集ができます。", style: Styles.headlineStyleGrey13),
-                            Text("タップ後に表のマスをなぞることで「割り当て状態」を編集できます。", style: Styles.headlineStyleGrey13),
-                            Text("「割当て状態」「非割り当て状態」どちらを入力するかは、ボタンを長押しすることで選択できます。", style: Styles.headlineStyleGrey13),
-                            Text("注意1 : その間、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: Styles.headlineStyleGrey13),
-                            Text("注意2 : 「シフトリクエスト表示中」にのみ使用できます。", style: Styles.headlineStyleGrey13),
+                            Text("細かい1マス単位の編集ができます。", style: Styles.defaultStyleGrey13),
+                            Text("タップ後に表のマスをなぞることで「割り当て状態」を編集できます。", style: Styles.defaultStyleGrey13),
+                            Text("「割当て状態」「非割り当て状態」どちらを入力するかは、ボタンを長押しすることで選択できます。", style: Styles.defaultStyleGrey13),
+                            Text("注意1 : その間、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。", style: Styles.defaultStyleGrey13),
+                            Text("注意2 : 「シフトリクエスト表示中」にのみ使用できます。", style: Styles.defaultStyleGrey13),
 
                             // Redo / Undo Button
                             const SizedBox(height: 10),
-                            Text("戻る・進む ボタン", style: Styles.headlineStyle18),
+                            Text("戻る・進む ボタン", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -972,8 +972,8 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("編集したシフト表を「前の状態」や「次の状態」に戻すことができます。", style: Styles.headlineStyleGrey13),
-                            Text("注意 : 遡れる状態は最大50であり、一度管理者画面を閉じると過去の変更履歴は破棄されます。", style: Styles.headlineStyleGrey13),
+                            Text("編集したシフト表を「前の状態」や「次の状態」に戻すことができます。", style: Styles.defaultStyleGrey13),
+                            Text("注意 : 遡れる状態は最大50であり、一度管理者画面を閉じると過去の変更履歴は破棄されます。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -986,10 +986,10 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                           children: [
                             SizedBox(
                               width: 10,
-                              child : displayInfoFlag[2] ? Text("-", style: Styles.headlineStyleGreen18) : Text("+", style: Styles.headlineStyleGreen18),
+                              child : displayInfoFlag[2] ? Text("-", style: Styles.defaultStyleGreen18) : Text("+", style: Styles.defaultStyleGreen18),
                             ),
                             const SizedBox(width: 10),
-                            Text("シフトリクエスト表について", style: Styles.headlineStyleGreen18),
+                            Text("シフトリクエスト表について", style: Styles.defaultStyleGreen18),
                           ],
                         ),
                         onPressed: (){
@@ -1004,14 +1004,14 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("画面下部の切り替えボタンをタップすることで、「シフト表」と「シフトリクエスト表」を切り替えることができます。", style: Styles.headlineStyleGrey13),
-                            Text("どちらの画面でもシフト表への割り当てを編集することが可能です。", style: Styles.headlineStyleGrey13),
+                            Text("画面下部の切り替えボタンをタップすることで、「シフト表」と「シフトリクエスト表」を切り替えることができます。", style: Styles.defaultStyleGrey13),
+                            Text("どちらの画面でもシフト表への割り当てを編集することが可能です。", style: Styles.defaultStyleGrey13),
                             
                             const SizedBox(height: 20),
-                            Text("アイコンについて", style: Styles.headlineStyle18),
+                            Text("アイコンについて", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
-                            Text("シフト表の表示されるアイコンは、「シフトリクエスト表のリクエスト状態」/「割り当て状態」を示すものです。", style: Styles.headlineStyleGrey13),
-                            Text("アイコンの示す意味は、下記のとおりです。", style: Styles.headlineStyleGrey13),
+                            Text("シフト表の表示されるアイコンは、「シフトリクエスト表のリクエスト状態」/「割り当て状態」を示すものです。", style: Styles.defaultStyleGrey13),
+                            Text("アイコンの示す意味は、下記のとおりです。", style: Styles.defaultStyleGrey13),
                             const SizedBox(height: 10),
                             Row(
                               children: [
@@ -1026,7 +1026,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                SizedBox(width: 100, child: Text("リクエスト状態", style: Styles.headlineStyleGrey13)),
+                                SizedBox(width: 100, child: Text("リクエスト状態", style: Styles.defaultStyleGrey13)),
                                 const SizedBox(width: 10),
                                 Container(
                                   decoration: BoxDecoration(
@@ -1039,7 +1039,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                Text("非リクエスト状態", style: Styles.headlineStyleGrey13)
+                                Text("非リクエスト状態", style: Styles.defaultStyleGrey13)
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -1056,7 +1056,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
                                   )
                                 ),
                                 const SizedBox(width: 10),
-                                Text("割り当て状態", style: Styles.headlineStyleGrey13),
+                                Text("割り当て状態", style: Styles.defaultStyleGrey13),
                               ],
                             ),
                           ],
@@ -1068,7 +1068,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
               ),
               actions: <Widget>[
                 TextButton(
-                  child: Text('閉じる', style: Styles.headlineStyleGreen13),
+                  child: Text('閉じる', style: Styles.defaultStyleGreen13),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -1170,7 +1170,7 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
             (widget.shiftTable.shiftTable[widget.row][widget.column].isEmpty)
             ? Padding(
               padding: const EdgeInsets.symmetric(vertical: 15.0),
-              child: Text("リクエストしているユーザがいません", style: Styles.headlineStyleRed15, textAlign: TextAlign.center),
+              child: Text("リクエストしているユーザがいません", style: Styles.defaultStyleRed15, textAlign: TextAlign.center),
             )
             : SizedBox(
               height: MediaQuery.of(context).size.height * 0.5 - 70 - MediaQuery.of(context).padding.bottom,  
@@ -1187,7 +1187,7 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                           children: [
                             SizedBox(
                               width: 100,
-                              child: Text(widget.shiftTable.requests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].displayName, style: Styles.headlineStyle15, textAlign: TextAlign.center)),
+                              child: Text(widget.shiftTable.requests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].displayName, style: Styles.defaultStyle15, textAlign: TextAlign.center)),
                             const SizedBox(width: 30),
                             Stack(
                               alignment: Alignment.center,
@@ -1270,14 +1270,14 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text("シフトの自動割り当て", style: Styles.headlineStyleGrey15, textAlign: TextAlign.center),
+                      child: Text("シフトの自動割り当て", style: Styles.defaultStyleGrey15, textAlign: TextAlign.center),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text("基本勤務時間", style: Styles.headlineStyleGreen15),
+                          Text("基本勤務時間", style: Styles.defaultStyleGreen15),
                           buildTimePicker(DateTime(1,1,1,0,0).add(baseDuration), DateTime(1,1,1,0,15), DateTime(1,1,1,23,45), 15, (DateTime val){ baseDuration = val.difference(DateTime(1,1,1,0,0));}),
                         ],
                       )
@@ -1287,7 +1287,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text("最短勤務時間", style: Styles.headlineStyleGreen15),
+                          Text("最短勤務時間", style: Styles.defaultStyleGreen15),
                           buildTimePicker(DateTime(1,1,1,0,0).add(minDuration), DateTime(1,1,1,0,15), DateTime(1,1,1,23,45), 15, (DateTime val){ minDuration = val.difference(DateTime(1,1,1,0,0));}),
                         ],
                       )
@@ -1297,7 +1297,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text("連続勤務日数", style: Styles.headlineStyleGreen15),
+                          Text("連続勤務日数", style: Styles.defaultStyleGreen15),
                           SizedBox(
                             height: 40,
                             width: screenSize.width / 4,
@@ -1314,7 +1314,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                               onPressed: () async {
                                 buildInputBaseConDayModaleWindow();
                               },
-                              child: Text(inputConDayList[baseConDay], style: Styles.headlineStyleGreen18)
+                              child: Text(inputConDayList[baseConDay], style: Styles.defaultStyleGreen18)
                             ),
                           )
                         ],
@@ -1336,7 +1336,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                           setState(() {
                             widget._shiftTable.autoFill(baseDuration.inMinutes, minDuration.inMinutes, baseConDay);
                             widget._shiftTable.calcFitness( baseDuration.inMinutes, minDuration.inMinutes, baseConDay);
-                            Navigator.pop(context, true); // これだけでModalWindowのFuture<dynamic>から返せる
+                            Navigator.pop(context, true);
                           });
                         }
                       ),
@@ -1392,7 +1392,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
             )
           );
         },
-        child: Text('${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}', style: Styles.headlineStyleGreen18)
+        child: Text('${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}', style: Styles.defaultStyleGreen18)
       ),
     );
   }
@@ -1406,7 +1406,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
         List<Widget>.generate(assignNumSelect.length, (index) => Row(
             mainAxisAlignment:  MainAxisAlignment.center,
             children: [ 
-              Text(inputConDayList[index], style: Styles.headlineStyle13,textAlign: TextAlign.center),
+              Text(inputConDayList[index], style: Styles.defaultStyle13,textAlign: TextAlign.center),
             ],
           )
         ),
@@ -1490,7 +1490,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: SizedBox(
                     height: 20,
-                    child: Text("シフトの範囲入力", style: Styles.headlineStyleGrey15, textAlign: TextAlign.center),
+                    child: Text("シフトの範囲入力", style: Styles.defaultStyleGrey15, textAlign: TextAlign.center),
                   ),
                 ),
                 Row(
@@ -1533,7 +1533,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         )
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.headlineStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -1548,7 +1548,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.headlineStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
                     SizedBox(height: widgetHeight, width: modalWidth * (100 / 330))
                   ],
                 ),
@@ -1569,7 +1569,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: Styles.headlineStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: Styles.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
@@ -1584,7 +1584,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: Styles.headlineStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: Styles.defaultStyleGrey13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomIconButton(
