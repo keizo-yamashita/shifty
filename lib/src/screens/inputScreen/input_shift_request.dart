@@ -6,17 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shift/main.dart';
 import 'package:shift/src/components/style/pop_icons.dart';
-import 'package:shift/src/components/shift_editor/editor_appbar.dart';
-import 'package:shift/src/components/shift_editor/table.dart';
-import 'package:shift/src/components/shift_editor/table_title.dart';
+import 'package:shift/src/components/form/shift_editor/editor_appbar.dart';
+import 'package:shift/src/components/form/shift_editor/table.dart';
+import 'package:shift/src/components/form/shift_editor/table_title.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/shift/shift_request.dart';
-import 'package:shift/src/components/shift_editor/coordinate.dart';
+import 'package:shift/src/components/form/shift_editor/coordinate.dart';
 import 'package:shift/src/components/undo_redo.dart';
-import 'package:shift/src/components/form/modal_window.dart';
-import 'package:shift/src/components/form/button.dart';
+import 'package:shift/src/components/form/utility/modal_window.dart';
+import 'package:shift/src/components/form/utility/button.dart';
 import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -769,7 +769,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                           enable:   false,
                           width:  modalWidth * (100 / 330),
                           height: buttonHeight,
-                          action: (){
+                          onPressed: (){
                             setState(() {
                               buildSelectorModaleWindow(weekSelect, 0);
                             });
@@ -785,7 +785,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         enable:   false,
                         width:  modalWidth * (100 / 330),
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             buildSelectorModaleWindow(weekdaySelect, 1);
                           });
@@ -806,7 +806,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         enable:   false,
                         width:  modalWidth * (100 / 330),
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             buildSelectorModaleWindow(timeDivs1List, 2);
                           });
@@ -821,7 +821,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         enable:   false,
                         width:  modalWidth * (100 / 330),
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             buildSelectorModaleWindow(timeDivs2List, 3);
                           });
@@ -855,7 +855,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         enable:   true,
                         width:  modalWidth,
                         height: buttonHeight * 0.8,
-                        action: (){
+                        onPressed: (){
                           var rule = RequestRule(
                             week:      selectorsIndex[0],
                             weekday:   selectorsIndex[1],

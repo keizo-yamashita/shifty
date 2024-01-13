@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shift/src/components/form/button.dart';
-import 'package:shift/src/components/form/modal_window.dart';
+import 'package:shift/src/components/form/utility/button.dart';
+import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/style/style.dart';
 
@@ -91,16 +91,10 @@ class InputDateTermState extends State<InputDateTerm>
     super.initState();
     tabController = TabController(length: 2, vsync: this);
 
-    DateTime end = customDateRange[0]
-        .start
-        .subtract(const Duration(days: 1))
-        .add(const Duration(minutes: 2));
-    DateTime start = customDateRange[1]
-        .end
-        .add(const Duration(days: 1))
-        .add(const Duration(minutes: 1));
+    DateTime end = templateDateRange[0].start.subtract(const Duration(days: 1));
+    DateTime start = templateDateRange[1].end.add(const Duration(days: 1));
 
-    existPrepareTerm = (end.difference(start).inDays + 1 > 0);
+    existPrepareTerm = (end.difference(start).inDays >= 0);
 
     widget.onDateTermChanged(
       templateDateRange[0],
@@ -212,16 +206,10 @@ class InputDateTermState extends State<InputDateTerm>
   ///////////////////////////////////////////////
 
   Widget buildTempleteSelector() {
-    DateTime end = templateDateRange[0]
-        .start
-        .subtract(const Duration(days: 1))
-        .add(const Duration(minutes: 2));
-    DateTime start = templateDateRange[1]
-        .end
-        .add(const Duration(days: 1))
-        .add(const Duration(minutes: 1));
+    DateTime end = templateDateRange[0].start.subtract(const Duration(days: 1));
+    DateTime start = templateDateRange[1].end.add(const Duration(days: 1));
 
-    bool exitPrepareTerm = (end.difference(start).inDays + 1 > 0);
+    existPrepareTerm = (end.difference(start).inDays >= 0);
 
     return Column(
       children: [
@@ -244,7 +232,7 @@ class InputDateTermState extends State<InputDateTerm>
                   widget.onDateTermChanged(
                     templateDateRange[0],
                     templateDateRange[1],
-                    exitPrepareTerm,
+                    existPrepareTerm,
                   );
                   setState(() {});
                 },
@@ -261,7 +249,7 @@ class InputDateTermState extends State<InputDateTerm>
                   widget.onDateTermChanged(
                     templateDateRange[0],
                     templateDateRange[1],
-                    exitPrepareTerm,
+                    existPrepareTerm,
                   );
                   setState(() {});
                 },
@@ -277,7 +265,7 @@ class InputDateTermState extends State<InputDateTerm>
             ),
             tableRow(
               'シフト作成期間',
-              (!exitPrepareTerm)
+              (!existPrepareTerm)
                   ? Container(
                       alignment: Alignment.center,
                       child: Text(
@@ -285,7 +273,12 @@ class InputDateTermState extends State<InputDateTerm>
                         style: Styles.defaultStyleRed13,
                       ),
                     )
-                  : printDateTerm(DateTimeRange(start: start, end: end)),
+                  : printDateTerm(
+                      DateTimeRange(
+                        start: start,
+                        end: end,
+                      ),
+                    ),
             ),
           ],
         ),
@@ -301,7 +294,7 @@ class InputDateTermState extends State<InputDateTerm>
     DateTime end = customDateRange[0].start.subtract(const Duration(days: 1));
     DateTime start = customDateRange[1].end.add(const Duration(days: 1));
 
-    existPrepareTerm = (end.difference(start).inDays > 1);
+    existPrepareTerm = (end.difference(start).inDays >= 0);
 
     return Table(
       columnWidths: const <int, TableColumnWidth>{
@@ -355,12 +348,19 @@ class InputDateTermState extends State<InputDateTerm>
                     style: Styles.defaultStyleRed13,
                   ),
                 )
-              : printDateTerm(
-                  DateTimeRange(
-                    start: start.add(const Duration(days: 1)),
-                    end: end.subtract(const Duration(days: 1)),
-                  ),
+              : Padding(
+                padding: EdgeInsets.only(left: screenSize.width * 0.03),
+                child: SizedBox(
+                  width: screenSize.width * 0.6,
+                  height: 40,
+                  child: printDateTerm(
+                      DateTimeRange(
+                        start: start,
+                        end: end,
+                      ),
+                    ),
                 ),
+              ),
         ),
       ],
     );
@@ -405,7 +405,7 @@ class InputDateTermState extends State<InputDateTerm>
         ),
         Text(
           " - ",
-          style: Styles.defaultStyleGreen10,
+          style: Styles.defaultStyleGreen13,
         ),
         Text(
           DateFormat('MM/dd', 'ja_JP').format(dateTerm.end),
@@ -419,6 +419,10 @@ class InputDateTermState extends State<InputDateTerm>
     );
   }
 
+  String textDateTerm(DateTimeRange dateTerm) {
+    return "${DateFormat('MM/dd', 'ja_JP').format(dateTerm.start)} - ${DateFormat('MM/dd', 'ja_JP').format(dateTerm.end)}  ( ${(dateTerm.end.difference(dateTerm.start).inDays + 1).toString().padLeft(2, ' ')}日 )";
+  }
+
   //////////////////////////////////////////
   /// テンプレートの設定を開くボタン
   //////////////////////////////////////////
@@ -429,11 +433,12 @@ class InputDateTermState extends State<InputDateTerm>
     Function(int) onPressed,
   ) {
     return CustomTextButton(
+      icon: Icons.menu,
       text: items[selected],
       enable: true,
-      width: screenSize.width * 0.445,
+      width: screenSize.width * 0.6,
       height: 40,
-      action: () async {
+      onPressed: () async {
         showModalWindow(
           context,
           0.5,
@@ -470,17 +475,7 @@ class InputDateTermState extends State<InputDateTerm>
     DateTimeRange dateTerm,
     Function(DateTimeRange) onPressed,
   ) {
-    return SizedBox(
-      height: 40,
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          shadowColor: Styles.hiddenColor,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          side: const BorderSide(color: Styles.primaryColor),
-        ),
+    return CustomTextButton(
         onPressed: () async {
           final x = pickDateRange(context, dateTerm);
           x.then((value) {
@@ -489,18 +484,11 @@ class InputDateTermState extends State<InputDateTerm>
           });
           setState(() {});
         },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              const Icon(Icons.calendar_month, color: Styles.primaryColor),
-              printDateTerm(dateTerm),
-            ],
-          ),
-        ),
-      ),
-    );
+        enable: true,
+        width: screenSize.width * 0.6,
+        height: 40,
+        icon: Icons.calendar_month_outlined,
+        text: textDateTerm(dateTerm));
   }
 
   Future<DateTimeRange> pickDateRange(
@@ -579,8 +567,6 @@ class InputDateTermState extends State<InputDateTerm>
       );
       startDate = startOfThisWeek.add(const Duration(days: 7));
       endDate = startDate.add(const Duration(days: 6));
-    } else {
-      print("index error");
     }
 
     templateDateRange[0] = DateTimeRange(

@@ -3,13 +3,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
 import 'package:shift/main.dart';
-import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
@@ -25,19 +24,10 @@ class CreateShiftTableWidget extends ConsumerStatefulWidget {
 
 class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
     with SingleTickerProviderStateMixin {
+
   // シフト準備期間が確保されているか確認するためのbool値
   bool existPrepareTerm = false;
 
-  // シフト時間区部設定のための parameters
-  DateTime startTime = DateTime(1, 1, 1, 9, 0);
-  DateTime endTime = DateTime(1, 1, 1, 21, 0);
-  DateTime duration = DateTime(1, 1, 1, 0, 60);
-
-  // 時間区分のカスタムのための変数
-  List<TimeDivision> timeDivsTemp = [];
-  int durationTemp = 60;
-
-  bool isDark = false;
   ShiftFrame shiftFrame = ShiftFrame();
   double appBarHeight = 0;
   Size screenSize = const Size(0, 0);
@@ -50,9 +40,6 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
   void initState() {
     super.initState();
     initializeDateFormatting('ja_JP', null).then((_) => setState(() {}));
-
-    ref.read(settingProvider).loadPreferences();
-    isDark = ref.read(settingProvider).enableDarkTheme;
     shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
   }
 
@@ -101,7 +88,8 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
         child: Scaffold(
           //AppBar
           appBar: AppBar(
-            title: Text("シフト表の作成", style: Styles.headlineStyleGreen20),
+            centerTitle: true,
+            title: Text("シフト表の作成", style: Styles.defaultStyleGreen20),
             bottomOpacity: 2.0,
             actions: [
               Padding(
@@ -118,27 +106,35 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                   },
                 ),
               ),
-              TextButton(
-                child: const Icon(
-                  Icons.navigate_next_outlined,
-                  color: Color.fromRGBO(20, 195, 142, 1),
-                  size: 45,
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_forward_ios,
+                  color: Styles.primaryColor,
                 ),
                 onPressed: () {
                   if (shiftFrame.timeDivs.isEmpty) {
-                    _onCreateScheduleItemTapped(
+                    showAlertDialog(
                       context,
+                      ref,
+                      "入力エラー",
                       "1つ以上の時間区分を入力して下さい。",
+                      true
                     );
                   } else if (shiftFrame.shiftName == '') {
-                    _onCreateScheduleItemTapped(
+                    showAlertDialog(
                       context,
+                      ref,
+                      "入力エラー",
                       "シフト表の名前を指定して下さい。",
+                      true
                     );
-                  } else if (existPrepareTerm) {
-                    _onCreateScheduleItemTapped(
+                  } else if (!existPrepareTerm) {
+                    showAlertDialog(
                       context,
-                      "※ リクエストに対するシフト作成期間が必要なため、\n「リクエスト期間」「シフト期間」には1日以上の間隔を空けて下さい。",
+                      ref,
+                      "入力エラー",
+                      "リクエストに対するシフト作成期間が必要なため、\n「リクエスト期間」「シフト期間」には1日以上の間隔を空けて下さい。",
+                      true
                     );
                   } else {
                     shiftFrame.initTable();
@@ -154,29 +150,6 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
               )
             ],
           ),
-          // floatingActionButton: (shiftFrame.timeDivs.isEmpty)
-          //     ? null
-          //     : Padding(
-          //         padding: EdgeInsets.only(
-          //           bottom: screenSize.height / 60,
-          //           right: screenSize.width / 60,
-          //         ),
-          //         child: FloatingActionButton(
-          //           shape: RoundedRectangleBorder(
-          //             borderRadius: BorderRadius.circular(40),
-          //           ),
-          //           foregroundColor: Styles.bgColor,
-          //           backgroundColor: (undoredoCtrl.enableUndo())
-          //               ? Styles.primaryColor
-          //               : Styles.hiddenColor,
-          //           onPressed: (!undoredoCtrl.enableUndo())
-          //               ? null
-          //               : () {
-          //                   timeDivsUndoRedo(true);
-          //                 },
-          //           child: const Icon(Icons.undo, size: 40),
-          //         ),
-          //       ),
           extendBody: true,
           extendBodyBehindAppBar: true,
           resizeToAvoidBottomInset: false,
@@ -186,7 +159,7 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(height: screenSize.height * 0.06 + appBarHeight),
+                  SizedBox(height: screenSize.height * 0.04 + appBarHeight),
                   InputShiftName(
                     textController: textConroller,
                     focusNode: focusNode,
@@ -194,15 +167,18 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
                       shiftFrame.shiftName = inputValue;
                     },
                   ),
-                  SizedBox(height: screenSize.height * 0.06),
+                  SizedBox(height: screenSize.height * 0.05),
                   InputDateTerm(
-                      onDateTermChanged: (shiftTerm, requestTerm, existTerm) {
+                    onDateTermChanged: (DateTimeRange shiftTerm, DateTimeRange requestTerm, bool existTerm) {
                     shiftFrame.dateTerm[0] = shiftTerm;
                     shiftFrame.dateTerm[1] = requestTerm;
                     existPrepareTerm = existTerm;
-                  }),
-                  SizedBox(height: screenSize.height * 0.06),
-                  InputTimeDivision(),
+                  },),
+                  SizedBox(height: screenSize.height * 0.1),
+                  InputTimeDivision(
+                    onTimeDivsChanged: (List<TimeDivision> timeDivs) {
+                    shiftFrame.timeDivs = timeDivs;
+                  },),
                   SizedBox(height: screenSize.height * 0.1 + appBarHeight),
                 ],
               ),
@@ -210,32 +186,6 @@ class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
           ),
         ),
       ),
-    );
-  }
-
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  /// 確認ボタンを押した時の処理
-  /// 引数のmessageを表示
-  ////////////////////////////////////////////////////////////////////////////////////////////
-
-  void _onCreateScheduleItemTapped(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text('入力エラー\n', style: Styles.defaultStyleRed15),
-          content: Text(message, style: Styles.defaultStyle13),
-          actions: <Widget>[
-            CupertinoDialogAction(
-              child: Text('OK', style: Styles.defaultStyleRed13),
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {});
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 

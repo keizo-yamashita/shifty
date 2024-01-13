@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

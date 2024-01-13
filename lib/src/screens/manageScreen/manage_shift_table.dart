@@ -9,17 +9,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:shift/main.dart';
 import 'package:shift/src/components/style/pop_icons.dart';
 import 'package:shift/src/components/shift/shift_request.dart';
-import 'package:shift/src/components/shift_editor/editor_appbar.dart';
+import 'package:shift/src/components/form/shift_editor/editor_appbar.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/shift/shift_table.dart';
-import 'package:shift/src/components/shift_editor/table.dart';
-import 'package:shift/src/components/shift_editor/table_title.dart';
-import 'package:shift/src/components/shift_editor/coordinate.dart';
+import 'package:shift/src/components/form/shift_editor/table.dart';
+import 'package:shift/src/components/form/shift_editor/table_title.dart';
+import 'package:shift/src/components/form/shift_editor/coordinate.dart';
 import 'package:shift/src/components/undo_redo.dart';
-import 'package:shift/src/components/form/modal_window.dart';
-import 'package:shift/src/components/form/button.dart';
+import 'package:shift/src/components/form/utility/modal_window.dart';
+import 'package:shift/src/components/form/utility/button.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数
@@ -1332,7 +1332,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                         enable: true,
                         width: modalWidth,
                         height: buttonHeight,
-                        action:(){
+                        onPressed:(){
                           setState(() {
                             widget._shiftTable.autoFill(baseDuration.inMinutes, minDuration.inMinutes, baseConDay);
                             widget._shiftTable.calcFitness( baseDuration.inMinutes, minDuration.inMinutes, baseConDay);
@@ -1504,7 +1504,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                           enable: false,
                           width: modalWidth,
                           height: buttonHeight,
-                          action: (){
+                          onPressed: (){
                             setState(() {
                               buildSelectorModaleWindow(requesterList, 5);
                             });
@@ -1525,7 +1525,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                           enable: false,
                           width: modalWidth * (100 / 330),
                           height: buttonHeight,
-                          action: (){
+                          onPressed: (){
                             setState(() {
                               buildSelectorModaleWindow(weekSelect, 0);
                             });
@@ -1541,7 +1541,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         enable: false,
                         width: modalWidth * (100 / 330),
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             buildSelectorModaleWindow(weekdaySelect, 1);
                           });
@@ -1562,7 +1562,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         enable: false,
                         width: modalWidth * (100 / 330),
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             buildSelectorModaleWindow(timeDivs1List, 2);
                           });
@@ -1577,7 +1577,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         enable: false,
                         width: modalWidth * (100 / 330),
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             buildSelectorModaleWindow(timeDivs2List, 3);
                           });
@@ -1611,7 +1611,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         enable: true,
                         width: modalWidth,
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             var rule = ShiftTableRule(
                               week:      selectorsIndex[0],

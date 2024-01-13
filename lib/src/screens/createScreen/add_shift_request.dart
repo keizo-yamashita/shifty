@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shift/main.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/shift/shift_request.dart';
 

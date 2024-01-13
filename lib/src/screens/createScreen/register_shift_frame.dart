@@ -6,16 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
 import 'package:shift/main.dart';
-import 'package:shift/src/components/shift_editor/editor_appbar.dart';
-import 'package:shift/src/components/shift_editor/table.dart';
-import 'package:shift/src/components/shift_editor/table_title.dart';
+import 'package:shift/src/components/form/shift_editor/editor_appbar.dart';
+import 'package:shift/src/components/form/shift_editor/table.dart';
+import 'package:shift/src/components/form/shift_editor/table_title.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/components/form/dialog.dart';
+import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/undo_redo.dart';
-import 'package:shift/src/components/form/modal_window.dart';
+import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
-import 'package:shift/src/components/shift_editor/coordinate.dart';
-import 'package:shift/src/components/form/button.dart';
+import 'package:shift/src/components/form/shift_editor/coordinate.dart';
+import 'package:shift/src/components/form/utility/button.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数
@@ -590,7 +590,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                           enable:   false,
                           width:  modalWidth * (100 / 330),
                           height: buttonHeight,
-                          action: (){
+                          onPressed: (){
                             setState(() {
                               buildSelectorModaleWindow(weekSelect, 0);
                             });
@@ -606,7 +606,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         enable:   false,
                         width:  modalWidth * (100 / 330),
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             buildSelectorModaleWindow(weekdaySelect, 1);
                           });
@@ -627,7 +627,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         enable:   false,
                         width:  modalWidth * (100 / 330),
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             buildSelectorModaleWindow(timeDivs1List, 2);
                           });
@@ -642,7 +642,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                          enable:   false,
                          width:  modalWidth * (100 / 330),
                          height: buttonHeight,
-                         action: (){
+                         onPressed: (){
                           setState(() {
                             buildSelectorModaleWindow(timeDivs2List, 3);
                           });
@@ -657,7 +657,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         enable:   false,
                         width:  modalWidth * (65 / 330),
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             buildSelectorModaleWindow(
                               List<Widget>.generate(assignNumSelect.length, (index) => Row(
@@ -684,7 +684,7 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
                         enable:   true,
                         width:  modalWidth,
                         height: buttonHeight,
-                        action: (){
+                        onPressed: (){
                           setState(() {
                             var rule = AssignRule(
                               week:      selectorsIndex[0],

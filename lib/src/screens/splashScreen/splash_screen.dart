@@ -37,7 +37,7 @@ class SplashScreenState extends ConsumerState<SplashScreen> with DeepLinkMixin{
   }
 
   splashScreenTimer(){
-    Timer(const Duration(seconds: 2), () async{
+    Timer(const Duration(seconds: 1), () async{
       ref.read(signInProvider).silentLogin();
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const AppWidget()));
     });

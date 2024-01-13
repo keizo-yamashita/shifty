@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shift/src/components/style/style.dart';
 
@@ -41,7 +42,7 @@ class ToolButton extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,
-            // elevation: 1.0,          // enableがtrueの場合は影をつける
+            // elevation: 1.0,       // enableがtrueの場合は影をつける
             shadowColor: invBgColor, // 影の色を設定
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             shape: RoundedRectangleBorder(
@@ -88,43 +89,68 @@ class ToolButton extends StatelessWidget {
 /////////////////////////////////////////////////////////////////////////////////
 
 class CustomTextButton extends StatelessWidget {
-  final String text;
-  final bool enable;
-  final double width;
-  final double height;
-  final Function action;
+  final IconData? icon;
+  final String    text;
+  final bool      enable;
+  final double    width;
+  final double    height;
+  final Function  onPressed;
 
   const CustomTextButton({
     Key? key,
+    this.icon,
     required this.text,
     required this.enable,
     required this.width,
     required this.height,
-    required this.action,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          shadowColor: Styles.hiddenColor,
-          minimumSize: Size.zero,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
+    return Center(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (icon != null)
+          Positioned(
+            left: 10,
+            child: Icon(
+              icon!,
+              size: 20,
+              color: enable ? Styles.primaryColor : Styles.hiddenColor,
+            ),
           ),
-          side: BorderSide(
-            color: enable ? Styles.primaryColor : Styles.hiddenColor,
+          SizedBox(
+            width: width,
+            height: height,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                shadowColor: Styles.hiddenColor,
+                minimumSize: Size.zero,
+                padding: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                side: BorderSide(
+                  color: enable ? Styles.primaryColor : Styles.hiddenColor,
+                ),
+              ),
+              onPressed: onPressed as void Function()?,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (icon != null)
+                  SizedBox(width: width*0.05),
+                  FittedBox(
+                    fit: BoxFit.fill,
+                    child: Text(text, style: enable ? Styles.defaultStyleGreen13 : Styles.defaultStyleGrey13),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        onPressed: action as void Function()?,
-        child: FittedBox(
-          fit: BoxFit.fill,
-          child: Text(text, style: Styles.defaultStyleGreen13),
-        ),
+        ],
       ),
     );
   }
