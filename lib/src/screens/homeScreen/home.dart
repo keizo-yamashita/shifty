@@ -55,9 +55,9 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
   @override
   Widget build(BuildContext context) {
 
-    // AppBar の高さの取得 & スクリーンサイズの取得 (AppBarはこのbuildでは作ってないので appbar の高さはいらない)
     appBarHeight = MediaQuery.of(context).padding.top;
-    screenSize   = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - appBarHeight);
+    Size size = MediaQuery.of(context).size;
+    screenSize = Size(size.width, size.height - appBarHeight);
 
     String id = ref.read(deepLinkProvider).shiftFrameId;
 

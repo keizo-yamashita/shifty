@@ -315,7 +315,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
 
     var value = (assignNum / shiftTable.shiftFrame.assignTable[row][column]);
 
-    var cellValue = Icon(PopIcons.ok, size: 14 * cellWidth / 20, color: Styles.primaryColor);
+    Icon cellValue = Icon(PopIcons.ok, size: 14 * cellWidth / 20, color: Styles.primaryColor);
     if(value == 0){
       cellValue = Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.red); 
     }
@@ -331,8 +331,8 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
     else if(value > 1.0){
       cellValue = Icon(PopIcons.ok, size: 14 * cellWidth / 20, color: Colors.yellow[800]);
     }
-
-    Color  cellColor = (selected) ? Styles.primaryColor.withAlpha(100) : Colors.transparent;
+    
+    Color cellColor =  selected ? cellValue.color!.withAlpha(150) : cellValue.color!.withAlpha(50);
     var cellBoaderWdth = 1.0;
 
     return Container(
@@ -370,7 +370,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
       cellColor = Colors.red;
     }
 
-    cellColor =  (selected) ? cellColor.withAlpha(100) : Colors.transparent;
+    cellColor = (selected) ? cellColor.withAlpha(100) : cellColor.withAlpha(50);
     var cellBoaderWdth = 1.0;
     return Container(
       width: cellWidth,
@@ -464,15 +464,19 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
 
   void handleUndo(){
     setState(() {
-      registered = false;
-      callUndoRedo(true);
+      if(undoredoCtrl.enableUndo()){
+        registered = false;
+        callUndoRedo(true);
+      }
     });
   }
 
   void handleRedo(){
     setState(() {
-      registered = false;
-      callUndoRedo(false);
+      if(undoredoCtrl.enableRedo()){
+        registered = false;
+        callUndoRedo(false);
+      }
     });
   }
 
