@@ -29,6 +29,7 @@ class InputShiftName extends StatelessWidget {
             ),
           ),
         ),
+        const Divider(height: 1, thickness: 1.0),
         SizedBox(height: screenSize.height * 0.02),
         SizedBox(
           child: TextField(

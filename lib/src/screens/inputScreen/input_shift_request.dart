@@ -246,7 +246,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
       cellColor = Colors.red;
     }
 
-    cellColor =  selected ? cellColor.withAlpha(200) : cellColor.withAlpha(50);
+    cellColor =  selected ? cellColor.withAlpha(150) : cellColor.withAlpha(50);
     var cellBoaderWdth = 1.0;
     return SizedBox(
       child: Container(
@@ -282,7 +282,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
       cellColor = Colors.red;
     }
 
-    cellColor =  (selected) ? cellColor.withAlpha(100) : Colors.transparent;
+    cellColor =  selected ? cellColor.withAlpha(150) : cellColor.withAlpha(50);
     var cellBoaderWdth = 1.0;
     return Container(
       width: cellWidth,
@@ -386,17 +386,22 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
 
   void handleUndo(){
     setState(() {
-      registered = false;
-      callUndoRedo(true);
+      if(undoredoCtrl.enableUndo()){
+        registered = false;
+        callUndoRedo(true);
+      }
     });
   }
 
   void handleRedo(){
     setState(() {
-      registered = false;
-      callUndoRedo(false);
+      if(undoredoCtrl.enableRedo()){
+        registered = false;
+        callUndoRedo(false);
+      }
     });
   }
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  シフト表に塗る色を選択する
