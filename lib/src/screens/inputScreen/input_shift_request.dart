@@ -84,8 +84,8 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
     shiftRequest = ref.read(shiftRequestProvider).shiftRequest;
     ref.read(settingProvider).loadPreferences();
 
-    int columnLength = shiftRequest.shiftFrame.dateTerm[0].end.difference(shiftRequest.shiftFrame.dateTerm[0].start).inDays + 1;
-    int rowLength    = shiftRequest.shiftFrame.timeDivs.length;
+    int columnLength = shiftRequest.shiftFrame.getDateLen();
+    int rowLength    = shiftRequest.shiftFrame.getTimeDivsLen();
 
     //  Undo Redo Buffer が空だったら最初の状態を保存
     if(undoredoCtrl.buffer.isEmpty){
