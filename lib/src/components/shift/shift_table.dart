@@ -92,7 +92,6 @@ class ShiftTable {
 
   calcFitness(int baseTime, int minTime, int baseConDay) {
     // date range
-    int date = shiftFrame.getDateLen();
     int time = shiftFrame.getTimeDivsLen();
     List<int> duration = List.generate(
         time,
