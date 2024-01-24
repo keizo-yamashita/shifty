@@ -24,9 +24,9 @@ class AccountScreen extends ConsumerWidget {
 
     User? user = ref.read(signInProvider).user;
 
-    bool isLogedIn = user != null &&
-        user.isAnonymous &&
-        user.providerData[0].photoURL != null;
+    bool isLogedIn = (user != null) &&
+        (user.isAnonymous) &&
+        (user.providerData.isNotEmpty && user.providerData[0].photoURL != null);
 
     return Center(
       child: Column(
@@ -66,24 +66,24 @@ class AccountScreen extends ConsumerWidget {
                 if (!ref.read(signInProvider).user!.isAnonymous) ...[
                   Text(
                     "ユーザー名 : ${ref.read(signInProvider).user?.providerData[0].displayName ?? ref.read(signInProvider).user?.uid ?? ''}",
-                    style: Styles.headlineStyle15,
+                    style: Styles.defaultStyle15,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     "メール : ${ref.read(signInProvider).user?.providerData[0].email ?? ''}",
-                    style: Styles.headlineStyle15,
+                    style: Styles.defaultStyle15,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     "ユーザーID : ${ref.read(signInProvider).user?.uid ?? ''}",
-                    style: Styles.headlineStyleGrey13,
+                    style: Styles.defaultStyleGrey13,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: 200,
                     child: OutlinedButton(
-                      child: Text('ログアウト', style: Styles.headlineStyleRed15),
+                      child: Text('ログアウト', style: Styles.defaultStyleRed15),
                       onPressed: () {
                         showConfirmDialog(
                           context,
@@ -103,7 +103,7 @@ class AccountScreen extends ConsumerWidget {
                   SizedBox(
                     width: 200,
                     child: OutlinedButton(
-                      child: Text('アカウント削除', style: Styles.headlineStyleRed15),
+                      child: Text('アカウント削除', style: Styles.defaultStyleRed15),
                       onPressed: () {
                         showConfirmDialog(
                           context,
@@ -138,12 +138,12 @@ class AccountScreen extends ConsumerWidget {
                 ] else ...[
                   Text(
                     "ゲストユーザ",
-                    style: Styles.headlineStyle20,
+                    style: Styles.defaultStyle20,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     "${ref.read(signInProvider).user?.uid}",
-                    style: Styles.headlineStyle15,
+                    style: Styles.defaultStyle15,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 20),
@@ -152,7 +152,7 @@ class AccountScreen extends ConsumerWidget {
                     child: OutlinedButton(
                       child: Text(
                         'ゲストユーザの削除',
-                        style: Styles.headlineStyleRed15,
+                        style: Styles.defaultStyleRed15,
                       ),
                       onPressed: () {
                         showConfirmDialog(
@@ -191,7 +191,7 @@ class AccountScreen extends ConsumerWidget {
                     child: OutlinedButton(
                       child: Text(
                         'アカウント連携',
-                        style: Styles.headlineStyleGreen15,
+                        style: Styles.defaultStyleGreen15,
                       ),
                       onPressed: () {
                         Navigator.push(
@@ -212,7 +212,7 @@ class AccountScreen extends ConsumerWidget {
                 const SizedBox(height: 20),
                 Text(
                   "未ログイン状態",
-                  style: Styles.headlineStyle15,
+                  style: Styles.defaultStyle15,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 20),
@@ -221,7 +221,7 @@ class AccountScreen extends ConsumerWidget {
                   child: OutlinedButton(
                     child: Text(
                       'ログイン画面へ',
-                      style: Styles.headlineStyleGreen15,
+                      style: Styles.defaultStyleGreen15,
                     ),
                     onPressed: () {
                       Navigator.push(

@@ -30,7 +30,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("アカウント連携", style: Styles.headlineStyleGreen20),
+        title: Text("アカウント連携", style: Styles.defaultStyleGreen20),
       ),
       extendBody: true,
       extendBodyBehindAppBar: true,
@@ -48,7 +48,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                 SizedBox(height: screenSize.height * 0.04 + appBarHeight),
                 SizedBox(
                   width: screenSize.width*0.8,
-                  child: Text('下記のいづれかの方法でログインすることで、ゲストアカウントを通常アカウントと連携します。連携後は、他端末への移行や複数端末でのログインが可能になります。', style: Styles.headlineStyleWhite15),
+                  child: Text('下記のいづれかの方法でログインすることで、ゲストログインデータをアカウントに引き継ぐことができます。引き継ぎ後は、他端末への移行や複数端末でのログインが可能になります。', style: Styles.defaultStyleWhite15),
                 ),
                 const SizedBox(height: 20),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.8, child: const Divider(color: Colors.white,)),
@@ -81,7 +81,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                       hintText: 'メールアドレス',
                       hintStyle: Styles.headlineStyleWhite15,
                     ),
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.emailAddress,
                   ),
                 ),
                 
@@ -113,7 +113,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                       hintText: 'パスワード',
                       hintStyle: Styles.headlineStyleWhite15,
                     ),
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.visiblePassword,
                     obscureText: true,
                   ),
                 ),
@@ -139,6 +139,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
     
     return SizedBox(
       height: 50,
+      width: 300,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           shadowColor: Styles.hiddenColor, 
