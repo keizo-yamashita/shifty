@@ -25,13 +25,13 @@ import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
 /// Home 画面
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-class HomeWidget extends ConsumerStatefulWidget {
-  const HomeWidget({Key? key}) : super(key: key);
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
   @override
-  HomeWidgetState createState() => HomeWidgetState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProviderStateMixin {
+class HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProviderStateMixin {
   
   bool   isOwner      = false;
   double appBarHeight = 0;     
@@ -55,9 +55,12 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
   @override
   Widget build(BuildContext context) {
 
-    appBarHeight = MediaQuery.of(context).padding.top;
-    Size size = MediaQuery.of(context).size;
-    screenSize = Size(size.width, size.height - appBarHeight);
+    var size = MediaQuery.of(context).size;
+    var appBarHeight = AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
+    screenSize = Size(size.width, size.height - appBarHeight - MediaQuery.of(context).padding.bottom);
+
+    const bottomNavigationBarHeight = 56.0;
+    final tabBarViewHeight = screenSize.height - appBarHeight - bottomNavigationBarHeight;
 
     String id = ref.read(deepLinkProvider).shiftFrameId;
 
@@ -174,6 +177,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
         child: FloatingActionButton(
           foregroundColor: Styles.bgColor,
           backgroundColor: Styles.primaryColor,
+          elevation: 2.0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(40),
           ),
@@ -188,7 +192,7 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
               if(value == 0){
                 ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
                 Navigator.push(context, MaterialPageRoute(builder: (c) => const CreateShiftTableWidget()));
-              }                
+              }
               if(value == 1){
                 Navigator.push(context, MaterialPageRoute(builder: (c) => const AddShiftRequestWidget()));
               }
@@ -197,38 +201,33 @@ class HomeWidgetState extends ConsumerState<HomeWidget> with SingleTickerProvide
         ),
       ),
 
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      resizeToAvoidBottomInset: false,
-    
       ////////////////////////////////////////////////////////////////////////////////////////////
       /// 登録しているシフト表の一覧を表示 (管理モード，従業員モードどちらも)
       /// StreamBuilder 使用
       ////////////////////////////////////////////////////////////////////////////////////////////
-    
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: appBarHeight),
-          SizedBox(
-            height: 60,
-            child: TabBar(
-              controller: tabController,
-              indicatorColor: Styles.primaryColor,
-              labelStyle: Styles.defaultStyle15,
-              labelColor: Styles.primaryColor,  
-              unselectedLabelColor: Colors.grey, 
-              tabs: tabList,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              child: TabBar(
+                controller: tabController,
+                indicatorColor: Styles.primaryColor,
+                labelStyle: Styles.defaultStyle15,
+                labelColor: Styles.primaryColor,  
+                unselectedLabelColor: Colors.grey, 
+                tabs: tabList,
+              ),
             ),
-          ),
-          SizedBox(
-            height: screenSize.height - 60 -60,
-            child: TabBarView(
-              controller: tabController,
-              children: tabItemList,
+            SizedBox(
+              height: tabBarViewHeight,
+              child: TabBarView(
+                controller: tabController,
+                children: tabItemList,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       )
     );
   }

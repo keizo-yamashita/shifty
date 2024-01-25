@@ -77,7 +77,10 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
   Widget build(BuildContext context) {
 
     // 画面サイズの取得
-    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom/2);
+    var size = MediaQuery.of(context).size;
+    var appBarHeight = AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
+    var bottomNavigationBarHeight = 56.0 + MediaQuery.of(context).padding.bottom ;
+    screenSize = Size(size.width, size.height - appBarHeight - bottomNavigationBarHeight);
 
     // Provider 処理
     isDark        = ref.read(settingProvider).enableDarkTheme;
@@ -154,7 +157,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
           (isRequestRange())
           ? TableEditor(
             editorKey:   editorKey,
-            tableHeight: screenSize.height * 1.0 - 65,
+            tableHeight: screenSize.height - 55,
             tableWidth:  screenSize.width,
             cellHeight:  cellHeight,
             cellWidth:   cellWidth,
@@ -185,7 +188,7 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
           )
           : TableEditor(
             editorKey:   editorKey,
-            tableHeight: screenSize.height * 1.0 - 65,
+            tableHeight: screenSize.height - 55,
             tableWidth:  screenSize.width,
             cellHeight:  cellHeight,
             cellWidth:   cellWidth,
@@ -221,8 +224,6 @@ class InputShiftRequestWidgetState extends ConsumerState<InputShiftRequestWidget
             selected: selectedCoodinate,
             isDark: isDark,
           ),
-          // brank
-          const SizedBox(height: 8)
         ],
       ),
     );

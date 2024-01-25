@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shift/firebase_options.dart';
 import 'package:shift/main.dart';
-import 'package:shift/src/app.dart';
+import 'package:shift/src/app_router.dart';
 
 import 'package:shift/src/components/deep_link_mixin.dart';
 import 'package:shift/src/components/sign_in/sign_in_provider.dart';
@@ -44,7 +44,7 @@ void main() {
     ///////////////////////////////////////////////////
 
     print("ログイン画面が開いていることを確認");
-    expect(find.byType(AppWidget), findsOneWidget);
+    expect(find.byType(AppRouterWidget), findsOneWidget);
     expect(find.text('Shifty へようこそ'), findsOneWidget);
     await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(seconds: 1));

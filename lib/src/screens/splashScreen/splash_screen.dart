@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shift/main.dart';
-import 'package:shift/src/app.dart';
+import 'package:shift/src/app_navigation_bar.dart';
 import 'package:shift/src/components/deep_link_mixin.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
@@ -39,7 +39,7 @@ class SplashScreenState extends ConsumerState<SplashScreen> with DeepLinkMixin{
   splashScreenTimer(){
     Timer(const Duration(milliseconds: 500), () async{
       ref.read(signInProvider).silentLogin();
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const AppWidget()));
+      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const AppNavigationBar()));
     });
   }
 
