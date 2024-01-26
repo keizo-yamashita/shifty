@@ -12,6 +12,7 @@ import 'package:shift/src/app_navigation_bar.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
 import 'package:shift/src/screens/homeScreen/suggest.dart';
+import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
 import 'firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,10 +37,10 @@ final cartNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'suggestion');
 
 final router = GoRouter(
   navigatorKey: rootNavigatorKey,
-  debugLogDiagnostics: true,
-  initialLocation: '/home',
+  initialLocation: '/',
   routes: [
     StatefulShellRoute.indexedStack(
+      parentNavigatorKey: rootNavigatorKey,
       builder:(context, state, navigationShell){
         return AppNavigationBar(navigationShell: navigationShell);
       },
@@ -48,11 +49,23 @@ final router = GoRouter(
           routes:[
             GoRoute(
               name: 'home',
-              path: '/home',
+              path: '/',
               pageBuilder: (context, state) => NoTransitionPage(
                 key: state.pageKey,
                 child: const HomeScreen(),
               ),
+              routes: [
+                GoRoute(
+                  name: 'input_shift_request',
+                  path: 'input_shift_request',
+                  pageBuilder: (context, state) {
+                    return MaterialPage(
+                      key: state.pageKey,
+                      child: const InputShiftRequestPage()
+                    );
+                  },
+                )
+              ],
             ),
           ],
         ),
