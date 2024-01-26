@@ -7,13 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shift/src/app_navigation_bar.dart';
+import 'package:shift/src/screens/homeSCreen/setting.dart';
+import 'package:shift/src/screens/homeScreen/home.dart';
+import 'package:shift/src/screens/homeScreen/suggest.dart';
+import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
 import 'firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // myh package
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/deep_link_mixin.dart';
-import 'package:shift/src/screens/splashScreen/splash_screen.dart';
 import 'package:shift/src/components/sign_in/sign_in_provider.dart';
 import 'package:shift/src/components/shift/shift_provider.dart';
 import 'package:shift/src/components/setting_provider.dart';
@@ -25,11 +30,78 @@ final shiftRequestProvider = ChangeNotifierProvider((ref) => ShiftRequestProvide
 final shiftTableProvider   = ChangeNotifierProvider((ref) => ShiftTableProvider());
 final deepLinkProvider     = ChangeNotifierProvider((ref) => DeepLinkProvider());
 
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+final homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
+final likeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'settings');
+final cartNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'suggestion');
+
+final router = GoRouter(
+  navigatorKey: rootNavigatorKey,
+  initialLocation: '/',
+  routes: [
+    StatefulShellRoute.indexedStack(
+      parentNavigatorKey: rootNavigatorKey,
+      builder:(context, state, navigationShell){
+        return AppNavigationBar(navigationShell: navigationShell);
+      },
+      branches: [
+        StatefulShellBranch(
+          routes:[
+            GoRoute(
+              name: 'home',
+              path: '/',
+              pageBuilder: (context, state) => NoTransitionPage(
+                key: state.pageKey,
+                child: const HomeScreen(),
+              ),
+              routes: [
+                GoRoute(
+                  name: 'input_shift_request',
+                  path: 'input_shift_request',
+                  pageBuilder: (context, state) {
+                    return MaterialPage(
+                      key: state.pageKey,
+                      child: const InputShiftRequestPage()
+                    );
+                  },
+                )
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes:[
+            GoRoute(
+              name: 'settings',
+              path: '/settings',
+              pageBuilder: (context, state) => NoTransitionPage(
+                key: state.pageKey,
+                child: const SettingScreen(),
+              ),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes:[
+            GoRoute(
+              name: 'suggestion',
+              path: '/suggestion',
+              pageBuilder: (context, state) => NoTransitionPage(
+                key: state.pageKey,
+                child: const SuggestionBoxScreen(),
+              ),
+            ),
+          ],
+        ),
+      ]
+    ),
+  ],
+);
+
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // FirebaseDatabase.instance.setPersistenceEnabled(true);
 
   runApp(
     const ProviderScope(
@@ -51,7 +123,7 @@ class MyAppState extends ConsumerState<MyApp>{
 
     ref.read(settingProvider).loadPreferences();
     
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Shifty',
       theme: ThemeData(
         primaryColor: Styles.primaryColor,
@@ -96,7 +168,11 @@ class MyAppState extends ConsumerState<MyApp>{
       ],
       supportedLocales: const [Locale('ja', ''),],
 
-      home: const SplashScreen(),
+      // home: const SplashScreen(),
+      routeInformationProvider: router.routeInformationProvider,
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
+
       scrollBehavior: const MaterialScrollBehavior().copyWith(
         dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown},
       ),

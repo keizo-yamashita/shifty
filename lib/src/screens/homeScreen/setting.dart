@@ -18,20 +18,19 @@ class SettingScreen extends ConsumerStatefulWidget {
 
 class SettingScreenState extends ConsumerState<SettingScreen> {
 
-  Size _screenSize      = const Size(0, 0);
+  Size screenSize = const Size(0, 0);
 
   @override
   Widget build(BuildContext context) {
     
-    var appBarHeight = AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
-    _screenSize      = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - appBarHeight);
+    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
 
     bool enableDarkTheme = ref.read(settingProvider).enableDarkTheme;
     bool defaultShiftView = ref.read(settingProvider).defaultShiftView;
 
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 16),
             child: Column(
@@ -61,8 +60,8 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                 ),
                 Text("「ライトテーマ」/「ダークテーマ」どちらを使用するか設定します。", style: Styles.defaultStyleGrey13),
                 
-                SizedBox(height: _screenSize.height * 0.1),
-      
+                SizedBox(height: screenSize.height * 0.05),
+            
                 Text("デフォルトで表示するシフト表", style: Styles.defaultStyle15),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical:  10),

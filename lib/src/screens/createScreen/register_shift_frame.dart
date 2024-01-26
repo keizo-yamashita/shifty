@@ -68,8 +68,11 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
       MediaQuery.of(context).size.height -
           AppBar().preferredSize.height -
           MediaQuery.of(context).padding.top -
-          MediaQuery.of(context).padding.bottom/2,
+          56.0 -
+          MediaQuery.of(context).padding.bottom,
     );
+
+    print(screenSize);
 
     ref.read(settingProvider).loadPreferences();
     isDark = ref.read(settingProvider).enableDarkTheme;
@@ -122,7 +125,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
             /// ツールボタン
             /// height : screenSize.height * 0.075
             ////////////////////////////////////////////////////////////////////////////////////////////
-
+        
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
@@ -176,14 +179,14 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                 ),
               ),
             ),
-
+        
             ////////////////////////////////////////////////////////////////////////////////////////////
             /// メインテーブル
             /// height : screenSize.height * 0.075
             ////////////////////////////////////////////////////////////////////////////////////////////
             TableEditor(
                 editorKey: editorKey,
-                tableHeight: screenSize.height * 1.0 - 65,
+                tableHeight: screenSize.height * 1.0 - 63,
                 tableWidth: screenSize.width,
                 cellHeight: cellHeight,
                 cellWidth: cellWidth,
