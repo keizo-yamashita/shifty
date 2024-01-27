@@ -115,14 +115,26 @@ class MyApp extends ConsumerStatefulWidget {
   @override
   MyAppState createState() => MyAppState();
 }
-
 class MyAppState extends ConsumerState<MyApp>{
+  
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(settingProvider).appBarHeight = AppBar().preferredSize.height;
+      ref.read(settingProvider).navigationBarHeight = 56.0;
+      ref.read(settingProvider).screenPaddingTop = MediaQuery.of(context).padding.top;
+      ref.read(settingProvider).screenPaddingBottom = MediaQuery.of(context).padding.bottom;
+      // デバッグログの出力
+      print('AppBar Height: ${ref.read(settingProvider).appBarHeight}');
+    },);
+  }
 
   @override
   Widget build(BuildContext context) {
 
     ref.read(settingProvider).loadPreferences();
-    
+
     return MaterialApp.router(
       title: 'Shifty',
       theme: ThemeData(
