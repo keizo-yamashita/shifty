@@ -60,9 +60,9 @@ class HomeScreenState extends ConsumerState<HomeScreen>
     screenSize = Size(
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height -
-          MediaQuery.of(context).padding.top -
-          56.0 -
-          MediaQuery.of(context).padding.bottom,
+      ref.read(settingProvider).navigationBarHeight - 
+      ref.read(settingProvider).screenPaddingTop -
+      ref.read(settingProvider).screenPaddingBottom
     );
 
     String id = ref.read(deepLinkProvider).shiftFrameId;

@@ -79,7 +79,14 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
   Widget build(BuildContext context) {
 
     // 画面サイズの取得
-    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).padding.top  - MediaQuery.of(context).padding.bottom);
+    screenSize = Size(
+      MediaQuery.of(context).size.width,
+      MediaQuery.of(context).size.height -
+      ref.read(settingProvider).appBarHeight - 
+      ref.read(settingProvider).navigationBarHeight - 
+      ref.read(settingProvider).screenPaddingTop -
+      ref.read(settingProvider).screenPaddingBottom,
+    );
 
     // Provider 処理
     shiftTable = ref.read(shiftTableProvider).shiftTable;
@@ -135,169 +142,167 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
           showAlertDialog(context, ref, "注意", "リクエスト期間内であるため、登録できません。", true,);
         }
       },
-      content: SingleChildScrollView(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              ////////////////////////////////////////////////////////////////////////////////////////////
-              /// ツールボタン
-              ////////////////////////////////////////////////////////////////////////////////////////////
-              // height 30 + 16
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0, right: 2.0, left: 2.0, bottom: 10.0),
+      content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// ツールボタン
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            // height 30 + 20
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0, right: 2.0, left: 2.0, bottom: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ToolButton(icon: Icons.zoom_in,                pressEnable: enableZoomIn,              width: screenSize.width/8, onPressed: handleZoomIn,),
+                  ToolButton(icon: Icons.zoom_out,               pressEnable: enableZoomOut,             width: screenSize.width/8, onPressed: handleZoomOut,),
+                  ToolButton(icon: Icons.auto_fix_high_outlined, pressEnable: true,                      width: screenSize.width/8, onPressed: handleAutoFill,),
+                  ToolButton(icon: Icons.filter_alt_outlined,    pressEnable: true,                      width: screenSize.width/8, onPressed: handleRangeFill,),
+                  ToolButton(icon: Icons.touch_app_outlined,     pressEnable: selectedIndex!=0, offEnable: !enableResponseEdit, width: screenSize.width/8, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue,),
+                  ToolButton(icon: Icons.undo,                   pressEnable: undoredoCtrl.enableUndo(), width: screenSize.width/8, onPressed: handleUndo,),
+                  ToolButton(icon: Icons.redo,                   pressEnable: undoredoCtrl.enableRedo(), width: screenSize.width/8, onPressed: handleRedo,),
+                ],
+              ),
+            ),
+            
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// メインテーブル
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            
+            (selectedIndex == 0)
+            ?
+            TableEditor(
+              editorKey:   editorKey,
+              tableHeight: screenSize.height - 50 - 65,
+              tableWidth:  screenSize.width,
+              cellHeight:  cellHeight,
+              cellWidth:   cellWidth,
+              titleHeight: cellHeight*2,
+              titleWidth:  cellWidth*3.5,
+              titleMargin: titleMargin,
+              onChangeSelect: (p0) async {
+                selectedCoodinate = p0!;
+                setState(() {});
+                buildAssignSelectModaleWindow(p0.column, p0.row);
+                setState(() {});
+              },
+              onInputEnd: null,
+              enableEdit: false,
+              selected: selectedCoodinate,
+              isDark: isDark,
+              columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftTable.shiftFrame.dateTerm[0].start, shiftTable.shiftFrame.dateTerm[0].end, isDark),
+              rowTitles:    getRowTitles(cellHeight, cellWidth*3.5, shiftTable.shiftFrame.timeDivs, isDark),
+              cells: List<List<Widget>>.generate(
+                rowLength, 
+                (i){
+                  return List.generate(
+                    columnLength,
+                    (j){
+                      return shiftCell( i, j, shiftTable.shiftFrame.assignTable[i][j] != 0, j == selectedCoodinate?.column && i == selectedCoodinate?.row);
+                    }
+                  );
+                },
+              ),
+            )
+            : TableEditor(
+              editorKey:   editorKey,
+              tableHeight: screenSize.height - 50 - 55,
+              tableWidth:  screenSize.width,
+              cellHeight:  cellHeight,
+              cellWidth:   cellWidth,
+              titleHeight: cellHeight*2,
+              titleWidth:  cellWidth*3.5,
+              titleMargin: titleMargin,
+              onChangeSelect: (p0) async {
+                selectedCoodinate = p0!;
+                if(enableResponseEdit && shiftTable.requests[selectedIndex-1].reqTable[p0.row][p0.column] == 1){
+                  shiftTable.requests[selectedIndex-1].respTable[p0.row][p0.column] = requestInputValue;
+                  for(int i = 0; i < shiftTable.shiftTable[p0.row][p0.column].length; i++){
+                    if(shiftTable.shiftTable[p0.row][p0.column][i].userIndex == selectedIndex -1){
+                      shiftTable.shiftTable[p0.row][p0.column][i].assign = (requestInputValue == 1) ? true : false;
+                      break;
+                    }
+                  }
+                  shiftTable.calcFitness(baseDuration.inMinutes, minDuration.inMinutes, baseConDay);
+                }
+                setState(() {});
+              },
+              onInputEnd: (){
+                registered = false;
+                insertBuffer(shiftTable.shiftTable);
+              },
+              columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftTable.shiftFrame.dateTerm[0].start, shiftTable.shiftFrame.dateTerm[0].end, isDark),
+              rowTitles: getRowTitles(cellHeight, cellWidth*3.5, shiftTable.shiftFrame.timeDivs, isDark),
+              cells: List<List<Widget>>.generate(
+                rowLength, 
+                (i){
+                  return List.generate(
+                    columnLength,
+                    (j){
+                      return responseCell( i, j, selectedIndex-1, shiftTable.shiftFrame.assignTable[i][j] != 0, j == selectedCoodinate?.column && i == selectedCoodinate?.row);
+                    }
+                  );
+                },
+              ),
+              enableEdit: enableResponseEdit,
+              selected: selectedCoodinate,
+              isDark: isDark,
+            ),
+            
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            /// 切り替えボタン
+            ////////////////////////////////////////////////////////////////////////////////////////////
+            
+            // height : 65
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 10.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    ToolButton(icon: Icons.zoom_in,                pressEnable: enableZoomIn,              width: screenSize.width/8, onPressed: handleZoomIn,),
-                    ToolButton(icon: Icons.zoom_out,               pressEnable: enableZoomOut,             width: screenSize.width/8, onPressed: handleZoomOut,),
-                    ToolButton(icon: Icons.auto_fix_high_outlined, pressEnable: true,                      width: screenSize.width/8, onPressed: handleAutoFill,),
-                    ToolButton(icon: Icons.filter_alt_outlined,    pressEnable: true,                      width: screenSize.width/8, onPressed: handleRangeFill,),
-                    ToolButton(icon: Icons.touch_app_outlined,     pressEnable: selectedIndex!=0, offEnable: !enableResponseEdit, width: screenSize.width/8, onPressed: handleTouchEdit, onLongPressed: handleChangeInputValue,),
-                    ToolButton(icon: Icons.undo,                   pressEnable: undoredoCtrl.enableUndo(), width: screenSize.width/8, onPressed: handleUndo,),
-                    ToolButton(icon: Icons.redo,                   pressEnable: undoredoCtrl.enableRedo(), width: screenSize.width/8, onPressed: handleRedo,),
+                    BottomButton(
+                      content: Text("      全体      ", style: (selectedIndex == 0) ? Styles.defaultStyleGreen13 : Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                      enable: selectedIndex == 0,
+                      width: 100,
+                      height: 40,
+                      onPressed: (){
+                        setState(() {
+                          selectedIndex = 0;
+                        });
+                      },
+                    ),
+                    for(int requesterIndex = 0; requesterIndex < shiftTable.requests.length; requesterIndex++)
+                    BottomButton(
+                      content: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(shiftTable.requests[requesterIndex].displayName, style: (selectedIndex == requesterIndex+1) ? Styles.defaultStyleGreen13 : Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                          Text("${(shiftTable.fitness[requesterIndex][1]/60).toStringAsFixed(1)} h / ${(shiftTable.fitness[requesterIndex][0]/60).toStringAsFixed(1)} h ( ${(shiftTable.fitness[requesterIndex][2]*100).toStringAsFixed(1)} % )", style: (selectedIndex == requesterIndex+1) ? Styles.defaultStyleGreen10 : Styles.defaultStyleGrey10, overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
+                      enable: selectedIndex == requesterIndex+1,
+                      width: 150,
+                      height: 40,
+                      onPressed: (){
+                        setState(() {
+                          selectedIndex = requesterIndex + 1; enableResponseEdit = false;
+                        });
+                      },
+                    ),
+                    if(shiftTable.requests.isEmpty)
+                    BottomButton(
+                      content: Text("フォロワーがいません", style: Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
+                      enable: false,
+                      width: 150,
+                      height: 40
+                    )
                   ],
                 ),
               ),
-              
-              ////////////////////////////////////////////////////////////////////////////////////////////
-              /// メインテーブル
-              ////////////////////////////////////////////////////////////////////////////////////////////
-              
-              (selectedIndex == 0)
-              ?
-              TableEditor(
-                editorKey:   editorKey,
-                tableHeight: screenSize.height * 1.0 - 45 - 55,
-                tableWidth:  screenSize.width,
-                cellHeight:  cellHeight,
-                cellWidth:   cellWidth,
-                titleHeight: cellHeight*2,
-                titleWidth:  cellWidth*3.5,
-                titleMargin: titleMargin,
-                onChangeSelect: (p0) async {
-                  selectedCoodinate = p0!;
-                  setState(() {});
-                  buildAssignSelectModaleWindow(p0.column, p0.row);
-                  setState(() {});
-                },
-                onInputEnd: null,
-                enableEdit: false,
-                selected: selectedCoodinate,
-                isDark: isDark,
-                columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftTable.shiftFrame.dateTerm[0].start, shiftTable.shiftFrame.dateTerm[0].end, isDark),
-                rowTitles:    getRowTitles(cellHeight, cellWidth*3.5, shiftTable.shiftFrame.timeDivs, isDark),
-                cells: List<List<Widget>>.generate(
-                  rowLength, 
-                  (i){
-                    return List.generate(
-                      columnLength,
-                      (j){
-                        return shiftCell( i, j, shiftTable.shiftFrame.assignTable[i][j] != 0, j == selectedCoodinate?.column && i == selectedCoodinate?.row);
-                      }
-                    );
-                  },
-                ),
-              )
-              : TableEditor(
-                editorKey:   editorKey,
-                tableHeight: screenSize.height * 1.0 - 45 - 55,
-                tableWidth:  screenSize.width,
-                cellHeight:  cellHeight,
-                cellWidth:   cellWidth,
-                titleHeight: cellHeight*2,
-                titleWidth:  cellWidth*3.5,
-                titleMargin: titleMargin,
-                onChangeSelect: (p0) async {
-                  selectedCoodinate = p0!;
-                  if(enableResponseEdit && shiftTable.requests[selectedIndex-1].reqTable[p0.row][p0.column] == 1){
-                    shiftTable.requests[selectedIndex-1].respTable[p0.row][p0.column] = requestInputValue;
-                    for(int i = 0; i < shiftTable.shiftTable[p0.row][p0.column].length; i++){
-                      if(shiftTable.shiftTable[p0.row][p0.column][i].userIndex == selectedIndex -1){
-                        shiftTable.shiftTable[p0.row][p0.column][i].assign = (requestInputValue == 1) ? true : false;
-                        break;
-                      }
-                    }
-                    shiftTable.calcFitness(baseDuration.inMinutes, minDuration.inMinutes, baseConDay);
-                  }
-                  setState(() {});
-                },
-                onInputEnd: (){
-                  registered = false;
-                  insertBuffer(shiftTable.shiftTable);
-                },
-                columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftTable.shiftFrame.dateTerm[0].start, shiftTable.shiftFrame.dateTerm[0].end, isDark),
-                rowTitles: getRowTitles(cellHeight, cellWidth*3.5, shiftTable.shiftFrame.timeDivs, isDark),
-                cells: List<List<Widget>>.generate(
-                  rowLength, 
-                  (i){
-                    return List.generate(
-                      columnLength,
-                      (j){
-                        return responseCell( i, j, selectedIndex-1, shiftTable.shiftFrame.assignTable[i][j] != 0, j == selectedCoodinate?.column && i == selectedCoodinate?.row);
-                      }
-                    );
-                  },
-                ),
-                enableEdit: enableResponseEdit,
-                selected: selectedCoodinate,
-                isDark: isDark,
-              ),
-              
-              ////////////////////////////////////////////////////////////////////////////////////////////
-              /// 切り替えボタン
-              ////////////////////////////////////////////////////////////////////////////////////////////
-              
-              // height : 55
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      BottomButton(
-                        content: Text("      全体      ", style: (selectedIndex == 0) ? Styles.defaultStyleGreen13 : Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                        enable: selectedIndex == 0,
-                        width: 100,
-                        height: 40,
-                        onPressed: (){
-                          setState(() {
-                            selectedIndex = 0;
-                          });
-                        },
-                      ),
-                      for(int requesterIndex = 0; requesterIndex < shiftTable.requests.length; requesterIndex++)
-                      BottomButton(
-                        content: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(shiftTable.requests[requesterIndex].displayName, style: (selectedIndex == requesterIndex+1) ? Styles.defaultStyleGreen13 : Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                            Text("${(shiftTable.fitness[requesterIndex][1]/60).toStringAsFixed(1)} h / ${(shiftTable.fitness[requesterIndex][0]/60).toStringAsFixed(1)} h ( ${(shiftTable.fitness[requesterIndex][2]*100).toStringAsFixed(1)} % )", style: (selectedIndex == requesterIndex+1) ? Styles.defaultStyleGreen10 : Styles.defaultStyleGrey10, overflow: TextOverflow.ellipsis),
-                          ],
-                        ),
-                        enable: selectedIndex == requesterIndex+1,
-                        width: 150,
-                        height: 40,
-                        onPressed: (){
-                          setState(() {
-                            selectedIndex = requesterIndex + 1; enableResponseEdit = false;
-                          });
-                        },
-                      ),
-                      if(shiftTable.requests.isEmpty)
-                      BottomButton(
-                        content: Text("フォロワーがいません", style: Styles.defaultStyleGrey13, overflow: TextOverflow.ellipsis),
-                        enable: false,
-                        width: 150,
-                        height: 40
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-      ),
+            ),
+          ],
+        ),
     );
   }
 
