@@ -35,7 +35,7 @@ Future<bool> showConfirmDialog(
 
   await showDialog(
     context: context,
-    builder: (_) {
+    builder: (dialogContext) {
       return Theme(
         data: isDark ? ThemeData.dark() : ThemeData.light(),
         child: CupertinoAlertDialog(
@@ -57,7 +57,7 @@ Future<bool> showConfirmDialog(
               ),
               onPressed: () {
                 onAccept();
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
                 accepted = true;
                 if (confirm) {
                   showDialog(
@@ -96,7 +96,7 @@ Future<bool> showConfirmDialog(
             CupertinoDialogAction(
               child: Text('Cancel', style: Styles.defaultStyleRed15),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
               },
             ),
           ],

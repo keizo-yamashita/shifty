@@ -16,13 +16,13 @@ import 'package:shift/src/components/form/create_screen/input_shift_name.dart';
 import 'package:shift/src/components/form/create_screen/input_date_term.dart';
 import 'package:shift/src/components/form/create_screen/input_time_division.dart';
 
-class CreateShiftTableWidget extends ConsumerStatefulWidget {
-  const CreateShiftTableWidget({Key? key}) : super(key: key);
+class CreateShiftFramePage extends ConsumerStatefulWidget {
+  const CreateShiftFramePage({Key? key}) : super(key: key);
   @override
-  CreateShiftTableWidgetState createState() => CreateShiftTableWidgetState();
+  CreateShiftFramePageState createState() => CreateShiftFramePageState();
 }
 
-class CreateShiftTableWidgetState extends ConsumerState<CreateShiftTableWidget>
+class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
     with SingleTickerProviderStateMixin {
   // シフト準備期間が確保されているか確認するためのbool値
   bool existPrepareTerm = false;

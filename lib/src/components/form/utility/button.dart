@@ -233,7 +233,7 @@ class BottomButton extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,
-            elevation: 2.0, // enableがtrueの場合は影をつける
+            // elevation: 2.0,          // enableがtrueの場合は影をつける
             shadowColor: invBgColor, // 影の色を設定
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             shape: RoundedRectangleBorder(

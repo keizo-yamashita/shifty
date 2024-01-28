@@ -9,10 +9,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shift/src/app_navigation_bar.dart';
+import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
 import 'package:shift/src/screens/homeScreen/suggest.dart';
 import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
+import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
 import 'firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -62,6 +64,26 @@ final router = GoRouter(
                     return MaterialPage(
                       key: state.pageKey,
                       child: const InputShiftRequestPage()
+                    );
+                  },
+                ),
+                GoRoute(
+                  name: 'create_shift_frame',
+                  path: 'create_shift_frame',
+                  pageBuilder: (context, state) {
+                    return MaterialPage(
+                      key: state.pageKey,
+                      child: const CreateShiftFramePage()
+                    );
+                  },
+                ),
+                GoRoute(
+                  name: 'manage_shift_table',
+                  path: 'manage_shift_table',
+                  pageBuilder: (context, state) {
+                    return MaterialPage(
+                      key: state.pageKey,
+                      child: const ManageShiftTablePage()
                     );
                   },
                 )

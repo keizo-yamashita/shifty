@@ -72,8 +72,6 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
       ref.read(settingProvider).screenPaddingBottom
     );
 
-    print(screenSize);
-
     ref.read(settingProvider).loadPreferences();
     isDark = ref.read(settingProvider).enableDarkTheme;
 
