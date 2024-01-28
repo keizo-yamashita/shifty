@@ -2,7 +2,6 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -121,8 +120,10 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   );
                 }
                 return FutureBuilder<Widget>(
-                  future: buildMyShiftRequest(snapshot.data!.docs,
-                      ref.read(settingProvider).enableDarkTheme),
+                  future: buildMyShiftRequest(
+                    snapshot.data!.docs,
+                    ref.read(settingProvider).enableDarkTheme,
+                  ),
                   builder:
                       (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -162,26 +163,33 @@ class HomeScreenState extends ConsumerState<HomeScreen>
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('shift-leader')
-                  .where('user-id',
-                      isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+                  .where(
+                    'user-id',
+                    isEqualTo: FirebaseAuth.instance.currentUser?.uid,
+                  )
                   .orderBy('created-at', descending: true)
                   .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<QuerySnapshot> snapshot,
+              ) {
                 if (snapshot.hasError) {
                   return const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Center(
-                        child: CircularProgressIndicator(
-                            color: Styles.defaultColor)),
+                      child: CircularProgressIndicator(
+                        color: Styles.defaultColor,
+                      ),
+                    ),
                   );
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Center(
-                      child:
-                          CircularProgressIndicator(color: Styles.primaryColor),
+                      child: CircularProgressIndicator(
+                        color: Styles.primaryColor,
+                      ),
                     ),
                   );
                 }
@@ -195,7 +203,8 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                         padding: EdgeInsets.all(8.0),
                         child: Center(
                           child: CircularProgressIndicator(
-                              color: Styles.primaryColor),
+                            color: Styles.primaryColor,
+                          ),
                         ),
                       );
                     } else if (snapshot.hasError) {
@@ -203,7 +212,8 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                         padding: EdgeInsets.all(8.0),
                         child: Center(
                           child: CircularProgressIndicator(
-                              color: Styles.defaultColor),
+                            color: Styles.defaultColor,
+                          ),
                         ),
                       );
                     } else {
@@ -237,17 +247,24 @@ class HomeScreenState extends ConsumerState<HomeScreen>
           ),
           child: const Icon(Icons.add, size: 40),
           onPressed: () async {
-            showSelectDialog(context, ref, "シフト表の追加", "シフト表の追加方法を選択してください。",
-                ["シフト表を作成する", "シフト表をフォローする"]).then(
+            showSelectDialog(
+              context,
+              ref,
+              "シフト表の追加",
+              "シフト表の追加方法を選択してください。",
+              ["シフト表を作成する", "シフト表をフォローする"],
+            ).then(
               (value) {
                 if (value == 0) {
                   ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
+                  
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (c) => const CreateShiftFramePage(),
                     ),
                   );
+                  context.go('/home/create_shift_frame');
                 }
                 if (value == 1) {
                   Navigator.push(
@@ -325,7 +342,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
             screenSize.width * 0.8,
             () {
               ref.read(shiftRequestProvider).shiftRequest = request;
-              context.go('/input_shift_request');
+              context.go('/home/input_shift_request');
             },
             isDark,
             () {
@@ -399,7 +416,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   if (context.mounted) {
                     ref.read(shiftTableProvider).shiftTable =
                         ShiftTable(frame, requests);
-                    context.go('/manage_shift_table');
+                    context.go('/home/manage_shift_table');
                   }
                 },
               );

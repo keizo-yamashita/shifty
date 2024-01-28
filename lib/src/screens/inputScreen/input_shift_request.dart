@@ -85,8 +85,6 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       ref.read(settingProvider).screenPaddingTop -
       ref.read(settingProvider).screenPaddingBottom
     );
-    print(screenSize);
-
     // Provider 処理
     isDark        = ref.read(settingProvider).enableDarkTheme;
     shiftRequest = ref.read(shiftRequestProvider).shiftRequest;
