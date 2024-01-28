@@ -85,8 +85,6 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       ref.read(settingProvider).screenPaddingTop -
       ref.read(settingProvider).screenPaddingBottom
     );
-    print(screenSize);
-
     // Provider 処理
     isDark        = ref.read(settingProvider).enableDarkTheme;
     shiftRequest = ref.read(shiftRequestProvider).shiftRequest;
@@ -112,7 +110,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       handleRegister: (){
         if(isRequestRange()){
           if(registered){
-            showAlertDialog(context, ref, "注意", "リクエストは変更されていないため、登録できません。", true);
+            showAlertDialog(context, ref, "注意", "リクエストは変更されていないため、登録できません。", true,);
           }else{
             showConfirmDialog(
               context, ref, "確認", "このリクエストを登録しますか？", "リクエストを登録しました。",
@@ -124,7 +122,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
             );
           }
         }else{
-          showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、登録できません。\n編集が必要な場合は管理者に連絡して下さい。", true);
+          showAlertDialog(context, ref, "注意", "リクエスト期間内でないため、登録できません。\n編集が必要な場合は管理者に連絡して下さい。", true,);
         }
       },
       content: Column(
@@ -172,17 +170,17 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
             onChangeSelect: (p0) async {
               setState(() {
                 selectedCoodinate = p0!;
-              });
+              },);
             },
-            columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftRequest.shiftFrame.dateTerm[0].start, shiftRequest.shiftFrame.dateTerm[0].end, isDark),
-            rowTitles: getRowTitles(cellHeight, cellWidth*3.5, shiftRequest.shiftFrame.timeDivs, isDark),
+            columnTitles: getColumnTitles(cellHeight*2, cellWidth, shiftRequest.shiftFrame.dateTerm[0].start, shiftRequest.shiftFrame.dateTerm[0].end, isDark,),
+            rowTitles: getRowTitles(cellHeight, cellWidth*3.5, shiftRequest.shiftFrame.timeDivs, isDark,),
             cells: List<List<Widget>>.generate(
               rowLength, 
               (i){
                 return List.generate(
                   columnLength,
                   (j){
-                    return requestCell( i, j, shiftRequest.shiftFrame.assignTable[i][j] != 0, j == selectedCoodinate?.column && i == selectedCoodinate?.row);
+                    return requestCell( i, j, shiftRequest.shiftFrame.assignTable[i][j] != 0, j == selectedCoodinate?.column && i == selectedCoodinate?.row,);
                   }
                 );
               },
@@ -206,7 +204,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
                 if(enableRequestEdit){
                   shiftRequest.reqTable[selectedCoodinate!.row][selectedCoodinate!.column] = requestInputValue;
                 }
-              });
+              },);
             },
             onInputEnd: (){
               registered = false;
@@ -268,8 +266,8 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
           color: cellColor
         ),
         child: editable
-          ? Center(child: SizedBox(width: cellWidth, height: cellHeight,child: cellValue))
-          : SizedBox(width: cellWidth, height: cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey)))
+          ? Center(child: SizedBox(width: cellWidth, height: cellHeight,child: cellValue,),)
+          : SizedBox(width: cellWidth, height: cellHeight, child: CustomPaint(painter: DiagonalLinePainter(Colors.grey),),)
       ),
     );
   }

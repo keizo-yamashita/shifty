@@ -5,9 +5,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:shift/main.dart';
-import 'package:shift/src/app_navigation_bar.dart';
 import 'package:shift/src/components/deep_link_mixin.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
@@ -31,15 +31,20 @@ class SplashScreenState extends ConsumerState<SplashScreen> with DeepLinkMixin{
         ref.read(signInProvider).silentLogin();
         return AddShiftRequestWidget(tableId: parameter);
      }
-     ));
+     ),);
     }
     setState(() {});
   }
 
   splashScreenTimer(){
     Timer(const Duration(milliseconds: 500), () async{
-      ref.read(signInProvider).silentLogin();
-      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const AppNavigationBar()));
+      ref.read(signInProvider).silentLogin().then((value){
+        if(ref.read(signInProvider).user != null){
+          context.go('/home');
+        }else{
+          context.go('/signin');
+        }
+      });
     });
   }
 

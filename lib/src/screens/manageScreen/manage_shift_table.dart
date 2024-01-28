@@ -54,15 +54,15 @@ bool registered         = true;
 /// シフトの作成・最終チェックに使用するページ (勤務人数も指定)
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-class ManageShiftTableWidget extends ConsumerStatefulWidget {
+class ManageShiftTablePage extends ConsumerStatefulWidget {
   
-  const ManageShiftTableWidget({Key? key}) : super(key: key);
+  const ManageShiftTablePage({Key? key}) : super(key: key);
   
   @override
-  ManageShiftTableWidgetState createState() => ManageShiftTableWidgetState();
+  ManageShiftTablePageState createState() => ManageShiftTablePageState();
 }
 
-class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> {
+class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
   // undo / redo
   UndoRedo<List<List<List<Candidate>>>> undoredoCtrl = UndoRedo(bufferMax);
@@ -206,7 +206,7 @@ class ManageShiftTableWidgetState extends ConsumerState<ManageShiftTableWidget> 
             )
             : TableEditor(
               editorKey:   editorKey,
-              tableHeight: screenSize.height - 50 - 55,
+              tableHeight: screenSize.height - 50 - 65,
               tableWidth:  screenSize.width,
               cellHeight:  cellHeight,
               cellWidth:   cellWidth,

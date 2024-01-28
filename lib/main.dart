@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
@@ -9,12 +9,15 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shift/src/app_navigation_bar.dart';
+import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
 import 'package:shift/src/screens/homeScreen/suggest.dart';
 import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
+import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
+import 'package:shift/src/screens/signInScreen/sign_in.dart';
+import 'package:shift/src/screens/splashScreen/splash_screen.dart';
 import 'firebase_options.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // myh package
 import 'package:shift/src/components/style/style.dart';
@@ -35,68 +38,128 @@ final homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
 final likeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'settings');
 final cartNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'suggestion');
 
-final router = GoRouter(
-  navigatorKey: rootNavigatorKey,
-  initialLocation: '/',
-  routes: [
-    StatefulShellRoute.indexedStack(
-      parentNavigatorKey: rootNavigatorKey,
-      builder:(context, state, navigationShell){
-        return AppNavigationBar(navigationShell: navigationShell);
-      },
-      branches: [
-        StatefulShellBranch(
-          routes:[
-            GoRoute(
-              name: 'home',
-              path: '/',
-              pageBuilder: (context, state) => NoTransitionPage(
-                key: state.pageKey,
-                child: const HomeScreen(),
+final routerProvider = Provider<GoRouter>((ref) {
+
+  final logedInState = ref.read(signInProvider);
+  var isStarted = false;
+
+  return GoRouter(
+    navigatorKey: rootNavigatorKey,
+    initialLocation: '/splash',
+    refreshListenable: logedInState,
+    redirect: (BuildContext context, GoRouterState state) {
+      if (state.uri.path == '/splash') {
+        return null;
+      }
+      if(isStarted){
+        return null; 
+      }else{
+        if(logedInState.user != null){
+          isStarted = true;
+          return '/home';
+        }
+        else{
+          isStarted = true;
+          return '/signin';
+        }
+      }
+    },
+    routes: [
+      StatefulShellRoute.indexedStack(
+        parentNavigatorKey: rootNavigatorKey,
+        builder:(context, state, navigationShell){
+          return AppNavigationBar(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            routes:[
+              GoRoute(
+                name: 'home',
+                path: '/home',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const HomeScreen(),
+                ),
+                routes: [
+                  GoRoute(
+                    name: 'input_shift_request',
+                    path: 'input_shift_request',
+                    pageBuilder: (context, state) {
+                      return MaterialPage(
+                        key: state.pageKey,
+                        child: const InputShiftRequestPage()
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    name: 'create_shift_frame',
+                    path: 'create_shift_frame',
+                    pageBuilder: (context, state) {
+                      return MaterialPage(
+                        key: state.pageKey,
+                        child: const CreateShiftFramePage()
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    name: 'manage_shift_table',
+                    path: 'manage_shift_table',
+                    pageBuilder: (context, state) {
+                      return MaterialPage(
+                        key: state.pageKey,
+                        child: const ManageShiftTablePage()
+                      );
+                    },
+                  )
+                ],
               ),
-              routes: [
-                GoRoute(
-                  name: 'input_shift_request',
-                  path: 'input_shift_request',
-                  pageBuilder: (context, state) {
-                    return MaterialPage(
-                      key: state.pageKey,
-                      child: const InputShiftRequestPage()
-                    );
-                  },
-                )
-              ],
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes:[
-            GoRoute(
-              name: 'settings',
-              path: '/settings',
-              pageBuilder: (context, state) => NoTransitionPage(
-                key: state.pageKey,
-                child: const SettingScreen(),
+            ],
+          ),
+          StatefulShellBranch(
+            routes:[
+              GoRoute(
+                name: 'settings',
+                path: '/settings',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const SettingScreen(),
+                ),
               ),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes:[
-            GoRoute(
-              name: 'suggestion',
-              path: '/suggestion',
-              pageBuilder: (context, state) => NoTransitionPage(
-                key: state.pageKey,
-                child: const SuggestionBoxScreen(),
+            ],
+          ),
+          StatefulShellBranch(
+            routes:[
+              GoRoute(
+                name: 'suggestion',
+                path: '/suggestion',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const SuggestionBoxScreen(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
+        ]
+      ),
+      GoRoute(
+      name: 'spalash',
+      path: '/splash',
+      pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const SplashScreen(),
         ),
-      ]
-    ),
-  ],
-);
+      ),
+      GoRoute(
+        name: 'signin',
+        path: '/signin',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const SignInScreen(),
+        ),
+      ),
+    ],
+  );
+},);
 
 
 void main() async{
@@ -125,8 +188,7 @@ class MyAppState extends ConsumerState<MyApp>{
       ref.read(settingProvider).navigationBarHeight = 56.0;
       ref.read(settingProvider).screenPaddingTop = MediaQuery.of(context).padding.top;
       ref.read(settingProvider).screenPaddingBottom = MediaQuery.of(context).padding.bottom;
-      // デバッグログの出力
-      print('AppBar Height: ${ref.read(settingProvider).appBarHeight}');
+      ref.read(signInProvider).silentLogin();
     },);
   }
 
@@ -134,6 +196,8 @@ class MyAppState extends ConsumerState<MyApp>{
   Widget build(BuildContext context) {
 
     ref.read(settingProvider).loadPreferences();
+
+    final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       title: 'Shifty',
@@ -180,7 +244,6 @@ class MyAppState extends ConsumerState<MyApp>{
       ],
       supportedLocales: const [Locale('ja', ''),],
 
-      // home: const SplashScreen(),
       routeInformationProvider: router.routeInformationProvider,
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
