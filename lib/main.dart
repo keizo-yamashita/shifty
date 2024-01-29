@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shift/src/app_navigation_bar.dart';
+import 'package:shift/src/screens/createScreen/add_shift_request.dart';
 import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
@@ -74,6 +75,18 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes:[
               GoRoute(
+                name: 'settings',
+                path: '/settings',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const SettingScreen(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes:[
+              GoRoute(
                 name: 'home',
                 path: '/home',
                 pageBuilder: (context, state) => NoTransitionPage(
@@ -102,6 +115,16 @@ final routerProvider = Provider<GoRouter>((ref) {
                     },
                   ),
                   GoRoute(
+                    name: 'add_shift_request',
+                    path: 'add_shift_request',
+                    pageBuilder: (context, state) {
+                      return MaterialPage(
+                        key: state.pageKey,
+                        child: const AddShiftRequestPage()
+                      );
+                    },
+                  ),
+                  GoRoute(
                     name: 'manage_shift_table',
                     path: 'manage_shift_table',
                     pageBuilder: (context, state) {
@@ -112,18 +135,6 @@ final routerProvider = Provider<GoRouter>((ref) {
                     },
                   )
                 ],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes:[
-              GoRoute(
-                name: 'settings',
-                path: '/settings',
-                pageBuilder: (context, state) => NoTransitionPage(
-                  key: state.pageKey,
-                  child: const SettingScreen(),
-                ),
               ),
             ],
           ),

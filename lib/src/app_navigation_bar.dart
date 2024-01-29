@@ -43,14 +43,14 @@ class AppNavigationBar extends StatelessWidget {
           },
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month, size: 24),
-              activeIcon: Icon(Icons.calendar_month, size: 28),
-              label: 'マイシフト',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.settings, size: 24),
               activeIcon: Icon(Icons.settings, size: 28),
               label: '設定',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month, size: 24),
+              activeIcon: Icon(Icons.calendar_month, size: 28),
+              label: 'マイシフト',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.notifications, size: 24),

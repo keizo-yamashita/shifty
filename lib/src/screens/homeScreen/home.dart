@@ -70,7 +70,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (c) => AddShiftRequestWidget(tableId: id),
+          builder: (c) => AddShiftRequestPage(tableId: id),
         ),
       );
       ref.read(deepLinkProvider).shiftFrameId = "";
@@ -257,22 +257,10 @@ class HomeScreenState extends ConsumerState<HomeScreen>
               (value) {
                 if (value == 0) {
                   ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
-                  
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (c) => const CreateShiftFramePage(),
-                    ),
-                  );
                   context.go('/home/create_shift_frame');
                 }
                 if (value == 1) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (c) => const AddShiftRequestWidget(),
-                    ),
-                  );
+                  context.go('/home/add_shift_request');
                 }
               },
             );

@@ -14,16 +14,16 @@ import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/shift/shift_request.dart';
 
-class AddShiftRequestWidget extends ConsumerStatefulWidget {
-  const AddShiftRequestWidget({Key? key, this.tableId}) : super(key: key);
+class AddShiftRequestPage extends ConsumerStatefulWidget {
+  const AddShiftRequestPage({Key? key, this.tableId}) : super(key: key);
 
   final String? tableId;
 
   @override
-  AddShiftRequestWidgetState createState() => AddShiftRequestWidgetState();
+  AddShiftRequestPageState createState() => AddShiftRequestPageState();
 }
 
-class AddShiftRequestWidgetState extends ConsumerState<AddShiftRequestWidget> {
+class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
   // set input text and cursor positon
   late TextEditingController textTableIdConroller;
   late TextEditingController textDisplayNameConroller;
