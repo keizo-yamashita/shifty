@@ -17,10 +17,7 @@ import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/shift/shift_request.dart';
 import 'package:shift/src/components/shift/shift_table.dart';
-import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
-import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
-import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// Home 画面
@@ -354,6 +351,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
     }
   }
 
+  // 
   Future<Widget> buildMyShiftFrame(
       List<QueryDocumentSnapshot<Object?>> docs, bool isDark) async {
     /// 自分のユーザIDが含まれるシフト表の表示
@@ -382,6 +380,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
             followersNum = snapshotReqs.docs.length;
           },
         );
+        // Shift Frame のインスタンス化
         shiftCard.add(
           frame.buildShiftTableCard(
             frame.shiftName,
