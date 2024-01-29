@@ -29,7 +29,7 @@ class SplashScreenState extends ConsumerState<SplashScreen> with DeepLinkMixin{
     if(parameter != null){
       Navigator.push( context, MaterialPageRoute(builder: (context){
         ref.read(signInProvider).silentLogin();
-        return AddShiftRequestWidget(tableId: parameter);
+        return AddShiftRequestPage(tableId: parameter);
      }
      ),);
     }
