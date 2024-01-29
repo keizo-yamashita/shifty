@@ -73,12 +73,12 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                   title: Text('ユーザ情報', style: Styles.defaultStyle13),
                 ),
                 SettingsTile.navigation(
-                  leading: const Icon(Icons.logout_rounded),
-                  title: Text('ログアウト', style: Styles.defaultStyle13),
+                  leading: const Icon(Icons.logout_rounded, color: Colors.red),
+                  title: Text('ログアウト', style: Styles.defaultStyleRed13),
                 ),
                 SettingsTile.navigation(
-                  leading: const Icon(Icons.delete_rounded),
-                  title: Text('退会する', style: Styles.defaultStyle13),
+                  leading: const Icon(Icons.delete_rounded, color: Colors.red),
+                  title: Text('退会する', style: Styles.defaultStyleRed13),
                 ),
               ],
             ),
@@ -110,6 +110,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                   title: const Text('プライバシーポリシー'),
                 ),
                 SettingsTile.navigation(
+                  trailing:  Text('1.0.0', style: Styles.defaultStyle13),
                   title: const Text('バージョン情報'),
                 ),
               ],
@@ -117,64 +118,6 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
           ],
         ),
       ),
-      // SafeArea(
-    //     child: SingleChildScrollView(
-    //       child: Padding(
-    //         padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 16),
-    //         child: Column(
-    //           mainAxisAlignment: MainAxisAlignment.start,
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             Text("カラーテーマの設定", style: Styles.defaultStyle15),
-    //             Padding(
-    //               padding: const EdgeInsets.symmetric(vertical:  10),
-    //               child: Row(
-    //                 children: [
-    //                   CupertinoSwitch(
-    //                     thumbColor: Styles.primaryColor,
-    //                     activeColor : Styles.primaryColor.withAlpha(100),
-    //                     value: enableDarkTheme,
-    //                     onChanged: (result){
-
-    //                     },
-    //                   ),
-    //                   const SizedBox(width: 20),
-    //                   
-    //                 ],
-    //               ),
-    //             ),
-    //             Text(, style: Styles.defaultStyleGrey13),
-                
-    //             SizedBox(height: screenSize.height * 0.05),
-            
-    //             Text("デフォルトで表示するシフト表", style: Styles.defaultStyle15),
-    //             Padding(
-    //               padding: const EdgeInsets.symmetric(vertical:  10),
-    //               child: Row(
-    //                 children: [
-    //                   CupertinoSwitch(
-    //                     thumbColor: Styles.primaryColor,
-    //                     activeColor : Styles.primaryColor.withAlpha(100),
-    //                     value: defaultShiftView,
-    //                     onChanged: (result){
-    //                       setState(() {
-    //                         ref.read(settingProvider).defaultShiftView = result;
-    //                         ref.read(settingProvider).storePreferences();
-    //                       });
-    //                     },
-    //                   ),
-    //                   const SizedBox(width: 20),
-    //                   Text((defaultShiftView) ? "管理中のシフト表" : "フォロー中のシフト表", style: Styles.defaultStyle13),
-    //                 ],
-    //               ),
-    //             ),
-    //             Text("「ホーム画面」で「管理中のシフト表」/「フォロー中のシフト表」どちらをデフォルト表示にするか設定します。", style: Styles.defaultStyleGrey13),
-    //             Text("シフト表管理者は「管理中のシフト表」を設定することをお勧めします。", style: Styles.defaultStyleGrey13)
-    //           ],
-    //         ),
-    //       ),
-    //     ),
-    //   ),
     );
   }
 }
