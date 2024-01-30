@@ -126,7 +126,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 10.0),
+              padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -182,60 +182,59 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
           /// height : screenSize.height * 0.075
           ////////////////////////////////////////////////////////////////////////////////////////////
           TableEditor(
-              editorKey: editorKey,
-              tableHeight: screenSize.height * 1.0 - 63,
-              tableWidth: screenSize.width,
-              cellHeight: cellHeight,
-              cellWidth: cellWidth,
-              titleHeight: cellHeight * 2,
-              titleWidth: cellWidth * 3.5,
-              titleMargin: titleMargin,
-              onChangeSelect: (p0) async {
-                setState(() {
-                  selectedCoordinate = p0!;
-                  if (enableEdit) {
-                    shiftFrame.assignTable[selectedCoordinate!.row]
-                        [selectedCoordinate!.column] = inputValue;
-                  }
-                });
+            editorKey: editorKey,
+            tableHeight: screenSize.height * 1.0 - 60,
+            tableWidth: screenSize.width,
+            cellHeight: cellHeight,
+            cellWidth: cellWidth,
+            titleHeight: cellHeight * 2,
+            titleWidth: cellWidth * 3.5,
+            titleMargin: titleMargin,
+            onChangeSelect: (p0) async {
+              setState(() {
+                selectedCoordinate = p0!;
+                if (enableEdit) {
+                  shiftFrame.assignTable[selectedCoordinate!.row]
+                      [selectedCoordinate!.column] = inputValue;
+                }
+              });
+            },
+            onInputEnd: () {
+              insertBuffer(shiftFrame.assignTable);
+            },
+            columnTitles: getColumnTitles(
+              cellHeight * 2,
+              cellWidth,
+              shiftFrame.dateTerm[0].start,
+              shiftFrame.dateTerm[0].end,
+              isDark,
+            ),
+            rowTitles: getRowTitles(
+              cellHeight,
+              cellWidth * 3.5,
+              shiftFrame.timeDivs,
+              isDark,
+            ),
+            cells: List<List<Widget>>.generate(
+              rowLength,
+              (i) {
+                return List.generate(
+                  columnLength,
+                  (j) {
+                    return shiftFrameCell(
+                      i,
+                      j,
+                      j == selectedCoordinate?.column &&
+                          i == selectedCoordinate?.row,
+                    );
+                  },
+                );
               },
-              onInputEnd: () {
-                insertBuffer(shiftFrame.assignTable);
-              },
-              columnTitles: getColumnTitles(
-                cellHeight * 2,
-                cellWidth,
-                shiftFrame.dateTerm[0].start,
-                shiftFrame.dateTerm[0].end,
-                isDark,
-              ),
-              rowTitles: getRowTitles(
-                cellHeight,
-                cellWidth * 3.5,
-                shiftFrame.timeDivs,
-                isDark,
-              ),
-              cells: List<List<Widget>>.generate(
-                rowLength,
-                (i) {
-                  return List.generate(
-                    columnLength,
-                    (j) {
-                      return shiftFrameCell(
-                        i,
-                        j,
-                        j == selectedCoordinate?.column &&
-                            i == selectedCoordinate?.row,
-                      );
-                    },
-                  );
-                },
-              ),
-              enableEdit: enableEdit,
-              selected: selectedCoordinate,
-              isDark: ref.read(settingProvider).enableDarkTheme),
-          // space
-          const SizedBox(height: 8)
+            ),
+            enableEdit: enableEdit,
+            selected: selectedCoordinate,
+            isDark: ref.read(settingProvider).enableDarkTheme,
+          ),
         ],
       ),
     );

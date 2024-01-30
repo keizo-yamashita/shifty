@@ -13,7 +13,8 @@ import 'package:shift/src/screens/createScreen/add_shift_request.dart';
 import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
-import 'package:shift/src/screens/homeScreen/suggest.dart';
+import 'package:shift/src/screens/homeScreen/contact.dart';
+import 'package:shift/src/screens/homeScreen/user_info.dart';
 import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
 import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
 import 'package:shift/src/screens/signInScreen/sign_in.dart';
@@ -75,11 +76,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes:[
               GoRoute(
-                name: 'settings',
-                path: '/settings',
+                name: 'suggestion',
+                path: '/suggestion',
                 pageBuilder: (context, state) => NoTransitionPage(
                   key: state.pageKey,
-                  child: const SettingScreen(),
+                  child: const ContactPage(),
                 ),
               ),
             ],
@@ -141,12 +142,30 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes:[
               GoRoute(
-                name: 'suggestion',
-                path: '/suggestion',
+                name: 'settings',
+                path: '/settings',
                 pageBuilder: (context, state) => NoTransitionPage(
                   key: state.pageKey,
-                  child: const SuggestionBoxScreen(),
+                  child: const SettingScreen(),
                 ),
+                routes: [
+                  GoRoute(
+                    name: 'userInfo',
+                    path: 'userInfo',
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      key: state.pageKey,
+                      child: const UserInfoPage(),
+                    ),
+                  ),
+                  GoRoute(
+                    name: 'contact',
+                    path: 'contact',
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      key: state.pageKey,
+                      child: const ContactPage(),
+                    ),
+                  ),
+                ]
               ),
             ],
           ),

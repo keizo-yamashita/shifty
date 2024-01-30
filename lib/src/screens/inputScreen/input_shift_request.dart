@@ -135,7 +135,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 10.0),
+              padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -160,7 +160,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
           (isRequestRange())
           ? TableEditor(
             editorKey:   editorKey,
-            tableHeight: screenSize.height - 55,
+            tableHeight: screenSize.height - 60,
             tableWidth:  screenSize.width,
             cellHeight:  cellHeight,
             cellWidth:   cellWidth,
@@ -191,7 +191,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
           )
           : TableEditor(
             editorKey:   editorKey,
-            tableHeight: screenSize.height - 55,
+            tableHeight: screenSize.height - 60,
             tableWidth:  screenSize.width,
             cellHeight:  cellHeight,
             cellWidth:   cellWidth,
@@ -246,8 +246,13 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       cellValue = Icon((shiftRequest.respTable[row][column] == 1) ? PopIcons.circle : PopIcons.circle_empty, size: 12 * cellWidth / 20, color: Styles.primaryColor);
       cellColor = Styles.primaryColor;
     }else{
-      cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
-      cellColor = Colors.red;
+      if(editable){
+        cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
+        cellColor = Colors.red;
+      }else{
+        cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.grey);
+        cellColor = Colors.grey;
+      }
     }
 
     cellColor =  selected ? cellColor.withAlpha(150) : cellColor.withAlpha(50);
@@ -282,8 +287,13 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       cellValue = Icon(PopIcons.circle_empty, size: 12 * cellWidth / 20, color: Styles.primaryColor);
       cellColor = Styles.primaryColor;
     }else{
-      cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
-      cellColor = Colors.red;
+      if(editable){
+        cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
+        cellColor = Colors.red;
+      }else{
+        cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.grey);
+        cellColor = Colors.grey;
+      }
     }
 
     cellColor =  selected ? cellColor.withAlpha(150) : cellColor.withAlpha(50);
