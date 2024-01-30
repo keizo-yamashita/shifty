@@ -31,8 +31,8 @@ Future<dynamic> showModalWindow(
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
             ),
           ),
           child: SizedBox(
@@ -40,7 +40,7 @@ Future<dynamic> showModalWindow(
             width: MediaQuery.of(context).size.width,
             child: Column(
               children: [
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 Container(
                   width: 100,
                   height: 4,
@@ -49,9 +49,9 @@ Future<dynamic> showModalWindow(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * height - 20,
+                  height: MediaQuery.of(context).size.height * height - 40,
                   width: MediaQuery.of(context).size.width,
                   child: child,
                 )

@@ -150,7 +150,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
             ////////////////////////////////////////////////////////////////////////////////////////////
             // height 30 + 20
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, right: 2.0, left: 2.0, bottom: 10.0),
+              padding: const EdgeInsets.only(top: 15.0, right: 2.0, left: 2.0, bottom: 15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -173,7 +173,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
             ?
             TableEditor(
               editorKey:   editorKey,
-              tableHeight: screenSize.height - 50 - 65,
+              tableHeight: screenSize.height - 60 - 70,
               tableWidth:  screenSize.width,
               cellHeight:  cellHeight,
               cellWidth:   cellWidth,
@@ -206,7 +206,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
             )
             : TableEditor(
               editorKey:   editorKey,
-              tableHeight: screenSize.height - 50 - 65,
+              tableHeight: screenSize.height - 60 - 70,
               tableWidth:  screenSize.width,
               cellHeight:  cellHeight,
               cellWidth:   cellWidth,
@@ -257,7 +257,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
-                padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 10.0),
+                padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 15.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -282,7 +282,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                         ],
                       ),
                       enable: selectedIndex == requesterIndex+1,
-                      width: 150,
+                      width: 160,
                       height: 40,
                       onPressed: (){
                         setState(() {
@@ -320,11 +320,15 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       }
     }
 
-    var value = (assignNum / shiftTable.shiftFrame.assignTable[row][column]);
+    var value = shiftTable.shiftFrame.assignTable[row][column] == 0 ? 0 : (assignNum / shiftTable.shiftFrame.assignTable[row][column]);
 
     Icon cellValue = Icon(PopIcons.ok, size: 14 * cellWidth / 20, color: Styles.primaryColor);
     if(value == 0){
-      cellValue = Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.red); 
+      if(editable){
+        cellValue = Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.red);
+      }else{
+        cellValue = Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.grey);
+      }
     }
     else if(value < 0.3){
       cellValue = Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.yellow[800]); 
@@ -373,8 +377,13 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       cellValue = Icon((shiftRequest.respTable[row][column] == 1) ? PopIcons.circle : PopIcons.circle_empty, size: 12 * cellWidth / 20, color: Styles.primaryColor);
       cellColor = Styles.primaryColor;
     }else{
-      cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
-      cellColor = Colors.red;
+      if(editable){
+        cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
+        cellColor = Colors.red;
+      }else{
+        cellValue = Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.grey);
+        cellColor = Colors.grey;
+      }
     }
 
     cellColor = (selected) ? cellColor.withAlpha(100) : cellColor.withAlpha(50);
