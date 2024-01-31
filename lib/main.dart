@@ -14,6 +14,7 @@ import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
 import 'package:shift/src/screens/homeScreen/contact.dart';
+import 'package:shift/src/screens/homeScreen/privacy_policy.dart';
 import 'package:shift/src/screens/homeScreen/user_info.dart';
 import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
 import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
@@ -163,6 +164,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                     pageBuilder: (context, state) => NoTransitionPage(
                       key: state.pageKey,
                       child: const ContactPage(),
+                    ),
+                  ),
+                  GoRoute(
+                    name: 'privacy_policy',
+                    path: 'privacy_policy',
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      key: state.pageKey,
+                      child: const PrivacyPolicyPage(),
                     ),
                   ),
                 ]

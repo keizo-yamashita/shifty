@@ -185,6 +185,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                 SettingsTile.navigation(
                   leading: const Icon(Icons.privacy_tip_rounded),
                   title: Text('プライバシーポリシー', style: Styles.defaultStyle13),
+                  onPressed:(context) => context.go('/settings/privacy_policy'),
                 ),
                 SettingsTile.navigation(
                   trailing:  Text('1.0.0', style: Styles.defaultStyle13),
