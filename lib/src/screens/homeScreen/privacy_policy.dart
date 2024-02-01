@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:webviewx/webviewx.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 // my package
 import 'package:shift/main.dart';
@@ -19,14 +19,27 @@ class PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
 
   Size screenSize = const Size(0, 0);
 
-  late WebViewXController webviewController;
   //Size get screenSize => MediaQuery.of(context).size;
-
-  @override
-  void dispose() {
-    webviewController.dispose();
-    super.dispose();
-  }
+  WebViewController controller = WebViewController()
+  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+  ..setBackgroundColor(const Color(0x00000000))
+  ..setNavigationDelegate(
+    NavigationDelegate(
+      onProgress: (int progress) {
+        // Update loading bar.
+      },
+      onPageStarted: (String url) {},
+      onPageFinished: (String url) {},
+      onWebResourceError: (WebResourceError error) {},
+      onNavigationRequest: (NavigationRequest request) {
+        if (request.url.startsWith('https://www.youtube.com/')) {
+          return NavigationDecision.prevent;
+        }
+        return NavigationDecision.navigate;
+      },
+    ),
+  )
+  ..loadRequest(Uri.parse('https://kaku-panda.github.io/shifty/privacy_and_policy.html'));
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +51,12 @@ class PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
 
     return 
     Scaffold(
+      appBar: AppBar(
+        title: const Text('プライバシーポリシー'),
+        centerTitle: true,
+      ),
       body: SafeArea(
-        child: WebViewX(
-          key: const ValueKey('webviewx'),
-          initialContent: 'https://kaku-panda.github.io/shifty/privacy_and_policy.html',
-          initialSourceType: SourceType.html,
-          height: 500,//サイズは適当
-          width: 500,//サイズは適当
-          onWebViewCreated: (controller) => webviewController = controller,
-        )
+        child:  WebViewWidget(controller: controller),
       ),
     );
   }
