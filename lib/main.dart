@@ -153,7 +153,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     name: 'userInfo',
                     path: 'userInfo',
-                    pageBuilder: (context, state) => NoTransitionPage(
+                    pageBuilder: (context, state) => MaterialPage(
                       key: state.pageKey,
                       child: const UserInfoPage(),
                     ),
@@ -161,7 +161,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     name: 'contact',
                     path: 'contact',
-                    pageBuilder: (context, state) => NoTransitionPage(
+                    pageBuilder: (context, state) => MaterialPage(
                       key: state.pageKey,
                       child: const ContactPage(),
                     ),
@@ -169,7 +169,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     name: 'privacy_policy',
                     path: 'privacy_policy',
-                    pageBuilder: (context, state) => NoTransitionPage(
+                    pageBuilder: (context, state) => MaterialPage(
                       key: state.pageKey,
                       child: const PrivacyPolicyPage(),
                     ),

@@ -6,9 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-// my package
-import 'package:shift/main.dart';
-
 class PrivacyPolicyPage extends ConsumerStatefulWidget {
   const PrivacyPolicyPage({Key? key}) : super(key: key);
   @override
@@ -45,9 +42,6 @@ class PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
   Widget build(BuildContext context) {
     
     screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
-
-    bool enableDarkTheme = ref.read(settingProvider).enableDarkTheme;
-    bool defaultShiftView = ref.read(settingProvider).defaultShiftView;
 
     return 
     Scaffold(
