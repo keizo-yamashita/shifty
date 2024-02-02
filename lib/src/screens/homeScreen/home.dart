@@ -62,7 +62,8 @@ class HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     String id = ref.read(deepLinkProvider).shiftFrameId;
-
+    final defaultShiftView = ref.watch(settingProvider.select((provider) => provider.defaultShiftView));
+    final isDark = ref.watch(settingProvider.select((provider) => provider.enableDarkTheme));
     if (id != "") {
       Navigator.push(
         context,
@@ -119,7 +120,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                 return FutureBuilder<Widget>(
                   future: buildMyShiftRequest(
                     snapshot.data!.docs,
-                    ref.read(settingProvider).enableDarkTheme,
+                    isDark,
                   ),
                   builder:
                       (BuildContext context, AsyncSnapshot<Widget> snapshot) {
@@ -191,8 +192,10 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   );
                 }
                 return FutureBuilder<Widget>(
-                  future: buildMyShiftFrame(snapshot.data!.docs,
-                      ref.read(settingProvider).enableDarkTheme),
+                  future: buildMyShiftFrame(
+                    snapshot.data!.docs,
+                    isDark,
+                  ),
                   builder:
                       (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -226,7 +229,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
       )
     ];
 
-    if ((ref.read(settingProvider).defaultShiftView)) {
+    if ((defaultShiftView)) {
       tabList = tabList.reversed.toList();
       tabItemList = tabItemList.reversed.toList();
     }
@@ -234,7 +237,9 @@ class HomeScreenState extends ConsumerState<HomeScreen>
     return Scaffold(
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
-            bottom: screenSize.height / 60, right: screenSize.width / 60),
+          bottom: screenSize.height / 60,
+          right: screenSize.width / 60,
+        ),
         child: FloatingActionButton(
           foregroundColor: Styles.bgColor,
           backgroundColor: Styles.primaryColor,

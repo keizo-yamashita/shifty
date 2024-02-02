@@ -36,7 +36,6 @@ bool enableZoomIn = true;
 bool enableZoomOut = true;
 int inputValue = 1;
 Size screenSize = const Size(0, 0);
-bool isDark = false;
 
 List<bool> displayInfoFlag = [true, true, true, true];
 
@@ -73,7 +72,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
     );
 
     ref.read(settingProvider).loadPreferences();
-    isDark = ref.read(settingProvider).enableDarkTheme;
+    final isDark = ref.watch(settingProvider.select((provider) => provider.enableDarkTheme));
 
     if (undoredoCtrl.buffer.isEmpty) {
       insertBuffer(shiftFrame.assignTable);

@@ -54,6 +54,8 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
       ref.read(settingProvider).screenPaddingTop -
       ref.read(settingProvider).screenPaddingBottom,
     );
+
+    final isDark = ref.watch(settingProvider.select((provider) => provider.enableDarkTheme));
     
     // シフト表名の更新
     textConroller.text = shiftFrame.shiftName;

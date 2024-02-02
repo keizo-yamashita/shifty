@@ -37,7 +37,6 @@ bool enableRequestEdit  = false;
 bool enableZoomIn       = true;
 bool enableZoomOut      = true;
 int  requestInputValue  = 1;
-bool isDark             = false;
 
 // 画面サイズ
 Size screenSize         = const Size(0, 0);
@@ -86,7 +85,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       ref.read(settingProvider).screenPaddingBottom
     );
     // Provider 処理
-    isDark        = ref.read(settingProvider).enableDarkTheme;
+    final isDark = ref.read(settingProvider).enableDarkTheme;
     shiftRequest = ref.read(shiftRequestProvider).shiftRequest;
     ref.read(settingProvider).loadPreferences();
 

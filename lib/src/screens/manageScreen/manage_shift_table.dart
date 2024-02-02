@@ -90,7 +90,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
     // Provider 処理
     shiftTable = ref.read(shiftTableProvider).shiftTable;
-    isDark     = ref.read(settingProvider).enableDarkTheme;
+    final isDark = ref.watch(settingProvider.select((provider) => provider.enableDarkTheme));
     ref.read(settingProvider).loadPreferences();
 
     if(undoredoCtrl.buffer.isEmpty){
