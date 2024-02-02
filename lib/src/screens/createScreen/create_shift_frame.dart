@@ -44,14 +44,17 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
 
   @override
   Widget build(BuildContext context) {
-    // AppBar の高さの取得 & スクリーンサイズの取得
-    appBarHeight =
-        AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
+    
+    // 画面サイズの取得
     screenSize = Size(
       MediaQuery.of(context).size.width,
-      MediaQuery.of(context).size.height - appBarHeight,
+      MediaQuery.of(context).size.height -
+      ref.read(settingProvider).appBarHeight - 
+      ref.read(settingProvider).navigationBarHeight - 
+      ref.read(settingProvider).screenPaddingTop -
+      ref.read(settingProvider).screenPaddingBottom,
     );
-
+    
     // シフト表名の更新
     textConroller.text = shiftFrame.shiftName;
 

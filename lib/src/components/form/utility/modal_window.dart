@@ -98,7 +98,7 @@ Widget buildModalWindowContainer(
                 )
               : Container(),
           SizedBox(
-            height: MediaQuery.of(context).size.height * height - 20,
+            height: MediaQuery.of(context).size.height * height - 40,
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: list.length,

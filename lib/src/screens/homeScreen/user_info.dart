@@ -14,15 +14,6 @@ class UserInfoPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 画面サイズの取得
-    var screenSize = Size(
-      MediaQuery.of(context).size.width,
-      MediaQuery.of(context).size.height -
-      ref.read(settingProvider).appBarHeight - 
-      ref.read(settingProvider).navigationBarHeight - 
-      ref.read(settingProvider).screenPaddingTop -
-      ref.read(settingProvider).screenPaddingBottom
-    );
 
     User? user = ref.read(signInProvider).user;
 

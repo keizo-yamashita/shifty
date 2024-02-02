@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 // my package
 import 'package:shift/main.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
+import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:shift/src/screens/signInScreen/link_account.dart';
@@ -39,6 +40,10 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
             settingsListBackground: Color(0xFFF2F2F7),
             settingsSectionBackground: Colors.white,
           ),
+          darkTheme: const SettingsThemeData(
+            settingsListBackground: Colors.black,
+            settingsSectionBackground: Color(0xFF1C1C1E),
+          ),
           sections: [
             SettingsSection(
               title: Text('基本設定', style: Styles.defaultStyle15),
@@ -49,8 +54,23 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                   value: Text((enableDarkTheme) ? "ダークテーマ" : "ライトテーマ", style: Styles.defaultStyle13),
                   onPressed: (value){
                     setState(() {
-                      // ref.read(settingProvider).enableDarkTheme = value;
-                      // ref.read(settingProvider).storePreferences();
+                      showModalWindow(
+                        context,
+                        0.5,
+                        buildModalWindowContainer(
+                          context,
+                          [
+                            Text("ライトテーマ", style: Styles.headlineStyle13,textAlign: TextAlign.center),
+                            Text("ダークテーマ", style: Styles.headlineStyle13,textAlign: TextAlign.center),
+                          ],
+                          0.5,
+                          (BuildContext context, int index){
+                            setState(() {});
+                            ref.read(settingProvider).enableDarkTheme = index == 1 ? true : false;
+                            ref.read(settingProvider).storePreferences();
+                          }
+                        )
+                      );
                     });
                   },
                 ),
@@ -60,8 +80,24 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                   value: Text((defaultShiftView) ? "管理中のシフト表" : "フォロー中のシフト表", style: Styles.defaultStyle13),
                   onPressed: (value) {
                     setState(() {
-                      // ref.read(settingProvider).defaultShiftView = value;
-                      // ref.read(settingProvider).storePreferences();
+                      showModalWindow(
+                        context,
+                        0.5,
+                        buildModalWindowContainer(
+                          context,
+                          [
+                            Text("フォロー中のシフト表", style: Styles.headlineStyle13,textAlign: TextAlign.center),
+                            Text("管理中のシフト表", style: Styles.headlineStyle13,textAlign: TextAlign.center),
+                          ],
+                          0.5,
+                          (BuildContext context, int index){
+                            setState(() {});
+                            ref.read(settingProvider).defaultShiftView = index == 1 ? true : false;
+                            ref.read(settingProvider).storePreferences();
+                          }
+                        )
+                      );
+
                     });
                   },
                 ),
