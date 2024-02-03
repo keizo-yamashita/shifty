@@ -54,7 +54,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                   width: min(MediaQuery.of(context).size.width * 0.8, 300),
                   child: TextFormField(
                     controller: inputMailController,
-                    cursorColor: Styles.bgColor,
+                    cursorColor: Styles.lightBgColor,
                     style: Styles.defaultStyleWhite15,
                     autofillHints: const [AutofillHints.email], 
                     decoration: InputDecoration(
@@ -63,13 +63,13 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: Styles.bgColor,
+                          color: Styles.lightBgColor,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: Styles.bgColor,
+                          color: Styles.lightBgColor,
                         ),
                       ),
                       prefixIcon: const Icon(Icons.input, color: Colors.white),
@@ -86,7 +86,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                   width: min(MediaQuery.of(context).size.width * 0.8, 300),
                   child: TextFormField(
                     controller: inputPasswordController,
-                    cursorColor: Styles.bgColor,
+                    cursorColor: Styles.lightBgColor,
                     style: Styles.defaultStyleWhite15,
                     autofillHints: const [AutofillHints.password], 
                     decoration: InputDecoration(
@@ -95,13 +95,13 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: Styles.bgColor,
+                          color: Styles.lightBgColor,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                          color: Styles.bgColor,
+                          color: Styles.lightBgColor,
                         ),
                       ),
                       prefixIcon: const Icon(Icons.input, color: Colors.white),

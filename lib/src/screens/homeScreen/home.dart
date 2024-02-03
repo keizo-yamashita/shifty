@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
 import 'package:shift/main.dart';
+import 'package:shift/src/components/form/utility/empty_appbar.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
@@ -62,7 +63,8 @@ class HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     String id = ref.read(deepLinkProvider).shiftFrameId;
-
+    final defaultShiftView = ref.watch(settingProvider.select((provider) => provider.defaultShiftView));
+    final isDark = ref.watch(settingProvider.select((provider) => provider.enableDarkTheme));
     if (id != "") {
       Navigator.push(
         context,
@@ -119,7 +121,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                 return FutureBuilder<Widget>(
                   future: buildMyShiftRequest(
                     snapshot.data!.docs,
-                    ref.read(settingProvider).enableDarkTheme,
+                    isDark,
                   ),
                   builder:
                       (BuildContext context, AsyncSnapshot<Widget> snapshot) {
@@ -191,8 +193,10 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   );
                 }
                 return FutureBuilder<Widget>(
-                  future: buildMyShiftFrame(snapshot.data!.docs,
-                      ref.read(settingProvider).enableDarkTheme),
+                  future: buildMyShiftFrame(
+                    snapshot.data!.docs,
+                    isDark,
+                  ),
                   builder:
                       (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -226,17 +230,20 @@ class HomeScreenState extends ConsumerState<HomeScreen>
       )
     ];
 
-    if ((ref.read(settingProvider).defaultShiftView)) {
+    if ((defaultShiftView)) {
       tabList = tabList.reversed.toList();
       tabItemList = tabItemList.reversed.toList();
     }
 
     return Scaffold(
+      appBar: const EmptyAppBar(),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
-            bottom: screenSize.height / 60, right: screenSize.width / 60),
+          bottom: screenSize.height / 60,
+          right: screenSize.width / 60,
+        ),
         child: FloatingActionButton(
-          foregroundColor: Styles.bgColor,
+          foregroundColor: Styles.lightBgColor,
           backgroundColor: Styles.primaryColor,
           elevation: 2.0,
           shape: RoundedRectangleBorder(

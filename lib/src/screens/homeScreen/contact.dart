@@ -45,7 +45,7 @@ class ContactPageState extends ConsumerState<ContactPage>  with SingleTickerProv
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('お問い合わせ / ご要望'),
+          title: Text('お問い合わせ / ご要望', style: Styles.defaultStyle18),
           centerTitle: true,
         ),
         body: Padding(

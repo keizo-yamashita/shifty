@@ -8,6 +8,7 @@ class EditorAppBar extends StatelessWidget {
   final WidgetRef ref;
   final bool registered;
   final String title;
+  final String subtitle;
   final Function? handleInfo;
   final Function? handleRegister;
   final Widget content;
@@ -18,6 +19,7 @@ class EditorAppBar extends StatelessWidget {
     required this.ref,
     required this.registered,
     required this.title,
+    required this.subtitle,
     this.handleInfo,
     this.handleRegister,
     required this.content,
@@ -55,10 +57,13 @@ class EditorAppBar extends StatelessWidget {
           centerTitle: true,
           title: FittedBox(
             fit: BoxFit.fill,
-            child: Text(title, style: Styles.defaultStyleGreen20),
+            child: Column(
+              children: [
+                Text(subtitle, style: Styles.defaultStyle13),
+                Text(title, style: Styles.defaultStyle18),
+              ],
+            ),
           ),
-          bottomOpacity: 2.0,
-          elevation: 2.0,
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 5.0),
@@ -91,7 +96,7 @@ class EditorAppBar extends StatelessWidget {
           ],
         ),
         resizeToAvoidBottomInset: false,
-        body: content,
+        body: SafeArea(child: content),
       ),
     );
   }
