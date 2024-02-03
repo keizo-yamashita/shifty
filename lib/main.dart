@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/services.dart';
 import 'package:shift/src/app_navigation_bar.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
 import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
@@ -235,45 +236,53 @@ class MyAppState extends ConsumerState<MyApp>{
   Widget build(BuildContext context) {
 
     ref.read(settingProvider).loadPreferences();
-
+    final isDark = ref.watch(settingProvider).enableDarkTheme;
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       title: 'Shifty',
       theme: ThemeData(
+        scaffoldBackgroundColor: Styles.lightBgColor,
         primaryColor: Styles.primaryColor,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Styles.bgColor.withOpacity(0.9),
-          foregroundColor: Styles.primaryColor,
-          elevation: 2.0
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Styles.lightColor,
+          elevation: 0.4,
+          scrolledUnderElevation: 0.4,
+          shadowColor: Colors.black,
         ),
         cupertinoOverrideTheme: const CupertinoThemeData(
           primaryColor: Colors.black,
           brightness: Brightness.light,
         ),
-        datePickerTheme: const DatePickerThemeData(
-          rangePickerBackgroundColor: Colors.white,
-          rangePickerHeaderForegroundColor: Styles.primaryColor,
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Styles.lightColor,
+          selectedItemColor: Styles.primaryColor,
+          unselectedItemColor: Colors.grey,
         ),
         brightness: Brightness.light
       ),
       darkTheme: ThemeData(
         primaryColor: Styles.primaryColor,
-        scaffoldBackgroundColor: Colors.grey[800],
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.grey[900]?.withOpacity(0.9),
-          foregroundColor: Styles.primaryColor,
-          elevation: 2.0
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Styles.darkColor,
+          elevation: 0.4,
+          scrolledUnderElevation: 0.4,
+          shadowColor: Color(0xFF8C8C8C),
         ),
         cupertinoOverrideTheme: const CupertinoThemeData(
           primaryColor: Colors.white,
           brightness: Brightness.dark,
         ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Styles.darkColor,
+          selectedItemColor: Styles.primaryColor,
+          unselectedItemColor: Styles.hiddenColor,
+        ),
         brightness: Brightness.dark,
         
       ),
       
-      themeMode: (ref.watch(settingProvider).enableDarkTheme) ? ThemeMode.dark : ThemeMode.light,
+      themeMode: (isDark) ? ThemeMode.dark : ThemeMode.light,
 
       debugShowCheckedModeBanner: false,
       localizationsDelegates:const  [

@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
 import 'package:shift/main.dart';
+import 'package:shift/src/components/form/utility/empty_appbar.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
@@ -235,13 +236,14 @@ class HomeScreenState extends ConsumerState<HomeScreen>
     }
 
     return Scaffold(
+      appBar: const EmptyAppBar(),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
           bottom: screenSize.height / 60,
           right: screenSize.width / 60,
         ),
         child: FloatingActionButton(
-          foregroundColor: Styles.bgColor,
+          foregroundColor: Styles.lightBgColor,
           backgroundColor: Styles.primaryColor,
           elevation: 2.0,
           shape: RoundedRectangleBorder(

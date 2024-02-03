@@ -88,7 +88,10 @@ class Styles{
  static const TextHeightBehavior defaultBehavior = TextHeightBehavior(applyHeightToLastDescent: false, applyHeightToFirstAscent: false);
 
   // Colors
-  static const bgColor          = Color(0xffffffff);
+  static const lightBgColor             = Color(0xFFF2F2F7);
+  static const darkBgColor              = Color(0xFF000000);
+  static const lightColor               = Color(0xffffffff);
+  static const darkColor                = Color(0xFF2C2C2c);
   static const secondaryBackgroundColor = Color.fromARGB(255, 255, 254, 250);
   static const primaryColor             = Color(0xff14C38E);
   static const secondaryColor           = Color(0xffB8F1B0);

@@ -85,7 +85,8 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
       context: context,
       ref: ref,
       registered: true,
-      title: "割り当て人数の設定",
+      title: shiftFrame.shiftName,
+      subtitle: "割り当て人数の設定",
       handleInfo: () {
         showInfoDialog(ref.read(settingProvider).enableDarkTheme);
       },

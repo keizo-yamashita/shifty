@@ -106,7 +106,8 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       context: context,
       ref: ref, 
       registered: registered,
-      title: "[シフト管理画面]  ${shiftTable.shiftFrame.shiftName}",
+      title: shiftTable.shiftFrame.shiftName,
+      subtitle: "シフト管理画面",
       handleInfo: (){
         showInfoDialog(isDark);
       },

@@ -46,6 +46,7 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
   Widget build(BuildContext context) {
     
     // 画面サイズの取得
+    appBarHeight = ref.read(settingProvider).appBarHeight + ref.read(settingProvider).screenPaddingTop;
     screenSize = Size(
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height -
@@ -94,7 +95,6 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
           appBar: AppBar(
             centerTitle: true,
             title: Text("シフト表の作成", style: Styles.defaultStyleGreen20),
-            bottomOpacity: 2.0,
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 5.0),

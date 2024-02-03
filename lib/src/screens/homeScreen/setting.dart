@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 // my package
 import 'package:shift/main.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
+import 'package:shift/src/components/form/utility/empty_appbar.dart';
 import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -34,22 +35,23 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
 
     return 
     Scaffold(
+      appBar: const EmptyAppBar(),
       body: SafeArea(
         child: SettingsList(
           lightTheme: const SettingsThemeData(
-            settingsListBackground: Color(0xFFF2F2F7),
-            settingsSectionBackground: Colors.white,
+            settingsListBackground: Styles.lightBgColor,
+            settingsSectionBackground: Styles.lightColor,
           ),
           darkTheme: const SettingsThemeData(
-            settingsListBackground: Colors.black,
-            settingsSectionBackground: Color(0xFF1C1C1E),
+            settingsListBackground: Styles.darkBgColor,
+            settingsSectionBackground: Styles.darkColor,
           ),
           sections: [
             SettingsSection(
               title: Text('基本設定', style: Styles.defaultStyle15),
               tiles: [
                 SettingsTile.navigation(
-                  leading: const Icon(Icons.color_lens_rounded),
+                  leading: Icon((enableDarkTheme) ? Icons.dark_mode : Icons.light_mode),
                   title: Text('カラーテーマ', style: Styles.defaultStyle13),
                   value: Text((enableDarkTheme) ? "ダークテーマ" : "ライトテーマ", style: Styles.defaultStyle13),
                   onPressed: (value){

@@ -397,7 +397,7 @@ class ShiftFrame {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                backgroundColor: isDark ? Colors.grey[800] : Styles.bgColor,
+                backgroundColor: isDark ? Styles.darkColor : Styles.lightColor,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(15),

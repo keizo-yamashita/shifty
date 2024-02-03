@@ -23,7 +23,7 @@ class UserInfoPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ユーザー情報'),
+        title: Text('ユーザー情報', style: Styles.defaultStyle18),
         centerTitle: true,
       ),
       body: Center(
