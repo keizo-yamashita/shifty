@@ -41,17 +41,17 @@ List<Widget> getColumnTitles(
     if (i == 0) {
       month = Text(
         '${date.month}月',
-        style: Styles.tableTitleStyle((isDark) ? Colors.white : Colors.black54),
+        style: Styles.tableTitleStyle((isDark) ? Colors.white : Colors.black),
       );
     } else if (date.day == 1) {
       month = Text(
         '${date.month}月',
-        style: Styles.tableTitleStyle((isDark) ? Colors.white : Colors.black54),
+        style: Styles.tableTitleStyle((isDark) ? Colors.white : Colors.black),
       );
     } else {
       month = Text(
         ' ',
-        style: Styles.tableTitleStyle((isDark) ? Colors.white : Colors.black54),
+        style: Styles.tableTitleStyle((isDark) ? Colors.white : Colors.black),
       );
     }
 
@@ -85,13 +85,13 @@ List<Widget> getColumnTitles(
       day = Text(
         '${date.day}',
         style: Styles.tableTitleStyle(
-          (isDark) ? Colors.white : Colors.black54,
+          (isDark) ? Colors.white : Colors.black,
         ),
       );
       weekday = Text(
         weekdayJP[date.weekday - 1],
         style: Styles.tableTitleStyle(
-          (isDark) ? Colors.white : Colors.black54,
+          (isDark) ? Colors.white : Colors.black,
         ),
       );
     }
@@ -144,7 +144,7 @@ List<Widget> getRowTitles(
           child: Text(
             timeDivs[i].name,
             style: Styles.tableTitleStyle(
-                (isDark) ? Colors.white : Colors.black54,),
+                (isDark) ? Colors.white : Colors.black,),
           ),
         ),
       ),

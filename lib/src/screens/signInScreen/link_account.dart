@@ -30,7 +30,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("アカウント連携", style: Styles.defaultStyleGreen20),
+        title: Text("アカウント連携", style: Styles.defaultStyle18),
       ),
       extendBody: true,
       extendBodyBehindAppBar: true,

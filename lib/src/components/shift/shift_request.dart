@@ -291,6 +291,7 @@ class ShiftRequest {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 backgroundColor: isDark ? Styles.darkColor : Styles.lightColor,
+                surfaceTintColor: isDark ? Styles.darkColor : Styles.lightColor,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),

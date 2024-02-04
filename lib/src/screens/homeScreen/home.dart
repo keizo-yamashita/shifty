@@ -424,12 +424,6 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   "シフト期間　　 : ${DateFormat('MM/dd').format(frame.dateTerm[0].start)} - ${DateFormat('MM/dd').format(frame.dateTerm[0].end)}\n\n";
               message += "下記のリンクよりシフトリクエストを入力して下さい。\n";
               message += "shifty://user/?id=${frame.shiftId}";
-              message += "\n\n";
-              message += "インストールがまだの方は ↓ から \n\n";
-              message +=
-                  "iOS : https://apps.apple.com/jp/app/shifty-%E3%82%B7%E3%83%95%E3%83%88%E8%A1%A8%E4%BD%9C%E6%88%90%E3%82%A2%E3%83%97%E3%83%AA/id6458593130 \n\n";
-              message +=
-                  "android : https://play.google.com/store/apps/details?id=com.kakupan.shift&pcampaignid=web_share \n";
               Share.share(message);
             },
             isDark,

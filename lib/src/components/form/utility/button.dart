@@ -1,7 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shift/src/components/style/style.dart';
 
@@ -29,7 +28,7 @@ class ToolButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color bgColor = Theme.of(context).scaffoldBackgroundColor;
+    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
     int invValue = (bgColor.value & 0xFF000000) | (~bgColor.value & 0x00FFFFFF);
     Color invBgColor = Color(invValue);
 
@@ -42,9 +41,9 @@ class ToolButton extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,
-            // elevation: 1.0,       // enableがtrueの場合は影をつける
-            shadowColor: invBgColor, // 影の色を設定
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            // elevation: 1.0,
+            shadowColor: invBgColor,
+            backgroundColor: bgColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
@@ -112,15 +111,6 @@ class CustomTextButton extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          if (icon != null)
-          Positioned(
-            left: 5,
-            child: Icon(
-              icon!,
-              size: 20,
-              color: enable ? Styles.primaryColor : Styles.hiddenColor,
-            ),
-          ),
           SizedBox(
             width: width,
             height: height,
@@ -135,6 +125,7 @@ class CustomTextButton extends StatelessWidget {
                 side: BorderSide(
                   color: enable ? Styles.primaryColor : Styles.hiddenColor,
                 ),
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
               ),
               onPressed: onPressed as void Function()?,
               child: Row(
@@ -148,6 +139,15 @@ class CustomTextButton extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+          if (icon != null)
+          Positioned(
+            left: 5,
+            child: Icon(
+              icon!,
+              size: 20,
+              color: enable ? Styles.primaryColor : Styles.hiddenColor,
             ),
           ),
         ],
@@ -185,6 +185,7 @@ class CustomIconButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
           side: BorderSide(
             color: enable ? Styles.primaryColor : Styles.hiddenColor,
           ),
@@ -220,7 +221,7 @@ class BottomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color bgColor = Theme.of(context).scaffoldBackgroundColor;
+    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
     int invValue = (bgColor.value & 0xFF000000) | (~bgColor.value & 0x00FFFFFF);
     Color invBgColor = Color(invValue);
 
@@ -235,7 +236,7 @@ class BottomButton extends StatelessWidget {
             padding: EdgeInsets.zero,
             // elevation: 2.0,          // enableがtrueの場合は影をつける
             shadowColor: invBgColor, // 影の色を設定
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            backgroundColor: bgColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
