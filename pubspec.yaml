@@ -53,6 +53,7 @@ dependencies:
   go_router: ^13.0.1
   settings_ui: ^2.0.2
   webview_flutter: ^4.4.4
+  package_info_plus: ^4.0.1 
   # dart_openai: ^3.0.0
 
 dev_dependencies:

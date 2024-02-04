@@ -5,6 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share/share.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 // my package
 import 'package:shift/main.dart';
@@ -32,6 +34,12 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
 
     bool enableDarkTheme = ref.read(settingProvider).enableDarkTheme;
     bool defaultShiftView = ref.read(settingProvider).defaultShiftView;
+
+    Future<String> getVersionInfo() async {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      var text = packageInfo.version;
+      return text;
+    }
 
     return 
     Scaffold(
@@ -211,6 +219,14 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                 SettingsTile.navigation(
                   leading: const Icon(Icons.share_rounded),
                   title: Text('アプリを共有する', style: Styles.defaultStyle13),
+                  onPressed: (context) {
+                    var message = "Shifty\n\n↓↓インストールはこちらから↓↓\n\n";
+                    message +=
+                        "iOS : https://apps.apple.com/jp/app/shifty-%E3%82%B7%E3%83%95%E3%83%88%E8%A1%A8%E4%BD%9C%E6%88%90%E3%82%A2%E3%83%97%E3%83%AA/id6458593130 \n\n";
+                    message +=
+                        "Android : https://play.google.com/store/apps/details?id=com.kakupan.shift&pcampaignid=web_share \n";
+                    Share.share(message);
+                  },
                 ),
                 SettingsTile.navigation(
                   leading: const Icon(Icons.star_rounded),
@@ -226,7 +242,16 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                   onPressed:(context) => context.go('/settings/privacy_policy'),
                 ),
                 SettingsTile.navigation(
-                  trailing:  Text('1.0.0', style: Styles.defaultStyle13),
+                  trailing: FutureBuilder<String>(
+                    future: getVersionInfo(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      return Text(
+                        snapshot.hasData ? snapshot.data : '',
+                        style: Styles.defaultStyle13,
+                        textAlign: TextAlign.center,
+                      );
+                    },
+                  ),
                   title: Text('バージョン情報', style: Styles.defaultStyle13),
                 ),
               ],

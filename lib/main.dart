@@ -8,7 +8,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/services.dart';
 import 'package:shift/src/app_navigation_bar.dart';
 import 'package:shift/src/screens/createScreen/add_shift_request.dart';
 import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
@@ -205,7 +204,6 @@ final routerProvider = Provider<GoRouter>((ref) {
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   runApp(
     const ProviderScope(
       child: MyApp()

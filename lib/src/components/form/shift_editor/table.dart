@@ -39,10 +39,10 @@ class TableEditor extends StatefulWidget {
     required this.titleWidth,
     required this.titleHeight,
     required this.titleMargin,
-    required this.selected, // selected point cordinate
-    required this.onChangeSelect, // chage select callback
-    this.onInputEnd, // notifiy input end for create input buffer
-    required this.enableEdit, // true = edit enable
+    required this.selected,
+    required this.onChangeSelect,
+    this.onInputEnd,
+    required this.enableEdit,
     required this.isDark,
     required this.columnTitles,
     required this.rowTitles,
