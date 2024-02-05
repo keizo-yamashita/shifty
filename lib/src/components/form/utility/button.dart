@@ -141,7 +141,7 @@ class CustomTextButton extends StatelessWidget {
               ),
             ),
           ),
-          if (icon != null)
+        if (icon != null)
           Positioned(
             left: 5,
             child: Icon(
