@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
@@ -1277,7 +1279,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
         var modalHeight  = screenSize.height * 0.5;
         var modalWidth   = screenSize.width - 20 - screenSize.width * 0.1;
         var paddingHeght = modalHeight * 0.04;
-        var buttonHeight = modalHeight * 0.16;
+        var buttonHeight = min(modalHeight * 0.16, 50.0);
 
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
@@ -1291,14 +1293,15 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text("シフトの自動割り当て", style: Styles.defaultStyleGrey15, textAlign: TextAlign.center),
+                      child: Text("シフトの自動割り当て", style: Styles.defaultStyle15, textAlign: TextAlign.center),
                     ),
+                    const Divider(thickness: 2),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text("基本勤務時間", style: Styles.defaultStyleGreen15),
+                          Text("基本勤務時間", style: Styles.defaultStyle15),
                           buildTimePicker(DateTime(1,1,1,0,0).add(baseDuration), DateTime(1,1,1,0,15), DateTime(1,1,1,23,45), 15, (DateTime val){ baseDuration = val.difference(DateTime(1,1,1,0,0));}),
                         ],
                       )
@@ -1308,7 +1311,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text("最短勤務時間", style: Styles.defaultStyleGreen15),
+                          Text("最短勤務時間", style: Styles.defaultStyle15),
                           buildTimePicker(DateTime(1,1,1,0,0).add(minDuration), DateTime(1,1,1,0,15), DateTime(1,1,1,23,45), 15, (DateTime val){ minDuration = val.difference(DateTime(1,1,1,0,0));}),
                         ],
                       )
@@ -1318,7 +1321,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text("連続勤務日数", style: Styles.defaultStyleGreen15),
+                          Text("連続勤務日数", style: Styles.defaultStyle15),
                           SizedBox(
                             height: 40,
                             width: screenSize.width / 4,
@@ -1328,9 +1331,11 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                                 minimumSize: Size.zero,
                                 padding: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
-                                side: const BorderSide(color: Styles.hiddenColor),
+                                backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+                                side: const BorderSide(color: Styles.primaryColor),
+
                               ),
                               onPressed: () async {
                                 buildInputBaseConDayModaleWindow();
@@ -1387,9 +1392,11 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
           minimumSize: Size.zero,
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
           ),
-          side: const BorderSide(color: Styles.hiddenColor),
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+          side: const BorderSide(color: Styles.primaryColor),
+          
         ),
         onPressed: () async {
           await showModalWindow(
@@ -1497,7 +1504,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
         var modalHeight  = screenSize.height * 0.5;
         var modalWidth   = screenSize.width - 20 - screenSize.width * 0.1;
         var paddingHeght = modalHeight * 0.03;
-        var buttonHeight = modalHeight * 0.16;
+        var buttonHeight = min(modalHeight * 0.16, 50.0);
         var widgetHeight = buttonHeight + paddingHeght * 2;
 
         return Padding(
@@ -1511,9 +1518,10 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: SizedBox(
                     height: 20,
-                    child: Text("シフトの範囲入力", style: Styles.defaultStyleGrey15, textAlign: TextAlign.center),
+                    child: Text("シフトの範囲入力", style: Styles.defaultStyle15, textAlign: TextAlign.center),
                   ),
                 ),
+                const Divider(thickness: 2),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -1522,8 +1530,8 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                       child: SizedBox(
                         child: CustomTextButton(
                           text: requesterList[selectorsIndex[5]],
-                          enable: false,
-                          width: modalWidth,
+                          enable: true,
+                          width: modalWidth*0.9,
                           height: buttonHeight,
                           onPressed: (){
                             setState(() {
@@ -1533,6 +1541,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         )
                       ),
                     ),
+                    SizedBox(height: 20, width: modalWidth*0.1, child: Center(child: Text("の", style: Styles.defaultStyle13))),
                   ]
                 ),
                 Row(
@@ -1543,8 +1552,8 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                       child: SizedBox(
                         child: CustomTextButton(
                           text: weekSelect[selectorsIndex[0]],
-                          enable: false,
-                          width: modalWidth * (100 / 330),
+                          enable: true,
+                          width: modalWidth * (90 / 330),
                           height: buttonHeight,
                           onPressed: (){
                             setState(() {
@@ -1554,13 +1563,13 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         )
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (25 / 330), child: Center(child: Text("の", style: Styles.defaultStyle13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text: weekdaySelect[selectorsIndex[1]],
-                        enable: false,
-                        width: modalWidth * (100 / 330),
+                        enable: true,
+                        width: modalWidth * (90 / 330),
                         height: buttonHeight,
                         onPressed: (){
                           setState(() {
@@ -1569,7 +1578,7 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("の", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (25 / 330), child: Center(child: Text("の", style: Styles.defaultStyle13))),
                     SizedBox(height: widgetHeight, width: modalWidth * (100 / 330))
                   ],
                 ),
@@ -1580,8 +1589,8 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text: timeDivs1List[selectorsIndex[2]],
-                        enable: false,
-                        width: modalWidth * (100 / 330),
+                        enable: true,
+                        width: modalWidth * (90 / 330),
                         height: buttonHeight,
                         onPressed: (){
                           setState(() {
@@ -1590,13 +1599,13 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (15 / 330), child: Center(child: Text("~", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (25 / 330), child: Center(child: Text("~", style: Styles.defaultStyle13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomTextButton(
                         text: timeDivs2List[selectorsIndex[3]],
-                        enable: false,
-                        width: modalWidth * (100 / 330),
+                        enable: true,
+                        width: modalWidth * (90 / 330),
                         height: buttonHeight,
                         onPressed: (){
                           setState(() {
@@ -1605,12 +1614,12 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (50 / 330), child: Center(child: Text("の区分は", style: Styles.defaultStyleGrey13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (60 / 330), child: Center(child: Text("の区分は", style: Styles.defaultStyle13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomIconButton(
                         icon: (selectorsIndex[4] == 1) ? const Icon(Icons.circle_outlined, size: 20, color: Styles.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red),
-                        enable: false,
+                        enable: true,
                         width: modalWidth * (65 / 330),
                         height: buttonHeight,
                         action: (){
