@@ -1228,22 +1228,31 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                               ],
                             ),
                             const SizedBox(width: 30),
-                            (widget.shiftTable.shiftTable[widget.row][widget.column][index].locked)
-                            ? const Padding(
-                              padding: EdgeInsets.only(bottom: 5, left: 5),
-                              child: Icon(PopIcons.lock, color: Colors.orange, size: 30),
+                            
+                            InkWell(
+                              child: (widget.shiftTable.shiftTable[widget.row][widget.column][index].locked)
+                              ? const Padding(
+                                padding: EdgeInsets.only(bottom: 5, left: 5),
+                                child: Icon(PopIcons.lock, color: Colors.orange, size: 30),
+                              )
+                              : const Padding(
+                                padding: EdgeInsets.only(bottom: 5, left: 5),
+                                child: Icon(PopIcons.lock_open, color: Colors.grey, size: 30),
+                              ),
+                              onTap: (){
+                                setState(() {
+                                  widget.shiftTable.shiftTable[widget.row][widget.column][index].locked = !widget.shiftTable.shiftTable[widget.row][widget.column][index].locked;
+                                });
+                              },
                             )
-                            : const Padding(
-                              padding: EdgeInsets.only(bottom: 5, left: 5),
-                              child: Icon(PopIcons.lock_open, color: Colors.grey, size: 30),
-                            ),
                           ]
                         ),
                         onTap: () {
                           setState(() {
-                            widget.shiftTable.shiftTable[widget.row][widget.column][index].assign = !widget.shiftTable.shiftTable[widget.row][widget.column][index].assign;
-                            widget.shiftTable.shiftTable[widget.row][widget.column][index].locked = !widget.shiftTable.shiftTable[widget.row][widget.column][index].locked;
-                            widget.shiftTable.requests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].respTable[widget.row][widget.column] = (widget.shiftTable.shiftTable[widget.row][widget.column][index].assign) ? 1 : 0;
+                            if(!widget.shiftTable.shiftTable[widget.row][widget.column][index].locked){
+                              widget.shiftTable.shiftTable[widget.row][widget.column][index].assign = !widget.shiftTable.shiftTable[widget.row][widget.column][index].assign;
+                              widget.shiftTable.requests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].respTable[widget.row][widget.column] = (widget.shiftTable.shiftTable[widget.row][widget.column][index].assign) ? 1 : 0;
+                            }
                           });
                         },
                       ),
