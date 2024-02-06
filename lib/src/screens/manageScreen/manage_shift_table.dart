@@ -1226,12 +1226,23 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                                     child: Icon(PopIcons.ok, color: Colors.transparent, size: 25),
                                   ),
                               ],
+                            ),
+                            const SizedBox(width: 30),
+                            (widget.shiftTable.shiftTable[widget.row][widget.column][index].locked)
+                            ? const Padding(
+                              padding: EdgeInsets.only(bottom: 5, left: 5),
+                              child: Icon(PopIcons.lock, color: Colors.orange, size: 30),
                             )
+                            : const Padding(
+                              padding: EdgeInsets.only(bottom: 5, left: 5),
+                              child: Icon(PopIcons.lock_open, color: Colors.grey, size: 30),
+                            ),
                           ]
                         ),
                         onTap: () {
                           setState(() {
                             widget.shiftTable.shiftTable[widget.row][widget.column][index].assign = !widget.shiftTable.shiftTable[widget.row][widget.column][index].assign;
+                            widget.shiftTable.shiftTable[widget.row][widget.column][index].locked = !widget.shiftTable.shiftTable[widget.row][widget.column][index].locked;
                             widget.shiftTable.requests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].respTable[widget.row][widget.column] = (widget.shiftTable.shiftTable[widget.row][widget.column][index].assign) ? 1 : 0;
                           });
                         },
@@ -1324,7 +1335,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                           Text("連続勤務日数", style: Styles.defaultStyle15),
                           SizedBox(
                             height: 40,
-                            width: screenSize.width / 4,
+                            width: screenSize.width / 3,
                             child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 shadowColor: Styles.hiddenColor, 
@@ -1340,7 +1351,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                               onPressed: () async {
                                 buildInputBaseConDayModaleWindow();
                               },
-                              child: Text(inputConDayList[baseConDay], style: Styles.defaultStyleGreen18)
+                              child: Text(inputConDayList[baseConDay], style: Styles.defaultStyleGreen15)
                             ),
                           )
                         ],
@@ -1348,6 +1359,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                     ),
                   ]
                 ),
+                const Divider(thickness: 0.5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -1385,7 +1397,7 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
     DateTime temp = init;
     return SizedBox(
       height: 40,
-      width: screenSize.width / 4,
+      width: screenSize.width / 3,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           shadowColor: Styles.hiddenColor, 
@@ -1405,22 +1417,19 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.3,
               width: double.maxFinite,
-              child: Theme(
-                data: isDark ? ThemeData.dark() : ThemeData.light(),
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.time,
-                  initialDateTime: init,
-                  minuteInterval: interval,
-                  minimumDate: min,
-                  maximumDate: max,
-                  onDateTimeChanged: (val){ setState(() { temp = val; callback(val); }); },
-                  use24hFormat: true,
-                ),
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.time,
+                initialDateTime: init,
+                minuteInterval: interval,
+                minimumDate: min,
+                maximumDate: max,
+                onDateTimeChanged: (val){ setState(() { temp = val; callback(val); }); },
+                use24hFormat: true,
               ),
             )
           );
         },
-        child: Text('${temp.hour.toString().padLeft(2, '0')}:${temp.minute.toString().padLeft(2, '0')}', style: Styles.defaultStyleGreen18)
+        child: Text('${temp.hour.toString().padLeft(2, '0')} 時間 ${temp.minute.toString().padLeft(2, '0')} 分', style: Styles.defaultStyleGreen15)
       ),
     );
   }
@@ -1614,23 +1623,24 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
                         }
                       ),
                     ),
-                    SizedBox(height: widgetHeight, width: modalWidth * (60 / 330), child: Center(child: Text("の区分は", style: Styles.defaultStyle13))),
+                    SizedBox(height: widgetHeight, width: modalWidth * (60 / 330), child: Center(child: Text("の区分を", style: Styles.defaultStyle13))),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeght),
                       child: CustomIconButton(
-                        icon: (selectorsIndex[4] == 1) ? const Icon(Icons.circle_outlined, size: 20, color: Styles.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red),
+                        icon: (selectorsIndex[4] == 1) ? const Icon(Icons.circle, size: 20, color: Styles.primaryColor) : const Icon(Icons.circle_outlined, size: 20, color: Styles.primaryColor),
                         enable: true,
                         width: modalWidth * (65 / 330),
                         height: buttonHeight,
                         action: (){
                           setState(() {
-                            buildSelectorModaleWindow(List<Icon>.generate(2, (index) => (index == 1) ? const Icon(Icons.circle_outlined, size: 20, color: Styles.primaryColor) : const Icon(Icons.clear, size: 20, color: Colors.red)), 4);
+                            buildSelectorModaleWindow(List<Icon>.generate(2, (index) => (index == 1) ? const Icon(Icons.circle, size: 20, color: Styles.primaryColor) : const Icon(Icons.circle_outlined, size: 20, color: Styles.primaryColor)), 4);
                           });
                         }
                       ),
                     ),
                   ],
                 ),
+                const Divider(thickness: 0.5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
