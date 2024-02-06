@@ -30,6 +30,7 @@ class ShiftTable {
                 Candidate(
                   ri,
                   (requests[ri].respTable[ti][di] == 1),
+                  (requests[ri].lockedTable[ti][di] == 1),
                 ),
               );
             }
@@ -97,7 +98,7 @@ class ShiftTable {
         time,
         (index) => shiftFrame.timeDivs[index].endTime
             .difference(shiftFrame.timeDivs[index].startTime)
-            .inMinutes);
+            .inMinutes,);
 
     // init Happiness
     for (var ri = 0; ri < requests.length; ri++) {
@@ -500,6 +501,7 @@ class ShiftTable {
                 Candidate(
                   index,
                   (requests[index].respTable[index_1][index_2] == 1),
+                  (requests[index].lockedTable[index_1][index_2] == 1)
                 ),
               );
             }
@@ -523,15 +525,18 @@ class ShiftTable {
 class Candidate {
   final int userIndex;
   bool assign;
+  bool locked;
   Candidate(
     this.userIndex,
     this.assign,
+    this.locked,
   );
 
   Candidate copy() {
     return Candidate(
       userIndex,
       assign,
+      locked,
     );
   }
 }

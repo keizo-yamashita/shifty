@@ -190,7 +190,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
   }
 
   Widget buildTimePicker(DateTime init, DateTime min, DateTime max,
-      int interval, Function(DateTime) callback) {
+      int interval, Function(DateTime) callback,) {
     DateTime temp = init;
 
     return CustomTextButton(
@@ -207,24 +207,21 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.3,
             width: double.maxFinite,
-            child: Theme(
-              data: isDark ? ThemeData.dark() : ThemeData.light(),
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.time,
-                initialDateTime: init,
-                minuteInterval: interval,
-                minimumDate: min,
-                maximumDate: max,
-                onDateTimeChanged: (val) {
-                  setState(
-                    () {
-                      temp = val;
-                      callback(val);
-                    },
-                  );
-                },
-                use24hFormat: true,
-              ),
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.time,
+              initialDateTime: init,
+              minuteInterval: interval,
+              minimumDate: min,
+              maximumDate: max,
+              onDateTimeChanged: (val) {
+                setState(
+                  () {
+                    temp = val;
+                    callback(val);
+                  },
+                );
+              },
+              use24hFormat: true,
             ),
           ),
         );

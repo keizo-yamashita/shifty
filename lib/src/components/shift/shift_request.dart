@@ -21,6 +21,7 @@ class ShiftRequest {
   late String displayName;
   late List<List<int>> reqTable;
   late List<List<int>> respTable;
+  late List<List<int>> lockedTable;
   late DateTime updateTime;
 
   ShiftRequest(
@@ -30,6 +31,7 @@ class ShiftRequest {
     String? displayName,
     List<List<int>>? reqTable,
     List<List<int>>? respTable,
+    List<List<int>>? lockedTable,
     DateTime? updateTime,
   ]) {
     this.requestId = requestId ?? "";
@@ -37,6 +39,7 @@ class ShiftRequest {
     this.displayName = displayName ?? "";
     this.reqTable = reqTable ?? <List<int>>[];
     this.respTable = respTable ?? <List<int>>[];
+    this.lockedTable = lockedTable ?? <List<int>>[];
     this.updateTime = updateTime ?? DateTime.now();
   }
 
@@ -57,6 +60,11 @@ class ShiftRequest {
       );
 
       respTable = List<List<int>>.generate(
+        rowsLen,
+        (index) => List<int>.generate(columnsLen, (index) => 0),
+      );
+
+      lockedTable = List<List<int>>.generate(
         rowsLen,
         (index) => List<int>.generate(columnsLen, (index) => 0),
       );
@@ -146,14 +154,6 @@ class ShiftRequest {
     final User? user = auth.currentUser;
     final uid = user?.uid;
 
-    var snapshotRef = await reference.get();
-    var assignMap = snapshotRef.data()!['assignment'];
-
-    reqTable = List<List<int>>.generate(
-      shiftFrame.getTimeDivsLen(),
-      (index) => assignMap[index.toString()].cast<int>(),
-    );
-
     final data = {
       'user-id': uid,
       'display-name': displayName,
@@ -161,6 +161,8 @@ class ShiftRequest {
       'request': shiftFrame.assignTable.asMap().map((index, value) =>
           MapEntry(index.toString(), value.map((e) => 0).toList())),
       'response': shiftFrame.assignTable.asMap().map((index, value) =>
+          MapEntry(index.toString(), value.map((e) => 0).toList())),
+      'locked': shiftFrame.assignTable.asMap().map((index, value) =>
           MapEntry(index.toString(), value.map((e) => 0).toList())),
       'reference': reference,
     };
@@ -211,6 +213,12 @@ class ShiftRequest {
               value.toList(),
             ),
           ),
+      'locked': lockedTable.asMap().map(
+        (index, value) => MapEntry(
+          index.toString(),
+          value.toList(),
+        ),
+      ),
     };
 
     if (requestId.isNotEmpty) {
@@ -236,19 +244,32 @@ class ShiftRequest {
   Future<ShiftRequest> pullShiftRequest(
     DocumentSnapshot<Object?> snapshotReq,
   ) async {
-    requestId = snapshotReq.id;
-    displayName = snapshotReq.get('display-name');
 
-    var requestMap = snapshotReq.get('request');
+    DateTime now = DateTime.now();
+    Map<String, dynamic> data = snapshotReq.data() as Map<String, dynamic>? ?? {};
+
+    requestId = snapshotReq.id;
+    displayName = data['display-name'] ?? "Name-Unknown";
+
+    var requestMap = data['request'] as Map<String, dynamic>? ?? {};
     reqTable = List<List<int>>.generate(shiftFrame.getTimeDivsLen(),
         (index) => requestMap[index.toString()].cast<int>());
 
-    var responseMap = snapshotReq.get('response');
+    var responseMap = data['response'] as Map<String, dynamic>? ?? {};
     respTable = List<List<int>>.generate(shiftFrame.getTimeDivsLen(),
         (index) => responseMap[index.toString()].cast<int>());
 
-    updateTime = snapshotReq.get('created-at').toDate();
+    var lockedMap = data['locked'] as Map<String, dynamic>?;
+    lockedTable = lockedMap != null ? List<List<int>>.generate(
+        shiftFrame.getTimeDivsLen(),
+        (index) => lockedMap[index.toString()].cast<int>()
+      ) : List<List<int>>.generate(
+        shiftFrame.getTimeDivsLen(),
+        (index) => List<int>.generate(shiftFrame.getDateLen(), (index) => 0),
+      );
 
+    updateTime = (data['created-at'] as Timestamp?)?.toDate() ?? now;
+    
     return this;
   }
 
@@ -264,6 +285,7 @@ class ShiftRequest {
       displayName,
       reqTable,
       respTable,
+      lockedTable,
       updateTime,
     );
   }
