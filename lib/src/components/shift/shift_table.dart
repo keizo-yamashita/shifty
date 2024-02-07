@@ -70,7 +70,7 @@ class ShiftTable {
   bool getAssignedFin(int ti, int di) {
     int count = 0;
     for (int i = 0; i < shiftTable[ti][di].length; i++) {
-      if (shiftTable[ti][di][i].assign) {
+      if (shiftTable[ti][di][i].assign || shiftTable[ti][di][i].locked) {
         count++;
       }
     }
@@ -176,6 +176,7 @@ class ShiftTable {
     for (var ti = 0; ti < timeDivsLen; ti++) {
       for (var di = 0; di < dateLen; di++) {
         for (int ci = 0; ci < shiftTable[ti][di].length; ci++) {
+          if(shiftTable[ti][di][ci].locked)continue;
           shiftTable[ti][di][ci].assign = false;
           requests[shiftTable[ti][di][ci].userIndex].respTable[ti][di] = 0;
         }
@@ -236,6 +237,7 @@ class ShiftTable {
         // 制限人数の限界まで割り当てる
         if (shiftTable[ti][di].length <= shiftFrame.assignTable[ti][di]) {
           for (int ci = 0; ci < shiftTable[ti][di].length; ci++) {
+            if(shiftTable[ti][di][ci].locked)continue; // lockされている場合はスキップ
             shiftTable[ti][di][ci].assign = true;
             requests[shiftTable[ti][di][ci].userIndex].respTable[ti][di] = 1;
           }
@@ -248,9 +250,9 @@ class ShiftTable {
         // すでに割り当て人数に達しているか確認する
         while (!getAssignedFin(ti, di)) {
           List<SemiCandidate> semiCandidate = [];
-          // 達していなければ，候補の候補者リストを作る
+          // 制限人数に達していなければ，候補の候補者リストを作る
           for (int ci = 0; ci < shiftTable[ti][di].length; ci++) {
-            if (!shiftTable[ti][di][ci].assign) {
+            if (!shiftTable[ti][di][ci].assign && !shiftTable[ti][di][ci].locked) {
               semiCandidate.add(
                 SemiCandidate(
                   ci,
@@ -393,7 +395,7 @@ class ShiftTable {
       if (rule.time1 == 0) {
         for (int i = 0; i < days.length; i++) {
           for (int j = 0; j < requests[rule.requester!].reqTable.length; j++) {
-            if (requests[rule.requester!].reqTable[j][days[i]] == 1) {
+            if (requests[rule.requester!].reqTable[j][days[i]] == 1 && !(requests[rule.requester!].lockedTable[j][days[i]] == 1)) {
               requests[rule.requester!].respTable[j][days[i]] = rule.response;
             }
           }
@@ -460,7 +462,7 @@ class ShiftTable {
         if (rule.time1 == 0) {
           for (int i = 0; i < days.length; i++) {
             for (int j = 0; j < requests[ri].reqTable.length; j++) {
-              if (requests[ri].reqTable[j][days[i]] == 1) {
+              if (requests[ri].reqTable[j][days[i]] == 1 && !(requests[ri].lockedTable[j][days[i]] == 1)) {
                 requests[ri].respTable[j][days[i]] = rule.response;
               }
             }
@@ -469,7 +471,7 @@ class ShiftTable {
           for (int i = 0; i < days.length; i++) {
             if (rule.time2 == 0 || rule.time1 == rule.time2) {
               if (shiftFrame.assignTable[rule.time1 - 1][days[i]] != 0) {
-                if (requests[ri].reqTable[rule.time1 - 1][days[i]] == 1) {
+                if (requests[ri].reqTable[rule.time1 - 1][days[i]] == 1 && !(requests[ri].lockedTable[rule.time1 - 1][days[i]] == 1)) {
                   requests[ri].respTable[rule.time1 - 1][days[i]] =
                       rule.response;
                 }
@@ -477,7 +479,7 @@ class ShiftTable {
             } else {
               for (int j = rule.time1 - 1; j < rule.time2; j++) {
                 if (shiftFrame.assignTable[j][days[i]] != 0) {
-                  if (requests[ri].reqTable[j][days[i]] == 1) {
+                  if (requests[ri].reqTable[j][days[i]] == 1 && !(requests[ri].lockedTable[j][days[i]] == 1)) {
                     requests[ri].respTable[j][days[i]] = rule.response;
                   }
                 }
