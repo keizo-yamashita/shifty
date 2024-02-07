@@ -707,11 +707,13 @@ class AutoFillWidget extends StatefulWidget {
 
 class AutoFillWidgetState extends State<AutoFillWidget> {
   bool viewHistry = false;
-  var selectorsIndex = [0, 0, 0, 0, 0];
+  static var selectorsIndex = [0, 0, 0, 0, 0];
 
   @override
   Widget build(BuildContext context) {
+
     var table = widget._shiftFrame;
+
     var timeDivs1List = List.generate(
       table.timeDivs.length + 1,
       (index) => (index == 0) ? '全て' : table.timeDivs[index - 1].name,

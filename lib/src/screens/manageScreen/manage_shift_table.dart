@@ -1228,22 +1228,32 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                               ],
                             ),
                             const SizedBox(width: 30),
-                            (widget.shiftTable.shiftTable[widget.row][widget.column][index].locked)
-                            ? const Padding(
-                              padding: EdgeInsets.only(bottom: 5, left: 5),
-                              child: Icon(PopIcons.lock, color: Colors.orange, size: 30),
+                            
+                            InkWell(
+                              child: (widget.shiftTable.shiftTable[widget.row][widget.column][index].locked)
+                              ? const Padding(
+                                padding: EdgeInsets.only(bottom: 5, left: 5),
+                                child: Icon(PopIcons.lock, color: Colors.orange, size: 30),
+                              )
+                              : const Padding(
+                                padding: EdgeInsets.only(bottom: 5, left: 5),
+                                child: Icon(PopIcons.lock_open, color: Colors.grey, size: 30),
+                              ),
+                              onTap: (){
+                                setState(() {
+                                  widget.shiftTable.shiftTable[widget.row][widget.column][index].locked = !widget.shiftTable.shiftTable[widget.row][widget.column][index].locked;
+                                  widget.shiftTable.requests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].lockedTable[widget.row][widget.column] = widget.shiftTable.shiftTable[widget.row][widget.column][index].locked ? 1 : 0;
+                                });
+                              },
                             )
-                            : const Padding(
-                              padding: EdgeInsets.only(bottom: 5, left: 5),
-                              child: Icon(PopIcons.lock_open, color: Colors.grey, size: 30),
-                            ),
                           ]
                         ),
                         onTap: () {
                           setState(() {
-                            widget.shiftTable.shiftTable[widget.row][widget.column][index].assign = !widget.shiftTable.shiftTable[widget.row][widget.column][index].assign;
-                            widget.shiftTable.shiftTable[widget.row][widget.column][index].locked = !widget.shiftTable.shiftTable[widget.row][widget.column][index].locked;
-                            widget.shiftTable.requests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].respTable[widget.row][widget.column] = (widget.shiftTable.shiftTable[widget.row][widget.column][index].assign) ? 1 : 0;
+                            if(!widget.shiftTable.shiftTable[widget.row][widget.column][index].locked){
+                              widget.shiftTable.shiftTable[widget.row][widget.column][index].assign = !widget.shiftTable.shiftTable[widget.row][widget.column][index].assign;
+                              widget.shiftTable.requests[widget.shiftTable.shiftTable[widget.row][widget.column][index].userIndex].respTable[widget.row][widget.column] = (widget.shiftTable.shiftTable[widget.row][widget.column][index].assign) ? 1 : 0;
+                            }
                           });
                         },
                       ),
@@ -1276,7 +1286,7 @@ class AutoFillModalWindowWidget extends StatefulWidget {
 
 class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
 
-  var selectorsIndex = [0, 0, 0];
+  static var selectorsIndex = [0, 0, 0];
 
   @override
   Widget build(BuildContext context) {
@@ -1493,7 +1503,7 @@ class RangeFillModalWindowWidget extends StatefulWidget {
 
 class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> {
 
-  var selectorsIndex = [0, 0, 0, 0, 0, 0];
+  static var selectorsIndex = [0, 0, 0, 0, 0, 0];
   
   @override
   Widget build(BuildContext context) {
@@ -1502,7 +1512,19 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
     var timeDivs1List = List.generate(shiftTable.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '全て' : shiftTable.shiftFrame.timeDivs[index-1].name);
     var timeDivs2List = List.generate(shiftTable.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '-' : shiftTable.shiftFrame.timeDivs[index-1].name);
     var requesterList = List.generate(shiftTable.requests.length + 1, (index) => (index == 0) ? '全員' : shiftTable.requests[index-1].displayName);
-   
+
+    if(selectorsIndex[2] >= timeDivs1List.length){
+      selectorsIndex[2] = 0;
+    }
+
+    if(selectorsIndex[3] >= timeDivs2List.length){
+      selectorsIndex[3] = 0;
+    }
+
+    if(selectorsIndex[5] >= requesterList.length){
+      selectorsIndex[5] = 0;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////
     /// Auto-Fillの引数の入力UI (viewHistoryがTrueであれば，履歴表示画面を表示)
     ////////////////////////////////////////////////////////////////////////////////////////////
