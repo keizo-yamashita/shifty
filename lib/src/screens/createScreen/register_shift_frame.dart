@@ -723,6 +723,14 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
       (index) => (index == 0) ? '-' : table.timeDivs[index - 1].name,
     );
 
+    if(selectorsIndex[2] >= timeDivs1List.length){
+      selectorsIndex[2] = 0;
+    }
+
+    if(selectorsIndex[3] >= timeDivs2List.length){
+      selectorsIndex[3] = 0;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// Auto-Fillの引数の入力UI
     ////////////////////////////////////////////////////////////////////////////////////////////
