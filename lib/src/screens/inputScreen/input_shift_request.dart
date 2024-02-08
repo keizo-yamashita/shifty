@@ -753,14 +753,22 @@ class RangeFillWidget extends StatefulWidget {
 class RangeFillWidgetState extends State<RangeFillWidget> {
   
   bool viewHistry = false;
-  var selectorsIndex = [0, 0, 0, 0, 0];
+  static var selectorsIndex = [0, 0, 0, 0, 0];
 
   @override
   Widget build(BuildContext context) {
 
     var request       = widget._shiftRequest;
-    var timeDivs1List = List.generate(request.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '全て' : request.shiftFrame.timeDivs[index-1].name);
-    var timeDivs2List = List.generate(request.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '-' : request.shiftFrame.timeDivs[index-1].name);
+    var timeDivs1List = List.generate(request.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '全て' : request.shiftFrame.timeDivs[index-1].name,);
+    var timeDivs2List = List.generate(request.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '-' : request.shiftFrame.timeDivs[index-1].name,);
+
+    if(selectorsIndex[2] >= timeDivs1List.length){
+      selectorsIndex[2] = 0;
+    }
+
+    if(selectorsIndex[3] >= timeDivs2List.length){
+      selectorsIndex[3] = 0;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     /// Auto-Fillの引数の入力UI (viewHistoryがTrueであれば，履歴表示画面を表示)
