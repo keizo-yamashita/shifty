@@ -146,13 +146,13 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     title: Text('ユーザの削除', style: Styles.defaultStyleRed13),
                     onPressed: (context) {
                       showConfirmDialog(
-                        context, ref, "確認", "アカウントを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "ユーザを削除しました。", (){
+                        context, ref, "確認", "アカウントを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "アカウントを削除しました。", (){
                           ref.read(signInProvider).deleteUserData().then(
                             (value){
                               ref.read(signInProvider).deleteUser().then(
                                 (error){
                                   if(error){
-                                    showAlertDialog(context, ref, "エラー", "ユーザの削除に失敗しました。もう一度お試しく下さい。", error); 
+                                    showAlertDialog(context, ref, "エラー", "アカウントの削除に失敗しました。もう一度お試しく下さい。", error); 
                                   }
                                 }
                               );
@@ -185,7 +185,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                         context,
                         ref,
                         "確認",
-                        "ゲストデータを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。",
+                        "ゲストユーザを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。",
                         "ゲストユーザを削除しました。",
                         () {
                           ref.read(signInProvider).deleteUserData().then(
