@@ -43,7 +43,7 @@ class EditorAppBar extends StatelessWidget {
             "注意",
             "データが保存されていません。\n未登録のデータは破棄されます。",
             "",
-            () {},
+            (){},
             false,
             true,
           );
