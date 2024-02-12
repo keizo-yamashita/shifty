@@ -1509,9 +1509,9 @@ class RangeFillModalWindowWidgetState extends State<RangeFillModalWindowWidget> 
   Widget build(BuildContext context) {
     
     var shiftTable       = widget._shiftTable;
-    var timeDivs1List = List.generate(shiftTable.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '全て' : shiftTable.shiftFrame.timeDivs[index-1].name);
-    var timeDivs2List = List.generate(shiftTable.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '-' : shiftTable.shiftFrame.timeDivs[index-1].name);
-    var requesterList = List.generate(shiftTable.requests.length + 1, (index) => (index == 0) ? '全員' : shiftTable.requests[index-1].displayName);
+    var timeDivs1List = List.generate(shiftTable.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '全て' : shiftTable.shiftFrame.timeDivs[index-1].name,);
+    var timeDivs2List = List.generate(shiftTable.shiftFrame.timeDivs.length + 1, (index) => (index == 0) ? '-' : shiftTable.shiftFrame.timeDivs[index-1].name,);
+    var requesterList = List.generate(shiftTable.requests.length + 1, (index) => (index == 0) ? '全員' : shiftTable.requests[index-1].displayName,);
 
     if(selectorsIndex[2] >= timeDivs1List.length){
       selectorsIndex[2] = 0;
