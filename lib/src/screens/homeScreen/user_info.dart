@@ -14,7 +14,6 @@ class UserInfoPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     User? user = ref.read(signInProvider).user;
 
     bool isLogedIn = (user != null) &&
