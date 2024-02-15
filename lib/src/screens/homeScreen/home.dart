@@ -63,8 +63,10 @@ class HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     String id = ref.read(deepLinkProvider).shiftFrameId;
-    final defaultShiftView = ref.watch(settingProvider.select((provider) => provider.defaultShiftView));
-    final isDark = ref.watch(settingProvider.select((provider) => provider.enableDarkTheme));
+    final defaultShiftView = ref
+        .watch(settingProvider.select((provider) => provider.defaultShiftView));
+    final isDark = ref
+        .watch(settingProvider.select((provider) => provider.enableDarkTheme));
     if (id != "") {
       Navigator.push(
         context,
@@ -96,8 +98,10 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   )
                   .orderBy('created-at', descending: true)
                   .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<QuerySnapshot> snapshot,
+              ) {
                 if (snapshot.hasError) {
                   return const Padding(
                     padding: EdgeInsets.all(8.0),
@@ -358,7 +362,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
     }
   }
 
-  // 
+  //
   Future<Widget> buildMyShiftFrame(
       List<QueryDocumentSnapshot<Object?>> docs, bool isDark) async {
     /// 自分のユーザIDが含まれるシフト表の表示

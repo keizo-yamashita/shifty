@@ -15,10 +15,10 @@ class ContactPage extends ConsumerStatefulWidget {
   ConsumerState<ContactPage> createState() => ContactPageState();
 }
 
-class ContactPageState extends ConsumerState<ContactPage>  with SingleTickerProviderStateMixin {
-  
+class ContactPageState extends ConsumerState<ContactPage>
+    with SingleTickerProviderStateMixin {
   Size screenSize = const Size(0, 0);
-  
+
   // TextField の動作をスムーズにするための変数
   final FocusNode focusNode = FocusNode();
   final TextEditingController textConroller = TextEditingController();
@@ -28,16 +28,14 @@ class ContactPageState extends ConsumerState<ContactPage>  with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    
     // 画面サイズの取得
     var screenSize = Size(
-      MediaQuery.of(context).size.width,
-      MediaQuery.of(context).size.height -
-      ref.read(settingProvider).appBarHeight - 
-      ref.read(settingProvider).navigationBarHeight - 
-      ref.read(settingProvider).screenPaddingTop -
-      ref.read(settingProvider).screenPaddingBottom
-    );
+        MediaQuery.of(context).size.width,
+        MediaQuery.of(context).size.height -
+            ref.read(settingProvider).appBarHeight -
+            ref.read(settingProvider).navigationBarHeight -
+            ref.read(settingProvider).screenPaddingTop -
+            ref.read(settingProvider).screenPaddingBottom);
 
     return GestureDetector(
       onTap: () {
@@ -57,11 +55,17 @@ class ContactPageState extends ConsumerState<ContactPage>  with SingleTickerProv
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("本アプリがご期待に添えず、ご不便をお掛けしている場合は、どのようなご要望でもお申し付け下さい。", style: Styles.defaultStyle13),
-                    SizedBox(height: screenSize.height/40),
-                    Text("例) 〇〇な機能が欲しい。〇〇が使いづらい。", style: Styles.defaultStyle13)
+                    Text(
+                      "本アプリがご期待に添えず、ご不便をお掛けしている場合は、どのようなご要望でもお申し付け下さい。",
+                      style: Styles.defaultStyle13,
+                    ),
+                    SizedBox(height: screenSize.height / 40),
+                    Text(
+                      "例) 〇〇な機能が欲しい。〇〇が使いづらい。",
+                      style: Styles.defaultStyle13,
+                    )
                   ],
-                )
+                ),
               ),
               // 要望入力欄
               SizedBox(
@@ -88,19 +92,20 @@ class ContactPageState extends ConsumerState<ContactPage>  with SingleTickerProv
                       ),
                     ),
                     hintText: 'ご要望はこちらに入力して下さい。',
-                    hintStyle: Styles.defaultStyleGrey13
+                    hintStyle: Styles.defaultStyleGrey13,
                   ),
-      
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.go,
-                  onTap: (){FocusScope.of(context).requestFocus(focusNode);},
-                  onChanged: (value){
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(focusNode);
+                  },
+                  onChanged: (value) {
                     suggestion = textConroller.text;
                   },
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               // 提出ボタン
               CustomTextButton(
                 icon: Icons.send,
@@ -109,16 +114,30 @@ class ContactPageState extends ConsumerState<ContactPage>  with SingleTickerProv
                 width: screenSize.width * 0.95,
                 height: 40,
                 onPressed: () {
-                  setState(() {
-                    if(suggestion != ""){
-                      postSuggestion(suggestion);
-                      showAlertDialog(context, ref, "確認", "送信しました。貴重なご意見ありがとうございます。", false);
-                      focusNode.unfocus();
-                      textConroller.clear();
-                    }else{
-                      showAlertDialog(context, ref, "エラー", "ご要望が入力されていません。", true);
-                    }
-                  });
+                  setState(
+                    () {
+                      if (suggestion != "") {
+                        postSuggestion(suggestion);
+                        showAlertDialog(
+                          context,
+                          ref,
+                          "確認",
+                          "送信しました。貴重なご意見ありがとうございます。",
+                          false,
+                        );
+                        focusNode.unfocus();
+                        textConroller.clear();
+                      } else {
+                        showAlertDialog(
+                          context,
+                          ref,
+                          "エラー",
+                          "ご要望が入力されていません。",
+                          true,
+                        );
+                      }
+                    },
+                  );
                 },
               ),
             ],
@@ -130,17 +149,17 @@ class ContactPageState extends ConsumerState<ContactPage>  with SingleTickerProv
 
   postSuggestion(String suggestion) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-    FirebaseAuth      auth      = FirebaseAuth.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
 
     final User? user = auth.currentUser;
     final uid = user?.uid;
 
     Map<String, String> data;
-    
-    if(uid != null){
+
+    if (uid != null) {
       data = {
-        'user-id'    : uid,
-        'suggestion' : suggestion,
+        'user-id': uid,
+        'suggestion': suggestion,
       };
       await firestore.collection('suggestion').add(data);
     }
