@@ -63,16 +63,16 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
     shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
 
     screenSize = Size(
-      MediaQuery.of(context).size.width,
-      MediaQuery.of(context).size.height -
-      ref.read(settingProvider).appBarHeight - 
-      ref.read(settingProvider).navigationBarHeight - 
-      ref.read(settingProvider).screenPaddingTop -
-      ref.read(settingProvider).screenPaddingBottom
-    );
+        MediaQuery.of(context).size.width,
+        MediaQuery.of(context).size.height -
+            ref.read(settingProvider).appBarHeight -
+            ref.read(settingProvider).navigationBarHeight -
+            ref.read(settingProvider).screenPaddingTop -
+            ref.read(settingProvider).screenPaddingBottom);
 
     ref.read(settingProvider).loadPreferences();
-    final isDark = ref.watch(settingProvider.select((provider) => provider.enableDarkTheme));
+    final isDark = ref
+        .watch(settingProvider.select((provider) => provider.enableDarkTheme));
 
     if (undoredoCtrl.buffer.isEmpty) {
       insertBuffer(shiftFrame.assignTable);
@@ -122,11 +122,12 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
           /// ツールボタン
           /// height : screenSize.height * 0.075
           ////////////////////////////////////////////////////////////////////////////////////////////
-      
+
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: const EdgeInsets.only(right: 5.0, left: 5.0, top: 15.0, bottom: 15.0),
+              padding: const EdgeInsets.only(
+                  right: 5.0, left: 5.0, top: 15.0, bottom: 15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -176,7 +177,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
               ),
             ),
           ),
-      
+
           ////////////////////////////////////////////////////////////////////////////////////////////
           /// メインテーブル
           /// height : screenSize.height * 0.075
@@ -506,43 +507,71 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // How to Edit
-                            Text("この画面では、シフト表の各日時に対する割り当て人数を設定します。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("シフト表作成後に割り当て人数を変更することはできません。",
-                                style: Styles.defaultStyleRed13),
-                            const SizedBox(height: 20),
-                            Text("編集方法", style: Styles.defaultStyle15),
-                            const SizedBox(height: 10),
-                            Text("シフト表の各マスの数字は、その日時の割り当て人数を示すものです。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("画面上部のツールボタンを使用することで、割り当て人数を編集できます。",
-                                style: Styles.defaultStyleGrey13),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Image.asset(
-                                  "assets/how_to_use/create_2_1.png"),
+                            Text(
+                              "この画面では、シフト表の各日時に対する割り当て人数を設定します。",
+                              style: Styles.defaultStyleGrey13,
                             ),
-                            Text("画面を横向きにすることもできます。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("見やすい画面で作業しましょう。",
-                                style: Styles.defaultStyleGrey13),
+                            Text(
+                              "シフト表作成後に割り当て人数を変更することはできません。",
+                              style: Styles.defaultStyleRed13,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "編集方法",
+                              style: Styles.defaultStyle15,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "シフト表の各マスの数字は、その日時の割り当て人数を示すものです。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "画面上部のツールボタンを使用することで、割り当て人数を編集できます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset(
-                                  "assets/how_to_use/create_2_2.png"),
+                                "assets/how_to_use/create_2_1.png",
+                              ),
+                            ),
+                            Text(
+                              "画面を横向きにすることもできます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "見やすい画面で作業しましょう。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Image.asset(
+                                "assets/how_to_use/create_2_2.png",
+                              ),
                             ),
                             Text("登録方法", style: Styles.defaultStyle15),
                             const SizedBox(height: 10),
-                            Text("編集後は、画面右上の「登録」ボタンを押して登録して下さい。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("編集内容を「登録」しない場合、画面遷移時に破棄されます。",
-                                style: Styles.defaultStyleRed13),
-                            Text("作成したシフト表の共有方法については、「ホーム画面」の i ボタンより参照して下さい。",
-                                style: Styles.defaultStyleGrey13),
+                            Text(
+                              "編集後は、画面右上の「登録」ボタンを押して登録して下さい。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "編集内容を「登録」しない場合、画面遷移時に破棄されます。",
+                              style: Styles.defaultStyleRed13,
+                            ),
+                            Text(
+                              "作成したシフト表の共有方法については、「ホーム画面」の i ボタンより参照して下さい。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.asset(
-                                  "assets/how_to_use/create_2_3.png"),
+                                "assets/how_to_use/create_2_3.png",
+                              ),
                             ),
                           ],
                         ),
@@ -711,7 +740,6 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     var table = widget._shiftFrame;
 
     var timeDivs1List = List.generate(
@@ -723,11 +751,11 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
       (index) => (index == 0) ? '-' : table.timeDivs[index - 1].name,
     );
 
-    if(selectorsIndex[2] >= timeDivs1List.length){
+    if (selectorsIndex[2] >= timeDivs1List.length) {
       selectorsIndex[2] = 0;
     }
 
-    if(selectorsIndex[3] >= timeDivs2List.length){
+    if (selectorsIndex[3] >= timeDivs2List.length) {
       selectorsIndex[3] = 0;
     }
 

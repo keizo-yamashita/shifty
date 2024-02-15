@@ -44,20 +44,21 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
 
   @override
   Widget build(BuildContext context) {
-    
     // 画面サイズの取得
-    appBarHeight = ref.read(settingProvider).appBarHeight + ref.read(settingProvider).screenPaddingTop;
+    appBarHeight = ref.read(settingProvider).appBarHeight +
+        ref.read(settingProvider).screenPaddingTop;
     screenSize = Size(
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height -
-      ref.read(settingProvider).appBarHeight - 
-      ref.read(settingProvider).navigationBarHeight - 
-      ref.read(settingProvider).screenPaddingTop -
-      ref.read(settingProvider).screenPaddingBottom,
+          ref.read(settingProvider).appBarHeight -
+          ref.read(settingProvider).navigationBarHeight -
+          ref.read(settingProvider).screenPaddingTop -
+          ref.read(settingProvider).screenPaddingBottom,
     );
 
-    final isDark = ref.watch(settingProvider.select((provider) => provider.enableDarkTheme));
-    
+    final isDark = ref
+        .watch(settingProvider.select((provider) => provider.enableDarkTheme));
+
     // シフト表名の更新
     textConroller.text = shiftFrame.shiftName;
 
@@ -118,17 +119,28 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
                 onPressed: () {
                   if (shiftFrame.timeDivs.isEmpty) {
                     showAlertDialog(
-                        context, ref, "入力エラー", "1つ以上の時間区分を入力して下さい。", true);
+                      context,
+                      ref,
+                      "入力エラー",
+                      "1つ以上の時間区分を入力して下さい。",
+                      true,
+                    );
                   } else if (shiftFrame.shiftName == '') {
                     showAlertDialog(
-                        context, ref, "入力エラー", "シフト表の名前を指定して下さい。", true);
+                      context,
+                      ref,
+                      "入力エラー",
+                      "シフト表の名前を指定して下さい。",
+                      true,
+                    );
                   } else if (!existPrepareTerm) {
                     showAlertDialog(
-                        context,
-                        ref,
-                        "入力エラー",
-                        "リクエストに対するシフト作成期間が必要なため、\n「リクエスト期間」「シフト期間」には1日以上の間隔を空けて下さい。",
-                        true);
+                      context,
+                      ref,
+                      "入力エラー",
+                      "リクエストに対するシフト作成期間が必要なため、\n「リクエスト期間」「シフト期間」には1日以上の間隔を空けて下さい。",
+                      true,
+                    );
                   } else {
                     shiftFrame.initTable();
                     ref.read(shiftFrameProvider).shiftFrame = shiftFrame;

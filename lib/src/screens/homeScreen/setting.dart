@@ -24,13 +24,12 @@ class SettingScreen extends ConsumerStatefulWidget {
 }
 
 class SettingScreenState extends ConsumerState<SettingScreen> {
-
   Size screenSize = const Size(0, 0);
 
   @override
   Widget build(BuildContext context) {
-    
-    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
+    screenSize = Size(
+        MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
 
     bool enableDarkTheme = ref.read(settingProvider).enableDarkTheme;
     bool defaultShiftView = ref.read(settingProvider).defaultShiftView;
@@ -41,8 +40,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
       return text;
     }
 
-    return 
-    Scaffold(
+    return Scaffold(
       appBar: const EmptyAppBar(),
       body: SafeArea(
         child: SettingsList(
@@ -59,56 +57,85 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
               title: Text('基本設定', style: Styles.defaultStyle15),
               tiles: [
                 SettingsTile.navigation(
-                  leading: Icon((enableDarkTheme) ? Icons.dark_mode : Icons.light_mode),
+                  leading: Icon(
+                    (enableDarkTheme) ? Icons.dark_mode : Icons.light_mode,
+                  ),
                   title: Text('カラーテーマ', style: Styles.defaultStyle13),
-                  value: Text((enableDarkTheme) ? "ダークテーマ" : "ライトテーマ", style: Styles.defaultStyle13),
-                  onPressed: (value){
-                    setState(() {
-                      showModalWindow(
-                        context,
-                        0.5,
-                        buildModalWindowContainer(
+                  value: Text(
+                    (enableDarkTheme) ? "ダークテーマ" : "ライトテーマ",
+                    style: Styles.defaultStyle13,
+                  ),
+                  onPressed: (value) {
+                    setState(
+                      () {
+                        showModalWindow(
                           context,
-                          [
-                            Text("ライトテーマ", style: Styles.headlineStyle13,textAlign: TextAlign.center),
-                            Text("ダークテーマ", style: Styles.headlineStyle13,textAlign: TextAlign.center),
-                          ],
                           0.5,
-                          (BuildContext context, int index){
-                            setState(() {});
-                            ref.read(settingProvider).enableDarkTheme = index == 1 ? true : false;
-                            ref.read(settingProvider).storePreferences();
-                          }
-                        )
-                      );
-                    });
+                          buildModalWindowContainer(
+                            context,
+                            [
+                              Text(
+                                "ライトテーマ",
+                                style: Styles.headlineStyle13,
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                "ダークテーマ",
+                                style: Styles.headlineStyle13,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                            0.5,
+                            (BuildContext context, int index) {
+                              setState(() {});
+                              ref.read(settingProvider).enableDarkTheme =
+                                  index == 1 ? true : false;
+                              ref.read(settingProvider).storePreferences();
+                            },
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
                 SettingsTile.navigation(
                   leading: const Icon(Icons.calendar_today_rounded),
                   title: Text('デフォルトの画面', style: Styles.defaultStyle13),
-                  value: Text((defaultShiftView) ? "管理中のシフト表" : "フォロー中のシフト表", style: Styles.defaultStyle13),
+                  value: Text(
+                    (defaultShiftView) ? "管理中のシフト表" : "フォロー中のシフト表",
+                    style: Styles.defaultStyle13,
+                  ),
                   onPressed: (value) {
-                    setState(() {
-                      showModalWindow(
-                        context,
-                        0.5,
-                        buildModalWindowContainer(
+                    setState(
+                      () {
+                        showModalWindow(
                           context,
-                          [
-                            Text("フォロー中のシフト表", style: Styles.headlineStyle13,textAlign: TextAlign.center),
-                            Text("管理中のシフト表", style: Styles.headlineStyle13,textAlign: TextAlign.center),
-                          ],
                           0.5,
-                          (BuildContext context, int index){
-                            setState(() {});
-                            ref.read(settingProvider).defaultShiftView = index == 1 ? true : false;
-                            ref.read(settingProvider).storePreferences();
-                          }
-                        )
-                      );
-
-                    });
+                          buildModalWindowContainer(
+                            context,
+                            [
+                              Text(
+                                "フォロー中のシフト表",
+                                style: Styles.headlineStyle13,
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                "管理中のシフト表",
+                                style: Styles.headlineStyle13,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                            0.5,
+                            (BuildContext context, int index) {
+                              setState(() {});
+                              ref.read(settingProvider).defaultShiftView =
+                                  index == 1 ? true : false;
+                              ref.read(settingProvider).storePreferences();
+                            },
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
               ],
@@ -123,11 +150,11 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     context.go('/settings/userInfo');
                   },
                 ),
-                if (!ref.read(signInProvider).user!.isAnonymous) ... [
+                if (!ref.read(signInProvider).user!.isAnonymous) ...[
                   SettingsTile.navigation(
                     leading: const Icon(Icons.logout_rounded),
                     title: Text('ログアウト', style: Styles.defaultStyle13),
-                    onPressed: (context){
+                    onPressed: (context) {
                       showConfirmDialog(
                         context,
                         ref,
@@ -142,21 +169,35 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     },
                   ),
                   SettingsTile.navigation(
-                    leading: const Icon(Icons.exit_to_app_rounded, color: Colors.red),
+                    leading: const Icon(
+                      Icons.exit_to_app_rounded,
+                      color: Colors.red,
+                    ),
                     title: Text('ユーザの削除', style: Styles.defaultStyleRed13),
                     onPressed: (context) {
                       showConfirmDialog(
-                        context, ref, "確認", "アカウントを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。", "アカウントを削除しました。", (){
+                        context,
+                        ref,
+                        "確認",
+                        "アカウントを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。",
+                        "アカウントを削除しました。",
+                        () {
                           ref.read(signInProvider).deleteUserData().then(
-                            (value){
+                            (value) {
                               ref.read(signInProvider).deleteUser().then(
-                                (error){
-                                  if(error){
-                                    showAlertDialog(context, ref, "エラー", "アカウントの削除に失敗しました。もう一度お試しく下さい。", error); 
+                                (error) {
+                                  if (error) {
+                                    showAlertDialog(
+                                      context,
+                                      ref,
+                                      "エラー",
+                                      "アカウントの削除に失敗しました。もう一度お試しく下さい。",
+                                      error,
+                                    );
                                   }
-                                }
+                                },
                               );
-                            }
+                            },
                           );
                         },
                         true,
@@ -164,7 +205,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                       );
                     },
                   ),
-                ] else ... [
+                ] else ...[
                   SettingsTile.navigation(
                     leading: const Icon(Icons.login_rounded),
                     title: Text('アカウント連携', style: Styles.defaultStyle13),
@@ -212,7 +253,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     },
                   ),
                 ]
-              ]
+              ],
             ),
             SettingsSection(
               title: Text('その他', style: Styles.defaultStyle15),
@@ -220,7 +261,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                 SettingsTile.navigation(
                   leading: const Icon(Icons.email_rounded),
                   title: Text('お問い合わせ / ご要望', style: Styles.defaultStyle13),
-                  onPressed:(context) => context.go('/settings/contact'),
+                  onPressed: (context) => context.go('/settings/contact'),
                 ),
                 SettingsTile.navigation(
                   leading: const Icon(Icons.share_rounded),
@@ -241,12 +282,14 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                 SettingsTile.navigation(
                   leading: const Icon(Icons.document_scanner_rounded),
                   title: Text('利用規約', style: Styles.defaultStyle13),
-                  onPressed:(context) => context.go('/settings/privacy_policy'),
+                  onPressed: (context) =>
+                      context.go('/settings/privacy_policy'),
                 ),
                 SettingsTile.navigation(
                   leading: const Icon(Icons.privacy_tip_rounded),
                   title: Text('プライバシーポリシー', style: Styles.defaultStyle13),
-                  onPressed:(context) => context.go('/settings/privacy_policy'),
+                  onPressed: (context) =>
+                      context.go('/settings/privacy_policy'),
                 ),
                 SettingsTile.navigation(
                   trailing: FutureBuilder<String>(
