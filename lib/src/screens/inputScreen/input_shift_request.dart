@@ -1189,7 +1189,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         height: buttonHeight,
                         action: () {
                           setState(
-                            () {
+                            () { 
                               buildSelectorModaleWindow(
                                 List<Icon>.generate(
                                   2,
