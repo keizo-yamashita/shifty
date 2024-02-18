@@ -263,14 +263,18 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                   cells: List<List<Widget>>.generate(
                     rowLength,
                     (i) {
-                      return List.generate(columnLength, (j) {
-                        return shiftCell(
+                      return List.generate(
+                        columnLength,
+                        (j) {
+                          return shiftCell(
                             i,
                             j,
                             shiftTable.shiftFrame.assignTable[i][j] != 0,
                             j == selectedCoodinate?.column &&
-                                i == selectedCoodinate?.row);
-                      });
+                                i == selectedCoodinate?.row,
+                          );
+                        },
+                      );
                     },
                   ),
                 )
@@ -312,25 +316,29 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                     insertBuffer(shiftTable.shiftTable);
                   },
                   columnTitles: getColumnTitles(
-                      cellHeight * 2,
-                      cellWidth,
-                      shiftTable.shiftFrame.dateTerm[0].start,
-                      shiftTable.shiftFrame.dateTerm[0].end,
-                      isDark),
+                    cellHeight * 2,
+                    cellWidth,
+                    shiftTable.shiftFrame.dateTerm[0].start,
+                    shiftTable.shiftFrame.dateTerm[0].end,
+                    isDark,
+                  ),
                   rowTitles: getRowTitles(cellHeight, cellWidth * 3.5,
                       shiftTable.shiftFrame.timeDivs, isDark),
                   cells: List<List<Widget>>.generate(
                     rowLength,
                     (i) {
-                      return List.generate(columnLength, (j) {
-                        return responseCell(
-                            i,
-                            j,
-                            selectedIndex - 1,
-                            shiftTable.shiftFrame.assignTable[i][j] != 0,
-                            j == selectedCoodinate?.column &&
-                                i == selectedCoodinate?.row);
-                      });
+                      return List.generate(
+                        columnLength,
+                        (j) {
+                          return responseCell(
+                              i,
+                              j,
+                              selectedIndex - 1,
+                              shiftTable.shiftFrame.assignTable[i][j] != 0,
+                              j == selectedCoodinate?.column &&
+                                  i == selectedCoodinate?.row);
+                        },
+                      );
                     },
                   ),
                   enableEdit: enableResponseEdit,
@@ -361,9 +369,11 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                     width: 100,
                     height: 40,
                     onPressed: () {
-                      setState(() {
-                        selectedIndex = 0;
-                      });
+                      setState(
+                        () {
+                          selectedIndex = 0;
+                        },
+                      );
                     },
                   ),
                   for (int requesterIndex = 0;
@@ -373,37 +383,45 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                       content: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(shiftTable.requests[requesterIndex].displayName,
-                              style: (selectedIndex == requesterIndex + 1)
-                                  ? Styles.defaultStyleGreen13
-                                  : Styles.defaultStyleGrey13,
-                              overflow: TextOverflow.ellipsis),
                           Text(
-                              "${(shiftTable.fitness[requesterIndex][1] / 60).toStringAsFixed(1)} h / ${(shiftTable.fitness[requesterIndex][0] / 60).toStringAsFixed(1)} h ( ${(shiftTable.fitness[requesterIndex][2] * 100).toStringAsFixed(1)} % )",
-                              style: (selectedIndex == requesterIndex + 1)
-                                  ? Styles.defaultStyleGreen10
-                                  : Styles.defaultStyleGrey10,
-                              overflow: TextOverflow.ellipsis),
+                            shiftTable.requests[requesterIndex].displayName,
+                            style: (selectedIndex == requesterIndex + 1)
+                                ? Styles.defaultStyleGreen13
+                                : Styles.defaultStyleGrey13,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            "${(shiftTable.fitness[requesterIndex][1] / 60).toStringAsFixed(1)} h / ${(shiftTable.fitness[requesterIndex][0] / 60).toStringAsFixed(1)} h ( ${(shiftTable.fitness[requesterIndex][2] * 100).toStringAsFixed(1)} % )",
+                            style: (selectedIndex == requesterIndex + 1)
+                                ? Styles.defaultStyleGreen10
+                                : Styles.defaultStyleGrey10,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ],
                       ),
                       enable: selectedIndex == requesterIndex + 1,
                       width: 160,
                       height: 40,
                       onPressed: () {
-                        setState(() {
-                          selectedIndex = requesterIndex + 1;
-                          enableResponseEdit = false;
-                        });
+                        setState(
+                          () {
+                            selectedIndex = requesterIndex + 1;
+                            enableResponseEdit = false;
+                          },
+                        );
                       },
                     ),
                   if (shiftTable.requests.isEmpty)
                     BottomButton(
-                        content: Text("フォロワーがいません",
-                            style: Styles.defaultStyleGrey13,
-                            overflow: TextOverflow.ellipsis),
-                        enable: false,
-                        width: 150,
-                        height: 40)
+                      content: Text(
+                        "フォロワーがいません",
+                        style: Styles.defaultStyleGrey13,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      enable: false,
+                      width: 150,
+                      height: 40,
+                    )
                 ],
               ),
             ),
@@ -430,8 +448,11 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
         ? 0
         : (assignNum / shiftTable.shiftFrame.assignTable[row][column]);
 
-    Icon cellValue = Icon(PopIcons.ok,
-        size: 14 * cellWidth / 20, color: Styles.primaryColor);
+    Icon cellValue = Icon(
+      PopIcons.ok,
+      size: 14 * cellWidth / 20,
+      color: Styles.primaryColor,
+    );
     if (value == 0) {
       if (editable) {
         cellValue =
@@ -441,17 +462,26 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
             size: 14 * cellWidth / 20, color: Colors.grey);
       }
     } else if (value < 0.3) {
-      cellValue = Icon(PopIcons.cancel,
-          size: 14 * cellWidth / 20, color: Colors.yellow[800]);
+      cellValue = Icon(
+        PopIcons.cancel,
+        size: 14 * cellWidth / 20,
+        color: Colors.yellow[800],
+      );
     } else if (value < 0.7) {
       cellValue = Icon(PopIcons.attention_alt,
           size: 14 * cellWidth / 20, color: Colors.red);
     } else if (value < 1.0) {
-      cellValue = Icon(PopIcons.attention_alt,
-          size: 14 * cellWidth / 20, color: Colors.yellow[800]);
+      cellValue = Icon(
+        PopIcons.attention_alt,
+        size: 14 * cellWidth / 20,
+        color: Colors.yellow[800],
+      );
     } else if (value > 1.0) {
-      cellValue = Icon(PopIcons.ok,
-          size: 14 * cellWidth / 20, color: Colors.yellow[800]);
+      cellValue = Icon(
+        PopIcons.ok,
+        size: 14 * cellWidth / 20,
+        color: Colors.yellow[800],
+      );
     }
 
     Color cellColor = selected
@@ -460,28 +490,33 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
     var cellBoaderWdth = 1.0;
 
     return Container(
-        width: cellWidth,
-        height: cellHeight,
-        decoration: BoxDecoration(
-            border: Border(
-              top: row == 0
-                  ? BorderSide(width: cellBoaderWdth, color: Colors.grey)
-                  : BorderSide.none,
-              bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
-              left: column == 0
-                  ? BorderSide(width: cellBoaderWdth, color: Colors.grey)
-                  : BorderSide.none,
-              right: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+      width: cellWidth,
+      height: cellHeight,
+      decoration: BoxDecoration(
+          border: Border(
+            top: row == 0
+                ? BorderSide(width: cellBoaderWdth, color: Colors.grey)
+                : BorderSide.none,
+            bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+            left: column == 0
+                ? BorderSide(width: cellBoaderWdth, color: Colors.grey)
+                : BorderSide.none,
+            right: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+          ),
+          color: cellColor),
+      child: editable
+          ? Center(
+              child: SizedBox(
+                  width: cellWidth, height: cellHeight, child: cellValue),
+            )
+          : SizedBox(
+              width: cellWidth,
+              height: cellHeight,
+              child: CustomPaint(
+                painter: DiagonalLinePainter(Colors.grey),
+              ),
             ),
-            color: cellColor),
-        child: editable
-            ? Center(
-                child: SizedBox(
-                    width: cellWidth, height: cellHeight, child: cellValue))
-            : SizedBox(
-                width: cellWidth,
-                height: cellHeight,
-                child: CustomPaint(painter: DiagonalLinePainter(Colors.grey))));
+    );
   }
 
   // Matrix Cell Class Instance
@@ -515,28 +550,33 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
     cellColor = (selected) ? cellColor.withAlpha(100) : cellColor.withAlpha(50);
     var cellBoaderWdth = 1.0;
     return Container(
-        width: cellWidth,
-        height: cellHeight,
-        decoration: BoxDecoration(
-            border: Border(
-              top: row == 0
-                  ? BorderSide(width: cellBoaderWdth, color: Colors.grey)
-                  : BorderSide.none,
-              bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
-              left: column == 0
-                  ? BorderSide(width: cellBoaderWdth, color: Colors.grey)
-                  : BorderSide.none,
-              right: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+      width: cellWidth,
+      height: cellHeight,
+      decoration: BoxDecoration(
+          border: Border(
+            top: row == 0
+                ? BorderSide(width: cellBoaderWdth, color: Colors.grey)
+                : BorderSide.none,
+            bottom: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+            left: column == 0
+                ? BorderSide(width: cellBoaderWdth, color: Colors.grey)
+                : BorderSide.none,
+            right: BorderSide(width: cellBoaderWdth, color: Colors.grey),
+          ),
+          color: cellColor),
+      child: editable
+          ? Center(
+              child: SizedBox(
+                  width: cellWidth, height: cellHeight, child: cellValue),
+            )
+          : SizedBox(
+              width: cellWidth,
+              height: cellHeight,
+              child: CustomPaint(
+                painter: DiagonalLinePainter(Colors.grey),
+              ),
             ),
-            color: cellColor),
-        child: editable
-            ? Center(
-                child: SizedBox(
-                    width: cellWidth, height: cellHeight, child: cellValue))
-            : SizedBox(
-                width: cellWidth,
-                height: cellHeight,
-                child: CustomPaint(painter: DiagonalLinePainter(Colors.grey))));
+    );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
