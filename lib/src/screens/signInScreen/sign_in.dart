@@ -4,6 +4,7 @@
 
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 // my package
 import 'package:shift/main.dart';
@@ -186,6 +187,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                       }
                       else{
                         showAlertDialog(context, ref, "確認", "新規登録しました。", false);
+                        context.go('/home');
                         isDisabled = false;
                       }
                     }
@@ -220,6 +222,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                   }
                   else{
                     showAlertDialog(context, ref, "確認", "ログインしました。", false);
+                    context.go('/home');
                     isDisabled = false;
                   }
                 }
@@ -241,6 +244,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                 ref.read(signInProvider).login(providerName, false).then(
                   (message){
                     showAlertDialog(context, ref, "確認", "ゲストユーザとして\nログインしました。", false);
+                    context.go('/home');
                     isDisabled = false;
                   }
                 ).catchError(
@@ -264,6 +268,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                 }
                 else{
                   showAlertDialog(context, ref, "確認", "ログインしました。", false);
+                  context.go('/home');
                   isDisabled = false;
                 }
               }
