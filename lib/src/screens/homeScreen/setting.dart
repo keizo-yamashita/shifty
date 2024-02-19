@@ -162,7 +162,9 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                         "ログアウトしますか？\n登録したデータは失われません。",
                         "ログアウトしました。",
                         () {
-                          ref.read(signInProvider).logout();
+                          ref.read(signInProvider).logout().then(
+                            (_) => context.go('/signin'),
+                          );
                         },
                         true,
                       );
@@ -194,8 +196,10 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                                       "アカウントの削除に失敗しました。もう一度お試しく下さい。",
                                       error,
                                     );
+                                  }else{
+                                    context.go('/signin');
                                   }
-                                },
+                                }
                               );
                             },
                           );
@@ -241,6 +245,8 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                                       "ゲストユーザの削除に失敗しました。もう一度お試しく下さい。",
                                       error,
                                     );
+                                  }else{
+                                    context.go('/signin');
                                   }
                                 },
                               );
