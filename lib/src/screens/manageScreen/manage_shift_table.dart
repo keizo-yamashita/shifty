@@ -521,7 +521,12 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
   // Matrix Cell Class Instance
   Widget responseCell(
-      int row, int column, int responseIndex, bool editable, bool selected) {
+    int row,
+    int column,
+    int responseIndex,
+    bool editable,
+    bool selected,
+  ) {
     ShiftRequest shiftRequest = shiftTable.requests[responseIndex];
     var value = editable ? shiftRequest.reqTable[row][column] : 0;
     Icon cellValue;
@@ -537,12 +542,18 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       cellColor = Styles.primaryColor;
     } else {
       if (editable) {
-        cellValue =
-            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
+        cellValue = Icon(
+          PopIcons.cancel,
+          size: 12 * cellWidth / 20,
+          color: Colors.red,
+        );
         cellColor = Colors.red;
       } else {
-        cellValue = Icon(PopIcons.cancel,
-            size: 12 * cellWidth / 20, color: Colors.grey);
+        cellValue = Icon(
+          PopIcons.cancel,
+          size: 12 * cellWidth / 20,
+          color: Colors.grey,
+        );
         cellColor = Colors.grey;
       }
     }
@@ -567,7 +578,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       child: editable
           ? Center(
               child: SizedBox(
-                  width: cellWidth, height: cellHeight, child: cellValue),
+                width: cellWidth,
+                height: cellHeight,
+                child: cellValue,
+              ),
             )
           : SizedBox(
               width: cellWidth,
@@ -695,38 +709,51 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
   void buildChangeInputValueModaleWindow() {
     showModalWindow(
+      context,
+      0.5,
+      buildModalWindowContainer(
         context,
-        0.5,
-        buildModalWindowContainer(
-            context,
-            [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.circle_outlined,
-                      size: 30, color: Styles.primaryColor),
-                  const SizedBox(width: 30),
-                  Text("非割り当て",
-                      style: Styles.defaultStyle13,
-                      textAlign: TextAlign.center),
-                ],
+        [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.circle_outlined,
+                size: 30,
+                color: Styles.primaryColor,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.circle,
-                      size: 30, color: Styles.primaryColor),
-                  const SizedBox(width: 30),
-                  Text("割り当て",
-                      style: Styles.defaultStyle13,
-                      textAlign: TextAlign.center),
-                ],
-              )
+              const SizedBox(width: 30),
+              Text(
+                "非割り当て",
+                style: Styles.defaultStyle13,
+                textAlign: TextAlign.center,
+              ),
             ],
-            0.5, (BuildContext context, int index) {
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.circle,
+                size: 30,
+                color: Styles.primaryColor,
+              ),
+              const SizedBox(width: 30),
+              Text(
+                "割り当て",
+                style: Styles.defaultStyle13,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          )
+        ],
+        0.5,
+        (BuildContext context, int index) {
           setState(() {});
           requestInputValue = index;
-        }));
+        },
+      ),
+    );
   }
 
   void handleTouchEdit() {
@@ -736,11 +763,12 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
         enableResponseEdit = !enableResponseEdit;
       } else {
         showAlertDialog(
-            context,
-            ref,
-            "エラー",
-            "このツールボタンは「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。",
-            true);
+          context,
+          ref,
+          "エラー",
+          "このツールボタンは「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。",
+          true,
+        );
       }
     });
   }
@@ -752,11 +780,12 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
         enableResponseEdit = true;
       } else {
         showAlertDialog(
-            context,
-            ref,
-            "エラー",
-            "このツールボタンは「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。",
-            true);
+          context,
+          ref,
+          "エラー",
+          "このツールボタンは「シフトリクエスト表示画面」でのみ有効です。 \n 画面下部の「切り替えボタン」より切り替えからタップして下さい。",
+          true,
+        );
       }
     });
   }
@@ -767,8 +796,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
   void buildAssignSelectModaleWindow(int column, int row) async {
     showModalWindow(
-            context, 0.5, InputModalWindowWidget(shiftTable, column, row))
-        .then((value) {
+      context,
+      0.5,
+      InputModalWindowWidget(shiftTable, column, row),
+    ).then((value) {
       if (value == true) {
         setState(() {});
         registered = false;
@@ -840,8 +871,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
   void buildAutoFillModalWindow(BuildContext context) {
     showModalWindow(
-            context, 0.5, AutoFillModalWindowWidget(shiftTable: shiftTable))
-        .then((value) {
+      context,
+      0.5,
+      AutoFillModalWindowWidget(shiftTable: shiftTable),
+    ).then((value) {
       if (value != null) {
         setState(() {});
         registered = false;
@@ -862,8 +895,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
   void buildRangeFillModalWindow(BuildContext context) {
     showModalWindow(
-            context, 0.5, RangeFillModalWindowWidget(shiftTable: shiftTable))
-        .then(
+      context,
+      0.5,
+      RangeFillModalWindowWidget(shiftTable: shiftTable),
+    ).then(
       (value) {
         if (value != null) {
           setState(() {});
@@ -897,9 +932,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
   Future<int?> showInfoDialog(bool isDarkTheme) async {
     return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(builder: (context, setState) {
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
             return AlertDialog(
               insetPadding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -963,36 +999,56 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                                 const Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    Icon(Icons.check_box_outline_blank_rounded,
-                                        color: Styles.hiddenColor, size: 20),
+                                    Icon(
+                                      Icons.check_box_outline_blank_rounded,
+                                      color: Styles.hiddenColor,
+                                      size: 20,
+                                    ),
                                     Padding(
-                                      padding:
-                                          EdgeInsets.only(bottom: 10, left: 5),
-                                      child: Icon(Icons.check,
-                                          color: Styles.primaryColor, size: 30),
+                                      padding: EdgeInsets.only(
+                                        bottom: 10,
+                                        left: 5,
+                                      ),
+                                      child: Icon(
+                                        Icons.check,
+                                        color: Styles.primaryColor,
+                                        size: 30,
+                                      ),
                                     )
                                   ],
                                 ),
                                 const SizedBox(width: 10),
-                                Text("割り当て状態",
-                                    style: Styles.defaultStyleGrey13),
+                                Text(
+                                  "割り当て状態",
+                                  style: Styles.defaultStyleGrey13,
+                                ),
                                 const SizedBox(width: 10),
                                 const Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    Icon(Icons.check_box_outline_blank_rounded,
-                                        color: Styles.hiddenColor, size: 20),
+                                    Icon(
+                                      Icons.check_box_outline_blank_rounded,
+                                      color: Styles.hiddenColor,
+                                      size: 20,
+                                    ),
                                     Padding(
-                                      padding:
-                                          EdgeInsets.only(bottom: 10, left: 5),
-                                      child: Icon(Icons.check,
-                                          color: Colors.transparent, size: 30),
+                                      padding: EdgeInsets.only(
+                                        bottom: 10,
+                                        left: 5,
+                                      ),
+                                      child: Icon(
+                                        Icons.check,
+                                        color: Colors.transparent,
+                                        size: 30,
+                                      ),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(width: 10),
-                                Text("非割り当て状態",
-                                    style: Styles.defaultStyleGrey13),
+                                Text(
+                                  "非割り当て状態",
+                                  style: Styles.defaultStyleGrey13,
+                                ),
                               ],
                             ),
 
@@ -1007,37 +1063,55 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                             Row(
                               children: [
                                 Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (isDarkTheme)
-                                                ? Colors.white
-                                                : Colors.grey),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: const Padding(
-                                        padding: EdgeInsets.all(2.0),
-                                        child: Icon(Icons.cancel_sharp,
-                                            size: 20, color: Colors.red))),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: (isDarkTheme)
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.cancel_sharp,
+                                      size: 20,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
                                 SizedBox(
-                                    width: 80,
-                                    child: Text("0 %",
-                                        style: Styles.defaultStyleGrey13)),
+                                  width: 80,
+                                  child: Text(
+                                    "0 %",
+                                    style: Styles.defaultStyleGrey13,
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
                                 Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (isDarkTheme)
-                                                ? Colors.white
-                                                : Colors.grey),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Icon(Icons.cancel_sharp,
-                                            size: 20,
-                                            color: Colors.yellow[800]))),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: (isDarkTheme)
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.cancel_sharp,
+                                      size: 20,
+                                      color: Colors.yellow[800],
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
-                                Text("1 ~ 29 %",
-                                    style: Styles.defaultStyleGrey13)
+                                Text(
+                                  "1 ~ 29 %",
+                                  style: Styles.defaultStyleGrey13,
+                                )
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -1046,37 +1120,51 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (isDarkTheme)
-                                                ? Colors.white
-                                                : Colors.grey),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: const Padding(
-                                        padding: EdgeInsets.all(2.0),
-                                        child: Icon(Icons.warning,
-                                            size: 20, color: Colors.red))),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: (isDarkTheme)
+                                            ? Colors.white
+                                            : Colors.grey),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(2.0),
+                                    child: Icon(Icons.warning,
+                                        size: 20, color: Colors.red),
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
                                 SizedBox(
-                                    width: 80,
-                                    child: Text("30 ~ 69 %",
-                                        style: Styles.defaultStyleGrey13)),
+                                  width: 80,
+                                  child: Text(
+                                    "30 ~ 69 %",
+                                    style: Styles.defaultStyleGrey13,
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
                                 Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (isDarkTheme)
-                                                ? Colors.white
-                                                : Colors.grey),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Icon(Icons.warning,
-                                            size: 20,
-                                            color: Colors.yellow[800]))),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: (isDarkTheme)
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.warning,
+                                      size: 20,
+                                      color: Colors.yellow[800],
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
-                                Text("70% ~ 99%",
-                                    style: Styles.defaultStyleGrey13),
+                                Text(
+                                  "70% ~ 99%",
+                                  style: Styles.defaultStyleGrey13,
+                                ),
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -1085,38 +1173,55 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (isDarkTheme)
-                                                ? Colors.white
-                                                : Colors.grey),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(2.0),
-                                      child: Icon(Icons.thumb_up_off_alt_sharp,
-                                          size: 20, color: Styles.primaryColor),
-                                    )),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: (isDarkTheme)
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.thumb_up_off_alt_sharp,
+                                      size: 20,
+                                      color: Styles.primaryColor,
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
                                 SizedBox(
-                                    width: 80,
-                                    child: Text("100 %",
-                                        style: Styles.defaultStyleGrey13)),
+                                  width: 80,
+                                  child: Text(
+                                    "100 %",
+                                    style: Styles.defaultStyleGrey13,
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
                                 Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (isDarkTheme)
-                                                ? Colors.white
-                                                : Colors.grey),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: Icon(Icons.thumb_up_off_alt_sharp,
-                                          size: 20, color: Colors.yellow[800]),
-                                    )),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: (isDarkTheme)
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.thumb_up_off_alt_sharp,
+                                      size: 20,
+                                      color: Colors.yellow[800],
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
-                                Text("101 % 以上",
-                                    style: Styles.defaultStyleGrey13),
+                                Text(
+                                  "101 % 以上",
+                                  style: Styles.defaultStyleGrey13,
+                                ),
                               ],
                             ),
 
@@ -1126,23 +1231,35 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                             const SizedBox(height: 10),
                             Row(
                               children: [
-                                const Icon(Icons.cloud_upload_outlined,
-                                    size: 24, color: Styles.primaryColor),
+                                const Icon(
+                                  Icons.cloud_upload_outlined,
+                                  size: 24,
+                                  color: Styles.primaryColor,
+                                ),
                                 const SizedBox(width: 10),
-                                Text("登録ボタン (画面右上)",
-                                    style: Styles.defaultStyleGrey13),
+                                Text(
+                                  "登録ボタン (画面右上)",
+                                  style: Styles.defaultStyleGrey13,
+                                ),
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("シフト表の編集内容は、「登録」しない場合、画面遷移時に破棄されます。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("入力したシフト表を「登録」するには、画面右上の「登録ボタン」を押してください。",
-                                style: Styles.defaultStyleGrey13),
                             Text(
-                                "登録したシフト表は常にシフト希望者に共有されますが、「シフト表作成者のみ」が変更を加えることができます。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("「シフト期間」開始日までには、必ず登録してください。",
-                                style: Styles.defaultStyleGrey13),
+                              "シフト表の編集内容は、「登録」しない場合、画面遷移時に破棄されます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "入力したシフト表を「登録」するには、画面右上の「登録ボタン」を押してください。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "登録したシフト表は常にシフト希望者に共有されますが、「シフト表作成者のみ」が変更を加えることができます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "「シフト期間」開始日までには、必ず登録してください。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -1177,8 +1294,9 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                           children: [
                             // Zoom Out / In Button
                             Text(
-                                "「シフト表」上部のツールボタンを用いることで、効率的なシフト表の編集を行うことができます。",
-                                style: Styles.defaultStyleGrey13),
+                              "「シフト表」上部のツールボタンを用いることで、効率的なシフト表の編集を行うことができます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             const SizedBox(height: 20),
                             Text("拡大・縮小ボタン", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
@@ -1186,19 +1304,23 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 ToolButton(
-                                    icon: Icons.zoom_in,
-                                    pressEnable: true,
-                                    width: screenSize.width / 7),
+                                  icon: Icons.zoom_in,
+                                  pressEnable: true,
+                                  width: screenSize.width / 7,
+                                ),
                                 const SizedBox(width: 10),
                                 ToolButton(
-                                    icon: Icons.zoom_out,
-                                    pressEnable: true,
-                                    width: screenSize.width / 7),
+                                  icon: Icons.zoom_out,
+                                  pressEnable: true,
+                                  width: screenSize.width / 7,
+                                ),
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("シフト表の拡大・縮小ができます。",
-                                style: Styles.defaultStyleGrey13),
+                            Text(
+                              "シフト表の拡大・縮小ができます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             const SizedBox(height: 10),
 
                             // Auto Fill Button
@@ -1206,25 +1328,34 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                             Text("自動入力ボタン", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
                             ToolButton(
-                                icon: Icons.auto_fix_high_outlined,
-                                pressEnable: true,
-                                width: screenSize.width / 7),
-                            const SizedBox(height: 10),
-                            Text("自動でシフト表へ割り当てできます。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("入力前に、ボタン長押しし、自動割り当てを行うための基準となる勤務時間を設定してください。",
-                                style: Styles.defaultStyleGrey13),
-                            const SizedBox(height: 10),
-                            Text("(例)8時間を設定 -> 8時間を基準の勤務時間として割り当てを行われる",
-                                style: Styles.defaultStyleGrey13),
+                              icon: Icons.auto_fix_high_outlined,
+                              pressEnable: true,
+                              width: screenSize.width / 7,
+                            ),
                             const SizedBox(height: 10),
                             Text(
-                                "注意1 : 全ての勤務者の希望通過率を基準に自動入力されます。そのため，設定した希望勤務時間に満たない割り当ても生じます。",
-                                style: Styles.defaultStyleGrey13),
+                              "自動でシフト表へ割り当てできます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "入力前に、ボタン長押しし、自動割り当てを行うための基準となる勤務時間を設定してください。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             const SizedBox(height: 10),
                             Text(
-                                "注意2 : 入力の手間を軽減することを目的としており，質を保証するものではありません。自動入力後，必ずご確認ください。改善案等がございましたら、ぜひご連絡くださいませ。",
-                                style: Styles.defaultStyleGrey13),
+                              "(例)8時間を設定 -> 8時間を基準の勤務時間として割り当てを行われる",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              "注意1 : 全ての勤務者の希望通過率を基準に自動入力されます。そのため，設定した希望勤務時間に満たない割り当ても生じます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              "注意2 : 入力の手間を軽減することを目的としており，質を保証するものではありません。自動入力後，必ずご確認ください。改善案等がございましたら、ぜひご連絡くださいませ。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             const SizedBox(height: 10),
 
                             // Filterring Input Button
@@ -1232,12 +1363,15 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                             Text("フィルタ入力ボタン", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
                             ToolButton(
-                                icon: Icons.filter_alt_outlined,
-                                pressEnable: true,
-                                width: screenSize.width / 7),
+                              icon: Icons.filter_alt_outlined,
+                              pressEnable: true,
+                              width: screenSize.width / 7,
+                            ),
                             const SizedBox(height: 10),
-                            Text("「勤務者名」「日時」を指定して、一括でシフト表に入力できます。",
-                                style: Styles.defaultStyleGrey13),
+                            Text(
+                              "「勤務者名」「日時」を指定して、一括でシフト表に入力できます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             const SizedBox(height: 10),
 
                             // Draw Button
@@ -1245,22 +1379,31 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                             Text("タッチ入力ボタン", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
                             ToolButton(
-                                icon: Icons.touch_app_outlined,
-                                pressEnable: true,
-                                width: screenSize.width / 7),
+                              icon: Icons.touch_app_outlined,
+                              pressEnable: true,
+                              width: screenSize.width / 7,
+                            ),
                             const SizedBox(height: 10),
-                            Text("細かい1マス単位の編集ができます。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("タップ後に表のマスをなぞることで「割り当て状態」を編集できます。",
-                                style: Styles.defaultStyleGrey13),
                             Text(
-                                "「割当て状態」「非割り当て状態」どちらを入力するかは、ボタンを長押しすることで選択できます。",
-                                style: Styles.defaultStyleGrey13),
+                              "細かい1マス単位の編集ができます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             Text(
-                                "注意1 : その間、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("注意2 : 「シフトリクエスト表示中」にのみ使用できます。",
-                                style: Styles.defaultStyleGrey13),
+                              "タップ後に表のマスをなぞることで「割り当て状態」を編集できます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "「割当て状態」「非割り当て状態」どちらを入力するかは、ボタンを長押しすることで選択できます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "注意1 : その間、表のスクロールが無効化されます。スクロールが必要な場合は、もう一度「タッチ入力ボタン」をタップし、無効化してください。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "注意2 : 「シフトリクエスト表示中」にのみ使用できます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
 
                             // Redo / Undo Button
                             const SizedBox(height: 10),
@@ -1270,22 +1413,27 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 ToolButton(
-                                    icon: Icons.undo,
-                                    pressEnable: true,
-                                    width: screenSize.width / 7),
+                                  icon: Icons.undo,
+                                  pressEnable: true,
+                                  width: screenSize.width / 7,
+                                ),
                                 const SizedBox(width: 10),
                                 ToolButton(
-                                    icon: Icons.redo,
-                                    pressEnable: true,
-                                    width: screenSize.width / 7)
+                                  icon: Icons.redo,
+                                  pressEnable: true,
+                                  width: screenSize.width / 7,
+                                )
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text("編集したシフト表を「前の状態」や「次の状態」に戻すことができます。",
-                                style: Styles.defaultStyleGrey13),
                             Text(
-                                "注意 : 遡れる状態は最大50であり、一度管理者画面を閉じると過去の変更履歴は破棄されます。",
-                                style: Styles.defaultStyleGrey13),
+                              "編集したシフト表を「前の状態」や「次の状態」に戻すことができます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "注意 : 遡れる状態は最大50であり、一度管理者画面を閉じると過去の変更履歴は破棄されます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             const SizedBox(height: 10),
                           ],
                         ),
@@ -1303,8 +1451,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                                 : Text("+", style: Styles.defaultStyleGreen18),
                           ),
                           const SizedBox(width: 10),
-                          Text("シフトリクエスト表について",
-                              style: Styles.defaultStyleGreen18),
+                          Text(
+                            "シフトリクエスト表について",
+                            style: Styles.defaultStyleGreen18,
+                          ),
                         ],
                       ),
                       onPressed: () {
@@ -1320,73 +1470,104 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                "画面下部の切り替えボタンをタップすることで、「シフト表」と「シフトリクエスト表」を切り替えることができます。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("どちらの画面でもシフト表への割り当てを編集することが可能です。",
-                                style: Styles.defaultStyleGrey13),
+                              "画面下部の切り替えボタンをタップすることで、「シフト表」と「シフトリクエスト表」を切り替えることができます。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "どちらの画面でもシフト表への割り当てを編集することが可能です。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             const SizedBox(height: 20),
                             Text("アイコンについて", style: Styles.defaultStyle18),
                             const SizedBox(height: 10),
                             Text(
-                                "シフト表の表示されるアイコンは、「シフトリクエスト表のリクエスト状態」/「割り当て状態」を示すものです。",
-                                style: Styles.defaultStyleGrey13),
-                            Text("アイコンの示す意味は、下記のとおりです。",
-                                style: Styles.defaultStyleGrey13),
+                              "シフト表の表示されるアイコンは、「シフトリクエスト表のリクエスト状態」/「割り当て状態」を示すものです。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
+                            Text(
+                              "アイコンの示す意味は、下記のとおりです。",
+                              style: Styles.defaultStyleGrey13,
+                            ),
                             const SizedBox(height: 10),
                             Row(
                               children: [
                                 Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (isDarkTheme)
-                                                ? Colors.white
-                                                : Colors.grey),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: const Padding(
-                                        padding: EdgeInsets.all(2.0),
-                                        child: Icon(Icons.circle_outlined,
-                                            size: 20,
-                                            color: Styles.primaryColor))),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: (isDarkTheme)
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.circle_outlined,
+                                      size: 20,
+                                      color: Styles.primaryColor,
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
                                 SizedBox(
-                                    width: 100,
-                                    child: Text("リクエスト状態",
-                                        style: Styles.defaultStyleGrey13)),
+                                  width: 100,
+                                  child: Text(
+                                    "リクエスト状態",
+                                    style: Styles.defaultStyleGrey13,
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
                                 Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (isDarkTheme)
-                                                ? Colors.white
-                                                : Colors.grey),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: const Padding(
-                                        padding: EdgeInsets.all(2.0),
-                                        child: Icon(Icons.clear,
-                                            size: 20, color: Colors.red))),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: (isDarkTheme)
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.clear,
+                                      size: 20,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
-                                Text("非リクエスト状態",
-                                    style: Styles.defaultStyleGrey13)
+                                Text(
+                                  "非リクエスト状態",
+                                  style: Styles.defaultStyleGrey13,
+                                )
                               ],
                             ),
                             const SizedBox(height: 10),
                             Row(
                               children: [
                                 Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: (isDarkTheme)
-                                                ? Colors.white
-                                                : Colors.grey),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: const Padding(
-                                        padding: EdgeInsets.all(2.0),
-                                        child: Icon(Icons.circle,
-                                            size: 20,
-                                            color: Styles.primaryColor))),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: (isDarkTheme)
+                                            ? Colors.white
+                                            : Colors.grey),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.circle,
+                                      size: 20,
+                                      color: Styles.primaryColor,
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 10),
-                                Text("割り当て状態",
-                                    style: Styles.defaultStyleGrey13),
+                                Text(
+                                  "割り当て状態",
+                                  style: Styles.defaultStyleGrey13,
+                                ),
                               ],
                             ),
                           ],
@@ -1404,8 +1585,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                 ),
               ],
             );
-          });
-        });
+          },
+        );
+      },
+    );
   }
 }
 
@@ -1434,26 +1617,34 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
         i < widget.shiftTable.shiftTable[widget.row][widget.column].length;
         i++) {
       widget.backup.add(
-          widget.shiftTable.shiftTable[widget.row][widget.column][i].assign);
+        widget.shiftTable.shiftTable[widget.row][widget.column][i].assign,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    DateTime date = widget.shiftTable.shiftFrame.dateTerm[0].start
-        .add(Duration(days: widget.column));
+    DateTime date = widget.shiftTable.shiftFrame.dateTerm[0].start.add(
+      Duration(days: widget.column),
+    );
     List<String> weekdayJP = ["月", "火", "水", "木", "金", "土", "日"];
     Text dateText;
 
     if (date.weekday == 6) {
-      dateText = Text('${date.day} (${weekdayJP[date.weekday - 1]})',
-          style: Styles.tableTitleStyle(Colors.blue, 15));
+      dateText = Text(
+        '${date.day} (${weekdayJP[date.weekday - 1]})',
+        style: Styles.tableTitleStyle(Colors.blue, 15),
+      );
     } else if (date.weekday == 7) {
-      dateText = Text('${date.day} (${weekdayJP[date.weekday - 1]})',
-          style: Styles.tableTitleStyle(Colors.red, 15));
+      dateText = Text(
+        '${date.day} (${weekdayJP[date.weekday - 1]})',
+        style: Styles.tableTitleStyle(Colors.red, 15),
+      );
     } else {
-      dateText = Text('${date.day} (${weekdayJP[date.weekday - 1]})',
-          style: Styles.tableTitleStyle(null, 15));
+      dateText = Text(
+        '${date.day} (${weekdayJP[date.weekday - 1]})',
+        style: Styles.tableTitleStyle(null, 15),
+      );
     }
 
     int assignNum = 0;
@@ -1497,12 +1688,15 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                   children: [
                     dateText,
                     const SizedBox(width: 10),
-                    Text(widget.shiftTable.shiftFrame.timeDivs[widget.row].name,
-                        style: Styles.tableTitleStyle(null, 15)),
+                    Text(
+                      widget.shiftTable.shiftFrame.timeDivs[widget.row].name,
+                      style: Styles.tableTitleStyle(null, 15),
+                    ),
                     const SizedBox(width: 20),
                     Text(
-                        "$assignNum / ${widget.shiftTable.shiftFrame.assignTable[widget.row][widget.column]} 人",
-                        style: Styles.tableTitleStyle(null, 15)),
+                      "$assignNum / ${widget.shiftTable.shiftFrame.assignTable[widget.row][widget.column]} 人",
+                      style: Styles.tableTitleStyle(null, 15),
+                    ),
                   ],
                 ),
               ),
@@ -1510,9 +1704,11 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
             (widget.shiftTable.shiftTable[widget.row][widget.column].isEmpty)
                 ? Padding(
                     padding: const EdgeInsets.symmetric(vertical: 15.0),
-                    child: Text("リクエストしているユーザがいません",
-                        style: Styles.defaultStyleRed15,
-                        textAlign: TextAlign.center),
+                    child: Text(
+                      "リクエストしているユーザがいません",
+                      style: Styles.defaultStyleRed15,
+                      textAlign: TextAlign.center,
+                    ),
                   )
                 : SizedBox(
                     height: MediaQuery.of(context).size.height * 0.5 -
@@ -1531,27 +1727,28 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                        width: 100,
-                                        child: Text(
-                                            widget
-                                                .shiftTable
-                                                .requests[widget
-                                                    .shiftTable
-                                                    .shiftTable[widget.row]
-                                                        [widget.column][index]
-                                                    .userIndex]
-                                                .displayName,
-                                            style: Styles.defaultStyle15,
-                                            textAlign: TextAlign.center)),
+                                      width: 100,
+                                      child: Text(
+                                          widget
+                                              .shiftTable
+                                              .requests[widget
+                                                  .shiftTable
+                                                  .shiftTable[widget.row]
+                                                      [widget.column][index]
+                                                  .userIndex]
+                                              .displayName,
+                                          style: Styles.defaultStyle15,
+                                          textAlign: TextAlign.center),
+                                    ),
                                     const SizedBox(width: 30),
                                     Stack(
                                       alignment: Alignment.center,
                                       children: [
                                         const Icon(
-                                            Icons
-                                                .check_box_outline_blank_rounded,
-                                            color: Styles.hiddenColor,
-                                            size: 30),
+                                          Icons.check_box_outline_blank_rounded,
+                                          color: Styles.hiddenColor,
+                                          size: 30,
+                                        ),
                                         (widget
                                                 .shiftTable
                                                 .shiftTable[widget.row]
@@ -1560,16 +1757,20 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                                             ? const Padding(
                                                 padding: EdgeInsets.only(
                                                     bottom: 5, left: 5),
-                                                child: Icon(PopIcons.ok,
-                                                    color: Styles.primaryColor,
-                                                    size: 25),
+                                                child: Icon(
+                                                  PopIcons.ok,
+                                                  color: Styles.primaryColor,
+                                                  size: 25,
+                                                ),
                                               )
                                             : const Padding(
                                                 padding: EdgeInsets.only(
                                                     bottom: 5, left: 5),
-                                                child: Icon(PopIcons.ok,
-                                                    color: Colors.transparent,
-                                                    size: 25),
+                                                child: Icon(
+                                                  PopIcons.ok,
+                                                  color: Colors.transparent,
+                                                  size: 25,
+                                                ),
                                               ),
                                       ],
                                     ),
@@ -1583,15 +1784,20 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                                           ? const Padding(
                                               padding: EdgeInsets.only(
                                                   bottom: 5, left: 5),
-                                              child: Icon(PopIcons.lock,
-                                                  color: Colors.orange,
-                                                  size: 30),
+                                              child: Icon(
+                                                PopIcons.lock,
+                                                color: Colors.orange,
+                                                size: 30,
+                                              ),
                                             )
                                           : const Padding(
                                               padding: EdgeInsets.only(
                                                   bottom: 5, left: 5),
-                                              child: Icon(PopIcons.lock_open,
-                                                  color: Colors.grey, size: 30),
+                                              child: Icon(
+                                                PopIcons.lock_open,
+                                                color: Colors.grey,
+                                                size: 30,
+                                              ),
                                             ),
                                       onTap: () {
                                         setState(() {
@@ -1625,39 +1831,41 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                                     )
                                   ]),
                               onTap: () {
-                                setState(() {
-                                  if (!widget
-                                      .shiftTable
-                                      .shiftTable[widget.row][widget.column]
-                                          [index]
-                                      .locked) {
-                                    widget
-                                            .shiftTable
-                                            .shiftTable[widget.row]
-                                                [widget.column][index]
-                                            .assign =
-                                        !widget
-                                            .shiftTable
-                                            .shiftTable[widget.row]
-                                                [widget.column][index]
-                                            .assign;
-                                    widget
-                                            .shiftTable
-                                            .requests[widget
-                                                .shiftTable
-                                                .shiftTable[widget.row]
-                                                    [widget.column][index]
-                                                .userIndex]
-                                            .respTable[widget.row]
-                                        [widget.column] = (widget
-                                            .shiftTable
-                                            .shiftTable[widget.row]
-                                                [widget.column][index]
-                                            .assign)
-                                        ? 1
-                                        : 0;
-                                  }
-                                });
+                                setState(
+                                  () {
+                                    if (!widget
+                                        .shiftTable
+                                        .shiftTable[widget.row][widget.column]
+                                            [index]
+                                        .locked) {
+                                      widget
+                                              .shiftTable
+                                              .shiftTable[widget.row]
+                                                  [widget.column][index]
+                                              .assign =
+                                          !widget
+                                              .shiftTable
+                                              .shiftTable[widget.row]
+                                                  [widget.column][index]
+                                              .assign;
+                                      widget
+                                              .shiftTable
+                                              .requests[widget
+                                                  .shiftTable
+                                                  .shiftTable[widget.row]
+                                                      [widget.column][index]
+                                                  .userIndex]
+                                              .respTable[widget.row]
+                                          [widget.column] = (widget
+                                              .shiftTable
+                                              .shiftTable[widget.row]
+                                                  [widget.column][index]
+                                              .assign)
+                                          ? 1
+                                          : 0;
+                                    }
+                                  },
+                                );
                               },
                             ),
                             const Divider(thickness: 2)
@@ -1698,68 +1906,80 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
     /// Auto-Fillの引数の入力UI (viewHistoryがTrueであれば，履歴表示画面を表示)
     ////////////////////////////////////////////////////////////////////////////////////////////
 
-    return LayoutBuilder(builder: (context, constraints) {
-      var modalHeight = screenSize.height * 0.5;
-      var modalWidth = screenSize.width - 20 - screenSize.width * 0.1;
-      var paddingHeght = modalHeight * 0.04;
-      var buttonHeight = min(modalHeight * 0.16, 50.0);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var modalHeight = screenSize.height * 0.5;
+        var modalWidth = screenSize.width - 20 - screenSize.width * 0.1;
+        var paddingHeght = modalHeight * 0.04;
+        var buttonHeight = min(modalHeight * 0.16, 50.0);
 
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
-        child: SizedBox(
-          height: modalHeight,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text("シフトの自動割り当て",
-                      style: Styles.defaultStyle15,
-                      textAlign: TextAlign.center),
-                ),
-                const Divider(thickness: 2),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text("基本勤務時間", style: Styles.defaultStyle15),
-                        buildTimePicker(
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
+          child: SizedBox(
+            height: modalHeight,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        "シフトの自動割り当て",
+                        style: Styles.defaultStyle15,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const Divider(thickness: 2),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text("基本勤務時間", style: Styles.defaultStyle15),
+                          buildTimePicker(
                             DateTime(1, 1, 1, 0, 0).add(baseDuration),
                             DateTime(1, 1, 1, 0, 15),
                             DateTime(1, 1, 1, 23, 45),
-                            15, (DateTime val) {
-                          baseDuration =
-                              val.difference(DateTime(1, 1, 1, 0, 0));
-                        }),
-                      ],
-                    )),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text("最短勤務時間", style: Styles.defaultStyle15),
-                        buildTimePicker(
+                            15,
+                            (DateTime val) {
+                              baseDuration =
+                                  val.difference(DateTime(1, 1, 1, 0, 0));
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text("最短勤務時間", style: Styles.defaultStyle15),
+                          buildTimePicker(
                             DateTime(1, 1, 1, 0, 0).add(minDuration),
                             DateTime(1, 1, 1, 0, 15),
                             DateTime(1, 1, 1, 23, 45),
-                            15, (DateTime val) {
-                          minDuration = val.difference(DateTime(1, 1, 1, 0, 0));
-                        }),
-                      ],
-                    )),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text("連続勤務日数", style: Styles.defaultStyle15),
-                        SizedBox(
-                          height: 40,
-                          width: screenSize.width / 3,
-                          child: OutlinedButton(
+                            15,
+                            (DateTime val) {
+                              minDuration =
+                                  val.difference(DateTime(1, 1, 1, 0, 0));
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text("連続勤務日数", style: Styles.defaultStyle15),
+                          SizedBox(
+                            height: 40,
+                            width: screenSize.width / 3,
+                            child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 shadowColor: Styles.hiddenColor,
                                 minimumSize: Size.zero,
@@ -1772,42 +1992,61 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
                                         .backgroundColor ??
                                     Theme.of(context).scaffoldBackgroundColor,
                                 side: const BorderSide(
-                                    color: Styles.primaryColor),
+                                  color: Styles.primaryColor,
+                                ),
                               ),
                               onPressed: () async {
                                 buildInputBaseConDayModaleWindow();
                               },
-                              child: Text(inputConDayList[baseConDay],
-                                  style: Styles.defaultStyleGreen15)),
-                        )
-                      ],
-                    )),
-              ]),
-              const Divider(thickness: 0.5),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                  child: CustomTextButton(
-                      text: "自動アサイン",
-                      enable: true,
-                      width: modalWidth,
-                      height: buttonHeight,
-                      onPressed: () {
-                        setState(() {
-                          widget._shiftTable.autoFill(baseDuration.inMinutes,
-                              minDuration.inMinutes, baseConDay);
-                          widget._shiftTable.calcFitness(baseDuration.inMinutes,
-                              minDuration.inMinutes, baseConDay);
-                          Navigator.pop(context, true);
-                        });
-                      }),
+                              child: Text(
+                                inputConDayList[baseConDay],
+                                style: Styles.defaultStyleGreen15,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ])
-            ],
+                const Divider(thickness: 0.5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: CustomTextButton(
+                        text: "自動アサイン",
+                        enable: true,
+                        width: modalWidth,
+                        height: buttonHeight,
+                        onPressed: () {
+                          setState(
+                            () {
+                              widget._shiftTable.autoFill(
+                                baseDuration.inMinutes,
+                                minDuration.inMinutes,
+                                baseConDay,
+                              );
+                              widget._shiftTable.calcFitness(
+                                baseDuration.inMinutes,
+                                minDuration.inMinutes,
+                                baseConDay,
+                              );
+                              Navigator.pop(context, true);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -1821,66 +2060,75 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
       height: 40,
       width: screenSize.width / 3,
       child: OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            shadowColor: Styles.hiddenColor,
-            minimumSize: Size.zero,
-            padding: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            backgroundColor: Theme.of(context).appBarTheme.backgroundColor ??
-                Theme.of(context).scaffoldBackgroundColor,
-            side: const BorderSide(color: Styles.primaryColor),
+        style: OutlinedButton.styleFrom(
+          shadowColor: Styles.hiddenColor,
+          minimumSize: Size.zero,
+          padding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
           ),
-          onPressed: () async {
-            await showModalWindow(
-                context,
-                0.4,
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  width: double.maxFinite,
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.time,
-                    initialDateTime: init,
-                    minuteInterval: interval,
-                    minimumDate: min,
-                    maximumDate: max,
-                    onDateTimeChanged: (val) {
-                      setState(() {
-                        temp = val;
-                        callback(val);
-                      });
-                    },
-                    use24hFormat: true,
-                  ),
-                ));
-          },
-          child: Text(
-              '${temp.hour.toString().padLeft(2, '0')} 時間 ${temp.minute.toString().padLeft(2, '0')} 分',
-              style: Styles.defaultStyleGreen15)),
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor ??
+              Theme.of(context).scaffoldBackgroundColor,
+          side: const BorderSide(color: Styles.primaryColor),
+        ),
+        onPressed: () async {
+          await showModalWindow(
+            context,
+            0.4,
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.3,
+              width: double.maxFinite,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.time,
+                initialDateTime: init,
+                minuteInterval: interval,
+                minimumDate: min,
+                maximumDate: max,
+                onDateTimeChanged: (val) {
+                  setState(() {
+                    temp = val;
+                    callback(val);
+                  });
+                },
+                use24hFormat: true,
+              ),
+            ),
+          );
+        },
+        child: Text(
+          '${temp.hour.toString().padLeft(2, '0')} 時間 ${temp.minute.toString().padLeft(2, '0')} 分',
+          style: Styles.defaultStyleGreen15,
+        ),
+      ),
     );
   }
 
   void buildInputBaseConDayModaleWindow() {
     showModalWindow(
+      context,
+      0.5,
+      buildModalWindowContainer(
         context,
+        List<Widget>.generate(
+          assignNumSelect.length,
+          (index) => Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                inputConDayList[index],
+                style: Styles.defaultStyle13,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
         0.5,
-        buildModalWindowContainer(
-            context,
-            List<Widget>.generate(
-                assignNumSelect.length,
-                (index) => Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(inputConDayList[index],
-                            style: Styles.defaultStyle13,
-                            textAlign: TextAlign.center),
-                      ],
-                    )),
-            0.5, (BuildContext context, int index) {
+        (BuildContext context, int index) {
           setState(() {});
           baseConDay = index;
-        }));
+        },
+      ),
+    );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -1889,13 +2137,18 @@ class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
 
   void buildSelectorModaleWindow(List list, int resultIndex) {
     showModalWindow(
+      context,
+      0.50,
+      buildModalWindowContainer(
         context,
+        list,
         0.50,
-        buildModalWindowContainer(context, list, 0.50,
-            (BuildContext context, int index) {
+        (BuildContext context, int index) {
           selectorsIndex[resultIndex] = index;
           setState(() {});
-        }));
+        },
+      ),
+    );
   }
 }
 
@@ -1954,35 +2207,40 @@ class RangeFillModalWindowWidgetState
     /// Auto-Fillの引数の入力UI (viewHistoryがTrueであれば，履歴表示画面を表示)
     ////////////////////////////////////////////////////////////////////////////////////////////
 
-    return LayoutBuilder(builder: (context, constraints) {
-      var modalHeight = screenSize.height * 0.5;
-      var modalWidth = screenSize.width - 20 - screenSize.width * 0.1;
-      var paddingHeght = modalHeight * 0.03;
-      var buttonHeight = min(modalHeight * 0.16, 50.0);
-      var widgetHeight = buttonHeight + paddingHeght * 2;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var modalHeight = screenSize.height * 0.5;
+        var modalWidth = screenSize.width - 20 - screenSize.width * 0.1;
+        var paddingHeght = modalHeight * 0.03;
+        var buttonHeight = min(modalHeight * 0.16, 50.0);
+        var widgetHeight = buttonHeight + paddingHeght * 2;
 
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
-        child: SizedBox(
-          height: modalHeight,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: SizedBox(
-                  height: 20,
-                  child: Text("シフトの範囲入力",
-                      style: Styles.defaultStyle15,
-                      textAlign: TextAlign.center),
-                ),
-              ),
-              const Divider(thickness: 2),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
+          child: SizedBox(
+            height: modalHeight,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   child: SizedBox(
-                      child: CustomTextButton(
+                    height: 20,
+                    child: Text(
+                      "シフトの範囲入力",
+                      style: Styles.defaultStyle15,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                const Divider(thickness: 2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: SizedBox(
+                        child: CustomTextButton(
                           text: requesterList[selectorsIndex[5]],
                           enable: true,
                           width: modalWidth * 0.9,
@@ -1991,39 +2249,48 @@ class RangeFillModalWindowWidgetState
                             setState(() {
                               buildSelectorModaleWindow(requesterList, 5);
                             });
-                          })),
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                      width: modalWidth * 0.1,
+                      child: Center(
+                        child: Text("の", style: Styles.defaultStyle13),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(
-                    height: 20,
-                    width: modalWidth * 0.1,
-                    child:
-                        Center(child: Text("の", style: Styles.defaultStyle13))),
-              ]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                    child: SizedBox(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: SizedBox(
                         child: CustomTextButton(
-                            text: weekSelect[selectorsIndex[0]],
-                            enable: true,
-                            width: modalWidth * (90 / 330),
-                            height: buttonHeight,
-                            onPressed: () {
-                              setState(() {
-                                buildSelectorModaleWindow(weekSelect, 0);
-                              });
-                            })),
-                  ),
-                  SizedBox(
+                          text: weekSelect[selectorsIndex[0]],
+                          enable: true,
+                          width: modalWidth * (90 / 330),
+                          height: buttonHeight,
+                          onPressed: () {
+                            setState(() {
+                              buildSelectorModaleWindow(weekSelect, 0);
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
                       height: widgetHeight,
                       width: modalWidth * (25 / 330),
                       child: Center(
-                          child: Text("の", style: Styles.defaultStyle13))),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                    child: CustomTextButton(
+                        child: Text("の", style: Styles.defaultStyle13),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: CustomTextButton(
                         text: weekdaySelect[selectorsIndex[1]],
                         enable: true,
                         width: modalWidth * (90 / 330),
@@ -2032,23 +2299,28 @@ class RangeFillModalWindowWidgetState
                           setState(() {
                             buildSelectorModaleWindow(weekdaySelect, 1);
                           });
-                        }),
-                  ),
-                  SizedBox(
+                        },
+                      ),
+                    ),
+                    SizedBox(
                       height: widgetHeight,
                       width: modalWidth * (25 / 330),
                       child: Center(
-                          child: Text("の", style: Styles.defaultStyle13))),
-                  SizedBox(
-                      height: widgetHeight, width: modalWidth * (100 / 330))
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                    child: CustomTextButton(
+                        child: Text("の", style: Styles.defaultStyle13),
+                      ),
+                    ),
+                    SizedBox(
+                      height: widgetHeight,
+                      width: modalWidth * (100 / 330),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: CustomTextButton(
                         text: timeDivs1List[selectorsIndex[2]],
                         enable: true,
                         width: modalWidth * (90 / 330),
@@ -2057,16 +2329,19 @@ class RangeFillModalWindowWidgetState
                           setState(() {
                             buildSelectorModaleWindow(timeDivs1List, 2);
                           });
-                        }),
-                  ),
-                  SizedBox(
+                        },
+                      ),
+                    ),
+                    SizedBox(
                       height: widgetHeight,
                       width: modalWidth * (25 / 330),
                       child: Center(
-                          child: Text("~", style: Styles.defaultStyle13))),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                    child: CustomTextButton(
+                        child: Text("~", style: Styles.defaultStyle13),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: CustomTextButton(
                         text: timeDivs2List[selectorsIndex[3]],
                         enable: true,
                         width: modalWidth * (90 / 330),
@@ -2075,75 +2350,98 @@ class RangeFillModalWindowWidgetState
                           setState(() {
                             buildSelectorModaleWindow(timeDivs2List, 3);
                           });
-                        }),
-                  ),
-                  SizedBox(
+                        },
+                      ),
+                    ),
+                    SizedBox(
                       height: widgetHeight,
                       width: modalWidth * (60 / 330),
                       child: Center(
-                          child: Text("の区分を", style: Styles.defaultStyle13))),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                    child: CustomIconButton(
+                        child: Text("の区分を", style: Styles.defaultStyle13),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: CustomIconButton(
                         icon: (selectorsIndex[4] == 1)
-                            ? const Icon(Icons.circle,
-                                size: 20, color: Styles.primaryColor)
-                            : const Icon(Icons.circle_outlined,
-                                size: 20, color: Styles.primaryColor),
+                            ? const Icon(
+                                Icons.circle,
+                                size: 20,
+                                color: Styles.primaryColor,
+                              )
+                            : const Icon(
+                                Icons.circle_outlined,
+                                size: 20,
+                                color: Styles.primaryColor,
+                              ),
                         enable: true,
                         width: modalWidth * (65 / 330),
                         height: buttonHeight,
                         action: () {
-                          setState(() {
-                            buildSelectorModaleWindow(
+                          setState(
+                            () {
+                              buildSelectorModaleWindow(
                                 List<Icon>.generate(
-                                    2,
-                                    (index) => (index == 1)
-                                        ? const Icon(Icons.circle,
-                                            size: 20,
-                                            color: Styles.primaryColor)
-                                        : const Icon(Icons.circle_outlined,
-                                            size: 20,
-                                            color: Styles.primaryColor)),
-                                4);
-                          });
-                        }),
-                  ),
-                ],
-              ),
-              const Divider(thickness: 0.5),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: paddingHeght),
-                  child: CustomTextButton(
-                      text: "範囲入力する",
-                      enable: true,
-                      width: modalWidth,
-                      height: buttonHeight,
-                      onPressed: () {
-                        setState(() {
-                          var rule = ShiftTableRule(
-                            week: selectorsIndex[0],
-                            weekday: selectorsIndex[1],
-                            time1: selectorsIndex[2],
-                            time2: selectorsIndex[3],
-                            response: selectorsIndex[4],
-                            requester: selectorsIndex[5] == 0
-                                ? null
-                                : selectorsIndex[5] - 1,
+                                  2,
+                                  (index) => (index == 1)
+                                      ? const Icon(
+                                          Icons.circle,
+                                          size: 20,
+                                          color: Styles.primaryColor,
+                                        )
+                                      : const Icon(
+                                          Icons.circle_outlined,
+                                          size: 20,
+                                          color: Styles.primaryColor,
+                                        ),
+                                ),
+                                4,
+                              );
+                            },
                           );
-                          widget._shiftTable.applyRuleToShift(rule);
-                          Navigator.pop(context, rule);
-                          setState(() {});
-                        });
-                      }),
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ])
-            ],
+                const Divider(thickness: 0.5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: paddingHeght),
+                      child: CustomTextButton(
+                        text: "範囲入力する",
+                        enable: true,
+                        width: modalWidth,
+                        height: buttonHeight,
+                        onPressed: () {
+                          setState(() {
+                            var rule = ShiftTableRule(
+                              week: selectorsIndex[0],
+                              weekday: selectorsIndex[1],
+                              time1: selectorsIndex[2],
+                              time2: selectorsIndex[3],
+                              response: selectorsIndex[4],
+                              requester: selectorsIndex[5] == 0
+                                  ? null
+                                  : selectorsIndex[5] - 1,
+                            );
+                            widget._shiftTable.applyRuleToShift(rule);
+                            Navigator.pop(context, rule);
+                            setState(() {});
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -2152,12 +2450,17 @@ class RangeFillModalWindowWidgetState
 
   void buildSelectorModaleWindow(List list, int resultIndex) {
     showModalWindow(
+      context,
+      0.50,
+      buildModalWindowContainer(
         context,
+        list,
         0.50,
-        buildModalWindowContainer(context, list, 0.50,
-            (BuildContext context, int index) {
+        (BuildContext context, int index) {
           selectorsIndex[resultIndex] = index;
           setState(() {});
-        }));
+        },
+      ),
+    );
   }
 }

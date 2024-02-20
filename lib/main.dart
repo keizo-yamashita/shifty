@@ -37,9 +37,6 @@ final shiftTableProvider   = ChangeNotifierProvider((ref) => ShiftTableProvider(
 final deepLinkProvider     = ChangeNotifierProvider((ref) => DeepLinkProvider());
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
-final homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
-final likeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'settings');
-final cartNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'suggestion');
 
 final routerProvider = Provider<GoRouter>((ref) {
 
