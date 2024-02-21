@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  firebase_core: ^2.11.0
+  firebase_core: ^2.25.4
   cloud_firestore: ^4.6.0
   time_range_picker: ^2.2.0
   firebase_auth: ^4.14.1
@@ -54,6 +54,8 @@ dependencies:
   settings_ui: ^2.0.2
   webview_flutter: ^4.4.4
   package_info_plus: ^4.0.1 
+  in_app_review: ^2.0.8
+  url_launcher: ^6.2.4
   # dart_openai: ^3.0.0
 
 dev_dependencies:
