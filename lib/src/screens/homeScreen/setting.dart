@@ -2,11 +2,16 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:share/share.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:settings_ui/settings_ui.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // my package
 import 'package:shift/main.dart';
@@ -14,7 +19,6 @@ import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/form/utility/empty_appbar.dart';
 import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:settings_ui/settings_ui.dart';
 import 'package:shift/src/screens/signInScreen/link_account.dart';
 
 class SettingScreen extends ConsumerStatefulWidget {
@@ -284,6 +288,9 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                 SettingsTile.navigation(
                   leading: const Icon(Icons.star_rounded),
                   title: Text('レビューを書く', style: Styles.defaultStyle13),
+                  onPressed: (context) {
+                    DrawerHelper.launchStoreReview(context);
+                  }
                 ),
                 SettingsTile.navigation(
                   leading: const Icon(Icons.document_scanner_rounded),
@@ -316,5 +323,35 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
         ),
       ),
     );
+  }
+}
+
+class DrawerHelper {
+  static final InAppReview _inAppReview = InAppReview.instance;
+
+  // URLを定数化
+  static const String _urlAppStore = 'https://apps.apple.com/jp/app/shifty-%E3%82%B7%E3%83%95%E3%83%88%E8%A1%A8%E4%BD%9C%E6%88%90%E3%82%A2%E3%83%97%E3%83%AA/id6458593130';
+  static const String _urlPlayStore = 'https://play.google.com/store/apps/details?id=com.kakupan.shift&pcampaignid=web_share';
+
+  static void launchStoreReview(BuildContext context) async {
+    try {
+      if (await _inAppReview.isAvailable()) {
+        _inAppReview.requestReview();
+      } else {
+        // ストアのURLにフォールバック
+        final url = Platform.isIOS ? _urlAppStore : _urlPlayStore;
+
+        if (!await launchUrl(Uri.parse(url))) {
+          throw 'Cannot launch the store URL';
+        }
+        // AnalyticsService.instance.analytics.logEvent(
+        //   name: 'navigate_to_store_url',
+        // );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ストアページを開けませんでした')),
+      );
+    }
   }
 }
