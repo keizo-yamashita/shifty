@@ -344,9 +344,6 @@ class DrawerHelper {
         if (!await launchUrl(Uri.parse(url))) {
           throw 'Cannot launch the store URL';
         }
-        // AnalyticsService.instance.analytics.logEvent(
-        //   name: 'navigate_to_store_url',
-        // );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
