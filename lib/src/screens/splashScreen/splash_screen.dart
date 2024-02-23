@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shift/main.dart';
 import 'package:shift/src/components/deep_link_mixin.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/screens/createScreen/add_shift_request.dart';
+import 'package:shift/src/screens/shiftScreen/add_shift_request.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

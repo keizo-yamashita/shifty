@@ -17,7 +17,7 @@ import 'package:shift/src/components/form/shift_editor/coordinate.dart';
 import 'package:shift/src/components/undo_redo.dart';
 import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/form/utility/button.dart';
-import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
+import 'package:shift/src/screens/shiftScreen/register_shift_frame.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数

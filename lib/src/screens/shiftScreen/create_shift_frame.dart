@@ -11,7 +11,7 @@ import 'package:shift/main.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
-import 'package:shift/src/screens/createScreen/register_shift_frame.dart';
+import 'package:shift/src/screens/shiftScreen/register_shift_frame.dart';
 import 'package:shift/src/components/form/create_screen/input_shift_name.dart';
 import 'package:shift/src/components/form/create_screen/input_date_term.dart';
 import 'package:shift/src/components/form/create_screen/input_time_division.dart';
