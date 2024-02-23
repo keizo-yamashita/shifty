@@ -47,6 +47,8 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
           AppBar().preferredSize.height -
           MediaQuery.of(context).padding.top,
     );
+    
+    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
 
     return GestureDetector(
       onTap: () {
@@ -110,6 +112,8 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                   cursorColor: Styles.primaryColor,
                   style: Styles.defaultStyleGreen15,
                   decoration: InputDecoration(
+                    fillColor: bgColor,
+                    filled: true,
                     contentPadding: const EdgeInsets.symmetric(vertical: 8),
                     prefixIconColor: Styles.primaryColor,
                     enabledBorder: OutlineInputBorder(
@@ -170,6 +174,8 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                   cursorColor: Styles.primaryColor,
                   style: Styles.defaultStyleGreen15,
                   decoration: InputDecoration(
+                    fillColor: bgColor,
+                    filled: true,
                     contentPadding: const EdgeInsets.symmetric(vertical: 8),
                     prefixIconColor: Styles.primaryColor,
                     enabledBorder: OutlineInputBorder(

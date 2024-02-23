@@ -24,6 +24,7 @@ import 'package:shift/src/screens/shiftScreen/manage_shift_table.dart';
 import 'package:shift/src/screens/settingsScreen/user_info.dart';
 import 'package:shift/src/screens/settingsScreen/contact.dart';
 import 'package:shift/src/screens/settingsScreen/privacy_policy.dart';
+import 'package:shift/src/screens/settingsScreen/link_account.dart';
 
 // my components
 import 'package:shift/src/components/style/style.dart';
@@ -156,6 +157,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                     pageBuilder: (context, state) => MaterialPage(
                       key: state.pageKey,
                       child: const UserInfoPage(),
+                    ),
+                  ),
+                  GoRoute(
+                    name: 'link_account',
+                    path: 'link_account',
+                    pageBuilder: (context, state) => MaterialPage(
+                      key: state.pageKey,
+                      child: const LinkAccountScreen(),
                     ),
                   ),
                   GoRoute(

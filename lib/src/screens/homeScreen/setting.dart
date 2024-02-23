@@ -19,7 +19,7 @@ import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/form/utility/empty_appbar.dart';
 import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/screens/signInScreen/link_account.dart';
+
 
 class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -218,12 +218,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     leading: const Icon(Icons.login_rounded),
                     title: Text('アカウント連携', style: Styles.defaultStyle13),
                     onPressed: (context) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (c) => const LinkAccountScreen(),
-                        ),
-                      );
+                      context.go('/settings/link_account');
                     },
                   ),
                   SettingsTile.navigation(

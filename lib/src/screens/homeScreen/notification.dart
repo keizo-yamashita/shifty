@@ -28,7 +28,7 @@ class NotificationScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(20),
                     child: Text(
                       '現在、お知らせはありません。',
-                      style: Styles.defaultStyle18,
+                      style: Styles.defaultStyle15,
                     ),
                   ),
                 ],
