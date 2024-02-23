@@ -2,28 +2,30 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'firebase_options.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
+
+// my screens
 import 'package:shift/src/app_navigation_bar.dart';
-import 'package:shift/src/screens/createScreen/add_shift_request.dart';
-import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
+import 'package:shift/src/screens/splashScreen/splash_screen.dart';
+import 'package:shift/src/screens/signInScreen/sign_in.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
-import 'package:shift/src/screens/homeScreen/contact.dart';
 import 'package:shift/src/screens/homeScreen/notification.dart';
-import 'package:shift/src/screens/homeScreen/privacy_policy.dart';
-import 'package:shift/src/screens/homeScreen/user_info.dart';
-import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
-import 'package:shift/src/screens/manageScreen/manage_shift_table.dart';
-import 'package:shift/src/screens/signInScreen/sign_in.dart';
-import 'package:shift/src/screens/splashScreen/splash_screen.dart';
-import 'firebase_options.dart';
+import 'package:shift/src/screens/shiftScreen/add_shift_request.dart';
+import 'package:shift/src/screens/shiftScreen/create_shift_frame.dart';
+import 'package:shift/src/screens/shiftScreen/input_shift_request.dart';
+import 'package:shift/src/screens/shiftScreen/manage_shift_table.dart';
+import 'package:shift/src/screens/settingsScreen/user_info.dart';
+import 'package:shift/src/screens/settingsScreen/contact.dart';
+import 'package:shift/src/screens/settingsScreen/privacy_policy.dart';
 
-// myh package
+// my components
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/deep_link_mixin.dart';
 import 'package:shift/src/components/sign_in/sign_in_provider.dart';
