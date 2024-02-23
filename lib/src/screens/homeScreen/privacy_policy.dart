@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shift/src/components/style/style.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PrivacyPolicyPage extends ConsumerStatefulWidget {
@@ -13,24 +14,28 @@ class PrivacyPolicyPage extends ConsumerStatefulWidget {
 }
 
 class PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
+  
   Size screenSize = const Size(0, 0);
 
-  //Size get screenSize => MediaQuery.of(context).size;
   WebViewController controller = WebViewController()
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..setBackgroundColor(const Color(0x00000000))
     ..setNavigationDelegate(
       NavigationDelegate(
         onProgress: (int progress) {
-          // Update loading bar.
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Styles.primaryColor,
+              ),
+            ),
+          );
         },
         onPageStarted: (String url) {},
         onPageFinished: (String url) {},
         onWebResourceError: (WebResourceError error) {},
         onNavigationRequest: (NavigationRequest request) {
-          if (request.url.startsWith('https://www.youtube.com/')) {
-            return NavigationDecision.prevent;
-          }
           return NavigationDecision.navigate;
         },
       ),

@@ -14,6 +14,7 @@ import 'package:shift/src/screens/createScreen/create_shift_frame.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
 import 'package:shift/src/screens/homeScreen/contact.dart';
+import 'package:shift/src/screens/homeScreen/notification.dart';
 import 'package:shift/src/screens/homeScreen/privacy_policy.dart';
 import 'package:shift/src/screens/homeScreen/user_info.dart';
 import 'package:shift/src/screens/inputScreen/input_shift_request.dart';
@@ -74,11 +75,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes:[
               GoRoute(
-                name: 'suggestion',
-                path: '/suggestion',
+                name: '/notification',
+                path: '/notification',
                 pageBuilder: (context, state) => NoTransitionPage(
                   key: state.pageKey,
-                  child: const ContactPage(),
+                  child: const NotificationScreen(),
                 ),
               ),
             ],
