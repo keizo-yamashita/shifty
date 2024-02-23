@@ -450,37 +450,37 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
     Icon cellValue = Icon(
       PopIcons.ok,
-      size: 14 * cellWidth / 20,
-      color: Styles.primaryColor,
+      size: 12 * cellWidth / 20,
+      color: Styles.primaryColor.withAlpha(100),
     );
     if (value == 0) {
       if (editable) {
         cellValue =
-            Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.red);
+            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
       } else {
         cellValue = Icon(PopIcons.cancel,
-            size: 14 * cellWidth / 20, color: Colors.grey);
+            size: 12 * cellWidth / 20, color: Colors.grey);
       }
     } else if (value < 0.3) {
       cellValue = Icon(
         PopIcons.cancel,
-        size: 14 * cellWidth / 20,
-        color: Colors.yellow[800],
+        size: 12 * cellWidth / 20,
+        color: Colors.yellow.withAlpha(100),
       );
     } else if (value < 0.7) {
       cellValue = Icon(PopIcons.attention_alt,
-          size: 14 * cellWidth / 20, color: Colors.red);
+          size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
     } else if (value < 1.0) {
       cellValue = Icon(
         PopIcons.attention_alt,
-        size: 14 * cellWidth / 20,
-        color: Colors.yellow[800],
+        size: 12 * cellWidth / 20,
+        color: Colors.yellow.withAlpha(100),
       );
     } else if (value > 1.0) {
       cellValue = Icon(
         PopIcons.ok,
-        size: 14 * cellWidth / 20,
-        color: Colors.yellow[800],
+        size: 12 * cellWidth / 20,
+        color: Colors.yellow.withAlpha(100),
       );
     }
 
@@ -507,7 +507,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       child: editable
           ? Center(
               child: SizedBox(
-                  width: cellWidth, height: cellHeight, child: cellValue),
+                  width: cellWidth, height: cellHeight, child: cellValue,),
             )
           : SizedBox(
               width: cellWidth,
@@ -534,20 +534,21 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
     if (value == 1) {
       cellValue = Icon(
-          (shiftRequest.respTable[row][column] == 1)
-              ? PopIcons.circle
-              : PopIcons.circle_empty,
-          size: 12 * cellWidth / 20,
-          color: Styles.primaryColor);
-      cellColor = Styles.primaryColor;
+        (shiftRequest.respTable[row][column] == 1)
+            ? PopIcons.circle
+            : PopIcons.circle_empty,
+        size: 12 * cellWidth / 20,
+        color: Styles.primaryColor.withAlpha(100),
+      );
+      cellColor = Styles.primaryColor.withAlpha(100);
     } else {
       if (editable) {
         cellValue = Icon(
           PopIcons.cancel,
           size: 12 * cellWidth / 20,
-          color: Colors.red,
+          color: Colors.red.withAlpha(100),
         );
-        cellColor = Colors.red;
+        cellColor = Colors.red.withAlpha(100);
       } else {
         cellValue = Icon(
           PopIcons.cancel,

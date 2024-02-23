@@ -321,13 +321,13 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
               ? PopIcons.circle
               : PopIcons.circle_empty,
           size: 12 * cellWidth / 20,
-          color: Styles.primaryColor);
-      cellColor = Styles.primaryColor;
+          color: Styles.primaryColor.withAlpha(100),);
+      cellColor = Styles.primaryColor.withAlpha(100);
     } else {
       if (editable) {
         cellValue =
-            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
-        cellColor = Colors.red;
+            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
+        cellColor = Colors.red.withAlpha(100);
       } else {
         cellValue = Icon(PopIcons.cancel,
             size: 12 * cellWidth / 20, color: Colors.grey);
@@ -380,13 +380,13 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
 
     if (value == 1) {
       cellValue = Icon(PopIcons.circle_empty,
-          size: 12 * cellWidth / 20, color: Styles.primaryColor);
-      cellColor = Styles.primaryColor;
+          size: 12 * cellWidth / 20, color: Styles.primaryColor.withAlpha(100),);
+      cellColor = Styles.primaryColor.withAlpha(100);
     } else {
       if (editable) {
         cellValue =
-            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
-        cellColor = Colors.red;
+            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
+        cellColor = Colors.red.withAlpha(100);
       } else {
         cellValue = Icon(PopIcons.cancel,
             size: 12 * cellWidth / 20, color: Colors.grey);
