@@ -93,17 +93,18 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
       handleRegister: () {
         if (ref.read(signInProvider).user != null) {
           showConfirmDialog(
-            context,
-            ref,
-            "確認",
-            "このシフト表で作成しますか？",
-            "シフト表を作成しました",
-            () {
+            context: context,
+            ref: ref,
+            title: "確認",
+            message1: "このシフト表で作成しますか？",
+            message2: "シフト表を作成しました",
+            onAccept: () {
               shiftFrame.pushShiftFrame();
               crearVariables();
               Navigator.pop(context);
               Navigator.pop(context);
             },
+            confirm: true,
           );
         } else {
           showAlertDialog(

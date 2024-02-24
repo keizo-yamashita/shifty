@@ -24,11 +24,12 @@ class NotificationScreen extends StatelessWidget {
             child: Center(
               child: Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 32.0),
                     child: Text(
-                      '現在、お知らせはありません。',
-                      style: Styles.defaultStyle18,
+                      "フォロー中のシフト表はありません。",
+                      style: Styles.defaultStyleGrey15,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ],

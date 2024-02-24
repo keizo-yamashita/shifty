@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 // my package
 import 'package:shift/main.dart';
 import 'package:flutter/material.dart';
+import 'package:shift/src/components/form/utility/snackbar.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
 
@@ -44,8 +45,8 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text('Shifty', style: Styles.defaultStyleWhite25),
-                Text('ダウンロードありがとうございます。', style: Styles.defaultStyleWhite25),
+                Text('Shifty', style: Styles.defaultStyleWhite20),
+                Text('ダウンロードありがとうございます。', style: Styles.defaultStyleWhite20),
                 const SizedBox(height: 10),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.8, child: const Divider(color: Colors.white,)),
                 const SizedBox(height: 10),
@@ -176,9 +177,13 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
               isDisabled = false;
             }
             else{
-              showConfirmDialog(context, ref, "確認",
-                "このメールアドレスとパスワードで\n新規登録しますか？", "",
-                (){
+              showConfirmDialog(
+                context: context,
+                ref : ref,
+                title: "確認",
+                message1: "このメールアドレスとパスワードで\n新規登録しますか？",
+                message2: "",
+                onAccept: (){
                   ref.read(signInProvider).login(providerName, false, mail, password).then(
                     (message){
                       if(message != ""){
@@ -186,7 +191,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                         isDisabled = false;
                       }
                       else{
-                        showAlertDialog(context, ref, "確認", "新規登録しました。", false);
+                        showSnackBar(context: context, message: "新規登録しました。");
                         context.go('/home');
                         isDisabled = false;
                       }
@@ -197,7 +202,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                     }
                   );
                 },
-                false
+                confirm: false,
               );
             }
           }
@@ -221,7 +226,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                     isDisabled = false;
                   }
                   else{
-                    showAlertDialog(context, ref, "確認", "ログインしました。", false);
+                    showSnackBar(context: context, message: "ログインしました。");
                     context.go('/home');
                     isDisabled = false;
                   }
@@ -238,12 +243,15 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
           ////////////////////////////////////////////////////////////////////////////////////////////
           else if(providerName == 'guest'){
             showConfirmDialog(
-              context, ref, "確認",
-              "ゲストユーザとして\nログインしますか？\n\n注意 : ゲストアカウントでは\n複数の端末でアカウントを\n共有することができません。", "",
-              (){
+              context: context,
+              ref : ref,
+              title: "確認",
+              message1: "ゲストユーザとして\nログインしますか？\n\n注意 : ゲストアカウントでは\n複数の端末でアカウントを\n共有することができません。",
+              message2: "",
+              onAccept: (){
                 ref.read(signInProvider).login(providerName, false).then(
                   (message){
-                    showAlertDialog(context, ref, "確認", "ゲストユーザとして\nログインしました。", false);
+                    showSnackBar(context: context, message: "ゲストユーザとして\nログインしました。");
                     context.go('/home');
                     isDisabled = false;
                   }
@@ -253,7 +261,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                   }
                 );
               },
-              false
+              confirm: false
             );
           }
           ////////////////////////////////////////////////////////////////////////////////////////////
@@ -267,7 +275,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                   isDisabled = false;
                 }
                 else{
-                  showAlertDialog(context, ref, "確認", "ログインしました。", false);
+                  showSnackBar(context: context, message: "ログインしました。");
                   context.go('/home');
                   isDisabled = false;
                 }

@@ -19,7 +19,7 @@ import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/form/utility/empty_appbar.dart';
 import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/screens/signInScreen/link_account.dart';
+
 
 class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -160,17 +160,17 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     title: Text('ログアウト', style: Styles.defaultStyle13),
                     onPressed: (context) {
                       showConfirmDialog(
-                        context,
-                        ref,
-                        "確認",
-                        "ログアウトしますか？\n登録したデータは失われません。",
-                        "ログアウトしました。",
-                        () {
+                        context: context,
+                        ref: ref,
+                        title: "確認",
+                        message1: "ログアウトしますか？\n登録したデータは失われません。",
+                        message2: "ログアウトしました。",
+                        onAccept: () {
                           ref.read(signInProvider).logout().then(
                             (_) => context.go('/signin'),
                           );
                         },
-                        true,
+                        confirm: true,
                       );
                     },
                   ),
@@ -182,12 +182,12 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     title: Text('ユーザの削除', style: Styles.defaultStyleRed13),
                     onPressed: (context) {
                       showConfirmDialog(
-                        context,
-                        ref,
-                        "確認",
-                        "アカウントを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。",
-                        "アカウントを削除しました。",
-                        () {
+                        context: context,
+                        ref: ref,
+                        title: "確認",
+                        message1: "アカウントを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。",
+                        message2: "アカウントを削除しました。",
+                        onAccept: () {
                           ref.read(signInProvider).deleteUserData().then(
                             (value) {
                               ref.read(signInProvider).deleteUser().then(
@@ -208,8 +208,8 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                             },
                           );
                         },
-                        true,
-                        true,
+                        confirm: true,
+                        error: true,
                       );
                     },
                   ),
@@ -218,12 +218,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     leading: const Icon(Icons.login_rounded),
                     title: Text('アカウント連携', style: Styles.defaultStyle13),
                     onPressed: (context) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (c) => const LinkAccountScreen(),
-                        ),
-                      );
+                      context.go('/settings/link_account');
                     },
                   ),
                   SettingsTile.navigation(
@@ -231,12 +226,12 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     title: Text('ゲストユーザの削除', style: Styles.defaultStyleRed13),
                     onPressed: (context) {
                       showConfirmDialog(
-                        context,
-                        ref,
-                        "確認",
-                        "ゲストユーザを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。",
-                        "ゲストユーザを削除しました。",
-                        () {
+                        context: context,
+                        ref: ref,
+                        title: "確認",
+                        message1: "ゲストユーザを削除しますか？\n登録したデータは全て削除されます。\n管理者である場合、フォロワーのリクエストデータも削除されます。",
+                        message2: "ゲストユーザを削除しました。",
+                        onAccept: () {
                           ref.read(signInProvider).deleteUserData().then(
                             (value) {
                               ref.read(signInProvider).deleteUser().then(
@@ -257,8 +252,8 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                             },
                           );
                         },
-                        true,
-                        true,
+                        confirm: true,
+                        error: true,
                       );
                     },
                   ),

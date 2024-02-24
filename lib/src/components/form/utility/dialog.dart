@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
 import 'package:shift/main.dart';
+import 'package:shift/src/components/form/utility/snackbar.dart';
 import 'package:shift/src/components/style/style.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -18,16 +19,16 @@ import 'package:shift/src/components/style/style.dart';
 /// onAccept : OK選択時に実行する関数
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-Future<bool> showConfirmDialog(
-  BuildContext context,
-  WidgetRef ref,
-  String title,
-  String message1,
-  String message2,
-  Function onAccept, [
+Future<bool> showConfirmDialog({
+  required BuildContext context,
+  required WidgetRef ref,
+  required String title,
+  required String message1,
+  required String message2,
+  required Function onAccept,
   bool confirm = false,
   bool error = false,
-]) async {
+}) async {
   ref.read(settingProvider).loadPreferences();
   bool isDark = ref.read(settingProvider).enableDarkTheme;
 
@@ -60,35 +61,7 @@ Future<bool> showConfirmDialog(
                 Navigator.pop(dialogContext);
                 accepted = true;
                 if (confirm) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Theme(
-                        data: isDark ? ThemeData.dark() : ThemeData.light(),
-                        child: CupertinoAlertDialog(
-                          title: Text(
-                            '完了\n',
-                            style: Styles.defaultStyleGreen15,
-                          ),
-                          content: Text(
-                            message2,
-                            style: Styles.defaultStyle13
-                          ),
-                          actions: <Widget>[
-                            CupertinoDialogAction(
-                              child: Text(
-                                'OK',
-                                style: Styles.defaultStyleGreen15,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
+                  showSnackBar(context: context, message: message2);
                 }
               },
             ),

@@ -54,7 +54,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           child: FittedBox(
             fit: BoxFit.fill,
             child: Text(
-              "③ 基本となる時間区分を設定して下さい。",
+              "③ 就業時間と管理間隔を設定して下さい。",
               style: Styles.defaultStyle15,
             ),
           ),
@@ -140,8 +140,8 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
             CustomTextButton(
               text: "入力",
               enable: true,
-              width: screenSize.width * 0.44,
-              height: 30,
+              width: screenSize.width * 0.9,
+              height: 35,
               onPressed: () {
                 setState(
                   () {
@@ -152,23 +152,9 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                 );
               },
             ),
-            CustomTextButton(
-              text: "戻す",
-              enable: undoredoCtrl.enableUndo(),
-              width: screenSize.width * 0.44,
-              height: 30,
-              onPressed: () {
-                setState(
-                  () {
-                    timeDivsUndoRedo(true);
-                    widget.onTimeDivsChanged(timeDivs);
-                  },
-                );
-              },
-            ),
           ],
         ),
-        SizedBox(height: screenSize.height * 0.04),
+        SizedBox(height: screenSize.height * 0.02),
 
         ////////////////////////////////////////////////////////////////////////////
         /// 登録した時間区分一覧
@@ -178,13 +164,31 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           style: Styles.defaultStyle13,
           textAlign: TextAlign.left,
         ),
-        SizedBox(height: screenSize.height * 0.04),
+        SizedBox(height: screenSize.height * 0.02),
         (timeDivs.isEmpty)
             ? Text(
                 "登録されている時間区分がありません。",
                 style: Styles.defaultStyle13,
               )
-            : buildScheduleEditor(),
+            : Column(
+              children: [
+            buildScheduleEditor(),
+            CustomTextButton(
+              text: "戻す",
+              enable: undoredoCtrl.enableUndo(),
+              width: screenSize.width * 0.90,
+              height: 35,
+              onPressed: () {
+                setState(
+                  () {
+                    timeDivsUndoRedo(true);
+                    widget.onTimeDivsChanged(timeDivs);
+                  },
+                );
+              },
+            ),
+              ],
+            )
       ],
     );
   }
@@ -297,8 +301,10 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
   ///////////////////////////////////////////////////////////////////////////////////
 
   buildScheduleEditor() {
-    double height = 40;
+    double height = 35;
     double boader = 4;
+
+    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,7 +338,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           ),
         ),
         SizedBox(
-          width: 180,
+          width: screenSize.width * 0.8,
           child: Column(
             children: [
               const Padding(padding: EdgeInsets.all(6)),
@@ -357,13 +363,13 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                              border: Border.all(color: Styles.hiddenColor),
-                              borderRadius: BorderRadius.circular(3.0)),
-                          height: ((height + boader) *
-                                  (calcDurationInMinute(timeDivs[i]) /
-                                          durationAxis)
-                                      .ceil()) -
-                              boader,
+                            color: bgColor,
+                            border: Border.all(color: Styles.primaryColor),
+                            borderRadius: BorderRadius.circular(3.0),
+                          ),
+                          height: (
+                            (height + boader)*(calcDurationInMinute(timeDivs[i]) /durationAxis).ceil()
+                            ) - boader,
                           child: Center(
                             child: Text(
                               "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')} - ${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}",

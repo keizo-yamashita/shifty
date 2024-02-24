@@ -115,10 +115,17 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
             );
           } else {
             showConfirmDialog(
-                context, ref, "確認", "このリクエストを登録しますか？", "リクエストを登録しました。", () {
-              registered = true;
-              shiftRequest.updateShiftRequest();
-            }, true);
+              context: context,
+              ref: ref, 
+              title: "確認",
+              message1: "このリクエストを登録しますか？",
+              message2: "リクエストを登録しました。",
+              onAccept: () {
+                registered = true;
+                shiftRequest.updateShiftRequest();
+              },
+              confirm: true,
+            );
           }
         } else {
           showAlertDialog(
@@ -321,13 +328,13 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
               ? PopIcons.circle
               : PopIcons.circle_empty,
           size: 12 * cellWidth / 20,
-          color: Styles.primaryColor);
-      cellColor = Styles.primaryColor;
+          color: Styles.primaryColor.withAlpha(100),);
+      cellColor = Styles.primaryColor.withAlpha(100);
     } else {
       if (editable) {
         cellValue =
-            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
-        cellColor = Colors.red;
+            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
+        cellColor = Colors.red.withAlpha(100);
       } else {
         cellValue = Icon(PopIcons.cancel,
             size: 12 * cellWidth / 20, color: Colors.grey);
@@ -335,7 +342,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       }
     }
 
-    cellColor = selected ? cellColor.withAlpha(150) : cellColor.withAlpha(50);
+    cellColor = selected ? cellColor.withAlpha(100) : cellColor.withAlpha(50);
     var cellBoaderWdth = 1.0;
     return SizedBox(
       child: Container(
@@ -380,13 +387,13 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
 
     if (value == 1) {
       cellValue = Icon(PopIcons.circle_empty,
-          size: 12 * cellWidth / 20, color: Styles.primaryColor);
-      cellColor = Styles.primaryColor;
+          size: 12 * cellWidth / 20, color: Styles.primaryColor.withAlpha(100),);
+      cellColor = Styles.primaryColor.withAlpha(100);
     } else {
       if (editable) {
         cellValue =
-            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red);
-        cellColor = Colors.red;
+            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
+        cellColor = Colors.red.withAlpha(100);
       } else {
         cellValue = Icon(PopIcons.cancel,
             size: 12 * cellWidth / 20, color: Colors.grey);
@@ -394,7 +401,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       }
     }
 
-    cellColor = selected ? cellColor.withAlpha(150) : cellColor.withAlpha(50);
+    cellColor = selected ? cellColor.withAlpha(100) : cellColor.withAlpha(50);
     var cellBoaderWdth = 1.0;
     return Container(
       width: cellWidth,

@@ -129,31 +129,31 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
             if (!(now.compareTo(shiftTable.shiftFrame.dateTerm[0].start) >= 0 &&
                 now.compareTo(shiftTable.shiftFrame.dateTerm[0].end) <= 0)) {
               showConfirmDialog(
-                context,
-                ref,
-                "確認",
-                "このシフトを登録しますか？",
-                "シフトを登録しました。",
-                () {
+                context: context,
+                ref: ref,
+                title: "確認",
+                message1: "このシフトを登録しますか？",
+                message2: "シフトを登録しました。",
+                onAccept: () {
                   registered = true;
                   shiftTable.pushShiftTable();
                 },
-                true,
-                false,
+                confirm: true,
+                error: false,
               );
             } else {
               showConfirmDialog(
-                context,
-                ref,
-                "確認",
-                "現在はシフト期間中です\nこのシフトを登録しますか？",
-                "シフトを登録しました。",
-                () {
+                context: context,
+                ref: ref,
+                title: "確認",
+                message1: "現在はシフト期間中です\nこのシフトを登録しますか？",
+                message2: "シフトを登録しました。",
+                onAccept: () {
                   registered = true;
                   shiftTable.pushShiftTable();
                 },
-                true,
-                false,
+                confirm: true,
+                error: false,
               );
             }
           }
@@ -231,7 +231,6 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
           ////////////////////////////////////////////////////////////////////////////////////////////
           /// メインテーブル
           ////////////////////////////////////////////////////////////////////////////////////////////
-
           (selectedIndex == 0)
               ? TableEditor(
                   editorKey: editorKey,
@@ -450,42 +449,42 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
     Icon cellValue = Icon(
       PopIcons.ok,
-      size: 14 * cellWidth / 20,
-      color: Styles.primaryColor,
+      size: 12 * cellWidth / 20,
+      color: Styles.primaryColor.withAlpha(100),
     );
     if (value == 0) {
       if (editable) {
         cellValue =
-            Icon(PopIcons.cancel, size: 14 * cellWidth / 20, color: Colors.red);
+            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
       } else {
         cellValue = Icon(PopIcons.cancel,
-            size: 14 * cellWidth / 20, color: Colors.grey);
+            size: 12 * cellWidth / 20, color: Colors.grey);
       }
     } else if (value < 0.3) {
       cellValue = Icon(
         PopIcons.cancel,
-        size: 14 * cellWidth / 20,
-        color: Colors.yellow[800],
+        size: 12 * cellWidth / 20,
+        color: Colors.yellow.withAlpha(100),
       );
     } else if (value < 0.7) {
       cellValue = Icon(PopIcons.attention_alt,
-          size: 14 * cellWidth / 20, color: Colors.red);
+          size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
     } else if (value < 1.0) {
       cellValue = Icon(
         PopIcons.attention_alt,
-        size: 14 * cellWidth / 20,
-        color: Colors.yellow[800],
+        size: 12 * cellWidth / 20,
+        color: Colors.yellow.withAlpha(100),
       );
     } else if (value > 1.0) {
       cellValue = Icon(
         PopIcons.ok,
-        size: 14 * cellWidth / 20,
-        color: Colors.yellow[800],
+        size: 12 * cellWidth / 20,
+        color: Colors.yellow.withAlpha(100),
       );
     }
 
     Color cellColor = selected
-        ? cellValue.color!.withAlpha(150)
+        ? cellValue.color!.withAlpha(100)
         : cellValue.color!.withAlpha(50);
     var cellBoaderWdth = 1.0;
 
@@ -507,7 +506,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       child: editable
           ? Center(
               child: SizedBox(
-                  width: cellWidth, height: cellHeight, child: cellValue),
+                  width: cellWidth, height: cellHeight, child: cellValue,),
             )
           : SizedBox(
               width: cellWidth,
@@ -534,20 +533,21 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
     if (value == 1) {
       cellValue = Icon(
-          (shiftRequest.respTable[row][column] == 1)
-              ? PopIcons.circle
-              : PopIcons.circle_empty,
-          size: 12 * cellWidth / 20,
-          color: Styles.primaryColor);
-      cellColor = Styles.primaryColor;
+        (shiftRequest.respTable[row][column] == 1)
+            ? PopIcons.circle
+            : PopIcons.circle_empty,
+        size: 12 * cellWidth / 20,
+        color: Styles.primaryColor.withAlpha(100),
+      );
+      cellColor = Styles.primaryColor.withAlpha(100);
     } else {
       if (editable) {
         cellValue = Icon(
           PopIcons.cancel,
           size: 12 * cellWidth / 20,
-          color: Colors.red,
+          color: Colors.red.withAlpha(100),
         );
-        cellColor = Colors.red;
+        cellColor = Colors.red.withAlpha(100);
       } else {
         cellValue = Icon(
           PopIcons.cancel,

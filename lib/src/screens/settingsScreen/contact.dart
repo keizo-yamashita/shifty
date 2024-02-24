@@ -28,6 +28,9 @@ class ContactPageState extends ConsumerState<ContactPage>
 
   @override
   Widget build(BuildContext context) {
+
+    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
+
     // 画面サイズの取得
     var screenSize = Size(
         MediaQuery.of(context).size.width,
@@ -79,6 +82,8 @@ class ContactPageState extends ConsumerState<ContactPage>
                   maxLength: 500,
                   autofocus: false,
                   decoration: InputDecoration(
+                    fillColor: bgColor,
+                    filled: true,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       borderSide: const BorderSide(

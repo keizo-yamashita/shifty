@@ -14,16 +14,16 @@ import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/shift/shift_request.dart';
 
-class AddShiftRequestPage extends ConsumerStatefulWidget {
-  const AddShiftRequestPage({Key? key, this.tableId}) : super(key: key);
+class FollowShiftFramePage extends ConsumerStatefulWidget {
+  const FollowShiftFramePage({Key? key, this.tableId}) : super(key: key);
 
   final String? tableId;
 
   @override
-  AddShiftRequestPageState createState() => AddShiftRequestPageState();
+  FollowShiftFramePageState createState() => FollowShiftFramePageState();
 }
 
-class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
+class FollowShiftFramePageState extends ConsumerState<FollowShiftFramePage> {
   // set input text and cursor positon
   late TextEditingController textTableIdConroller;
   late TextEditingController textDisplayNameConroller;
@@ -47,6 +47,8 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
           AppBar().preferredSize.height -
           MediaQuery.of(context).padding.top,
     );
+    
+    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
 
     return GestureDetector(
       onTap: () {
@@ -92,7 +94,7 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                   child: FittedBox(
                     fit: BoxFit.fill,
                     child: Text(
-                      "シフト表のIDを入力して下さい (半角英数20文字)",
+                      "シフト表のIDを入力して下さい。 (半角英数20文字)",
                       style: Styles.defaultStyle15,
                     ),
                   ),
@@ -110,6 +112,8 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                   cursorColor: Styles.primaryColor,
                   style: Styles.defaultStyleGreen15,
                   decoration: InputDecoration(
+                    fillColor: bgColor,
+                    filled: true,
                     contentPadding: const EdgeInsets.symmetric(vertical: 8),
                     prefixIconColor: Styles.primaryColor,
                     enabledBorder: OutlineInputBorder(
@@ -131,30 +135,13 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.go,
                 ),
-                SizedBox(height: screenSize.height * 0.04),
-
-                // (textTableIdConroller.text != "") ?
-                // StreamBuilder<DocumentSnapshot>(
-                //   stream: FirebaseFirestore.instance.collection('shift-table').doc(textTableIdConroller.text).snapshots(),
-                //   builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                //     if (snapshot.hasError) {
-                //       return Text('SteremBuilder でエラーが発生しました: ${snapshot.error}');
-                //     }
-                //     if (snapshot.connectionState == ConnectionState.waiting) {
-                //       return const CircularProgressIndicator(color: MyStyle.primaryColor);
-                //     }
-                //     return buildExistChecker(snapshot.data);
-                //   },
-                // )
-                // : Container(),
-
                 SizedBox(height: screenSize.height * 0.02),
                 Align(
                   alignment: Alignment.topLeft,
                   child: FittedBox(
                     fit: BoxFit.fill,
                     child: Text(
-                      "あなたの表示名を入力して下さい (最大6文字)",
+                      "あなたの表示名を入力して下さい。(最大6文字)",
                       style: Styles.defaultStyle15,
                     ),
                   ),
@@ -170,6 +157,8 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                   cursorColor: Styles.primaryColor,
                   style: Styles.defaultStyleGreen15,
                   decoration: InputDecoration(
+                    fillColor: bgColor,
+                    filled: true,
                     contentPadding: const EdgeInsets.symmetric(vertical: 8),
                     prefixIconColor: Styles.primaryColor,
                     enabledBorder: OutlineInputBorder(
@@ -254,7 +243,7 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                                             context,
                                             ref,
                                             "エラー",
-                                            "すでに同じ表示名が使用されているようです\n別の表示名を入力してください",
+                                            "すでに同じ表示名が使用されているようです。\n別の表示名を入力してください。",
                                             true,
                                           );
                                           errorFlag = true;
@@ -264,12 +253,12 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
 
                                       if (!errorFlag) {
                                         showConfirmDialog(
-                                          context,
-                                          ref,
-                                          "確認",
-                                          "'${shiftFrame.shiftName}'をフォローしますか？",
-                                          "'${shiftFrame.shiftName}'をフォローしました",
-                                          () {
+                                          context: context,
+                                          ref: ref,
+                                          title: "確認",
+                                          message1: "'${shiftFrame.shiftName}'をフォローしますか？",
+                                          message2: "'${shiftFrame.shiftName}'をフォローしました。",
+                                          onAccept: () {
                                             var shiftRequest = ShiftRequest(
                                               shiftFrame,
                                             );
@@ -280,6 +269,7 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                                             );
                                             Navigator.pop(context);
                                           },
+                                          confirm: true,
                                         );
                                       }
                                     },
@@ -289,7 +279,7 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                                     context,
                                     ref,
                                     "エラー",
-                                    "あなたの表示名を\n入力してください",
+                                    "あなたの表示名を\n入力してください。",
                                     true,
                                   );
                                 }
@@ -298,7 +288,7 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                                   context,
                                   ref,
                                   "エラー",
-                                  "このシフト表は現在リクエスト期間中ではないようです\n管理者に確認してください",
+                                  "このシフト表は現在リクエスト期間中ではないようです。\n管理者に確認してください。",
                                   true,
                                 );
                               }
@@ -308,7 +298,7 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
                                 context,
                                 ref,
                                 "エラー",
-                                "入力したIDのシフト表は\n見つかりませんでした",
+                                "入力したIDのシフト表は\n見つかりませんでした。",
                                 true,
                               );
                             }
@@ -339,29 +329,5 @@ class AddShiftRequestPageState extends ConsumerState<AddShiftRequestPage> {
   void dispose() {
     textTableIdConroller.dispose();
     super.dispose();
-  }
-
-  Widget buildExistChecker(DocumentSnapshot<Object?>? doc) {
-    if (doc!.exists) {
-      return Column(
-        children: [
-          Text(
-            "シフト表が見つかりました！",
-            style: Styles.defaultStyleGreen15,
-          ),
-          Text(
-            "シフト表名 : ${doc.get('name')}",
-            style: Styles.defaultStyleGreen15,
-          ),
-        ],
-      );
-    } else {
-      return Column(
-        children: [
-          Text("このIDを持つシフト表は存在しないようです", style: Styles.defaultStyleRed15),
-          Text("IDをもう一度確認してください", style: Styles.defaultStyleRed15),
-        ],
-      );
-    }
   }
 }

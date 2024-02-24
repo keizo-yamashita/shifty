@@ -15,7 +15,10 @@ class InputShiftName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     final screenSize = MediaQuery.of(context).size;
+    
+    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
 
     return Column(
       children: [
@@ -38,6 +41,8 @@ class InputShiftName extends StatelessWidget {
             focusNode: focusNode,
             autofocus: false,
             decoration: InputDecoration(
+              fillColor: bgColor,
+              filled: true,
               contentPadding: const EdgeInsets.symmetric(vertical: 8),
               prefixIconColor: Styles.primaryColor,
               enabledBorder: OutlineInputBorder(

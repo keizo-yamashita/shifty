@@ -326,15 +326,12 @@ class DiagonalLinePainter extends CustomPainter {
       ..color = color
       ..strokeWidth = 0.4;
 
-    // 左下から右上に斜線を描く
     canvas.drawLine(const Offset(0, 0), Offset(size.width, size.height), paint);
-    // canvas.drawLine(Offset(0, size.height), Offset(size.width, 0), paint);
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    // ここでは常に再描画するようにしていますが、パフォーマンスの観点から、
-    // 描画に影響するプロパティが変更された場合のみtrueを返すようにすると良いでしょう。
+
     return false;
   }
 }
