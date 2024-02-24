@@ -176,7 +176,8 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
           // height 30 + 20
           Padding(
             padding: const EdgeInsets.only(
-                top: 15.0, right: 2.0, left: 2.0, bottom: 15.0),
+              top: 15.0, right: 2.0, left: 2.0, bottom: 15.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -244,7 +245,9 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                   onChangeSelect: (p0) async {
                     selectedCoodinate = p0!;
                     setState(() {});
-                    buildAssignSelectModaleWindow(p0.column, p0.row);
+                    if(shiftTable.shiftFrame.assignTable[p0.row][p0.column] != 0){
+                      buildAssignSelectModaleWindow(p0.column, p0.row);
+                    }
                     setState(() {});
                   },
                   onInputEnd: null,
@@ -252,13 +255,18 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                   selected: selectedCoodinate,
                   isDark: isDark,
                   columnTitles: getColumnTitles(
-                      cellHeight * 2,
-                      cellWidth,
-                      shiftTable.shiftFrame.dateTerm[0].start,
-                      shiftTable.shiftFrame.dateTerm[0].end,
-                      isDark),
-                  rowTitles: getRowTitles(cellHeight, cellWidth * 3.5,
-                      shiftTable.shiftFrame.timeDivs, isDark),
+                    cellHeight * 2,
+                    cellWidth,
+                    shiftTable.shiftFrame.dateTerm[0].start,
+                    shiftTable.shiftFrame.dateTerm[0].end,
+                    isDark,
+                  ),
+                  rowTitles: getRowTitles(
+                    cellHeight,
+                    cellWidth * 3.5,
+                    shiftTable.shiftFrame.timeDivs,
+                    isDark,
+                  ),
                   cells: List<List<Widget>>.generate(
                     rowLength,
                     (i) {
@@ -360,10 +368,11 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                 children: [
                   BottomButton(
                     content: Text("      全体      ",
-                        style: (selectedIndex == 0)
-                            ? Styles.defaultStyleGreen13
-                            : Styles.defaultStyleGrey13,
-                        overflow: TextOverflow.ellipsis),
+                      style: (selectedIndex == 0)
+                          ? Styles.defaultStyleGreen13
+                          : Styles.defaultStyleGrey13,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     enable: selectedIndex == 0,
                     width: 100,
                     height: 40,
@@ -506,7 +515,8 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       child: editable
           ? Center(
               child: SizedBox(
-                  width: cellWidth, height: cellHeight, child: cellValue,),
+                width: cellWidth, height: cellHeight, child: cellValue,
+              ),
             )
           : SizedBox(
               width: cellWidth,

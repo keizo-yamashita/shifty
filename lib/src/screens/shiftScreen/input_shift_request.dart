@@ -67,7 +67,6 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
 
   // シフトリクエストのインスタンス取得
   late ShiftRequest shiftRequest;
-  bool enableResponseEdit = false;
   GlobalKey editorKey = GlobalKey<TableEditorState>();
 
   @override
@@ -116,7 +115,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
           } else {
             showConfirmDialog(
               context: context,
-              ref: ref, 
+              ref: ref,
               title: "確認",
               message1: "このリクエストを登録しますか？",
               message2: "リクエストを登録しました。",
@@ -148,7 +147,8 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
               scrollDirection: Axis.horizontal,
               child: Padding(
                 padding: const EdgeInsets.only(
-                    right: 5.0, left: 5.0, top: 15.0, bottom: 15.0),
+                  right: 5.0, left: 5.0, top: 15.0, bottom: 15.0,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -176,7 +176,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
                     ToolButton(
                       icon: Icons.touch_app_outlined,
                       pressEnable: isRequestRange(),
-                      offEnable: !enableResponseEdit,
+                      offEnable: !enableRequestEdit,
                       width: screenSize.width / 7,
                       onPressed: handleTouchEdit,
                       onLongPressed: handleChangeInputValue,
@@ -213,9 +213,14 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
                     titleWidth: cellWidth * 3.5,
                     titleMargin: titleMargin,
                     onChangeSelect: (p0) async {
+                      var editable = shiftRequest.shiftFrame.assignTable[p0!.row][p0.column] != 0;
                       setState(
                         () {
-                          selectedCoodinate = p0!;
+                          selectedCoodinate = p0;
+                          if (editable && enableRequestEdit) {
+                            shiftRequest.reqTable[selectedCoodinate!.row]
+                                [selectedCoodinate!.column] = requestInputValue;
+                          }
                         },
                       );
                     },
@@ -249,7 +254,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
                         );
                       },
                     ),
-                    enableEdit: enableEdit,
+                    enableEdit: enableRequestEdit,
                     selected: selectedCoodinate,
                     isDark: isDark,
                   )
@@ -266,10 +271,6 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
                       setState(
                         () {
                           selectedCoodinate = p0!;
-                          if (enableRequestEdit) {
-                            shiftRequest.reqTable[selectedCoodinate!.row]
-                                [selectedCoodinate!.column] = requestInputValue;
-                          }
                         },
                       );
                     },
@@ -284,8 +285,11 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
                       shiftRequest.shiftFrame.dateTerm[0].end,
                       isDark,
                     ),
-                    rowTitles: getRowTitles(cellHeight, cellWidth * 3.5,
-                        shiftRequest.shiftFrame.timeDivs, isDark),
+                    rowTitles: getRowTitles(
+                      cellHeight, cellWidth * 3.5,
+                      shiftRequest.shiftFrame.timeDivs,
+                      isDark,
+                    ),
                     cells: List<List<Widget>>.generate(
                       rowLength,
                       (i) {
@@ -324,20 +328,27 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
 
     if (value == 1) {
       cellValue = Icon(
-          (shiftRequest.respTable[row][column] == 1)
-              ? PopIcons.circle
-              : PopIcons.circle_empty,
-          size: 12 * cellWidth / 20,
-          color: Styles.primaryColor.withAlpha(100),);
+        (shiftRequest.respTable[row][column] == 1)
+            ? PopIcons.circle
+            : PopIcons.circle_empty,
+        size: 12 * cellWidth / 20,
+        color: Styles.primaryColor.withAlpha(100),
+      );
       cellColor = Styles.primaryColor.withAlpha(100);
     } else {
       if (editable) {
-        cellValue =
-            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
+        cellValue = Icon(
+          PopIcons.cancel,
+          size: 12 * cellWidth / 20,
+          color: Colors.red.withAlpha(100),
+        );
         cellColor = Colors.red.withAlpha(100);
       } else {
-        cellValue = Icon(PopIcons.cancel,
-            size: 12 * cellWidth / 20, color: Colors.grey);
+        cellValue = Icon(
+          PopIcons.cancel,
+          size: 12 * cellWidth / 20,
+          color: Colors.grey,
+        );
         cellColor = Colors.grey;
       }
     }
@@ -386,17 +397,26 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
     Color cellColor;
 
     if (value == 1) {
-      cellValue = Icon(PopIcons.circle_empty,
-          size: 12 * cellWidth / 20, color: Styles.primaryColor.withAlpha(100),);
+      cellValue = Icon(
+        PopIcons.circle_empty,
+        size: 12 * cellWidth / 20,
+        color: Styles.primaryColor.withAlpha(100),
+      );
       cellColor = Styles.primaryColor.withAlpha(100);
     } else {
       if (editable) {
-        cellValue =
-            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
+        cellValue = Icon(
+          PopIcons.cancel,
+          size: 12 * cellWidth / 20,
+          color: Colors.red.withAlpha(100),
+        );
         cellColor = Colors.red.withAlpha(100);
       } else {
-        cellValue = Icon(PopIcons.cancel,
-            size: 12 * cellWidth / 20, color: Colors.grey);
+        cellValue = Icon(
+          PopIcons.cancel,
+          size: 12 * cellWidth / 20,
+          color: Colors.grey,
+        );
         cellColor = Colors.grey;
       }
     }
@@ -1196,7 +1216,7 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
                         height: buttonHeight,
                         action: () {
                           setState(
-                            () { 
+                            () {
                               buildSelectorModaleWindow(
                                 List<Icon>.generate(
                                   2,

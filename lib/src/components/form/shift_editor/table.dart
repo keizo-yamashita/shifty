@@ -27,7 +27,7 @@ class TableEditor extends StatefulWidget {
   // テーブルの構成要素 (縦横の要素数を一致させることに注意)
   final List<Widget> columnTitles;
   final List<Widget> rowTitles;
-  final List<List<Widget?>> cells;
+  final List<List<Widget>> cells;
 
   const TableEditor({
     super.key,
@@ -102,7 +102,7 @@ class TableEditorState extends State<TableEditor> {
                 left: (j == 0) ? widget.titleMargin : 0,
                 bottom: (i == columnLength) ? widget.titleMargin : 0,
               ),
-              child: cellWithHitDetector(i, j, true),
+              child: cellWithHitDetector(i, j),
             );
           },
         );
@@ -258,13 +258,11 @@ class TableEditorState extends State<TableEditor> {
   //////////////////////////////////////////////////////////////////////
 
   // Matrix Cell Class Instance
-  Widget cellWithHitDetector(int row, int column, bool editable) {
+  Widget cellWithHitDetector(int row, int column) {
     final coordinate = Coordinate(column: column, row: row);
 
     void onSelected() {
-      if (editable) {
-        widget.onChangeSelect?.call(coordinate);
-      }
+      widget.onChangeSelect?.call(coordinate);
     }
 
     widget.cells[row][column];
