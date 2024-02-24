@@ -17,7 +17,6 @@ import 'package:shift/src/components/form/shift_editor/coordinate.dart';
 import 'package:shift/src/components/undo_redo.dart';
 import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/form/utility/button.dart';
-import 'package:shift/src/screens/shiftScreen/register_shift_frame.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数
@@ -36,6 +35,7 @@ int bufferMax = 50;
 bool enableRequestEdit = false;
 bool enableZoomIn = true;
 bool enableZoomOut = true;
+bool isDark = false;
 int requestInputValue = 1;
 
 // 画面サイズ
@@ -43,9 +43,6 @@ Size screenSize = const Size(0, 0);
 
 // 使い方の表示フラグ
 List<bool> displayInfoFlag = [false, false, false, false];
-
-// 最後のデータを保存したかどうか
-bool registered = true;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// シフト表の最終チェックに使用するページ (勤務人数も指定)
@@ -70,7 +67,14 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
   GlobalKey editorKey = GlobalKey<TableEditorState>();
 
   @override
+  void initState() {
+    super.initState();
+    ref.read(settingProvider).isEditting = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     // 画面サイズの取得
     screenSize = Size(
         MediaQuery.of(context).size.width,
@@ -79,8 +83,9 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
             ref.read(settingProvider).navigationBarHeight -
             ref.read(settingProvider).screenPaddingTop -
             ref.read(settingProvider).screenPaddingBottom);
+
     // Provider 処理
-    final isDark = ref.read(settingProvider).enableDarkTheme;
+    isDark = ref.watch(settingProvider).enableDarkTheme;
     shiftRequest = ref.read(shiftRequestProvider).shiftRequest;
     ref.read(settingProvider).loadPreferences();
 
@@ -89,14 +94,13 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
 
     //  Undo Redo Buffer が空だったら最初の状態を保存
     if (undoredoCtrl.buffer.isEmpty) {
-      registered = true;
       insertBuffer(shiftRequest.reqTable);
     }
 
     return EditorAppBar(
       context: context,
       ref: ref,
-      registered: registered,
+      isEditting: ref.watch(settingProvider).isEditting,
       title: shiftRequest.shiftFrame.shiftName,
       subtitle: isRequestRange() ? "リクエスト入力画面" : "シフト確認画面",
       handleInfo: () {
@@ -104,7 +108,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       },
       handleRegister: () {
         if (isRequestRange()) {
-          if (registered) {
+          if (!ref.watch(settingProvider).isEditting) {
             showAlertDialog(
               context,
               ref,
@@ -120,7 +124,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
               message1: "このリクエストを登録しますか？",
               message2: "リクエストを登録しました。",
               onAccept: () {
-                registered = true;
+                ref.read(settingProvider).isEditting = false;
                 shiftRequest.updateShiftRequest();
               },
               confirm: true,
@@ -214,15 +218,17 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
                     titleMargin: titleMargin,
                     onChangeSelect: (p0) async {
                       var editable = shiftRequest.shiftFrame.assignTable[p0!.row][p0.column] != 0;
-                      setState(
-                        () {
-                          selectedCoodinate = p0;
-                          if (editable && enableRequestEdit) {
-                            shiftRequest.reqTable[selectedCoodinate!.row]
-                                [selectedCoodinate!.column] = requestInputValue;
-                          }
-                        },
-                      );
+                      setState(() {
+                        selectedCoodinate = p0;
+                        if (editable && enableRequestEdit) {
+                          shiftRequest.reqTable[selectedCoodinate!.row]
+                              [selectedCoodinate!.column] = requestInputValue;
+                        }
+                      });
+                    },
+                    onInputEnd: () {
+                      ref.read(settingProvider).isEditting = true;
+                      insertBuffer(shiftRequest.reqTable);
                     },
                     columnTitles: getColumnTitles(
                       cellHeight * 2,
@@ -268,15 +274,9 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
                     titleWidth: cellWidth * 3.5,
                     titleMargin: titleMargin,
                     onChangeSelect: (p0) async {
-                      setState(
-                        () {
-                          selectedCoodinate = p0!;
-                        },
-                      );
-                    },
-                    onInputEnd: () {
-                      registered = false;
-                      insertBuffer(shiftRequest.reqTable);
+                      setState(() {
+                        selectedCoodinate = p0!;
+                      });
                     },
                     columnTitles: getColumnTitles(
                       cellHeight * 2,
@@ -546,7 +546,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
   void handleUndo() {
     setState(() {
       if (undoredoCtrl.enableUndo()) {
-        registered = false;
+        ref.read(settingProvider).isEditting = true;
         callUndoRedo(true);
       }
     });
@@ -555,7 +555,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
   void handleRedo() {
     setState(() {
       if (undoredoCtrl.enableRedo()) {
-        registered = false;
+        ref.read(settingProvider).isEditting = true;
         callUndoRedo(false);
       }
     });
@@ -657,7 +657,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       (value) {
         if (value != null) {
           setState(() {});
-          registered = false;
+          ref.read(settingProvider).isEditting = true;
           insertBuffer(shiftRequest.reqTable);
         }
       },

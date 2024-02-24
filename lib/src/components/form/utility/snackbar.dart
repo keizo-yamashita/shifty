@@ -4,9 +4,10 @@ import 'package:shift/src/components/style/style.dart';
 void showSnackBar({
   required BuildContext context,
   required String message,
-  Duration duration = const Duration(seconds: 5),
+  Duration duration = const Duration(seconds: 3),
 }) {
   final overlay = Overlay.of(context);
+  var canceled = false;
 
   late OverlayEntry overlayEntry;
   overlayEntry = OverlayEntry(
@@ -18,7 +19,10 @@ void showSnackBar({
         color: Colors.transparent,
         child: Dismissible(
           direction: DismissDirection.up,
-          onDismissed: (direction) => overlayEntry.remove(),
+          onDismissed: (direction){
+            canceled = true;
+            overlayEntry.remove();
+          },
           key: ValueKey(message),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
@@ -46,5 +50,12 @@ void showSnackBar({
 
   overlay.insert(overlayEntry);
 
-  Future.delayed(duration, () => overlayEntry.remove());
+  Future.delayed(
+    duration,
+    (){
+      if(!canceled){
+        overlayEntry.remove();
+      }
+    },
+  );
 }

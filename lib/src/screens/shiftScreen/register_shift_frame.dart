@@ -23,8 +23,8 @@ import 'package:shift/src/components/form/utility/button.dart';
 /// 全体で使用する変数
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-double cellHeight = 20;
-double cellWidth = 20;
+double cellHeight  = 20;
+double cellWidth   = 20;
 double titleMargin = 3;
 double cellSizeMax = 30;
 double cellSizeMin = 10;
@@ -34,6 +34,7 @@ int bufferMax = 50;
 bool enableEdit = false;
 bool enableZoomIn = true;
 bool enableZoomOut = true;
+bool isDark = false;
 int inputValue = 1;
 Size screenSize = const Size(0, 0);
 
@@ -71,8 +72,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
             ref.read(settingProvider).screenPaddingBottom);
 
     ref.read(settingProvider).loadPreferences();
-    final isDark = ref
-        .watch(settingProvider.select((provider) => provider.enableDarkTheme));
+    isDark = ref.watch(settingProvider).enableDarkTheme;
 
     if (undoredoCtrl.buffer.isEmpty) {
       insertBuffer(shiftFrame.assignTable);
@@ -84,7 +84,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
     return EditorAppBar(
       context: context,
       ref: ref,
-      registered: true,
+      isEditting: true,
       title: shiftFrame.shiftName,
       subtitle: "割り当て人数の設定",
       handleInfo: () {

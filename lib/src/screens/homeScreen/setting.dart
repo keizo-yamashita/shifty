@@ -35,8 +35,8 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
     screenSize = Size(
         MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
 
-    bool enableDarkTheme = ref.read(settingProvider).enableDarkTheme;
-    bool defaultShiftView = ref.read(settingProvider).defaultShiftView;
+    bool enableDarkTheme = ref.watch(settingProvider).enableDarkTheme;
+    bool defaultShiftView = ref.watch(settingProvider).defaultShiftView;
 
     Future<String> getVersionInfo() async {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
