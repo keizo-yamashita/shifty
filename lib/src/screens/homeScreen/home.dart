@@ -18,7 +18,7 @@ import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
 import 'package:shift/src/components/shift/shift_request.dart';
 import 'package:shift/src/components/shift/shift_table.dart';
-import 'package:shift/src/screens/shiftScreen/add_shift_request.dart';
+import 'package:shift/src/screens/shiftScreen/follow_shift_frame.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// Home 画面
@@ -71,7 +71,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (c) => AddShiftRequestPage(tableId: id),
+          builder: (c) => FollowShiftFramePage(tableId: id),
         ),
       );
       ref.read(deepLinkProvider).shiftFrameId = "";
@@ -343,14 +343,15 @@ class HomeScreenState extends ConsumerState<HomeScreen>
             isDark,
             () {
               showConfirmDialog(
-                context,
-                ref,
-                "確認",
-                "シフト表'${frame.shiftName}'のフォローを解除しますか？",
-                "シフト表'${frame.shiftName}'のフォローを解除しました。",
-                () {
+                context: context,
+                ref: ref,
+                title: "確認",
+                message1: "シフト表'${frame.shiftName}'のフォローを解除しますか？",
+                message2: "シフト表'${frame.shiftName}'のフォローを解除しました。",
+                onAccept: () {
                   removeTableSoft(request.requestId);
                 },
+                confirm: true,
               );
             },
           ),
@@ -459,14 +460,15 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   if (value == 3) {
                   } else if (value == 4) {
                     showConfirmDialog(
-                      context,
-                      ref,
-                      "確認",
-                      "シフト表'${frame.shiftName}'\nを削除しますか？\n管理者が削除を行うと、\n'${frame.shiftName}'への登録データはすべて削除されます。",
-                      "シフト表'${frame.shiftName}'を削除しました。",
-                      () {
+                      context: context,
+                      ref: ref,
+                      title: "確認",
+                      message1: "シフト表'${frame.shiftName}'\nを削除しますか？\n管理者が削除を行うと、\n'${frame.shiftName}'への登録データはすべて削除されます。",
+                      message2: "シフト表'${frame.shiftName}'を削除しました。",
+                      onAccept: () {
                         removeTableHard(frame.shiftId);
                       },
+                      confirm: true,
                     );
                   } else {}
                 },

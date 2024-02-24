@@ -115,10 +115,17 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
             );
           } else {
             showConfirmDialog(
-                context, ref, "確認", "このリクエストを登録しますか？", "リクエストを登録しました。", () {
-              registered = true;
-              shiftRequest.updateShiftRequest();
-            }, true);
+              context: context,
+              ref: ref, 
+              title: "確認",
+              message1: "このリクエストを登録しますか？",
+              message2: "リクエストを登録しました。",
+              onAccept: () {
+                registered = true;
+                shiftRequest.updateShiftRequest();
+              },
+              confirm: true,
+            );
           }
         } else {
           showAlertDialog(
@@ -335,7 +342,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       }
     }
 
-    cellColor = selected ? cellColor.withAlpha(150) : cellColor.withAlpha(50);
+    cellColor = selected ? cellColor.withAlpha(100) : cellColor.withAlpha(50);
     var cellBoaderWdth = 1.0;
     return SizedBox(
       child: Container(
@@ -394,7 +401,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       }
     }
 
-    cellColor = selected ? cellColor.withAlpha(150) : cellColor.withAlpha(50);
+    cellColor = selected ? cellColor.withAlpha(100) : cellColor.withAlpha(50);
     var cellBoaderWdth = 1.0;
     return Container(
       width: cellWidth,

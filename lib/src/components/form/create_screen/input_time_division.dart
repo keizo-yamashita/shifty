@@ -141,7 +141,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
               text: "入力",
               enable: true,
               width: screenSize.width * 0.9,
-              height: 30,
+              height: 35,
               onPressed: () {
                 setState(
                   () {
@@ -154,7 +154,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
             ),
           ],
         ),
-        SizedBox(height: screenSize.height * 0.04),
+        SizedBox(height: screenSize.height * 0.02),
 
         ////////////////////////////////////////////////////////////////////////////
         /// 登録した時間区分一覧
@@ -164,7 +164,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
           style: Styles.defaultStyle13,
           textAlign: TextAlign.left,
         ),
-        SizedBox(height: screenSize.height * 0.04),
+        SizedBox(height: screenSize.height * 0.02),
         (timeDivs.isEmpty)
             ? Text(
                 "登録されている時間区分がありません。",
@@ -177,7 +177,7 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
               text: "戻す",
               enable: undoredoCtrl.enableUndo(),
               width: screenSize.width * 0.90,
-              height: 30,
+              height: 35,
               onPressed: () {
                 setState(
                   () {

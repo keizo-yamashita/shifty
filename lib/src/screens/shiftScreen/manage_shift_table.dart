@@ -129,31 +129,31 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
             if (!(now.compareTo(shiftTable.shiftFrame.dateTerm[0].start) >= 0 &&
                 now.compareTo(shiftTable.shiftFrame.dateTerm[0].end) <= 0)) {
               showConfirmDialog(
-                context,
-                ref,
-                "確認",
-                "このシフトを登録しますか？",
-                "シフトを登録しました。",
-                () {
+                context: context,
+                ref: ref,
+                title: "確認",
+                message1: "このシフトを登録しますか？",
+                message2: "シフトを登録しました。",
+                onAccept: () {
                   registered = true;
                   shiftTable.pushShiftTable();
                 },
-                true,
-                false,
+                confirm: true,
+                error: false,
               );
             } else {
               showConfirmDialog(
-                context,
-                ref,
-                "確認",
-                "現在はシフト期間中です\nこのシフトを登録しますか？",
-                "シフトを登録しました。",
-                () {
+                context: context,
+                ref: ref,
+                title: "確認",
+                message1: "現在はシフト期間中です\nこのシフトを登録しますか？",
+                message2: "シフトを登録しました。",
+                onAccept: () {
                   registered = true;
                   shiftTable.pushShiftTable();
                 },
-                true,
-                false,
+                confirm: true,
+                error: false,
               );
             }
           }
@@ -231,7 +231,6 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
           ////////////////////////////////////////////////////////////////////////////////////////////
           /// メインテーブル
           ////////////////////////////////////////////////////////////////////////////////////////////
-
           (selectedIndex == 0)
               ? TableEditor(
                   editorKey: editorKey,
@@ -485,7 +484,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
     }
 
     Color cellColor = selected
-        ? cellValue.color!.withAlpha(150)
+        ? cellValue.color!.withAlpha(100)
         : cellValue.color!.withAlpha(50);
     var cellBoaderWdth = 1.0;
 

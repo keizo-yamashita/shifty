@@ -38,14 +38,14 @@ class EditorAppBar extends StatelessWidget {
           navigator.pop();
         } else {
           final bool shouldPop = await showConfirmDialog(
-            context,
-            ref,
-            "注意",
-            "データが保存されていません。\n未登録のデータは破棄されます。",
-            "",
-            (){},
-            false,
-            true,
+            context: context,
+            ref: ref,
+            title: "注意",
+            message1: "データが保存されていません。\n未登録のデータは破棄されます。",
+            message2: "",
+            onAccept: (){},
+            confirm: false,
+            error: true,
           );
           if (shouldPop) {
             navigator.pop();

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // my package
 import 'package:shift/main.dart';
+import 'package:shift/src/components/form/utility/snackbar.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
 
@@ -166,9 +167,13 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
               isDisabled = false;
             }
             else{
-              showConfirmDialog(context, ref, "確認",
-                "このメールアドレスとパスワードで\n新規登録しますか？", "",
-                (){
+              showConfirmDialog(
+                context: context,
+                ref: ref,
+                title: "確認",
+                message1: "このメールアドレスとパスワードで\n新規登録しますか？",
+                message2: "",
+                onAccept: (){
                   ref.read(signInProvider).login(providerName, true, mail, password).then(
                     (message){
                       if(message != ""){
@@ -177,7 +182,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                       }
                       else{
                         Navigator.pop(context);
-                        showAlertDialog(context, ref, "確認", "新規登録後、連携しました。", false);
+                        showSnackBar(context: context, message: "ゲストアカウントを連携しました。");
                         isDisabled = false;
                       }
                     }
@@ -187,7 +192,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                     }
                   );
                 },
-                false
+                confirm: false,
               );
             }
           }

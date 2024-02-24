@@ -17,7 +17,7 @@ import 'package:shift/src/screens/signInScreen/sign_in.dart';
 import 'package:shift/src/screens/homeSCreen/setting.dart';
 import 'package:shift/src/screens/homeScreen/home.dart';
 import 'package:shift/src/screens/homeScreen/notification.dart';
-import 'package:shift/src/screens/shiftScreen/add_shift_request.dart';
+import 'package:shift/src/screens/shiftScreen/follow_shift_frame.dart';
 import 'package:shift/src/screens/shiftScreen/create_shift_frame.dart';
 import 'package:shift/src/screens/shiftScreen/input_shift_request.dart';
 import 'package:shift/src/screens/shiftScreen/manage_shift_table.dart';
@@ -123,7 +123,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                     pageBuilder: (context, state) {
                       return MaterialPage(
                         key: state.pageKey,
-                        child: const AddShiftRequestPage()
+                        child: const FollowShiftFramePage()
                       );
                     },
                   ),

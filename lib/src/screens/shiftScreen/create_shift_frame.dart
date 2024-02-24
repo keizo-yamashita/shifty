@@ -77,14 +77,14 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
             navigator.pop();
           } else {
             final bool shouldPop = await showConfirmDialog(
-              context,
-              ref,
-              "注意",
-              "入力が保存されていません。\n未登録の入力は破棄されます。",
-              "",
-              () {},
-              false,
-              true,
+              context: context,
+              ref: ref,
+              title: "注意",
+              message1: "入力が保存されていません。\n未登録の入力は破棄されます。",
+              message2: "",
+              onAccept: () {},
+              confirm: false,
+              error: true,
             );
             if (shouldPop) {
               navigator.pop();
@@ -172,7 +172,7 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
                       shiftFrame.shiftName = inputValue;
                     },
                   ),
-                  SizedBox(height: screenSize.height * 0.05),
+                  SizedBox(height: screenSize.height * 0.1),
                   InputDateTerm(
                     onDateTermChanged: (DateTimeRange shiftTerm,
                         DateTimeRange requestTerm, bool existTerm) {
@@ -187,7 +187,7 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
                       shiftFrame.timeDivs = timeDivs;
                     },
                   ),
-                  SizedBox(height: screenSize.height * 0.1 + appBarHeight),
+                  SizedBox(height: screenSize.height * 0.1),
                 ],
               ),
             ),
