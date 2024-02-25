@@ -401,26 +401,22 @@ class ShiftFrame {
                 surfaceTintColor: isDark ? Styles.darkColor : Styles.lightColor,
               ),
               child: Padding(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(15),
+                      padding: const EdgeInsets.symmetric(vertical: 20.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (!isTestMode)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Icon(
-                                Icons.build_circle,
-                                size: 20,
-                                color: (isEndShiftTerm())
-                                    ? Colors.grey
-                                    : Styles.primaryColor,
-                              ),
+                          if (isTestMode)
+                            Icon(
+                              Icons.build_circle,
+                              size: 20,
+                              color: (isEndShiftTerm())
+                                  ? Colors.grey
+                                  : Styles.primaryColor,
                             ),
                           Text(
                             title,

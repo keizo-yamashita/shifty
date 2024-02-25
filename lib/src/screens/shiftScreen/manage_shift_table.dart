@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 
 // my package
 import 'package:shift/main.dart';
+import 'package:shift/src/components/form/utility/snackbar.dart';
 import 'package:shift/src/components/style/pop_icons.dart';
 import 'package:shift/src/components/shift/shift_request.dart';
 import 'package:shift/src/components/form/shift_editor/editor_appbar.dart';
@@ -82,14 +83,15 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     // 画面サイズの取得
     screenSize = Size(
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height -
-          ref.read(settingProvider).appBarHeight -
-          ref.read(settingProvider).navigationBarHeight -
-          ref.read(settingProvider).screenPaddingTop -
-          ref.read(settingProvider).screenPaddingBottom,
+          ref.watch(settingProvider).appBarHeight -
+          ref.watch(settingProvider).navigationBarHeight -
+          ref.watch(settingProvider).screenPaddingTop -
+          ref.watch(settingProvider).screenPaddingBottom,
     );
 
     // Provider 処理
@@ -104,7 +106,6 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
     int columnLength = shiftTable.shiftFrame.getDateLen();
     int rowLength = shiftTable.shiftFrame.getTimeDivsLen();
 
-    // Firestoreからシフト表に対するシフト希望表を取ってくる
     return EditorAppBar(
       context: context,
       ref: ref,
@@ -176,7 +177,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
           ////////////////////////////////////////////////////////////////////////////////////////////
           /// ツールボタン
           ////////////////////////////////////////////////////////////////////////////////////////////
-          // height 30 + 20
+          // height 60
           Padding(
             padding: const EdgeInsets.only(
               top: 15.0,
@@ -364,12 +365,14 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
           /// 切り替えボタン
           ////////////////////////////////////////////////////////////////////////////////////////////
 
-          // height : 65
+          // height : 70
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: const EdgeInsets.only(
-                  right: 5.0, left: 5.0, top: 15.0, bottom: 15.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 5.0,
+                vertical: 15.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -1569,9 +1572,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                                 Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: (isDarkTheme)
-                                            ? Colors.white
-                                            : Colors.grey),
+                                      color: (isDarkTheme)
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: const Padding(
@@ -1845,6 +1849,12 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                                           !candidates[ci].assign;
                                       requests[ri].respTable[row][column] =
                                           (candidates[ci].assign) ? 1 : 0;
+                                    }else{
+                                      showSnackBar(
+                                        context:context,
+                                        message: "'${requests[ri].displayName}' はロックされています。",
+                                        type: SnackBarType.warning,
+                                      );
                                     }
                                   },
                                 );

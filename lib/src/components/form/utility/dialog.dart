@@ -61,7 +61,7 @@ Future<bool> showConfirmDialog({
                 Navigator.pop(dialogContext);
                 accepted = true;
                 if (confirm) {
-                  showSnackBar(context: context, message: message2);
+                  showSnackBar(context: context, message: message2, type: SnackBarType.info);
                 }
               },
             ),

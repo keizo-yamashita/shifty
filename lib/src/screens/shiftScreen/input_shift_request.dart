@@ -74,7 +74,6 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
 
   @override
   Widget build(BuildContext context) {
-
     // 画面サイズの取得
     screenSize = Size(
         MediaQuery.of(context).size.width,
@@ -140,179 +139,183 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
           );
         }
       },
-      content: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            /// ツールボタン
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  right: 5.0, left: 5.0, top: 15.0, bottom: 15.0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    //　拡大縮小ボタン
-                    ToolButton(
-                      icon: Icons.zoom_in,
-                      pressEnable: enableZoomIn,
-                      width: screenSize.width / 7,
-                      onPressed: handleZoomIn,
-                    ),
-                    ToolButton(
-                      icon: Icons.zoom_out,
-                      pressEnable: enableZoomOut,
-                      width: screenSize.width / 7,
-                      onPressed: handleZoomOut,
-                    ),
-                    // 範囲入力ボタン
-                    ToolButton(
-                      icon: Icons.filter_alt_outlined,
-                      pressEnable: isRequestRange(),
-                      width: screenSize.width / 7,
-                      onPressed: handleRangeFill,
-                    ),
-                    // タッチ入力ボタン
-                    ToolButton(
-                      icon: Icons.touch_app_outlined,
-                      pressEnable: isRequestRange(),
-                      offEnable: !enableRequestEdit,
-                      width: screenSize.width / 7,
-                      onPressed: handleTouchEdit,
-                      onLongPressed: handleChangeInputValue,
-                    ),
-                    // Redo Undo ボタン
-                    ToolButton(
-                      icon: Icons.undo,
-                      pressEnable: undoredoCtrl.enableUndo(),
-                      width: screenSize.width / 7,
-                      onPressed: handleUndo,
-                    ),
-                    ToolButton(
-                      icon: Icons.redo,
-                      pressEnable: undoredoCtrl.enableRedo(),
-                      width: screenSize.width / 7,
-                      onPressed: handleRedo,
-                    ),
-                  ],
-                ),
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          ////////////////////////////////////////////////////////////////////////////////////////////
+          /// ツールボタン
+          ////////////////////////////////////////////////////////////////////////////////////////////
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                right: 5.0,
+                left: 5.0,
+                top: 15.0,
+                bottom: 15.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  //　拡大縮小ボタン
+                  ToolButton(
+                    icon: Icons.zoom_in,
+                    pressEnable: enableZoomIn,
+                    width: screenSize.width / 7,
+                    onPressed: handleZoomIn,
+                  ),
+                  ToolButton(
+                    icon: Icons.zoom_out,
+                    pressEnable: enableZoomOut,
+                    width: screenSize.width / 7,
+                    onPressed: handleZoomOut,
+                  ),
+                  // 範囲入力ボタン
+                  ToolButton(
+                    icon: Icons.filter_alt_outlined,
+                    pressEnable: isRequestRange(),
+                    width: screenSize.width / 7,
+                    onPressed: handleRangeFill,
+                  ),
+                  // タッチ入力ボタン
+                  ToolButton(
+                    icon: Icons.touch_app_outlined,
+                    pressEnable: isRequestRange(),
+                    offEnable: !enableRequestEdit,
+                    width: screenSize.width / 7,
+                    onPressed: handleTouchEdit,
+                    onLongPressed: handleChangeInputValue,
+                  ),
+                  // Redo Undo ボタン
+                  ToolButton(
+                    icon: Icons.undo,
+                    pressEnable: undoredoCtrl.enableUndo(),
+                    width: screenSize.width / 7,
+                    onPressed: handleUndo,
+                  ),
+                  ToolButton(
+                    icon: Icons.redo,
+                    pressEnable: undoredoCtrl.enableRedo(),
+                    width: screenSize.width / 7,
+                    onPressed: handleRedo,
+                  ),
+                ],
               ),
             ),
-
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            /// メインテーブル
-            ////////////////////////////////////////////////////////////////////////////////////////////
-            (isRequestRange())
-                ? TableEditor(
-                    editorKey: editorKey,
-                    tableHeight: screenSize.height - 60,
-                    tableWidth: screenSize.width,
-                    cellHeight: cellHeight,
-                    cellWidth: cellWidth,
-                    titleHeight: cellHeight * 2,
-                    titleWidth: cellWidth * 3.5,
-                    titleMargin: titleMargin,
-                    onChangeSelect: (p0) async {
-                      var editable = shiftRequest.shiftFrame.assignTable[p0!.row][p0.column] != 0;
-                      setState(() {
-                        selectedCoodinate = p0;
-                        if (editable && enableRequestEdit) {
-                          shiftRequest.reqTable[selectedCoodinate!.row]
-                              [selectedCoodinate!.column] = requestInputValue;
-                        }
-                      });
-                    },
-                    onInputEnd: () {
-                      ref.read(settingProvider).isEditting = true;
-                      insertBuffer(shiftRequest.reqTable);
-                    },
-                    columnTitles: getColumnTitles(
-                      cellHeight * 2,
-                      cellWidth,
-                      shiftRequest.shiftFrame.dateTerm[0].start,
-                      shiftRequest.shiftFrame.dateTerm[0].end,
-                      isDark,
-                    ),
-                    rowTitles: getRowTitles(
-                      cellHeight,
-                      cellWidth * 3.5,
-                      shiftRequest.shiftFrame.timeDivs,
-                      isDark,
-                    ),
-                    cells: List<List<Widget>>.generate(
-                      rowLength,
-                      (i) {
-                        return List.generate(
-                          columnLength,
-                          (j) {
-                            return requestCell(
-                              i,
-                              j,
-                              shiftRequest.shiftFrame.assignTable[i][j] != 0,
-                              j == selectedCoodinate?.column &&
-                                  i == selectedCoodinate?.row,
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    enableEdit: enableRequestEdit,
-                    selected: selectedCoodinate,
-                    isDark: isDark,
-                  )
-                : TableEditor(
-                    editorKey: editorKey,
-                    tableHeight: screenSize.height - 60,
-                    tableWidth: screenSize.width,
-                    cellHeight: cellHeight,
-                    cellWidth: cellWidth,
-                    titleHeight: cellHeight * 2,
-                    titleWidth: cellWidth * 3.5,
-                    titleMargin: titleMargin,
-                    onChangeSelect: (p0) async {
-                      setState(() {
-                        selectedCoodinate = p0!;
-                      });
-                    },
-                    columnTitles: getColumnTitles(
-                      cellHeight * 2,
-                      cellWidth,
-                      shiftRequest.shiftFrame.dateTerm[0].start,
-                      shiftRequest.shiftFrame.dateTerm[0].end,
-                      isDark,
-                    ),
-                    rowTitles: getRowTitles(
-                      cellHeight, cellWidth * 3.5,
-                      shiftRequest.shiftFrame.timeDivs,
-                      isDark,
-                    ),
-                    cells: List<List<Widget>>.generate(
-                      rowLength,
-                      (i) {
-                        return List.generate(
-                          columnLength,
-                          (j) {
-                            return responseCell(
-                              i,
-                              j,
-                              shiftRequest.shiftFrame.assignTable[i][j] != 0,
-                              j == selectedCoodinate?.column &&
-                                  i == selectedCoodinate?.row,
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    enableEdit: false,
-                    selected: selectedCoodinate,
-                    isDark: isDark,
+          ),
+      
+          ////////////////////////////////////////////////////////////////////////////////////////////
+          /// メインテーブル
+          ////////////////////////////////////////////////////////////////////////////////////////////
+          (isRequestRange())
+              ? TableEditor(
+                  editorKey: editorKey,
+                  tableHeight: screenSize.height - 60,
+                  tableWidth: screenSize.width,
+                  cellHeight: cellHeight,
+                  cellWidth: cellWidth,
+                  titleHeight: cellHeight * 2,
+                  titleWidth: cellWidth * 3.5,
+                  titleMargin: titleMargin,
+                  onChangeSelect: (p0) async {
+                    var editable = shiftRequest
+                            .shiftFrame.assignTable[p0!.row][p0.column] !=
+                        0;
+                    setState(() {
+                      selectedCoodinate = p0;
+                      if (editable && enableRequestEdit) {
+                        shiftRequest.reqTable[selectedCoodinate!.row]
+                            [selectedCoodinate!.column] = requestInputValue;
+                      }
+                    });
+                  },
+                  onInputEnd: () {
+                    ref.read(settingProvider).isEditting = true;
+                    insertBuffer(shiftRequest.reqTable);
+                  },
+                  columnTitles: getColumnTitles(
+                    cellHeight * 2,
+                    cellWidth,
+                    shiftRequest.shiftFrame.dateTerm[0].start,
+                    shiftRequest.shiftFrame.dateTerm[0].end,
+                    isDark,
                   ),
-          ],
-        ),
+                  rowTitles: getRowTitles(
+                    cellHeight,
+                    cellWidth * 3.5,
+                    shiftRequest.shiftFrame.timeDivs,
+                    isDark,
+                  ),
+                  cells: List<List<Widget>>.generate(
+                    rowLength,
+                    (i) {
+                      return List.generate(
+                        columnLength,
+                        (j) {
+                          return requestCell(
+                            i,
+                            j,
+                            shiftRequest.shiftFrame.assignTable[i][j] != 0,
+                            j == selectedCoodinate?.column &&
+                                i == selectedCoodinate?.row,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  enableEdit: enableRequestEdit,
+                  selected: selectedCoodinate,
+                  isDark: isDark,
+                )
+              : TableEditor(
+                  editorKey: editorKey,
+                  tableHeight: screenSize.height - 60,
+                  tableWidth: screenSize.width,
+                  cellHeight: cellHeight,
+                  cellWidth: cellWidth,
+                  titleHeight: cellHeight * 2,
+                  titleWidth: cellWidth * 3.5,
+                  titleMargin: titleMargin,
+                  onChangeSelect: (p0) async {
+                    setState(() {
+                      selectedCoodinate = p0!;
+                    });
+                  },
+                  columnTitles: getColumnTitles(
+                    cellHeight * 2,
+                    cellWidth,
+                    shiftRequest.shiftFrame.dateTerm[0].start,
+                    shiftRequest.shiftFrame.dateTerm[0].end,
+                    isDark,
+                  ),
+                  rowTitles: getRowTitles(
+                    cellHeight,
+                    cellWidth * 3.5,
+                    shiftRequest.shiftFrame.timeDivs,
+                    isDark,
+                  ),
+                  cells: List<List<Widget>>.generate(
+                    rowLength,
+                    (i) {
+                      return List.generate(
+                        columnLength,
+                        (j) {
+                          return responseCell(
+                            i,
+                            j,
+                            shiftRequest.shiftFrame.assignTable[i][j] != 0,
+                            j == selectedCoodinate?.column &&
+                                i == selectedCoodinate?.row,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  enableEdit: false,
+                  selected: selectedCoodinate,
+                  isDark: isDark,
+                ),
+        ],
       ),
     );
   }
