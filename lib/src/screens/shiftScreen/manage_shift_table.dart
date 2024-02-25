@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 
 // my package
 import 'package:shift/main.dart';
+import 'package:shift/src/components/form/utility/snackbar.dart';
 import 'package:shift/src/components/style/pop_icons.dart';
 import 'package:shift/src/components/shift/shift_request.dart';
 import 'package:shift/src/components/form/shift_editor/editor_appbar.dart';
@@ -50,7 +51,6 @@ int baseConDay = 0;
 var inputConDayList = List<String>.generate(31, (index) => "${index + 1} 日");
 
 int requestInputValue = 1;
-bool registered = true;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// シフトの作成・最終チェックに使用するページ (勤務人数も指定)
@@ -74,38 +74,42 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
   int selectedIndex = 0;
   bool enableResponseEdit = false;
   GlobalKey editorKey = GlobalKey<TableEditorState>();
+  
+  @override
+  void initState() {
+    super.initState();
+    ref.read(settingProvider).isEditting = false;
+  }
 
   @override
   Widget build(BuildContext context) {
+    
     // 画面サイズの取得
     screenSize = Size(
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height -
-          ref.read(settingProvider).appBarHeight -
-          ref.read(settingProvider).navigationBarHeight -
-          ref.read(settingProvider).screenPaddingTop -
-          ref.read(settingProvider).screenPaddingBottom,
+          ref.watch(settingProvider).appBarHeight -
+          ref.watch(settingProvider).navigationBarHeight -
+          ref.watch(settingProvider).screenPaddingTop -
+          ref.watch(settingProvider).screenPaddingBottom,
     );
 
     // Provider 処理
     shiftTable = ref.read(shiftTableProvider).shiftTable;
-    final isDark = ref
-        .watch(settingProvider.select((provider) => provider.enableDarkTheme));
+    isDark = ref.watch(settingProvider).enableDarkTheme;
     ref.read(settingProvider).loadPreferences();
 
     if (undoredoCtrl.buffer.isEmpty) {
-      registered = true;
       insertBuffer(shiftTable.shiftTable);
     }
 
     int columnLength = shiftTable.shiftFrame.getDateLen();
     int rowLength = shiftTable.shiftFrame.getTimeDivsLen();
 
-    // Firestoreからシフト表に対するシフト希望表を取ってくる
     return EditorAppBar(
       context: context,
       ref: ref,
-      registered: registered,
+      isEditting: ref.watch(settingProvider).isEditting,
       title: shiftTable.shiftFrame.shiftName,
       subtitle: "シフト管理画面",
       handleInfo: () {
@@ -116,7 +120,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
         // リクエスト期間ではないことを確認
         if (!(now.compareTo(shiftTable.shiftFrame.dateTerm[1].start) >= 0 &&
             now.compareTo(shiftTable.shiftFrame.dateTerm[1].end) <= 0)) {
-          if (registered) {
+          if (!ref.watch(settingProvider).isEditting) {
             showAlertDialog(
               context,
               ref,
@@ -135,7 +139,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                 message1: "このシフトを登録しますか？",
                 message2: "シフトを登録しました。",
                 onAccept: () {
-                  registered = true;
+                  ref.read(settingProvider).isEditting = false;
                   shiftTable.pushShiftTable();
                 },
                 confirm: true,
@@ -149,7 +153,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                 message1: "現在はシフト期間中です\nこのシフトを登録しますか？",
                 message2: "シフトを登録しました。",
                 onAccept: () {
-                  registered = true;
+                  ref.read(settingProvider).isEditting = false;
                   shiftTable.pushShiftTable();
                 },
                 confirm: true,
@@ -173,10 +177,14 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
           ////////////////////////////////////////////////////////////////////////////////////////////
           /// ツールボタン
           ////////////////////////////////////////////////////////////////////////////////////////////
-          // height 30 + 20
+          // height 60
           Padding(
             padding: const EdgeInsets.only(
-                top: 15.0, right: 2.0, left: 2.0, bottom: 15.0),
+              top: 15.0,
+              right: 2.0,
+              left: 2.0,
+              bottom: 15.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -244,7 +252,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                   onChangeSelect: (p0) async {
                     selectedCoodinate = p0!;
                     setState(() {});
-                    buildAssignSelectModaleWindow(p0.column, p0.row);
+                    if (shiftTable.shiftFrame.assignTable[p0.row][p0.column] !=
+                        0) {
+                      buildAssignSelectModaleWindow(p0.column, p0.row);
+                    }
                     setState(() {});
                   },
                   onInputEnd: null,
@@ -252,13 +263,18 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                   selected: selectedCoodinate,
                   isDark: isDark,
                   columnTitles: getColumnTitles(
-                      cellHeight * 2,
-                      cellWidth,
-                      shiftTable.shiftFrame.dateTerm[0].start,
-                      shiftTable.shiftFrame.dateTerm[0].end,
-                      isDark),
-                  rowTitles: getRowTitles(cellHeight, cellWidth * 3.5,
-                      shiftTable.shiftFrame.timeDivs, isDark),
+                    cellHeight * 2,
+                    cellWidth,
+                    shiftTable.shiftFrame.dateTerm[0].start,
+                    shiftTable.shiftFrame.dateTerm[0].end,
+                    isDark,
+                  ),
+                  rowTitles: getRowTitles(
+                    cellHeight,
+                    cellWidth * 3.5,
+                    shiftTable.shiftFrame.timeDivs,
+                    isDark,
+                  ),
                   cells: List<List<Widget>>.generate(
                     rowLength,
                     (i) {
@@ -311,7 +327,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                     setState(() {});
                   },
                   onInputEnd: () {
-                    registered = false;
+                    ref.read(settingProvider).isEditting = true;
                     insertBuffer(shiftTable.shiftTable);
                   },
                   columnTitles: getColumnTitles(
@@ -349,21 +365,25 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
           /// 切り替えボタン
           ////////////////////////////////////////////////////////////////////////////////////////////
 
-          // height : 65
+          // height : 70
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: const EdgeInsets.only(
-                  right: 5.0, left: 5.0, top: 15.0, bottom: 15.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 5.0,
+                vertical: 15.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   BottomButton(
-                    content: Text("      全体      ",
-                        style: (selectedIndex == 0)
-                            ? Styles.defaultStyleGreen13
-                            : Styles.defaultStyleGrey13,
-                        overflow: TextOverflow.ellipsis),
+                    content: Text(
+                      "      全体      ",
+                      style: (selectedIndex == 0)
+                          ? Styles.defaultStyleGreen13
+                          : Styles.defaultStyleGrey13,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     enable: selectedIndex == 0,
                     width: 100,
                     height: 40,
@@ -454,32 +474,32 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
     );
     if (value == 0) {
       if (editable) {
-        cellValue =
-            Icon(PopIcons.cancel, size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
+        cellValue = Icon(
+          PopIcons.cancel,
+          size: 12 * cellWidth / 20,
+          color: Colors.red.withAlpha(100),
+        );
       } else {
         cellValue = Icon(PopIcons.cancel,
             size: 12 * cellWidth / 20, color: Colors.grey);
       }
     } else if (value < 0.3) {
       cellValue = Icon(
-        PopIcons.cancel,
+        PopIcons.attention_alt,
         size: 12 * cellWidth / 20,
-        color: Colors.yellow.withAlpha(100),
+        color: Colors.red.withAlpha(100),
       );
-    } else if (value < 0.7) {
-      cellValue = Icon(PopIcons.attention_alt,
-          size: 12 * cellWidth / 20, color: Colors.red.withAlpha(100),);
     } else if (value < 1.0) {
       cellValue = Icon(
         PopIcons.attention_alt,
         size: 12 * cellWidth / 20,
-        color: Colors.yellow.withAlpha(100),
+        color: Colors.yellow[800],
       );
     } else if (value > 1.0) {
       cellValue = Icon(
         PopIcons.ok,
         size: 12 * cellWidth / 20,
-        color: Colors.yellow.withAlpha(100),
+        color: Colors.yellow[800],
       );
     }
 
@@ -506,7 +526,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       child: editable
           ? Center(
               child: SizedBox(
-                  width: cellWidth, height: cellHeight, child: cellValue,),
+                width: cellWidth,
+                height: cellHeight,
+                child: cellValue,
+              ),
             )
           : SizedBox(
               width: cellWidth,
@@ -688,7 +711,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
   void handleUndo() {
     setState(() {
       if (undoredoCtrl.enableUndo()) {
-        registered = false;
+        ref.read(settingProvider).isEditting = true;
         callUndoRedo(true);
       }
     });
@@ -697,7 +720,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
   void handleRedo() {
     setState(() {
       if (undoredoCtrl.enableRedo()) {
-        registered = false;
+        ref.read(settingProvider).isEditting = true;
         callUndoRedo(false);
       }
     });
@@ -802,7 +825,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
     ).then((value) {
       if (value == true) {
         setState(() {});
-        registered = false;
+        ref.read(settingProvider).isEditting = true;
         insertBuffer(shiftTable.shiftTable);
       }
     });
@@ -873,11 +896,11 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
     showModalWindow(
       context,
       0.5,
-      AutoFillModalWindowWidget(shiftTable: shiftTable),
+      AutoFillWidget(shiftTable: shiftTable),
     ).then((value) {
       if (value != null) {
         setState(() {});
-        registered = false;
+        ref.read(settingProvider).isEditting = true;
         insertBuffer(shiftTable.shiftTable);
       }
     });
@@ -902,7 +925,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       (value) {
         if (value != null) {
           setState(() {});
-          registered = false;
+          ref.read(settingProvider).isEditting = true;
           insertBuffer(shiftTable.shiftTable);
         }
       },
@@ -1549,9 +1572,10 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                                 Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: (isDarkTheme)
-                                            ? Colors.white
-                                            : Colors.grey),
+                                      color: (isDarkTheme)
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: const Padding(
@@ -1600,7 +1624,7 @@ class InputModalWindowWidget extends StatefulWidget {
   final ShiftTable shiftTable;
   final int column;
   final int row;
-  final List<bool> backup = [];
+  final List<Candidate> backup = [];
 
   InputModalWindowWidget(this.shiftTable, this.column, this.row, {Key? key})
       : super(key: key);
@@ -1613,20 +1637,39 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
   @override
   void initState() {
     super.initState();
-    for (int i = 0;
-        i < widget.shiftTable.shiftTable[widget.row][widget.column].length;
-        i++) {
+
+    var row = widget.row;
+    var column = widget.column;
+
+    for (int i = 0; i < widget.shiftTable.shiftTable[row][column].length; i++) {
       widget.backup.add(
-        widget.shiftTable.shiftTable[widget.row][widget.column][i].assign,
+        Candidate(
+          widget.shiftTable.shiftTable[row][column][i].userIndex,
+          widget.shiftTable.shiftTable[row][column][i].assign,
+          widget.shiftTable.shiftTable[row][column][i].locked,
+        ),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    var row = widget.row;
+    var column = widget.column;
+
+    var shiftFrame = widget.shiftTable.shiftFrame;
+    var candidates = widget.shiftTable.shiftTable[row][column];
+    var requests = widget.shiftTable.requests;
+    var backup = widget.backup;
+
+    var mediaQuery = MediaQuery.of(context);
+    var modalHeight = mediaQuery.size.height * 0.5;
+    var contentHeight = modalHeight - 70 - mediaQuery.padding.bottom;
+
     DateTime date = widget.shiftTable.shiftFrame.dateTerm[0].start.add(
       Duration(days: widget.column),
     );
+
     List<String> weekdayJP = ["月", "火", "水", "木", "金", "土", "日"];
     Text dateText;
 
@@ -1648,35 +1691,31 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
     }
 
     int assignNum = 0;
-    for (int i = 0;
-        i < widget.shiftTable.shiftTable[widget.row][widget.column].length;
-        i++) {
-      if (widget.shiftTable.shiftTable[widget.row][widget.column][i].assign) {
+    for (int i = 0; i < candidates.length; i++) {
+      if (candidates[i].assign) {
         assignNum++;
       }
     }
 
     return PopScope(
-      canPop: false, // 戻るキーの動作で戻ることを一旦防ぐ
+      canPop: false,
       onPopInvoked: (didPop) async {
         if (didPop) {
           return;
         }
         bool changed = false;
-        for (int i = 0;
-            i < widget.shiftTable.shiftTable[widget.row][widget.column].length;
-            i++) {
-          if (widget
-                  .shiftTable.shiftTable[widget.row][widget.column][i].assign !=
-              widget.backup[i]) {
+        for (int i = 0; i < candidates.length; i++) {
+          var assign = candidates[i].assign != backup[i].assign;
+          var locked = candidates[i].locked != backup[i].locked;
+          if (assign || locked) {
             changed = true;
-            break; // 変更が見つかったらループを終了
+            break;
           }
         }
         Navigator.pop(context, changed);
       },
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.5,
+        height: modalHeight,
         child: Column(
           children: [
             SizedBox(
@@ -1689,19 +1728,19 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                     dateText,
                     const SizedBox(width: 10),
                     Text(
-                      widget.shiftTable.shiftFrame.timeDivs[widget.row].name,
+                      shiftFrame.timeDivs[row].name,
                       style: Styles.tableTitleStyle(null, 15),
                     ),
                     const SizedBox(width: 20),
                     Text(
-                      "$assignNum / ${widget.shiftTable.shiftFrame.assignTable[widget.row][widget.column]} 人",
+                      "$assignNum / ${shiftFrame.assignTable[row][column]} 人",
                       style: Styles.tableTitleStyle(null, 15),
                     ),
                   ],
                 ),
               ),
             ),
-            (widget.shiftTable.shiftTable[widget.row][widget.column].isEmpty)
+            (candidates.isEmpty)
                 ? Padding(
                     padding: const EdgeInsets.symmetric(vertical: 15.0),
                     child: Text(
@@ -1711,164 +1750,117 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
                     ),
                   )
                 : SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.5 -
-                        70 -
-                        MediaQuery.of(context).padding.bottom,
+                    height: contentHeight,
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: widget.shiftTable
-                          .shiftTable[widget.row][widget.column].length,
-                      itemBuilder: (BuildContext context, int index) {
+                      itemCount: candidates.length,
+                      itemBuilder: (BuildContext context, int ci) {
+                        var ri = candidates[ci].userIndex;
                         return Column(
                           children: [
                             ListTile(
                               title: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 100,
-                                      child: Text(
-                                          widget
-                                              .shiftTable
-                                              .requests[widget
-                                                  .shiftTable
-                                                  .shiftTable[widget.row]
-                                                      [widget.column][index]
-                                                  .userIndex]
-                                              .displayName,
-                                          style: Styles.defaultStyle15,
-                                          textAlign: TextAlign.center),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                    child: Text(
+                                      requests[ri].displayName,
+                                      style: Styles.defaultStyle15,
+                                      textAlign: TextAlign.center,
                                     ),
-                                    const SizedBox(width: 30),
-                                    Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        const Icon(
-                                          Icons.check_box_outline_blank_rounded,
-                                          color: Styles.hiddenColor,
-                                          size: 30,
-                                        ),
-                                        (widget
-                                                .shiftTable
-                                                .shiftTable[widget.row]
-                                                    [widget.column][index]
-                                                .assign)
-                                            ? const Padding(
-                                                padding: EdgeInsets.only(
-                                                    bottom: 5, left: 5),
-                                                child: Icon(
-                                                  PopIcons.ok,
-                                                  color: Styles.primaryColor,
-                                                  size: 25,
-                                                ),
-                                              )
-                                            : const Padding(
-                                                padding: EdgeInsets.only(
-                                                    bottom: 5, left: 5),
-                                                child: Icon(
-                                                  PopIcons.ok,
-                                                  color: Colors.transparent,
-                                                  size: 25,
-                                                ),
-                                              ),
-                                      ],
-                                    ),
-                                    const SizedBox(width: 30),
-                                    InkWell(
-                                      child: (widget
-                                              .shiftTable
-                                              .shiftTable[widget.row]
-                                                  [widget.column][index]
-                                              .locked)
+                                  ),
+                                  const SizedBox(width: 30),
+                                  Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.check_box_outline_blank_rounded,
+                                        color: Styles.hiddenColor,
+                                        size: 30,
+                                      ),
+                                      (candidates[ci].assign)
                                           ? const Padding(
                                               padding: EdgeInsets.only(
-                                                  bottom: 5, left: 5),
+                                                bottom: 5,
+                                                left: 5,
+                                              ),
                                               child: Icon(
-                                                PopIcons.lock,
-                                                color: Colors.orange,
-                                                size: 30,
+                                                PopIcons.ok,
+                                                color: Styles.primaryColor,
+                                                size: 25,
                                               ),
                                             )
                                           : const Padding(
                                               padding: EdgeInsets.only(
-                                                  bottom: 5, left: 5),
+                                                bottom: 5,
+                                                left: 5,
+                                              ),
                                               child: Icon(
-                                                PopIcons.lock_open,
-                                                color: Colors.grey,
-                                                size: 30,
+                                                PopIcons.ok,
+                                                color: Colors.transparent,
+                                                size: 25,
                                               ),
                                             ),
-                                      onTap: () {
-                                        setState(() {
-                                          widget
-                                                  .shiftTable
-                                                  .shiftTable[widget.row]
-                                                      [widget.column][index]
-                                                  .locked =
-                                              !widget
-                                                  .shiftTable
-                                                  .shiftTable[widget.row]
-                                                      [widget.column][index]
-                                                  .locked;
-                                          widget
-                                                  .shiftTable
-                                                  .requests[widget
-                                                      .shiftTable
-                                                      .shiftTable[widget.row]
-                                                          [widget.column][index]
-                                                      .userIndex]
-                                                  .lockedTable[widget.row]
-                                              [widget.column] = widget
-                                                  .shiftTable
-                                                  .shiftTable[widget.row]
-                                                      [widget.column][index]
-                                                  .locked
-                                              ? 1
-                                              : 0;
-                                        });
-                                      },
-                                    )
-                                  ]),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 30),
+                                  InkWell(
+                                    child: (candidates[ci].locked)
+                                        ? const Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: 5,
+                                              left: 5,
+                                            ),
+                                            child: Icon(
+                                              PopIcons.lock,
+                                              color: Colors.orange,
+                                              size: 30,
+                                            ),
+                                          )
+                                        : const Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: 5,
+                                              left: 5,
+                                            ),
+                                            child: Icon(
+                                              PopIcons.lock_open,
+                                              color: Colors.grey,
+                                              size: 30,
+                                            ),
+                                          ),
+                                    onTap: () {
+                                      setState(() {
+                                        candidates[ci].locked =
+                                            !candidates[ci].locked;
+                                        requests[ri].lockedTable[row][column] =
+                                            candidates[ci].locked ? 1 : 0;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
                               onTap: () {
                                 setState(
                                   () {
-                                    if (!widget
-                                        .shiftTable
-                                        .shiftTable[widget.row][widget.column]
-                                            [index]
-                                        .locked) {
-                                      widget
-                                              .shiftTable
-                                              .shiftTable[widget.row]
-                                                  [widget.column][index]
-                                              .assign =
-                                          !widget
-                                              .shiftTable
-                                              .shiftTable[widget.row]
-                                                  [widget.column][index]
-                                              .assign;
-                                      widget
-                                              .shiftTable
-                                              .requests[widget
-                                                  .shiftTable
-                                                  .shiftTable[widget.row]
-                                                      [widget.column][index]
-                                                  .userIndex]
-                                              .respTable[widget.row]
-                                          [widget.column] = (widget
-                                              .shiftTable
-                                              .shiftTable[widget.row]
-                                                  [widget.column][index]
-                                              .assign)
-                                          ? 1
-                                          : 0;
+                                    if (!candidates[ci].locked) {
+                                      candidates[ci].assign =
+                                          !candidates[ci].assign;
+                                      requests[ri].respTable[row][column] =
+                                          (candidates[ci].assign) ? 1 : 0;
+                                    }else{
+                                      showSnackBar(
+                                        context:context,
+                                        message: "'${requests[ri].displayName}' はロックされています。",
+                                        type: SnackBarType.warning,
+                                      );
                                     }
                                   },
                                 );
                               },
                             ),
-                            const Divider(thickness: 2)
+                            const Divider(thickness: 2),
                           ],
                         );
                       },
@@ -1885,19 +1877,18 @@ class InputModalWindowWidgetState extends State<InputModalWindowWidget> {
 /// 人，日時を選択して自動で埋めるためのモーダルウィンドウクラス
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-class AutoFillModalWindowWidget extends StatefulWidget {
+class AutoFillWidget extends StatefulWidget {
   final ShiftTable _shiftTable;
 
-  const AutoFillModalWindowWidget({Key? key, required ShiftTable shiftTable})
+  const AutoFillWidget({Key? key, required ShiftTable shiftTable})
       : _shiftTable = shiftTable,
         super(key: key);
 
   @override
-  AutoFillModalWindowWidgetState createState() =>
-      AutoFillModalWindowWidgetState();
+  AutoFillWidgetState createState() => AutoFillWidgetState();
 }
 
-class AutoFillModalWindowWidgetState extends State<AutoFillModalWindowWidget> {
+class AutoFillWidgetState extends State<AutoFillWidget> {
   static var selectorsIndex = [0, 0, 0];
 
   @override

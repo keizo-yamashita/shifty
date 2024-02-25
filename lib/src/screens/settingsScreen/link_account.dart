@@ -182,7 +182,7 @@ class LinkAccountScreenState extends ConsumerState<LinkAccountScreen> {
                       }
                       else{
                         Navigator.pop(context);
-                        showSnackBar(context: context, message: "ゲストアカウントを連携しました。");
+                        showSnackBar(context: context, message: "ゲストアカウントを連携しました。", type: SnackBarType.info);
                         isDisabled = false;
                       }
                     }

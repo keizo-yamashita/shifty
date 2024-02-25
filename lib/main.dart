@@ -225,7 +225,7 @@ class MyApp extends ConsumerStatefulWidget {
   @override
   MyAppState createState() => MyAppState();
 }
-class MyAppState extends ConsumerState<MyApp>{
+class MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   
   @override
   void initState() {
@@ -236,7 +236,22 @@ class MyAppState extends ConsumerState<MyApp>{
       ref.read(settingProvider).screenPaddingTop = MediaQuery.of(context).padding.top;
       ref.read(settingProvider).screenPaddingBottom = MediaQuery.of(context).padding.bottom;
       ref.read(signInProvider).silentLogin();
+      WidgetsBinding.instance.addObserver(this);
     },);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+      ref.read(settingProvider).appBarHeight = AppBar().preferredSize.height;
+      ref.read(settingProvider).navigationBarHeight = 56.0;
+      ref.read(settingProvider).screenPaddingTop = MediaQuery.of(context).padding.top;
+      ref.read(settingProvider).screenPaddingBottom = MediaQuery.of(context).padding.bottom;
   }
 
   @override

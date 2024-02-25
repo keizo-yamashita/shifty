@@ -191,7 +191,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                         isDisabled = false;
                       }
                       else{
-                        showSnackBar(context: context, message: "新規登録しました。");
+                        showSnackBar(context: context, message: "新規登録しました。", type: SnackBarType.info);
                         context.go('/home');
                         isDisabled = false;
                       }
@@ -226,7 +226,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                     isDisabled = false;
                   }
                   else{
-                    showSnackBar(context: context, message: "ログインしました。");
+                    showSnackBar(context: context, message: "ログインしました。", type: SnackBarType.info);
                     context.go('/home');
                     isDisabled = false;
                   }
@@ -251,7 +251,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
               onAccept: (){
                 ref.read(signInProvider).login(providerName, false).then(
                   (message){
-                    showSnackBar(context: context, message: "ゲストユーザとして\nログインしました。");
+                    showSnackBar(context: context, message: "ゲストユーザとして\nログインしました。", type: SnackBarType.info);
                     context.go('/home');
                     isDisabled = false;
                   }
@@ -275,7 +275,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                   isDisabled = false;
                 }
                 else{
-                  showSnackBar(context: context, message: "ログインしました。");
+                  showSnackBar(context: context, message: "ログインしました。", type: SnackBarType.info);
                   context.go('/home');
                   isDisabled = false;
                 }

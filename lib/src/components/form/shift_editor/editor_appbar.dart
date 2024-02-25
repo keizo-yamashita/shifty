@@ -6,7 +6,7 @@ import 'package:shift/src/components/style/style.dart';
 class EditorAppBar extends StatelessWidget {
   final BuildContext context;
   final WidgetRef ref;
-  final bool registered;
+  final bool isEditting;
   final String title;
   final String subtitle;
   final Function? handleInfo;
@@ -17,7 +17,7 @@ class EditorAppBar extends StatelessWidget {
     Key? key,
     required this.context,
     required this.ref,
-    required this.registered,
+    required this.isEditting,
     required this.title,
     required this.subtitle,
     this.handleInfo,
@@ -34,7 +34,7 @@ class EditorAppBar extends StatelessWidget {
           return;
         }
         final NavigatorState navigator = Navigator.of(context);
-        if (registered) {
+        if (!isEditting) {
           navigator.pop();
         } else {
           final bool shouldPop = await showConfirmDialog(
@@ -95,8 +95,8 @@ class EditorAppBar extends StatelessWidget {
             ),
           ],
         ),
-        resizeToAvoidBottomInset: false,
-        body: SafeArea(child: content),
+        // resizeToAvoidBottomInset: false,
+        body: content,
       ),
     );
   }

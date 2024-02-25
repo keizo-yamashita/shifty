@@ -61,7 +61,7 @@ Future<bool> showConfirmDialog({
                 Navigator.pop(dialogContext);
                 accepted = true;
                 if (confirm) {
-                  showSnackBar(context: context, message: message2);
+                  showSnackBar(context: context, message: message2, type: SnackBarType.info);
                 }
               },
             ),
@@ -138,13 +138,14 @@ void showAlertDialog(
 /// title : タイトルの文章 message : 選択のためのヒント
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-Future<int?> showSelectDialog(
-  BuildContext context,
-  WidgetRef ref,
-  String title,
-  String message,
-  List<String> options,
-) async {
+Future<int?> showSelectDialog({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String title,
+    required String message,
+    required List<String> options,
+    required List<bool> error,
+  }) async {
   int? selectedOption;
 
   ref.read(settingProvider).loadPreferences();
@@ -168,9 +169,7 @@ Future<int?> showSelectDialog(
                 CupertinoDialogAction(
                   child: Text(
                     options[i],
-                    style: isDark
-                        ? Styles.defaultStyleWhite13
-                        : Styles.defaultStyleBlack13,
+                    style: error[i] ? Styles.defaultStyleRed13 : isDark ? Styles.defaultStyleWhite13 : Styles.defaultStyleBlack13,
                   ),
                   onPressed: () {
                     selectedOption = i;
@@ -205,7 +204,7 @@ Future<int?> showInfoDialog(
     context: context,
     builder: (BuildContext context) {
       return StatefulBuilder(
-        builder: (context, SetState) {
+        builder: (context, _) {
           return AlertDialog(
             insetPadding: const EdgeInsets.symmetric(
               horizontal: 20,

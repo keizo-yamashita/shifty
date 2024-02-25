@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,6 +12,7 @@ import 'package:shift/main.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
+import 'package:shift/src/screens/shiftScreen/manage_shift_table.dart';
 import 'package:shift/src/screens/shiftScreen/register_shift_frame.dart';
 import 'package:shift/src/components/form/create_screen/input_shift_name.dart';
 import 'package:shift/src/components/form/create_screen/input_date_term.dart';
@@ -29,6 +31,7 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
 
   ShiftFrame shiftFrame = ShiftFrame();
   double appBarHeight = 0;
+  bool isDark = false;
   Size screenSize = const Size(0, 0);
 
   // TextField の動作をスムーズにするための変数
@@ -39,6 +42,7 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
   void initState() {
     super.initState();
     initializeDateFormatting('ja_JP', null).then((_) => setState(() {}));
+    ref.read(settingProvider).isEditting = false;
     shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
   }
 
@@ -50,14 +54,15 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
     screenSize = Size(
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height -
-          ref.read(settingProvider).appBarHeight -
-          ref.read(settingProvider).navigationBarHeight -
-          ref.read(settingProvider).screenPaddingTop -
-          ref.read(settingProvider).screenPaddingBottom,
+          ref.watch(settingProvider).appBarHeight -
+          ref.watch(settingProvider).navigationBarHeight -
+          ref.watch(settingProvider).screenPaddingTop -
+          ref.watch(settingProvider).screenPaddingBottom,
     );
 
-    final isDark = ref
-        .watch(settingProvider.select((provider) => provider.enableDarkTheme));
+    isDark = ref.watch(settingProvider).enableDarkTheme;
+    
+    ref.read(settingProvider).isEditting = !(textConroller.text == '' && shiftFrame.timeDivs.isEmpty);
 
     // シフト表名の更新
     textConroller.text = shiftFrame.shiftName;
@@ -73,14 +78,14 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
             return;
           }
           final NavigatorState navigator = Navigator.of(context);
-          if (textConroller.text == '' && shiftFrame.timeDivs.isEmpty) {
+          if (!ref.watch(settingProvider).isEditting) {
             navigator.pop();
           } else {
             final bool shouldPop = await showConfirmDialog(
               context: context,
               ref: ref,
               title: "注意",
-              message1: "入力が保存されていません。\n未登録の入力は破棄されます。",
+              message1: "データが保存されていません。\n未登録のデータは破棄されます。",
               message2: "",
               onAccept: () {},
               confirm: false,
@@ -160,7 +165,7 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
           resizeToAvoidBottomInset: false,
           body: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

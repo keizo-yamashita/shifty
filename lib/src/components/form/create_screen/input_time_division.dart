@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shift/src/components/form/utility/button.dart';
 import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/style/style.dart';
@@ -171,30 +172,35 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                 style: Styles.defaultStyle13,
               )
             : Column(
-              children: [
-            buildScheduleEditor(),
-            CustomTextButton(
-              text: "戻す",
-              enable: undoredoCtrl.enableUndo(),
-              width: screenSize.width * 0.90,
-              height: 35,
-              onPressed: () {
-                setState(
-                  () {
-                    timeDivsUndoRedo(true);
-                    widget.onTimeDivsChanged(timeDivs);
-                  },
-                );
-              },
-            ),
-              ],
-            )
+                children: [
+                  buildScheduleEditor(),
+                  CustomTextButton(
+                    text: "戻す",
+                    enable: undoredoCtrl.enableUndo(),
+                    width: screenSize.width * 0.90,
+                    height: 35,
+                    onPressed: () {
+                      setState(
+                        () {
+                          timeDivsUndoRedo(true);
+                          widget.onTimeDivsChanged(timeDivs);
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
       ],
     );
   }
 
-  Widget buildTimePicker(DateTime init, DateTime min, DateTime max,
-      int interval, Function(DateTime) callback,) {
+  Widget buildTimePicker(
+    DateTime init,
+    DateTime min,
+    DateTime max,
+    int interval,
+    Function(DateTime) callback,
+  ) {
     DateTime temp = init;
 
     return CustomTextButton(
@@ -304,90 +310,95 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
     double height = 35;
     double boader = 4;
 
-    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
+    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).scaffoldBackgroundColor;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          child: Column(
-            children: [
-              for (final timeDiv in timeDivsAxis)
+    return SizedBox(
+      width: screenSize.width * 0.9,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            child: Column(
+              children: [
+                for (final timeDiv in timeDivsAxis)
+                  SizedBox(
+                    height: height + boader,
+                    child: Text(
+                      "${timeDiv.startTime.hour.toString().padLeft(2, '0')}:${timeDiv.startTime.minute.toString().padLeft(2, '0')}-",
+                      style: Styles.defaultStyle13,
+                      textHeightBehavior: Styles.defaultBehavior,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 SizedBox(
                   height: height + boader,
                   child: Text(
-                    "${timeDiv.startTime.hour.toString().padLeft(2, '0')}:${timeDiv.startTime.minute.toString().padLeft(2, '0')}-",
+                    "${timeDivsAxis.last.endTime.hour.toString().padLeft(2, '0')}:${timeDivsAxis.last.endTime.minute.toString().padLeft(2, '0')}-",
                     style: Styles.defaultStyle13,
                     textHeightBehavior: Styles.defaultBehavior,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              SizedBox(
-                height: height + boader,
-                child: Text(
-                  "${timeDivsAxis.last.endTime.hour.toString().padLeft(2, '0')}:${timeDivsAxis.last.endTime.minute.toString().padLeft(2, '0')}-",
-                  style: Styles.defaultStyle13,
-                  textHeightBehavior: Styles.defaultBehavior,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        SizedBox(
-          width: screenSize.width * 0.8,
-          child: Column(
-            children: [
-              const Padding(padding: EdgeInsets.all(6)),
-              for (int i = 0; i < timeDivs.length; i++)
-                Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(boader / 2),
-                      child: InkWell(
-                        onTap: () {
-                          setState(
-                            () {
-                              if (i + 1 != timeDivs.length) {
-                                timeDivs[i].endTime = timeDivs[i + 1].endTime;
-                                timeDivs[i].name =
-                                    "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')}-${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}";
-                                timeDivs.removeAt(i + 1);
-                              }
-                            },
-                          );
-                          insertBuffer(timeDivs);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: bgColor,
-                            border: Border.all(color: Styles.primaryColor),
-                            borderRadius: BorderRadius.circular(3.0),
-                          ),
-                          height: (
-                            (height + boader)*(calcDurationInMinute(timeDivs[i]) /durationAxis).ceil()
-                            ) - boader,
-                          child: Center(
-                            child: Text(
-                              "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')} - ${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}",
-                              style: Styles.defaultStyleGreen13,
-                              textHeightBehavior: Styles.defaultBehavior,
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.ellipsis,
+          Expanded(
+            child: Column(
+              children: [
+                const Padding(padding: EdgeInsets.all(6)),
+                for (int i = 0; i < timeDivs.length; i++)
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(boader / 2),
+                        child: InkWell(
+                          onTap: () {
+                            setState(
+                              () {
+                                if (i + 1 != timeDivs.length) {
+                                  timeDivs[i].endTime = timeDivs[i + 1].endTime;
+                                  timeDivs[i].name =
+                                      "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')}-${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}";
+                                  timeDivs.removeAt(i + 1);
+                                }
+                              },
+                            );
+                            insertBuffer(timeDivs);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: bgColor,
+                              border: Border.all(color: Styles.primaryColor),
+                              borderRadius: BorderRadius.circular(3.0),
+                            ),
+                            height: ((height + boader) *
+                                    (calcDurationInMinute(timeDivs[i]) /
+                                            durationAxis)
+                                        .ceil()) -
+                                boader,
+                            child: Center(
+                              child: Text(
+                                "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')} - ${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}",
+                                style: Styles.defaultStyleGreen13,
+                                textHeightBehavior: Styles.defaultBehavior,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-            ],
+                    ],
+                  ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

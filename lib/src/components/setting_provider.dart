@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingProvider extends ChangeNotifier {
   bool _enableDarkTheme = false;
   bool _defaultShiftView = false;
+  bool isEditting = false;
   double _screenPaddngTop = 0.0;
   double _screenPaddngBottom = 0.0;
   double _appBarHeight = 0.0;

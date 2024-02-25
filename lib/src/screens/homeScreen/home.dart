@@ -256,11 +256,15 @@ class HomeScreenState extends ConsumerState<HomeScreen>
           child: const Icon(Icons.add, size: 40),
           onPressed: () async {
             showSelectDialog(
-              context,
-              ref,
-              "シフト表の追加",
-              "シフト表の追加方法を選択してください。",
-              ["シフト表を作成する", "シフト表をフォローする"],
+              context: context,
+              ref: ref,
+              title: "シフト表の追加",
+              message: "シフト表の追加方法を選択してください。",
+              options: [
+                "シフト表を作成する",
+                "シフト表をフォローする",
+              ],
+              error: [false, false],
             ).then(
               (value) {
                 if (value == 0) {
@@ -433,13 +437,20 @@ class HomeScreenState extends ConsumerState<HomeScreen>
             },
             isDark,
             () {
-              showSelectDialog(context, ref, frame.shiftName, "", [
-                "シフト表IDのコピー",
-                "シフト表をSNSで共有",
-                "次のシフト表を作成",
-                "シフト表の設定",
-                "シフト表を削除"
-              ]).then(
+              showSelectDialog(
+                context: context,
+                ref: ref,
+                title: frame.shiftName,
+                message: "",
+                options: [
+                  "シフト表IDのコピー",
+                  "シフト表をSNSで共有",
+                  "次のシフト表を作成",
+                  "シフト表の設定",
+                  "シフト表を削除",
+                ],
+                error: [false, false, false, false, true,],
+              ).then(
                 (value) {
                   if (value == 0) {
                     Clipboard.setData(ClipboardData(text: frame.shiftId));
