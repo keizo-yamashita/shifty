@@ -7,9 +7,6 @@ class SnackBarManager {
   static final List<OverlayEntry> _snackBars = [];
   static const int maxSnackBars = 3;
   
-  // enum SnackBarType { info, warning, error }
-  
-
   static void removeSnackBar(OverlayEntry entry) {
     _snackBars.remove(entry);
     _updateSnackBarsPosition();
@@ -49,13 +46,13 @@ class SnackBarManager {
   static IconData getSnackIcon(SnackBarType type) {
     switch (type) {
       case SnackBarType.info:
-        return Icons.info_outline;
+        return Icons.info;
       case SnackBarType.warning:
-        return Icons.warning_amber_outlined;
+        return Icons.warning;
       case SnackBarType.error:
-        return Icons.error_outline;
+        return Icons.error;
       default:
-        return Icons.info_outline;
+        return Icons.info;
     }
   }
 }
@@ -64,7 +61,7 @@ void showSnackBar({
   required BuildContext context,
   required String message,
   required SnackBarType type,
-  Duration duration = const Duration(seconds: 3),
+  Duration duration = const Duration(seconds: 2),
 }) {
   final overlay = Overlay.of(context);
   
