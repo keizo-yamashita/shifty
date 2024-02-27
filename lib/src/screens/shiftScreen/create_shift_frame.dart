@@ -3,7 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,7 +11,6 @@ import 'package:shift/main.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
 import 'package:shift/src/components/style/style.dart';
 import 'package:shift/src/components/shift/shift_frame.dart';
-import 'package:shift/src/screens/shiftScreen/manage_shift_table.dart';
 import 'package:shift/src/screens/shiftScreen/register_shift_frame.dart';
 import 'package:shift/src/components/form/create_screen/input_shift_name.dart';
 import 'package:shift/src/components/form/create_screen/input_date_term.dart';

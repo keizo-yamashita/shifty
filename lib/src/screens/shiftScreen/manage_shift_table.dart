@@ -4,8 +4,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
+import 'dart:math' as math;
 
 // my package
 import 'package:shift/main.dart';
@@ -236,6 +238,9 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
             ),
           ),
 
+          RotatedBox(
+            quarterTurns: 0,
+            child:
           ////////////////////////////////////////////////////////////////////////////////////////////
           /// メインテーブル
           ////////////////////////////////////////////////////////////////////////////////////////////
@@ -244,6 +249,8 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                   editorKey: editorKey,
                   tableHeight: screenSize.height - 60 - 70,
                   tableWidth: screenSize.width,
+                  // tableHeight: screenSize.width,
+                  // tableWidth: screenSize.height - 60 - 70,
                   cellHeight: cellHeight,
                   cellWidth: cellWidth,
                   titleHeight: cellHeight * 2,
@@ -360,7 +367,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                   selected: selectedCoodinate,
                   isDark: isDark,
                 ),
-
+          ),
           ////////////////////////////////////////////////////////////////////////////////////////////
           /// 切り替えボタン
           ////////////////////////////////////////////////////////////////////////////////////////////
