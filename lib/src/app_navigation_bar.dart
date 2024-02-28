@@ -86,5 +86,6 @@ class AppNavigationBar extends ConsumerWidget {
         ),
       ),
     );
+    
   }
 }
