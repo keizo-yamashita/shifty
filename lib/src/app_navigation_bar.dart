@@ -23,9 +23,33 @@ class AppNavigationBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    var isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: Container(
+      drawer: isLandscape ? Drawer(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 40),
+          children: [
+            ListTile(
+              leading: const Icon(Icons.notifications, size: 28),
+              title: const Text('お知らせ'),
+              onTap: () => navigationShell.goBranch(0),
+            ),
+            ListTile(
+              leading: const Icon(Icons.calendar_month, size: 28),
+              title: const Text('マイシフト'),
+              onTap: () => navigationShell.goBranch(1),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings, size: 28),
+              title: const Text('設定'),
+              onTap: () => navigationShell.goBranch(2),
+            ),
+          ],
+        ),
+      ) : null,
+      bottomNavigationBar: !isLandscape ? Container(
         height: 56.0 + MediaQuery.of(context).padding.bottom,
         decoration: const BoxDecoration(
           boxShadow: <BoxShadow>[
@@ -84,7 +108,7 @@ class AppNavigationBar extends ConsumerWidget {
           type: BottomNavigationBarType.fixed,
           fixedColor: Styles.primaryColor,
         ),
-      ),
+      ) : null,
     );
     
   }

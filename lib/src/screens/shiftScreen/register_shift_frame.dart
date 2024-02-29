@@ -64,12 +64,13 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
     shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
 
     screenSize = Size(
-        MediaQuery.of(context).size.width,
-        MediaQuery.of(context).size.height -
-            ref.read(settingProvider).appBarHeight -
-            ref.read(settingProvider).navigationBarHeight -
-            ref.read(settingProvider).screenPaddingTop -
-            ref.read(settingProvider).screenPaddingBottom);
+      MediaQuery.of(context).size.width,
+      MediaQuery.of(context).size.height -
+          ref.watch(settingProvider).appBarHeight -
+          ((MediaQuery.of(context).orientation == Orientation.portrait) ? ref.watch(settingProvider).navigationBarHeight : 0) -
+          ref.watch(settingProvider).screenPaddingTop -
+          ref.watch(settingProvider).screenPaddingBottom,
+    );
 
     ref.read(settingProvider).loadPreferences();
     isDark = ref.watch(settingProvider).enableDarkTheme;

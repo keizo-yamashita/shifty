@@ -240,7 +240,12 @@ class HomeScreenState extends ConsumerState<HomeScreen>
     }
 
     return Scaffold(
-      appBar: const EmptyAppBar(),
+      appBar: MediaQuery.of(context).orientation == Orientation.portrait ? (const EmptyAppBar()) : AppBar(
+        title: const Text('マイシフト'),
+        centerTitle: true,
+        backgroundColor: isDark ? Styles.darkColor : Styles.lightColor,
+        elevation: 0,
+      ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
           bottom: screenSize.height / 60,
