@@ -16,7 +16,6 @@ import 'package:url_launcher/url_launcher.dart';
 // my package
 import 'package:shift/main.dart';
 import 'package:shift/src/components/form/utility/dialog.dart';
-import 'package:shift/src/components/form/utility/empty_appbar.dart';
 import 'package:shift/src/components/form/utility/modal_window.dart';
 import 'package:shift/src/components/style/style.dart';
 
@@ -44,9 +43,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
       return text;
     }
 
-    return Scaffold(
-      appBar: const EmptyAppBar(),
-      body: SafeArea(
+    return SafeArea(
         child: SettingsList(
           lightTheme: const SettingsThemeData(
             settingsListBackground: Styles.lightBgColor,
@@ -316,7 +313,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
             ),
           ],
         ),
-      ),
+      
     );
   }
 }

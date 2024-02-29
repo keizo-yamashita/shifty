@@ -91,7 +91,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height -
           ref.watch(settingProvider).appBarHeight -
-          ref.watch(settingProvider).navigationBarHeight -
+          ((MediaQuery.of(context).orientation == Orientation.portrait) ? ref.watch(settingProvider).navigationBarHeight : 0) -
           ref.watch(settingProvider).screenPaddingTop -
           ref.watch(settingProvider).screenPaddingBottom,
     );
@@ -238,19 +238,11 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
             ),
           ),
 
-          RotatedBox(
-            quarterTurns: 0,
-            child:
-          ////////////////////////////////////////////////////////////////////////////////////////////
-          /// メインテーブル
-          ////////////////////////////////////////////////////////////////////////////////////////////
           (selectedIndex == 0)
               ? TableEditor(
                   editorKey: editorKey,
                   tableHeight: screenSize.height - 60 - 70,
                   tableWidth: screenSize.width,
-                  // tableHeight: screenSize.width,
-                  // tableWidth: screenSize.height - 60 - 70,
                   cellHeight: cellHeight,
                   cellWidth: cellWidth,
                   titleHeight: cellHeight * 2,
@@ -367,7 +359,6 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                   selected: selectedCoodinate,
                   isDark: isDark,
                 ),
-          ),
           ////////////////////////////////////////////////////////////////////////////////////////////
           /// 切り替えボタン
           ////////////////////////////////////////////////////////////////////////////////////////////
