@@ -96,7 +96,6 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
           showConfirmDialog(
             context: context,
             ref: ref,
-            
             title: "確認",
             message1: "このシフト表で作成しますか？",
             message2: "シフト表を作成しました",
