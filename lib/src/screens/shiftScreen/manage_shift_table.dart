@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
-import 'dart:math' as math;
 
 // my package
 import 'package:shift/main.dart';
@@ -88,7 +87,8 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
     
     // 画面サイズの取得
     screenSize = Size(
-      MediaQuery.of(context).size.width,
+      MediaQuery.of(context).size.width - 
+          ((MediaQuery.of(context).orientation == Orientation.landscape) ? ref.watch(settingProvider).appBarHeight : 0),
       MediaQuery.of(context).size.height -
           ref.watch(settingProvider).appBarHeight -
           ((MediaQuery.of(context).orientation == Orientation.portrait) ? ref.watch(settingProvider).navigationBarHeight : 0) -
@@ -180,68 +180,71 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
           /// ツールボタン
           ////////////////////////////////////////////////////////////////////////////////////////////
           // height 60
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 15.0,
-              right: 2.0,
-              left: 2.0,
-              bottom: 15.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ToolButton(
-                  icon: Icons.zoom_in,
-                  pressEnable: enableZoomIn,
-                  width: screenSize.width / 8,
-                  onPressed: handleZoomIn,
-                ),
-                ToolButton(
-                  icon: Icons.zoom_out,
-                  pressEnable: enableZoomOut,
-                  width: screenSize.width / 8,
-                  onPressed: handleZoomOut,
-                ),
-                ToolButton(
-                  icon: Icons.auto_fix_high_outlined,
-                  pressEnable: true,
-                  width: screenSize.width / 8,
-                  onPressed: handleAutoFill,
-                ),
-                ToolButton(
-                  icon: Icons.filter_alt_outlined,
-                  pressEnable: true,
-                  width: screenSize.width / 8,
-                  onPressed: handleRangeFill,
-                ),
-                ToolButton(
-                  icon: Icons.touch_app_outlined,
-                  pressEnable: selectedIndex != 0,
-                  offEnable: !enableResponseEdit,
-                  width: screenSize.width / 8,
-                  onPressed: handleTouchEdit,
-                  onLongPressed: handleChangeInputValue,
-                ),
-                ToolButton(
-                  icon: Icons.undo,
-                  pressEnable: undoredoCtrl.enableUndo(),
-                  width: screenSize.width / 8,
-                  onPressed: handleUndo,
-                ),
-                ToolButton(
-                  icon: Icons.redo,
-                  pressEnable: undoredoCtrl.enableRedo(),
-                  width: screenSize.width / 8,
-                  onPressed: handleRedo,
-                ),
-              ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                right: 5.0,
+                left: 5.0,
+                top: 10.0,
+                bottom: 5.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ToolButton(
+                    icon: Icons.zoom_in,
+                    pressEnable: enableZoomIn,
+                    width: screenSize.width / 8,
+                    onPressed: handleZoomIn,
+                  ),
+                  ToolButton(
+                    icon: Icons.zoom_out,
+                    pressEnable: enableZoomOut,
+                    width: screenSize.width / 8,
+                    onPressed: handleZoomOut,
+                  ),
+                  ToolButton(
+                    icon: Icons.auto_fix_high_outlined,
+                    pressEnable: true,
+                    width: screenSize.width / 8,
+                    onPressed: handleAutoFill,
+                  ),
+                  ToolButton(
+                    icon: Icons.filter_alt_outlined,
+                    pressEnable: true,
+                    width: screenSize.width / 8,
+                    onPressed: handleRangeFill,
+                  ),
+                  ToolButton(
+                    icon: Icons.touch_app_outlined,
+                    pressEnable: selectedIndex != 0,
+                    offEnable: !enableResponseEdit,
+                    width: screenSize.width / 8,
+                    onPressed: handleTouchEdit,
+                    onLongPressed: handleChangeInputValue,
+                  ),
+                  ToolButton(
+                    icon: Icons.undo,
+                    pressEnable: undoredoCtrl.enableUndo(),
+                    width: screenSize.width / 8,
+                    onPressed: handleUndo,
+                  ),
+                  ToolButton(
+                    icon: Icons.redo,
+                    pressEnable: undoredoCtrl.enableRedo(),
+                    width: screenSize.width / 8,
+                    onPressed: handleRedo,
+                  ),
+                ],
+              ),
             ),
           ),
 
           (selectedIndex == 0)
               ? TableEditor(
                   editorKey: editorKey,
-                  tableHeight: screenSize.height - 60 - 70,
+                  tableHeight: screenSize.height - 45 - 55,
                   tableWidth: screenSize.width,
                   cellHeight: cellHeight,
                   cellWidth: cellWidth,
@@ -294,7 +297,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
                 )
               : TableEditor(
                   editorKey: editorKey,
-                  tableHeight: screenSize.height - 60 - 70,
+                  tableHeight: screenSize.height - 45 - 55,
                   tableWidth: screenSize.width,
                   cellHeight: cellHeight,
                   cellWidth: cellWidth,
@@ -367,9 +370,11 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 5.0,
-                vertical: 15.0,
+              padding: const EdgeInsets.only(
+                right: 5.0,
+                left: 5.0,
+                top: 10.0,
+                bottom: 5.0,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -918,7 +923,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
     showModalWindow(
       context,
       0.5,
-      RangeFillModalWindowWidget(shiftTable: shiftTable),
+      RangeFillWidget(shiftTable: shiftTable),
     ).then(
       (value) {
         if (value != null) {
@@ -2145,20 +2150,18 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
 /// 人，日時を選択して自動で埋めるためのモーダルウィンドウクラス
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-class RangeFillModalWindowWidget extends StatefulWidget {
+class RangeFillWidget extends StatefulWidget {
   final ShiftTable _shiftTable;
 
-  const RangeFillModalWindowWidget({Key? key, required ShiftTable shiftTable})
+  const RangeFillWidget({Key? key, required ShiftTable shiftTable})
       : _shiftTable = shiftTable,
         super(key: key);
 
   @override
-  RangeFillModalWindowWidgetState createState() =>
-      RangeFillModalWindowWidgetState();
+  RangeFillWidgetState createState() => RangeFillWidgetState();
 }
 
-class RangeFillModalWindowWidgetState
-    extends State<RangeFillModalWindowWidget> {
+class RangeFillWidgetState extends State<RangeFillWidget> {
   static var selectorsIndex = [0, 0, 0, 0, 0, 0];
 
   @override

@@ -64,7 +64,8 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
     shiftFrame = ref.read(shiftFrameProvider).shiftFrame;
 
     screenSize = Size(
-      MediaQuery.of(context).size.width,
+      MediaQuery.of(context).size.width - 
+          ((MediaQuery.of(context).orientation == Orientation.landscape) ? ref.watch(settingProvider).appBarHeight : 0),
       MediaQuery.of(context).size.height -
           ref.watch(settingProvider).appBarHeight -
           ((MediaQuery.of(context).orientation == Orientation.portrait) ? ref.watch(settingProvider).navigationBarHeight : 0) -
@@ -101,14 +102,13 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
             message2: "シフト表を作成しました",
             onAccept: () {
               shiftFrame.pushShiftFrame();
-              crearVariables();
               Navigator.pop(context);
               Navigator.pop(context);
+              // crearVariables();
             },
             confirm: true,
           );
         } else {
-          
           showAlertDialog(
             context,
             ref,
@@ -130,7 +130,11 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
             scrollDirection: Axis.horizontal,
             child: Padding(
               padding: const EdgeInsets.only(
-                  right: 5.0, left: 5.0, top: 15.0, bottom: 15.0),
+                right: 5.0,
+                left: 5.0,
+                top: 10.0,
+                bottom: 5.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -187,7 +191,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
           ////////////////////////////////////////////////////////////////////////////////////////////
           TableEditor(
             editorKey: editorKey,
-            tableHeight: screenSize.height * 1.0 - 60,
+            tableHeight: screenSize.height * 1.0 - 45,
             tableWidth: screenSize.width,
             cellHeight: cellHeight,
             cellWidth: cellWidth,
@@ -769,9 +773,9 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
     return LayoutBuilder(
       builder: (context, constraints) {
         var modalHeight = screenSize.height * 0.5;
-        var modalWidth = screenSize.width - 10 - screenSize.width * 0.08;
-        var paddingHeght = modalHeight * 0.04;
-        var buttonHeight = min(modalHeight * 0.15, 40.0);
+        var modalWidth = screenSize.width - 20 - screenSize.width * 0.1;
+        var paddingHeght = modalHeight * 0.03;
+        var buttonHeight = min(modalHeight * 0.16, 50.0);
         var widgetHeight = buttonHeight + paddingHeght * 2;
 
         return Padding(
@@ -779,8 +783,20 @@ class AutoFillWidgetState extends State<AutoFillWidget> {
           child: SizedBox(
             height: modalHeight,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: SizedBox(
+                    height: 20,
+                    child: Text(
+                      "割り当て人数の範囲入力",
+                      style: Styles.defaultStyle15,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                const Divider(thickness: 2),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
