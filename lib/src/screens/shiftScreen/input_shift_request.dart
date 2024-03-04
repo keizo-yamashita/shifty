@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -76,7 +78,8 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
   Widget build(BuildContext context) {
     // 画面サイズの取得
     screenSize = Size(
-      MediaQuery.of(context).size.width,
+      MediaQuery.of(context).size.width - 
+          ((MediaQuery.of(context).orientation == Orientation.landscape) ? ref.watch(settingProvider).appBarHeight : 0),
       MediaQuery.of(context).size.height -
           ref.watch(settingProvider).appBarHeight -
           ((MediaQuery.of(context).orientation == Orientation.portrait) ? ref.watch(settingProvider).navigationBarHeight : 0) -
@@ -153,8 +156,8 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
               padding: const EdgeInsets.only(
                 right: 5.0,
                 left: 5.0,
-                top: 15.0,
-                bottom: 15.0,
+                top: 10.0,
+                bottom: 5.0,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -212,7 +215,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
           (isRequestRange())
               ? TableEditor(
                   editorKey: editorKey,
-                  tableHeight: screenSize.height - 60,
+                  tableHeight: screenSize.height - 45,
                   tableWidth: screenSize.width,
                   cellHeight: cellHeight,
                   cellWidth: cellWidth,
@@ -271,7 +274,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
                 )
               : TableEditor(
                   editorKey: editorKey,
-                  tableHeight: screenSize.height - 60,
+                  tableHeight: screenSize.height - 45,
                   tableWidth: screenSize.width,
                   cellHeight: cellHeight,
                   cellWidth: cellWidth,
@@ -1052,11 +1055,12 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-///  シフト表の Auto-Fill 機能のためのクラス (モーダルウィンドウとして使用)
+///  シフト表の Range-Fill 機能のためのクラス (モーダルウィンドウとして使用)
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 class RangeFillWidget extends StatefulWidget {
   final ShiftRequest _shiftRequest;
+
   const RangeFillWidget({Key? key, required ShiftRequest shiftRequest})
       : _shiftRequest = shiftRequest,
         super(key: key);
@@ -1098,9 +1102,9 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
     return LayoutBuilder(
       builder: (context, constraints) {
         var modalHeight = screenSize.height * 0.5;
-        var modalWidth = screenSize.width - 10 - screenSize.width * 0.08;
-        var paddingHeght = modalHeight * 0.04;
-        var buttonHeight = modalHeight * 0.2;
+        var modalWidth = screenSize.width - 20 - screenSize.width * 0.1;
+        var paddingHeght = modalHeight * 0.03;
+        var buttonHeight = min(modalHeight * 0.16, 50.0);
         var widgetHeight = buttonHeight + paddingHeght * 2;
 
         return Padding(
@@ -1108,8 +1112,20 @@ class RangeFillWidgetState extends State<RangeFillWidget> {
           child: SizedBox(
             height: modalHeight,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: SizedBox(
+                    height: 20,
+                    child: Text(
+                      "シフトの範囲入力",
+                      style: Styles.defaultStyle15,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                const Divider(thickness: 2),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [

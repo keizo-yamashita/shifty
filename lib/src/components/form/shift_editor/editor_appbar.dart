@@ -95,7 +95,7 @@ class EditorAppBar extends StatelessWidget {
             ),
           ],
         ),
-        // resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: false,
         body: content,
       ),
     );
