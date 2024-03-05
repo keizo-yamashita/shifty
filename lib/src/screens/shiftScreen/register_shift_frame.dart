@@ -415,6 +415,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
     });
   }
 
+
   void handleChangeInputValue() {
     setState(() {
       buildChangeInputValueModaleWindow();
