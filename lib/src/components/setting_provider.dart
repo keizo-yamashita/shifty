@@ -63,5 +63,6 @@ class SettingProvider extends ChangeNotifier {
     prefs.setBool('enableDarkTheme', _enableDarkTheme);
     prefs.setBool('defaultShiftView', _defaultShiftView);
     notifyListeners();
+
   }
 }
