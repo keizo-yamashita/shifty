@@ -9,6 +9,7 @@ class SettingProvider extends ChangeNotifier {
   bool _enableDarkTheme = false;
   bool _defaultShiftView = false;
   bool isEditting = false;
+  bool isRotating = false;
   double _screenPaddngTop = 0.0;
   double _screenPaddngBottom = 0.0;
   double _appBarHeight = 0.0;
@@ -20,7 +21,7 @@ class SettingProvider extends ChangeNotifier {
   double get screenPaddingBottom => _screenPaddngBottom;
   double get appBarHeight => _appBarHeight;
   double get navigationBarHeight => _navigationBarHeight;
-
+  
   set enableDarkTheme(bool result) {
     _enableDarkTheme = result;
     notifyListeners();
@@ -63,6 +64,5 @@ class SettingProvider extends ChangeNotifier {
     prefs.setBool('enableDarkTheme', _enableDarkTheme);
     prefs.setBool('defaultShiftView', _defaultShiftView);
     notifyListeners();
-
   }
 }

@@ -118,7 +118,11 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
           );
         }
       },
-      content: Column(
+      content: ref.watch(settingProvider).isRotating
+      ? const Center(
+        child:Text("Loading..."),
+      )
+      : Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ////////////////////////////////////////////////////////////////////////////////////////////

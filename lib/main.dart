@@ -248,10 +248,15 @@ class MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
 
   @override
   void didChangeMetrics() {
+    super.didChangeMetrics();
+    ref.read(settingProvider).isRotating = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(settingProvider).appBarHeight = AppBar().preferredSize.height;
       ref.read(settingProvider).navigationBarHeight = 56.0;
       ref.read(settingProvider).screenPaddingTop = MediaQuery.of(context).padding.top;
       ref.read(settingProvider).screenPaddingBottom = MediaQuery.of(context).padding.bottom;
+      ref.read(settingProvider).isRotating = false;
+    });
   }
 
   @override

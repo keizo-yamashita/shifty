@@ -83,7 +83,7 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
       MediaQuery.of(context).size.height -
           ref.watch(settingProvider).appBarHeight -
           ((MediaQuery.of(context).orientation == Orientation.portrait) ? ref.watch(settingProvider).navigationBarHeight : 0) -
-          ref.watch(settingProvider).screenPaddingTop -
+          ((MediaQuery.of(context).orientation == Orientation.portrait) ? ref.watch(settingProvider).screenPaddingTop : 0) -
           ref.watch(settingProvider).screenPaddingBottom,
     );
 
@@ -144,7 +144,11 @@ class InputShiftRequestPageState extends ConsumerState<InputShiftRequestPage> {
           );
         }
       },
-      content: Column(
+      content: ref.watch(settingProvider).isRotating
+      ? const Center(
+        child:Text("Loading..."),
+      )
+      : Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ////////////////////////////////////////////////////////////////////////////////////////////
