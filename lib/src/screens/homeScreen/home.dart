@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -344,7 +346,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
         shiftCard.add(
           request.buildShiftRequestCard(
             frame.shiftName,
-            screenSize.width * 0.8,
+            min(500, screenSize.width * 0.8),
             () {
               ref.read(shiftRequestProvider).shiftRequest = request;
               context.go('/home/input_shift_request');
@@ -405,7 +407,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
         shiftCard.add(
           frame.buildShiftTableCard(
             frame.shiftName,
-            screenSize.width * 0.8,
+            min(500, screenSize.width * 0.8),
             followersNum,
             () async {
               List<ShiftRequest> requests = [];
