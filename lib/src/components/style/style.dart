@@ -89,7 +89,7 @@ class Styles{
 
   // Colors
   static const lightBgColor             = Color(0xFFF2F2F7);
-  static const darkBgColor              = Color(0xFF000000);
+  static const darkBgColor              = Color(0xFF202020);
   static const lightColor               = Color(0xffffffff);
   static const darkColor                = Color(0xFF2C2C2c);
   static const secondaryBackgroundColor = Color.fromARGB(255, 255, 254, 250);

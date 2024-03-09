@@ -289,6 +289,7 @@ class MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         brightness: Brightness.light
       ),
       darkTheme: ThemeData(
+        scaffoldBackgroundColor: Styles.darkBgColor,
         primaryColor: Styles.primaryColor,
         appBarTheme: const AppBarTheme(
           backgroundColor: Styles.darkColor,
