@@ -32,6 +32,8 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
   bool isDark = false;
   Size screenSize = const Size(0, 0);
 
+
+
   // TextField の動作をスムーズにするための変数
   final FocusNode focusNode = FocusNode();
   final TextEditingController textConroller = TextEditingController();
