@@ -27,6 +27,7 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
   // シフト準備期間が確保されているか確認するためのbool値
   bool existPrepareTerm = false;
 
+
   ShiftFrame shiftFrame = ShiftFrame();
   double appBarHeight = 0;
   bool isDark = false;
