@@ -11,27 +11,27 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
 
 // my screens
-import 'package:shift/src/app_navigation_bar.dart';
-import 'package:shift/src/screens/splashScreen/splash_screen.dart';
-import 'package:shift/src/screens/signInScreen/sign_in.dart';
-import 'package:shift/src/screens/homeSCreen/setting.dart';
-import 'package:shift/src/screens/homeScreen/home.dart';
-import 'package:shift/src/screens/homeScreen/notification.dart';
-import 'package:shift/src/screens/shiftScreen/follow_shift_frame.dart';
-import 'package:shift/src/screens/shiftScreen/create_shift_frame.dart';
-import 'package:shift/src/screens/shiftScreen/input_shift_request.dart';
-import 'package:shift/src/screens/shiftScreen/manage_shift_table.dart';
-import 'package:shift/src/screens/settingsScreen/user_info.dart';
-import 'package:shift/src/screens/settingsScreen/contact.dart';
-import 'package:shift/src/screens/settingsScreen/privacy_policy.dart';
-import 'package:shift/src/screens/settingsScreen/link_account.dart';
+import 'package:shift/app_navigation_bar.dart';
+import 'package:shift/screens/splashScreen/splash_screen.dart';
+import 'package:shift/screens/signInScreen/sign_in.dart';
+import 'package:shift/screens/homeSCreen/setting.dart';
+import 'package:shift/screens/homeScreen/home.dart';
+import 'package:shift/screens/homeScreen/notification.dart';
+import 'package:shift/screens/shiftScreen/follow_shift_frame.dart';
+import 'package:shift/screens/shiftScreen/create_shift_frame.dart';
+import 'package:shift/screens/shiftScreen/input_shift_request.dart';
+import 'package:shift/screens/shiftScreen/manage_shift_table.dart';
+import 'package:shift/screens/settingsScreen/user_info.dart';
+import 'package:shift/screens/settingsScreen/contact.dart';
+import 'package:shift/screens/settingsScreen/privacy_policy.dart';
+import 'package:shift/screens/settingsScreen/link_account.dart';
 
 // my components
-import 'package:shift/src/components/style/style.dart';
-import 'package:shift/src/components/deep_link_mixin.dart';
-import 'package:shift/src/components/sign_in/sign_in_provider.dart';
-import 'package:shift/src/components/shift/shift_provider.dart';
-import 'package:shift/src/components/setting_provider.dart';
+import 'package:shift/components/style/style.dart';
+import 'package:shift/providers/deep_link_mixin.dart';
+import 'package:shift/providers/sign_in_provider.dart';
+import 'package:shift/providers/shift_provider.dart';
+import 'package:shift/providers/setting_provider.dart';
 
 final signInProvider       = ChangeNotifierProvider((ref) => SignInProvider());
 final settingProvider      = ChangeNotifierProvider((ref) => SettingProvider());

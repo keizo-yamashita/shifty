@@ -6,12 +6,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shift/firebase_options.dart';
 import 'package:shift/main.dart';
-import 'package:shift/src/app_router.dart';
+import 'package:shift/app_router.dart';
 
-import 'package:shift/src/components/deep_link_mixin.dart';
-import 'package:shift/src/components/sign_in/sign_in_provider.dart';
-import 'package:shift/src/components/shift/shift_provider.dart';
-import 'package:shift/src/components/setting_provider.dart';
+import 'package:shift/providers/deep_link_mixin.dart';
+import 'package:shift/providers/sign_in_provider.dart';
+import 'package:shift/providers/shift_provider.dart';
+import 'package:shift/providers/setting_provider.dart';
 
 final signInProvider       = ChangeNotifierProvider((ref) => SignInProvider());
 final settingProvider      = ChangeNotifierProvider((ref) => SettingProvider());
