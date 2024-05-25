@@ -286,6 +286,7 @@ class MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
           selectedItemColor: Styles.primaryColor,
           unselectedItemColor: Colors.grey,
         ),
+        cardColor: Styles.lightColor,
         brightness: Brightness.light
       ),
       darkTheme: ThemeData(
@@ -306,6 +307,7 @@ class MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
           selectedItemColor: Styles.primaryColor,
           unselectedItemColor: Styles.hiddenColor,
         ),
+        cardColor: Styles.darkColor,
         brightness: Brightness.dark,
         
       ),

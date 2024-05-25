@@ -43,16 +43,40 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
       return text;
     }
 
+    // テーマデータの取得
+    var lightTheme = Theme.of(context);
+    var darkTheme = Theme.of(context).copyWith(brightness: Brightness.dark);
+
+    var settingsLightTheme = SettingsThemeData(
+      settingsListBackground: lightTheme.scaffoldBackgroundColor,
+      settingsSectionBackground: lightTheme.cardColor,
+      dividerColor: lightTheme.dividerColor,
+      tileHighlightColor: lightTheme.highlightColor,
+      titleTextColor: lightTheme.textTheme.bodyLarge?.color,
+      leadingIconsColor: lightTheme.iconTheme.color,
+      tileDescriptionTextColor: lightTheme.textTheme.bodyMedium?.color,
+      settingsTileTextColor: lightTheme.textTheme.bodyLarge?.color,
+      inactiveTitleColor: lightTheme.disabledColor,
+      inactiveSubtitleColor: lightTheme.disabledColor,
+    );
+
+    var settingsDarkTheme = SettingsThemeData(
+      settingsListBackground: darkTheme.scaffoldBackgroundColor,
+      settingsSectionBackground: darkTheme.cardColor,
+      dividerColor: darkTheme.dividerColor,
+      tileHighlightColor: darkTheme.highlightColor,
+      titleTextColor: darkTheme.textTheme.bodyLarge?.color,
+      leadingIconsColor: darkTheme.iconTheme.color,
+      tileDescriptionTextColor: darkTheme.textTheme.bodyMedium?.color,
+      settingsTileTextColor: darkTheme.textTheme.bodyLarge?.color,
+      inactiveTitleColor: darkTheme.disabledColor,
+      inactiveSubtitleColor: darkTheme.disabledColor,
+    );
+
     return SafeArea(
         child: SettingsList(
-          lightTheme: const SettingsThemeData(
-            settingsListBackground: Styles.lightBgColor,
-            settingsSectionBackground: Styles.lightColor,
-          ),
-          darkTheme: const SettingsThemeData(
-            settingsListBackground: Styles.darkBgColor,
-            settingsSectionBackground: Styles.darkColor,
-          ),
+          lightTheme: settingsLightTheme,
+          darkTheme: settingsDarkTheme,
           sections: [
             SettingsSection(
               title: Text('基本設定', style: Styles.defaultStyle15),
