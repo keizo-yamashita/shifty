@@ -45,6 +45,7 @@ dependencies:
   horizontal_data_table:
     path: ../tutorial/flutter_horizontal_data_table_ex
   app_review: ^2.0.1
+  freezed_annotation: ^2.4.1
 
   flutter_localizations:
     sdk: flutter
@@ -56,6 +57,7 @@ dependencies:
   package_info_plus: ^4.0.1 
   in_app_review: ^2.0.8
   url_launcher: ^6.2.4
+  json_annotation: ^4.9.0
   # dart_openai: ^3.0.0
 
 dev_dependencies:
@@ -64,7 +66,10 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-  flutter_launcher_icons: "^0.13.1" 
+  flutter_launcher_icons: "^0.13.1"
+  freezed: ^2.5.3
+  build_runner: ^2.4.10
+  json_serializable: ^6.8.0
 
 flutter_icons:
   android: "launcher_icon" 
