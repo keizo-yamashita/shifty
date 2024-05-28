@@ -11,7 +11,7 @@ import 'package:shift/main.dart';
 import 'package:shift/components/form/utility/button.dart';
 import 'package:shift/components/style/style.dart';
 import 'package:shift/components/form/utility/dialog.dart';
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/models/shift_request.dart';
 
 class FollowShiftFramePage extends ConsumerStatefulWidget {
@@ -232,8 +232,9 @@ class FollowShiftFramePageState extends ConsumerState<FollowShiftFramePage> {
                                       .get()
                                       .then(
                                     (snapshots) {
-                                      var shiftFrame = ShiftFrame();
-                                      shiftFrame.pullShiftFrame(value);
+                                      var shiftFrame = ShiftFrame.fromFirebase(
+                                        value,
+                                      );
                                       var errorFlag = false;
 
                                       for (var snapshot in snapshots.docs) {

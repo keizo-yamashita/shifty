@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../time_division/time_division.dart';
 import 'assign_rule.dart';
@@ -9,10 +10,72 @@ import 'package:shift/components/style/style.dart';
 part 'shift_frame.freezed.dart';
 part 'shift_frame.g.dart';
 
+////////////////////////////////////////////////////////////////////////////////////////////
+/// grobal variable
+////////////////////////////////////////////////////////////////////////////////////////////
+
+const List<String> weekSelect = [
+  "すべての週",
+  "第1週",
+  "第2週",
+  "第3週",
+  "第4週",
+];
+const List<String> weekdaySelect = [
+  "すべての曜日",
+  "月曜日",
+  "火曜日",
+  "水曜日",
+  "木曜日",
+  "金曜日",
+  "土曜日",
+  "日曜日"
+];
+const List<String> assignNumSelect = [
+  "0 人",
+  "1 人",
+  "2 人",
+  "3 人",
+  "4 人",
+  "5 人",
+  "6 人",
+  "7 人",
+  "8 人",
+  "9 人",
+  "10 人"
+];
+const List<String> templateShiftTermSelect = [
+  "1月ごと",
+  "2週間ごと",
+  "1週間ごと",
+];
+const List<String> templateReqLimitSelect = [
+  "シフト開始 7 日前まで",
+  "シフト開始 6 日前まで",
+  "シフト開始 5 日前まで",
+  "シフト開始 4 日前まで",
+  "シフト開始 3 日前まで",
+  "シフト開始 2 日前まで"
+];
+
+List<List<Color>> colorTable = List<List<Color>>.generate(
+  11,
+  (index) => [
+    Color.fromARGB(
+      Styles.primaryColor.alpha,
+      (200 - ((200 - Styles.primaryColor.red) * (index) ~/ 10)).toInt(),
+      (200 - ((200 - Styles.primaryColor.green) * (index) ~/ 10)).toInt(),
+      (200 - ((200 - Styles.primaryColor.blue) * (index) ~/ 10)).toInt(),
+    ),
+    Colors.grey[600]!
+  ],
+);
+
 @freezed
 class ShiftFrame with _$ShiftFrame {
 
   const ShiftFrame._();
+
   const factory ShiftFrame({
     required String shiftId,
     required String shiftName,
@@ -27,7 +90,63 @@ class ShiftFrame with _$ShiftFrame {
   factory ShiftFrame.fromJson(Map<String, dynamic> json) => _$ShiftFrameFromJson(json);
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  ///  シフト表の作成関数
+  ///  シフト表の初期化
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  
+  factory ShiftFrame.fromFirebase(DocumentSnapshot doc) {
+    return ShiftFrame.fromJson(doc.data()! as Map<String, dynamic>);
+  }
+
+  factory ShiftFrame.withDefaults({
+    String? shiftId,
+    String? shiftName,
+    DateTime? updateTime,
+    List<TimeDivision>? timeDivs,
+    List<DateTimeRange>? dateTerm,
+    List<List<int>>? assignTable,
+    bool? isTestMode,
+    String? userId,
+  }) {
+    return ShiftFrame(
+      shiftId: shiftId ?? "",
+      shiftName: shiftName ?? "シフト表名が設定されていません",
+      updateTime: updateTime ?? DateTime.now(),
+      timeDivs: timeDivs ?? <TimeDivision>[],
+      dateTerm: dateTerm ??
+          [
+            DateTimeRange(
+              start: DateTime(
+                DateTime.now().year,
+                DateTime.now().month + 1,
+                1,
+              ),
+              end: DateTime(
+                DateTime.now().year,
+                DateTime.now().month + 2,
+                0,
+              ),
+            ),
+            DateTimeRange(
+              start: DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+              ),
+              end: DateTime(
+                DateTime.now().year,
+                DateTime.now().month + 1,
+                0,
+              ),
+            ),
+          ],
+      assignTable: assignTable ?? <List<int>>[],
+      isTestMode: isTestMode ?? false,
+      userId: userId ?? "",
+    );
+  }
+
+  ///j/////////////////////////////////////////////////////////////////////////////////////////
+  ///  シフト表の初期化
   ////////////////////////////////////////////////////////////////////////////////////////////
   
   ShiftFrame initTable() {
@@ -48,6 +167,7 @@ class ShiftFrame with _$ShiftFrame {
 
     return this;
   }
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  シフト表の column, row の長さを返す関数

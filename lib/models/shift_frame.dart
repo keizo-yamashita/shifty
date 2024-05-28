@@ -145,7 +145,6 @@ class ShiftFrame {
         ),
       );
     }
-
     return this;
   }
 

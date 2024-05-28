@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shift/components/form/utility/button.dart';
 import 'package:shift/components/form/utility/modal_window.dart';
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/components/style/style.dart';
 
 class InputDateTerm extends StatefulWidget {

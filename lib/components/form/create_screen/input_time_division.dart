@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shift/components/form/utility/button.dart';
 import 'package:shift/components/form/utility/modal_window.dart';
 import 'package:shift/components/style/style.dart';
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/time_division/time_division.dart';
 import 'package:shift/components/undo_redo.dart';
 
 class InputTimeDivision extends StatefulWidget {
@@ -355,19 +355,26 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
                       Padding(
                         padding: EdgeInsets.all(boader / 2),
                         child: InkWell(
-                          onTap: () {
-                            setState(
-                              () {
-                                if (i + 1 != timeDivs.length) {
-                                  timeDivs[i].endTime = timeDivs[i + 1].endTime;
-                                  timeDivs[i].name =
-                                      "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')}-${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}";
-                                  timeDivs.removeAt(i + 1);
-                                }
-                              },
-                            );
-                            insertBuffer(timeDivs);
-                          },
+                        onTap: () {
+                          setState(
+                            () {
+                              if (i + 1 != timeDivs.length) {
+                                TimeDivision updatedTimeDiv = timeDivs[i].copyWith(
+                                  endTime: timeDivs[i + 1].endTime,
+                                  name: "${timeDivs[i].startTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].startTime.minute.toString().padLeft(2, '0')}-${timeDivs[i].endTime.hour.toString().padLeft(2, '0')}:${timeDivs[i].endTime.minute.toString().padLeft(2, '0')}",
+                                );
+
+                                List<TimeDivision> updatedTimeDivs = List.from(timeDivs);
+                                updatedTimeDivs[i] = updatedTimeDiv;
+                                updatedTimeDivs.removeAt(i + 1);
+
+                                timeDivs = updatedTimeDivs;
+                              }
+                            },
+                          );
+                          insertBuffer(timeDivs);
+                        },
+
                           child: Container(
                             decoration: BoxDecoration(
                               color: bgColor,
@@ -412,19 +419,16 @@ class InputTimeDivisionState extends State<InputTimeDivision> {
 
   void insertBuffer(List<TimeDivision> timeDivs) {
     setState(() {
-      undoredoCtrl
-          .insertBuffer(timeDivs.map((e) => TimeDivision.copy(e)).toList());
+      undoredoCtrl.insertBuffer(timeDivs.map((e) => e.copyWith()).toList());
     });
   }
 
   void timeDivsUndoRedo(bool undo) {
     setState(() {
       if (undo) {
-        timeDivs =
-            undoredoCtrl.undo().map((e) => TimeDivision.copy(e)).toList();
+        timeDivs = undoredoCtrl.undo().map((e) => e.copyWith()).toList();
       } else {
-        timeDivs =
-            undoredoCtrl.redo().map((e) => TimeDivision.copy(e)).toList();
+        timeDivs = undoredoCtrl.redo().map((e) => e.copyWith()).toList();
       }
     });
   }
