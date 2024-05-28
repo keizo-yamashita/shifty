@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:shift/components/style/style.dart';
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/shift/shift_frame.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// shift request class

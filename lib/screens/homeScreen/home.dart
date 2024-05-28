@@ -17,7 +17,7 @@ import 'package:shift/main.dart';
 import 'package:shift/components/form/utility/empty_appbar.dart';
 import 'package:shift/components/style/style.dart';
 import 'package:shift/components/form/utility/dialog.dart';
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/models/shift_request.dart';
 import 'package:shift/models/shift_table.dart';
 import 'package:shift/screens/shiftScreen/follow_shift_frame.dart';
@@ -275,7 +275,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
             ).then(
               (value) {
                 if (value == 0) {
-                  ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
+                  ref.read(shiftFrameProvider).shiftFrame = ShiftFrame.withDefaults();
                   context.go('/home/create_shift_frame');
                 }
                 if (value == 1) {

@@ -30,7 +30,7 @@ class ContactPageState extends ConsumerState<ContactPage>
   Widget build(BuildContext context) {
 
     Color bgColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
-
+    
     // 画面サイズの取得
     var screenSize = Size(
         MediaQuery.of(context).size.width,
