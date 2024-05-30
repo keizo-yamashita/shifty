@@ -204,6 +204,8 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
       ),
     );
   }
+a
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   ///  シフト管理画面の使い方を説明するための関数
