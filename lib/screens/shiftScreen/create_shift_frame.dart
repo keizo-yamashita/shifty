@@ -16,8 +16,6 @@ import 'package:shift/components/form/create_screen/input_shift_name.dart';
 import 'package:shift/components/form/create_screen/input_date_term.dart';
 import 'package:shift/components/form/create_screen/input_time_division.dart';
 
-
-
 class CreateShiftFramePage extends ConsumerStatefulWidget {
   const CreateShiftFramePage({Key? key}) : super(key: key);
   @override
@@ -29,13 +27,10 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
   // シフト準備期間が確保されているか確認するためのbool値
   bool existPrepareTerm = false;
 
-
   ShiftFrame shiftFrame = ShiftFrame();
   double appBarHeight = 0;
   bool isDark = false;
   Size screenSize = const Size(0, 0);
-
-
 
   // TextField の動作をスムーズにするための変数
   final FocusNode focusNode = FocusNode();
