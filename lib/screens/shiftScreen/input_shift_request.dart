@@ -13,7 +13,7 @@ import 'package:shift/components/form/shift_editor/table.dart';
 import 'package:shift/components/form/shift_editor/table_title.dart';
 import 'package:shift/components/style/style.dart';
 import 'package:shift/components/form/utility/dialog.dart';
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/models/shift_request.dart';
 import 'package:shift/components/form/shift_editor/coordinate.dart';
 import 'package:shift/components/undo_redo.dart';

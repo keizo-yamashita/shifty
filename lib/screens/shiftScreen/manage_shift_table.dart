@@ -4,7 +4,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -16,7 +15,7 @@ import 'package:shift/models/shift_request.dart';
 import 'package:shift/components/form/shift_editor/editor_appbar.dart';
 import 'package:shift/components/style/style.dart';
 import 'package:shift/components/form/utility/dialog.dart';
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/models/shift_table.dart';
 import 'package:shift/components/form/shift_editor/table.dart';
 import 'package:shift/components/form/shift_editor/table_title.dart';
@@ -950,7 +949,7 @@ class ManageShiftTablePageState extends ConsumerState<ManageShiftTablePage> {
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   void crearVariables() {
-    ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
+    ref.read(shiftFrameProvider).shiftFrame = ShiftFrame.withDefaults();
     selectedCoodinate = Coordinate(column: 0, row: 0);
     undoredoCtrl = UndoRedo(bufferMax);
     selectedIndex = 0;

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +10,6 @@ import 'package:shift/components/style/style.dart';
 
 part 'shift_frame.freezed.dart';
 part 'shift_frame.g.dart';
-
-////////////////////////////////////////////////////////////////////////////////////////////
-/// grobal variable
-////////////////////////////////////////////////////////////////////////////////////////////
 
 const List<String> weekSelect = [
   "すべての週",
@@ -95,6 +92,21 @@ class ShiftFrame with _$ShiftFrame {
   
   factory ShiftFrame.fromFirebase(DocumentSnapshot doc) {
     return ShiftFrame.fromJson(doc.data()! as Map<String, dynamic>);
+  }
+
+  // Firestoreにデータを保存するメソッド
+  Future<void> pushToFirestore() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
+
+    final Map<String, dynamic> data = this.toJson();
+    data['user-id'] = uid;
+    data['created-at'] = FieldValue.serverTimestamp();
+
+    await firestore.collection('shift-leader').add(data);
   }
 
   factory ShiftFrame.withDefaults({
