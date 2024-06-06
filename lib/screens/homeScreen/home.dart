@@ -338,7 +338,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
         DocumentReference refShiftFrame = snapshotReq.get('reference');
         var snapshotShiftFrame = await refShiftFrame.get();
         // Shift Frame のインスタンス化
-        var frame = await ShiftFrame().pullShiftFrame(snapshotShiftFrame);
+        var frame = ShiftFrame.fromFirebase(snapshotShiftFrame);
 
         // Shift Request のインスタンス化
         var request = await ShiftRequest(frame).pullShiftRequest(snapshotReq);
@@ -391,7 +391,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
       // とってきたシフトリクエストが参照しているシフト表を取ってくる
       List<Widget> shiftCard = [];
       for (var snapshotMyShiftFrame in docs) {
-        var frame = await ShiftFrame().pullShiftFrame(snapshotMyShiftFrame);
+        var frame = ShiftFrame.fromFirebase(snapshotMyShiftFrame);
         var followersNum = 0;
         await FirebaseFirestore.instance
             .collection('shift-follower')

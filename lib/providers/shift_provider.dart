@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/models/shift_request.dart';
 import 'package:shift/models/shift_table.dart';
 
@@ -13,7 +13,7 @@ import 'package:shift/models/shift_table.dart';
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 class ShiftFrameProvider extends ChangeNotifier {
-  ShiftFrame _shiftFrame = ShiftFrame();
+  ShiftFrame _shiftFrame = ShiftFrame.withDefaults();
 
   ShiftFrame get shiftFrame => _shiftFrame;
 
@@ -24,7 +24,7 @@ class ShiftFrameProvider extends ChangeNotifier {
 }
 
 class ShiftRequestProvider extends ChangeNotifier {
-  ShiftRequest _shiftRequest = ShiftRequest(ShiftFrame());
+  ShiftRequest _shiftRequest = ShiftRequest(ShiftFrame.withDefaults());
 
   ShiftRequest get shiftRequest => _shiftRequest;
 
@@ -36,8 +36,8 @@ class ShiftRequestProvider extends ChangeNotifier {
 
 class ShiftTableProvider extends ChangeNotifier {
   ShiftTable _shiftTable = ShiftTable(
-    ShiftFrame(),
-    [ShiftRequest(ShiftFrame())],
+    ShiftFrame.withDefaults(),
+    [ShiftRequest(ShiftFrame.withDefaults())],
   );
 
   ShiftTable get shiftTable => _shiftTable;

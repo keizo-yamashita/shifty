@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shift/components/style/style.dart';
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/time_division/time_division.dart';
 
 ///////////////////////////////////////////////////////////////////////
 /// テーブルの要素を作るための関数

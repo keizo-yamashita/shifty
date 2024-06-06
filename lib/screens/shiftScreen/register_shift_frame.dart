@@ -15,7 +15,8 @@ import 'package:shift/components/style/style.dart';
 import 'package:shift/components/form/utility/dialog.dart';
 import 'package:shift/components/undo_redo.dart';
 import 'package:shift/components/form/utility/modal_window.dart';
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/shift/assign_rule.dart';
+import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/components/form/shift_editor/coordinate.dart';
 import 'package:shift/components/form/utility/button.dart';
 
@@ -56,7 +57,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
 
   Coordinate? selectedCoordinate;
 
-  ShiftFrame shiftFrame = ShiftFrame();
+  ShiftFrame shiftFrame = ShiftFrame.withDefaults();
   GlobalKey editorKey = GlobalKey<TableEditorState>();
 
   @override
@@ -101,7 +102,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
             message1: "このシフト表で作成しますか？",
             message2: "シフト表を作成しました",
             onAccept: () {
-              shiftFrame.pushShiftFrame();
+              shiftFrame.pushToFirestore();
               Navigator.pop(context);
               Navigator.pop(context);
               // crearVariables();
@@ -359,11 +360,13 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
   void callUndoRedo(bool undo) {
     setState(() {
       if (undo) {
-        shiftFrame.assignTable =
-            undoredoCtrl.undo().map((e) => List.from(e).cast<int>()).toList();
+        shiftFrame = shiftFrame.copyWith(
+          assignTable: undoredoCtrl.undo().map((e) => List.from(e).cast<int>()).toList()
+        );
       } else {
-        shiftFrame.assignTable =
-            undoredoCtrl.redo().map((e) => List.from(e).cast<int>()).toList();
+        shiftFrame = shiftFrame.copyWith(
+          assignTable: undoredoCtrl.redo().map((e) => List.from(e).cast<int>()).toList()
+        );
       }
     });
   }
@@ -452,7 +455,7 @@ class CheckShiftTableWidgetState extends ConsumerState<CheckShiftTableWidget> {
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   void crearVariables() {
-    ref.read(shiftFrameProvider).shiftFrame = ShiftFrame();
+    ref.read(shiftFrameProvider).shiftFrame = ShiftFrame.withDefaults();
     selectedCoordinate = Coordinate(column: 0, row: 0);
     undoredoCtrl = UndoRedo(bufferMax);
     selectedCoordinate = null;

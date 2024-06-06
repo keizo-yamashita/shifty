@@ -10,7 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shift/main.dart';
 import 'package:shift/components/form/utility/dialog.dart';
 import 'package:shift/components/style/style.dart';
-import 'package:shift/models/shift_frame.dart';
+import 'package:shift/models/shift/shift_frame.dart';
+import 'package:shift/models/time_division/time_division.dart';
 import 'package:shift/screens/shiftScreen/register_shift_frame.dart';
 import 'package:shift/components/form/create_screen/input_shift_name.dart';
 import 'package:shift/components/form/create_screen/input_date_term.dart';
@@ -27,7 +28,7 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
   // シフト準備期間が確保されているか確認するためのbool値
   bool existPrepareTerm = false;
 
-  ShiftFrame shiftFrame = ShiftFrame();
+  ShiftFrame shiftFrame = ShiftFrame.withDefaults();
   double appBarHeight = 0;
   bool isDark = false;
   Size screenSize = const Size(0, 0);
@@ -146,7 +147,7 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
                     );
                   } else {
                     shiftFrame.initTable();
-                    ref.read(shiftFrameProvider).shiftFrame = shiftFrame;
+                    ref.read(shiftFrameProvider).shiftFrame = shiftFrame.copyWith();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -172,7 +173,9 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
                     textController: textConroller,
                     focusNode: focusNode,
                     onTextChanged: (String inputValue) {
-                      shiftFrame.shiftName = inputValue;
+                      shiftFrame = shiftFrame.copyWith(
+                        shiftName: inputValue,
+                      );
                     },
                   ),
                   SizedBox(height: screenSize.height * 0.1),
@@ -187,7 +190,9 @@ class CreateShiftFramePageState extends ConsumerState<CreateShiftFramePage>
                   SizedBox(height: screenSize.height * 0.1),
                   InputTimeDivision(
                     onTimeDivsChanged: (List<TimeDivision> timeDivs) {
-                      shiftFrame.timeDivs = timeDivs;
+                      shiftFrame = shiftFrame.copyWith(
+                        timeDivs: timeDivs,
+                      );
                     },
                   ),
                   SizedBox(height: screenSize.height * 0.1),
