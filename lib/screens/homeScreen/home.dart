@@ -331,6 +331,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
         ),
       );
     } else {
+      
       // とってきたシフトリクエストが参照しているシフト表を取ってくる
       List<Widget> shiftCard = [];
       for (var snapshotReq in docs) {

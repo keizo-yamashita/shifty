@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////// 
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shift/app_navigation_bar.dart';
 import 'package:shift/screens/splashScreen/splash_screen.dart';
 import 'package:shift/screens/signInScreen/sign_in.dart';
-import 'package:shift/screens/homeSCreen/setting.dart';
+import 'package:shift/screens/settingsScreen/setting.dart';
 import 'package:shift/screens/homeScreen/home.dart';
 import 'package:shift/screens/homeScreen/notification.dart';
 import 'package:shift/screens/shiftScreen/follow_shift_frame.dart';
