@@ -1,5 +1,5 @@
 ## Getting Started
-This project is a starting point for a Flutter application.
+シフト表作成アプリ
 
 ## シフト表枠組み作成 UI
 ![sample00](assets/shiftt-release/6.7/00.png)
