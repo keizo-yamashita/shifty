@@ -1,4 +1,7 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:shift/components/style/style.dart';
 
 class InputShiftName extends StatelessWidget {
@@ -15,10 +18,10 @@ class InputShiftName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     final screenSize = MediaQuery.of(context).size;
-    
-    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
+
+    Color bgColor = Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).scaffoldBackgroundColor;
 
     return Column(
       children: [

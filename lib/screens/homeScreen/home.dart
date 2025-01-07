@@ -1,26 +1,33 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
+
+// Dart imports:
 import 'dart:math';
 
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
+
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
-import 'package:share/share.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+// import 'package:share/share.dart';
 
-// my package
-import 'package:shift/main.dart';
+// Project imports:
+import 'package:shift/components/form/utility/dialog.dart';
 import 'package:shift/components/form/utility/empty_appbar.dart';
 import 'package:shift/components/style/style.dart';
-import 'package:shift/components/form/utility/dialog.dart';
+import 'package:shift/main.dart';
 import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/models/shift_request.dart';
 import 'package:shift/models/shift_table.dart';
 import 'package:shift/screens/shiftScreen/follow_shift_frame.dart';
+
+// my package
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// Home 画面
@@ -441,7 +448,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   "シフト期間　　 : ${DateFormat('MM/dd').format(frame.dateTerm[0].start)} - ${DateFormat('MM/dd').format(frame.dateTerm[0].end)}\n\n";
               message += "下記のリンクよりシフトリクエストを入力して下さい。\n";
               message += "shifty://user/?id=${frame.shiftId}";
-              Share.share(message);
+              // Share.share(message);
             },
             isDark,
             () {
@@ -473,7 +480,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                     message +=
                         "リクエスト期間 : ${DateFormat('MM/dd').format(frame.dateTerm[1].start)} - ${DateFormat('MM/dd').format(frame.dateTerm[1].end)}\n";
                     message += "shifty://user/?id=${frame.shiftId}";
-                    Share.share(message);
+                    // Share.share(message);
                   }
                   if (value == 2) {}
                   if (value == 3) {

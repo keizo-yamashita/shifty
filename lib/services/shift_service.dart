@@ -1,5 +1,6 @@
-import 'package:shift/repositories/shift_repository.dart';
+// Project imports:
 import 'package:shift/models/shift/shift_frame.dart';
+import 'package:shift/repositories/shift_repository.dart';
 
 class ShiftService {
 

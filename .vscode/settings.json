@@ -1,3 +1,37 @@
 {
-    "cmake.sourceDirectory": "/Users/ymstkz/work/sw-dev/flutter/shift/linux"
+  "dart.flutterSdkPath": ".fvm/versions/3.24.0",
+  "search.exclude": {
+    "**/.fvm": true
+  },
+  "files.watcherExclude": {
+    "**/.fvm": true
+  },
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "never",
+      "source.fixAll": "explicit"
+    },
+    "editor.formatOnType": true
+  },
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": ".dart$",
+        "cmd": "fvm flutter pub run import_path_converter:main"
+      },
+      {
+        "match": ".dart$",
+        "cmd": "fvm flutter pub run import_sorter:main"
+      }
+    ]
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "pubspec.yaml": ".flutter-plugins, .packages, .dart_tool, .flutter-plugins-dependencies, .metadata, .packages, pubspec.lock, build.yaml, analysis_options.yaml, all_lint_rules.yaml",
+    ".gitignore": ".gitattributes, .gitmodules, .gitmessage, .mailmap, .git-blame*",
+    "readme.*": "authors, backers.md, changelog*, citation*, code_of_conduct.md, codeowners, contributing.md, contributors, copying, credits, governance.md, history.md, license*, maintainers, readme*, security.md, sponsors.md",
+    "*.dart": "$(capture).g.dart, $(capture).freezed.dart"
+  }
 }

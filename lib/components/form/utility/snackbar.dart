@@ -1,4 +1,7 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:shift/components/style/style.dart';
 
 enum SnackBarType { info, warning, error }

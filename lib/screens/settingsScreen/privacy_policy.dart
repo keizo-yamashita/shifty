@@ -2,10 +2,15 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shift/components/style/style.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+// Project imports:
+import 'package:shift/components/style/style.dart';
 
 class PrivacyPolicyPage extends ConsumerStatefulWidget {
   const PrivacyPolicyPage({Key? key}) : super(key: key);
@@ -14,7 +19,6 @@ class PrivacyPolicyPage extends ConsumerStatefulWidget {
 }
 
 class PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
-  
   Size screenSize = const Size(0, 0);
 
   WebViewController controller = WebViewController()

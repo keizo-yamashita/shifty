@@ -1,13 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
-import 'package:firebase_auth/firebase_auth.dart';
+
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// Project imports:
+import 'package:shift/components/style/style.dart';
 import 'package:shift/main.dart';
 import 'package:shift/screens/signInScreen/sign_in.dart';
-import 'package:shift/components/style/style.dart';
 
 class UserInfoPage extends ConsumerWidget {
   const UserInfoPage({Key? key}) : super(key: key);

@@ -1,11 +1,15 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:shift/components/form/utility/button.dart';
-import 'package:shift/components/style/style.dart';
-import 'package:shift/components/form/utility/dialog.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// Project imports:
+import 'package:shift/components/form/utility/button.dart';
+import 'package:shift/components/form/utility/dialog.dart';
+import 'package:shift/components/style/style.dart';
 import 'package:shift/main.dart';
 
 class ContactPage extends ConsumerStatefulWidget {

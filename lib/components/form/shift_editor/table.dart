@@ -1,8 +1,11 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:shift/components/form/shift_editor/two_dimention_grid_view.dart';
+
+// Project imports:
 import 'package:shift/components/form/shift_editor/coordinate.dart';
 import 'package:shift/components/form/shift_editor/linkled_scroll.dart';
+import 'package:shift/components/form/shift_editor/two_dimention_grid_view.dart';
 
 class TableEditor extends StatefulWidget {
   // key : テーブルを拡大縮小させたタイミングで更新する必要あり

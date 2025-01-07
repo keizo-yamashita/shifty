@@ -2,14 +2,21 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
+
+// Dart imports:
 import 'dart:async';
+
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+// Project imports:
+import 'package:shift/components/style/style.dart';
 import 'package:shift/main.dart';
 import 'package:shift/providers/deep_link_mixin.dart';
-import 'package:shift/components/style/style.dart';
 import 'package:shift/screens/shiftScreen/follow_shift_frame.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {

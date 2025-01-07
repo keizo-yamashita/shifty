@@ -1,10 +1,9 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:shift/components/style/style.dart';
 import 'package:shift/models/time_division/time_division.dart';
-
-///////////////////////////////////////////////////////////////////////
-/// テーブルの要素を作るための関数
-///////////////////////////////////////////////////////////////////////
 
 List<Widget> getColumnTitles(
   double height,
@@ -144,7 +143,8 @@ List<Widget> getRowTitles(
           child: Text(
             timeDivs[i].name,
             style: Styles.tableTitleStyle(
-                (isDark) ? Colors.white : Colors.black,),
+              (isDark) ? Colors.white : Colors.black,
+            ),
           ),
         ),
       ),

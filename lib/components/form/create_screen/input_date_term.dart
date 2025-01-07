@@ -1,9 +1,14 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:intl/intl.dart';
+
+// Project imports:
 import 'package:shift/components/form/utility/button.dart';
 import 'package:shift/components/form/utility/modal_window.dart';
-import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/components/style/style.dart';
+import 'package:shift/models/shift/shift_frame.dart';
 
 class InputDateTerm extends StatefulWidget {
   final Function(
@@ -531,7 +536,7 @@ class InputDateTermState extends State<InputDateTerm>
               dividerColor: Styles.primaryColor.withAlpha(100),
               shadowColor: Styles.primaryColor,
               dayBackgroundColor:
-                  MaterialStateProperty.all<Color>(Styles.primaryColor),
+                  WidgetStateProperty.all<Color>(Styles.primaryColor),
               rangeSelectionBackgroundColor: Styles.primaryColor.withAlpha(100),
             ),
           ),

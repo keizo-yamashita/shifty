@@ -1,24 +1,30 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
+
+// Dart imports:
 import 'dart:math';
 
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:shift/main.dart';
-import 'package:shift/components/style/pop_icons.dart';
+// Project imports:
+import 'package:shift/components/form/shift_editor/coordinate.dart';
 import 'package:shift/components/form/shift_editor/editor_appbar.dart';
 import 'package:shift/components/form/shift_editor/table.dart';
 import 'package:shift/components/form/shift_editor/table_title.dart';
-import 'package:shift/components/style/style.dart';
+import 'package:shift/components/form/utility/button.dart';
 import 'package:shift/components/form/utility/dialog.dart';
+import 'package:shift/components/form/utility/modal_window.dart';
+import 'package:shift/components/style/pop_icons.dart';
+import 'package:shift/components/style/style.dart';
+import 'package:shift/components/undo_redo.dart';
+import 'package:shift/main.dart';
 import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/models/shift_request.dart';
-import 'package:shift/components/form/shift_editor/coordinate.dart';
-import 'package:shift/components/undo_redo.dart';
-import 'package:shift/components/form/utility/modal_window.dart';
-import 'package:shift/components/form/utility/button.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 全体で使用する変数

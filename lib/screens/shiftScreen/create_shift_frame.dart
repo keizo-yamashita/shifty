@@ -2,20 +2,25 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////
 
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// my package
-import 'package:shift/main.dart';
+// Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+// Project imports:
+import 'package:shift/components/form/create_screen/input_date_term.dart';
+import 'package:shift/components/form/create_screen/input_shift_name.dart';
+import 'package:shift/components/form/create_screen/input_time_division.dart';
 import 'package:shift/components/form/utility/dialog.dart';
 import 'package:shift/components/style/style.dart';
+import 'package:shift/main.dart';
 import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/models/time_division/time_division.dart';
 import 'package:shift/screens/shiftScreen/register_shift_frame.dart';
-import 'package:shift/components/form/create_screen/input_shift_name.dart';
-import 'package:shift/components/form/create_screen/input_date_term.dart';
-import 'package:shift/components/form/create_screen/input_time_division.dart';
+
+// my package
 
 class CreateShiftFramePage extends ConsumerStatefulWidget {
   const CreateShiftFramePage({Key? key}) : super(key: key);

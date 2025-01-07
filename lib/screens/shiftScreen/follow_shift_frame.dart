@@ -2,15 +2,19 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////
 
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:shift/main.dart';
+// Project imports:
 import 'package:shift/components/form/utility/button.dart';
-import 'package:shift/components/style/style.dart';
 import 'package:shift/components/form/utility/dialog.dart';
+import 'package:shift/components/style/style.dart';
+import 'package:shift/main.dart';
 import 'package:shift/models/shift/shift_frame.dart';
 import 'package:shift/models/shift_request.dart';
 

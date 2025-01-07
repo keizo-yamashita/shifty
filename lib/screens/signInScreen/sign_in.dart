@@ -2,16 +2,23 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+// Dart imports:
 import 'dart:math';
+
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-// my package
-import 'package:shift/main.dart';
-import 'package:flutter/material.dart';
+// Project imports:
+import 'package:shift/components/form/utility/dialog.dart';
 import 'package:shift/components/form/utility/snackbar.dart';
 import 'package:shift/components/style/style.dart';
-import 'package:shift/components/form/utility/dialog.dart';
+import 'package:shift/main.dart';
+
+// my package
 
 final GlobalKey<ScaffoldState> _signInScaffoldKey = GlobalKey<ScaffoldState>();
 

@@ -2,14 +2,19 @@
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+// Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// my package
-import 'package:shift/main.dart';
+// Project imports:
 import 'package:shift/components/form/utility/snackbar.dart';
 import 'package:shift/components/style/style.dart';
+import 'package:shift/main.dart';
+
+// my package
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// 登録の確認ダイアログ (確認機能付き)

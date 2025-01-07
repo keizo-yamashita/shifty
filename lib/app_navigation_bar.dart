@@ -1,12 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// import
 ////////////////////////////////////////////////////////////////////////////////////////////
+
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shift/main.dart';
+import 'package:go_router/go_router.dart';
+
+// Project imports:
 import 'package:shift/components/form/utility/dialog.dart';
 import 'package:shift/components/style/style.dart';
+import 'package:shift/main.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// App Widget

@@ -1,4 +1,7 @@
+// Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+// Project imports:
 import 'package:shift/models/shift/shift_frame.dart';
 
 class ShiftRepository {
