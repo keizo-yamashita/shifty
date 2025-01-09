@@ -1,18 +1,23 @@
+// Dart imports:
 import 'dart:io';
 
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:share/share.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:shift/main.dart';
+// Project imports:
 import 'package:shift/components/form/utility/dialog.dart';
 import 'package:shift/components/form/utility/modal_window.dart';
 import 'package:shift/components/style/style.dart';
+import 'package:shift/main.dart';
 
 class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);

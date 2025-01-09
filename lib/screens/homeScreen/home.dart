@@ -15,7 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-// import 'package:share/share.dart';
+import 'package:share/share.dart';
 
 // Project imports:
 import 'package:shift/components/form/utility/dialog.dart';
@@ -448,7 +448,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   "シフト期間　　 : ${DateFormat('MM/dd').format(frame.dateTerm[0].start)} - ${DateFormat('MM/dd').format(frame.dateTerm[0].end)}\n\n";
               message += "下記のリンクよりシフトリクエストを入力して下さい。\n";
               message += "shifty://user/?id=${frame.shiftId}";
-              // Share.share(message);
+              Share.share(message);
             },
             isDark,
             () {
