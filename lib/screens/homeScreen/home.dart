@@ -480,7 +480,7 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                     message +=
                         "リクエスト期間 : ${DateFormat('MM/dd').format(frame.dateTerm[1].start)} - ${DateFormat('MM/dd').format(frame.dateTerm[1].end)}\n";
                     message += "shifty://user/?id=${frame.shiftId}";
-                    // Share.share(message);
+                    Share.share(message);
                   }
                   if (value == 2) {}
                   if (value == 3) {
