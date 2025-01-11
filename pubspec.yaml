@@ -55,6 +55,7 @@ dependencies:
   in_app_review: ^2.0.9
   url_launcher: ^6.2.4
   json_annotation: ^4.9.0
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:

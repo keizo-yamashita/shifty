@@ -135,6 +135,32 @@ class SignInProvider extends ChangeNotifier {
     return message;
   }
 
+  Future<String> loginWithEmail({
+    required String? email,
+    required String? password,
+    bool isLinking = false,
+  }) async {
+    String message = "";
+
+    final credential =
+        EmailAuthProvider.credential(email: email!, password: password!);
+    try {
+      if (isLinking) {
+        await _user
+            ?.linkWithCredential(credential)
+            .then((value) => _user = value.user);
+      } else {
+        await FirebaseAuth.instance
+            .signInWithCredential(credential)
+            .then((value) => _user = value.user);
+      }
+    } on FirebaseAuthException catch (e) {
+      message = encodeFirebaseAuthException(e);
+    }
+    notifyListeners();
+    return message;
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////
   /// アプリ起動時に呼び出すサイレントログインメソッド
   ////////////////////////////////////////////////////////////////////////////////////////////

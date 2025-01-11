@@ -27,8 +27,6 @@ import 'package:shift/models/shift_request.dart';
 import 'package:shift/models/shift_table.dart';
 import 'package:shift/screens/shiftScreen/follow_shift_frame.dart';
 
-// my package
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// Home 画面
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,12 +247,14 @@ class HomeScreenState extends ConsumerState<HomeScreen>
     }
 
     return Scaffold(
-      appBar: MediaQuery.of(context).orientation == Orientation.portrait ? (const EmptyAppBar()) : AppBar(
-        title: const Text('マイシフト'),
-        centerTitle: true,
-        backgroundColor: isDark ? Styles.darkColor : Styles.lightColor,
-        elevation: 0,
-      ),
+      appBar: MediaQuery.of(context).orientation == Orientation.portrait
+          ? (const EmptyAppBar())
+          : AppBar(
+              title: const Text('マイシフト'),
+              centerTitle: true,
+              backgroundColor: isDark ? Styles.darkColor : Styles.lightColor,
+              elevation: 0,
+            ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
           bottom: screenSize.height / 60,
@@ -282,7 +282,8 @@ class HomeScreenState extends ConsumerState<HomeScreen>
             ).then(
               (value) {
                 if (value == 0) {
-                  ref.read(shiftFrameProvider).shiftFrame = ShiftFrame.withDefaults();
+                  ref.read(shiftFrameProvider).shiftFrame =
+                      ShiftFrame.withDefaults();
                   context.go('/home/create_shift_frame');
                 }
                 if (value == 1) {
@@ -338,7 +339,6 @@ class HomeScreenState extends ConsumerState<HomeScreen>
         ),
       );
     } else {
-      
       // とってきたシフトリクエストが参照しているシフト表を取ってくる
       List<Widget> shiftCard = [];
       for (var snapshotReq in docs) {
@@ -464,7 +464,13 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   "シフト表の設定",
                   "シフト表を削除",
                 ],
-                error: [false, false, false, false, true,],
+                error: [
+                  false,
+                  false,
+                  false,
+                  false,
+                  true,
+                ],
               ).then(
                 (value) {
                   if (value == 0) {
@@ -489,7 +495,8 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                       context: context,
                       ref: ref,
                       title: "確認",
-                      message1: "シフト表'${frame.shiftName}'\nを削除しますか？\n管理者が削除を行うと、\n'${frame.shiftName}'への登録データはすべて削除されます。",
+                      message1:
+                          "シフト表'${frame.shiftName}'\nを削除しますか？\n管理者が削除を行うと、\n'${frame.shiftName}'への登録データはすべて削除されます。",
                       message2: "シフト表'${frame.shiftName}'を削除しました。",
                       onAccept: () {
                         removeTableHard(frame.shiftId);
